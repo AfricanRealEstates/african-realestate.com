@@ -168,7 +168,7 @@ export default async function PropertyDetails({
                 <span className="text-sm opacity-70">Agent</span>
               </div>
             </div>
-            <div className="w-full grid lg:grid-cols-2 gap-4 mb-2">
+            <div className="w-full flex flex-wrap gap-4 mb-2">
               <li className="flex items-center gap-4">
                 <Mail className="h-5 w-5 text-[#4e4e4e]" />
                 <div>
