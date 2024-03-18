@@ -24,6 +24,28 @@ export default function PropertyCard({ property }: PropertyCardProps) {
     currency,
   } = property;
 
+  // Function to convert different land units to hectares
+  const convertToHectares = (size: number, units: string): number => {
+    switch (units.toLowerCase()) {
+      case "ha":
+        return size;
+      case "acres":
+        // Conversion factor: 1 acre = 0.404686 hectares
+        return size * 0.404686;
+      case "sqft":
+        // Conversion factor: 1 hectare = 107639.104 square feet
+        return size / 107639.104;
+      case "sqm":
+        // Conversion factor: 1 hectare = 10000 square meters
+        return size / 10000;
+      default:
+        return size;
+    }
+  };
+
+  // Converted land size in hectares
+  const convertedLandSize = convertToHectares(landSize, landUnits);
+
   return (
     <Link
       key={id}
@@ -92,8 +114,8 @@ export default function PropertyCard({ property }: PropertyCardProps) {
                 <div className="flex items-center justify-center gap-1">
                   <LandPlot className="h-4 w-4" />
                   <p className="flex items-center gap-0.5 whitespace-nowrap font-medium">
-                    <span>{landSize}</span>
-                    <span>{landUnits}</span>
+                    <span>{convertedLandSize.toFixed(3)}</span>
+                    <span>ha</span>
                   </p>
                 </div>
                 <div className="flex items-center justify-center gap-1 font-medium">

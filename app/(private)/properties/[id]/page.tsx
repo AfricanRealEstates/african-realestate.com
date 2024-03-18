@@ -85,6 +85,31 @@ export default async function PropertyDetails({
     </div>
   );
 
+  // Function to convert different land units to hectares
+  const convertToHectares = (size: number, units: string): number => {
+    switch (units.toLowerCase()) {
+      case "ha":
+        return size;
+      case "acres":
+        // Conversion factor: 1 acre = 0.404686 hectares
+        return size * 0.404686;
+      case "sqft":
+        // Conversion factor: 1 hectare = 107639.104 square feet
+        return size / 107639.104;
+      case "sqm":
+        // Conversion factor: 1 hectare = 10000 square meters
+        return size / 10000;
+      default:
+        return size;
+    }
+  };
+
+  // Converted land size in hectares
+  const convertedLandSize = convertToHectares(
+    property.landSize,
+    property.landUnits
+  );
+
   return (
     <div
       className={` ${raleway.className} w-[95%] lg:max-w-7xl mx-auto py-[90px] lg:py-[120px]`}
@@ -140,7 +165,8 @@ export default async function PropertyDetails({
               <div className="grid grid-cols-3 gap-2">
                 <div className="">Land size:</div>
                 <div className="font-medium">
-                  {property.landSize} {property.landUnits}
+                  <span>{convertedLandSize.toFixed(3)}</span>
+                  <span>ha</span>
                 </div>
               </div>
             </div>
