@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import PropertyQueries from "./property-queries";
+import Link from "next/link";
 
 interface ClientTableProps {
   properties: Property[];
@@ -41,6 +42,9 @@ export default function ClientTable({
       title: "Title",
       dataIndex: "title",
       key: "title",
+      render(title: string, record: Property) {
+        return <Link href={`/properties/${record.id}`}>{title}</Link>;
+      },
     },
     {
       title: "Currency",

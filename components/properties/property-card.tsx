@@ -28,9 +28,10 @@ export default function PropertyCard({ property }: PropertyCardProps) {
     <Link
       key={id}
       href={`/properties/${id}`}
-      className="relative px-2 py-3 bg-white text-inherit no-underline"
+      className="relative px-2 py-3 bg-white text-inherit no-underline lg:shadow-none shadow-md"
     >
-      <div className="card-wrapper group pointer-events-auto relative grid aspect-square h-full w-full min-w-[335px] grid-rows-[1fr_auto] gap-3 rounded-lg group-[.is]/marker:!grid-rows-[200px_auto] sm:aspect-ratio sm:grid-rows-[294px_auto]">
+      {/* sm:grid-rows-[294px_auto] */}
+      <div className="card-wrapper group pointer-events-auto relative grid aspect-square h-full w-full min-w-[335px] grid-rows-[1fr_auto] gap-3 rounded-lg group-[.is]/marker:!grid-rows-[150px_auto] sm:aspect-ratio">
         <article className="transition duration-300 ease-in-out group-hover:scale-[0.97] relative isolate h-full w-full overflow-hidden rounded-lg">
           <div className="scrollbar-hide pointer-events-auto relative inset-0 flex snap-x snap-mandatory overflow-x-auto @xs/marker:rounded-b-none w-full rounded-lg object-cover h-full">
             <div className="h-full w-full flex-none snap-center snap-always overflow-hidden object-cover relative isolate">
@@ -80,10 +81,14 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           <div className="flex items-center">
             <div className="grid w-full grid-cols-[min-content,auto] gap-x-2">
               <div className="flex items-center gap-2 text-sm">
-                <div className="flex items-center justify-center gap-1">
-                  <Bed className="h-4 w-4" />
-                  <span className="whitespace-nowrap">{bedrooms} Bedrooms</span>
-                </div>
+                {bedrooms > 0 && (
+                  <div className="flex items-center justify-center gap-1">
+                    <Bed className="h-4 w-4" />
+                    <span className="whitespace-nowrap">
+                      {bedrooms} Bedrooms
+                    </span>
+                  </div>
+                )}
                 <div className="flex items-center justify-center gap-1">
                   <LandPlot className="h-4 w-4" />
                   <p className="flex items-center gap-0.5 whitespace-nowrap font-medium">

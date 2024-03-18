@@ -109,7 +109,7 @@ export default async function PropertyDetails({
                       height={400}
                       key={image}
                       alt="Property Image"
-                      className="h-full w-full rounded-xl object-cover delay-200  opacity-100 inset-0 z-[-1]"
+                      className="h-full w-full max-h-[440px] rounded-xl object-cover delay-200  opacity-100 inset-0 z-[-1]"
                       src={image}
                     />
                   );
@@ -212,13 +212,13 @@ export default async function PropertyDetails({
             {property.title}
           </h1>
           <div className="flex flex-wrap items-center gap-3 md:gap-6 mb-6">
-            {property.bedrooms && (
+            {property.bedrooms > 0 && (
               <div className="flex items-center gap-1 text-sm">
                 <BedSingle className="h-4 w-4" />
                 <span>{property.bedrooms} bedrooms</span>
               </div>
             )}
-            {property.bathrooms && (
+            {property.bathrooms > 0 && (
               <div className="flex items-center gap-1 text-sm">
                 <BathIcon className="h-4 w-4" />
                 <span>{property.bathrooms} bathrooms</span>

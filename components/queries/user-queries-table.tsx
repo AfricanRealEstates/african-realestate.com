@@ -2,6 +2,7 @@
 import { Property, Query } from "@prisma/client";
 import { Table } from "antd";
 import dayjs from "dayjs";
+import Link from "next/link";
 import React from "react";
 
 export default function UserQueriesTable({ queries }: { queries: Query[] }) {
@@ -10,9 +11,13 @@ export default function UserQueriesTable({ queries }: { queries: Query[] }) {
       title: "Property Title",
       dataIndex: "property",
       key: "property",
-      render: (property: Property) =>
-        property.title.slice(0, 100) +
-        (property.title.length > 100 ? "..." : ""),
+      render: (property: Property) => {
+        return (
+          <Link href={`/properties/${property.id}`}>{property.title}</Link>
+        );
+      },
+      // property.title.slice(0, 100) +
+      // (property.title.length > 100 ? "..." : ""),
     },
     {
       title: "Currency",

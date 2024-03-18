@@ -28,7 +28,7 @@ export default async function AllProperties({
     },
   });
   return (
-    <section className="mx-auto mb-8 gap-8 grid w-full max-w-screen-xl grid-cols-[repeat(auto-fill,_minmax(335px,1fr))] justify-center overflow-hidden">
+    <section className="mx-auto mb-8 gap-8 grid w-full grid-cols-[repeat(auto-fill,minmax(335px,1fr))] justify-center">
       {properties.map((property) => {
         return <PropertyCard key={property.id} property={property} />;
       })}

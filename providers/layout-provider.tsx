@@ -80,7 +80,7 @@ export default function LayoutProvider({ children }: Props) {
   );
   const isAdminRoute = pathname.split("/")[1] === "admin";
 
-  const ref = useClickOutside(() => setMobileView(false));
+  // const ref = useClickOutside(() => setMobileView(false));
 
   const getHeader = () => {
     if (isPublicRoute && !currentUser) return null;
@@ -200,7 +200,7 @@ export default function LayoutProvider({ children }: Props) {
               </div>
               {mobileView && (
                 <section
-                  ref={ref}
+                  // ref={ref}
                   className="shadow-xl transition-transform ease-in-out fixed right-0 z-20 gap-y-6 mt-0 bg-white w-full p-8 text-base flex flex-col  lg:hidden"
                 >
                   <nav className="flex flex-col space-y-4 shadow-[0_1px_0_#f7f7f7] pb-4">
