@@ -232,9 +232,11 @@ export default async function PropertyDetails({
             )}
           </div>
           <div className="hr mt-4 h-px bg-[#f6f7f6] lg:mt-6"></div>
-          <p className="mb-16 mt-6 leading-6 text-[#4e4e4e]">
+          <pre
+            className={`${raleway.className} mb-16 mt-6 leading-6 text-[#4e4e4e]`}
+          >
             {property.description}
-          </p>
+          </pre>
 
           <div className="relative mb-10 lg:mb-12 flex flex-col md:mb-14">
             <h3 className="mb-5 text-2xl font-medium">Amenities</h3>
