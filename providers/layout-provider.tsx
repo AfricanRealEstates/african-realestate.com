@@ -1,17 +1,16 @@
 "use client";
 import { getCurrentUser } from "@/actions/users";
 import Loader from "@/components/globals/loader";
-import Header from "@/components/landing/header";
-import { useClickOutside } from "@/hooks/use-click-outside";
 
+import { useClickOutside } from "@/hooks/use-click-outside";
 import { UserButton } from "@clerk/nextjs";
 import { User } from "@prisma/client";
 import { Button, Dropdown } from "antd";
-import { HomeIcon, Menu, Plus, X } from "lucide-react";
-import { Nunito_Sans, Raleway } from "next/font/google";
+import { HomeIcon, Menu, X } from "lucide-react";
+import { Raleway } from "next/font/google";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const nunitoSans = Raleway({
   subsets: ["latin"],
