@@ -130,11 +130,12 @@ export default async function PropertyDetails({
                 property.images.map((image) => {
                   return (
                     <Image
+                      priority
                       width={400}
                       height={400}
                       key={image}
                       alt="Property Image"
-                      className="h-full w-full max-h-[440px] rounded-xl object-cover delay-200  opacity-100 inset-0 z-[-1]"
+                      className="h-full w-full max-h-[440px] rounded-xl object-contain delay-200  opacity-100 inset-0 z-[-1]"
                       src={image}
                     />
                   );
