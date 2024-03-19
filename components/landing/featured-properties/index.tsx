@@ -24,7 +24,7 @@ export default async function FeaturedProperties() {
       <div className="mx-auto w-[95%] max-w-7xl px-5 py-16 md:px-10 md:py-24">
         <section className="flex items-center justify-start gap-12 flex-col w-full">
           <div className="flex flex-col items-center justify-center gap-5">
-            <h2 className="text-2xl text-center font-semibold sm:text-3xl xl:text-[40px] relative">
+            <h2 className="text-center text-3xl font-bold md:text-5xl mt-4 text-[#181a20]">
               Featured Properties
             </h2>
             <p className="text-[13px] text-center md:text-[17px] text-[#4e4e4e]">
