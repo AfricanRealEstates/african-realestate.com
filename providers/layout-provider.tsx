@@ -1,6 +1,7 @@
 "use client";
 import { getCurrentUser } from "@/actions/users";
 import Loader from "@/components/globals/loader";
+import Footer from "@/components/landing/footer";
 
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { UserButton } from "@clerk/nextjs";
@@ -331,6 +332,14 @@ export default function LayoutProvider({ children }: Props) {
     return <section className="">{children}</section>;
   };
 
+  const getFooter = () => {
+    return (
+      <section>
+        <Footer />
+      </section>
+    );
+  };
+
   const currenUser = async () => {
     try {
       setLoading(true);
@@ -354,7 +363,9 @@ export default function LayoutProvider({ children }: Props) {
 
   return (
     <div>
-      {getHeader()} {getContent()}
+      {getHeader()}
+      {getContent()}
+      {getFooter()}
     </div>
   );
 }

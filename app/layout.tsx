@@ -6,6 +6,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import LayoutProvider from "@/providers/layout-provider";
 import { ToastProvider } from "@/providers/toast-provider";
 import Header from "@/components/landing/header";
+import Footer from "@/components/landing/footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
