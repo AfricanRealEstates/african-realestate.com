@@ -279,31 +279,33 @@ export default function Footer() {
         <div className="mb-14 mt-16 w-full [border-bottom:0.7px_solid_rgb(255,_255,_255,__0.3)]"></div>
         <div className="flex flex-row items-start justify-between max-[767px]:flex-col max-[479px]:flex-col-reverse md:items-center text-white">
           <div className="max-[991px]:flex-none">
-            <p className="max-[479px]:text-sm">
+            <p className="max-[479px]:text-sm text-sm text-[#bebdbd]">
               &copy; Copyright {new Date().getFullYear()}. All rights reserved.
             </p>
           </div>
 
-          <div className="max-[991px]:flex-none hidden">
-            <p className="max-[479px]:text-sm">African Real Estate Inc.</p>
+          <div className="max-[991px]:flex-none hidden lg:flex">
+            <p className="max-[479px]:text-sm text-[#bebdbd] font-bold text-sm">
+              African Real Estate Inc.
+            </p>
           </div>
 
           <div className="max-[991px]: text-center font-semibold max-[991px]:py-1.5">
             <a
               href="#"
-              className="inline-block py-2 pl-5 font-normal no-underline hover:text-[#bebdbd] transition text-white max-[479px]:px-2.5 lg:pl-12"
+              className="text-sm inline-block py-2 pl-5 font-normal no-underline text-[#bebdbd] transition hover:text-white max-[479px]:px-2.5 lg:pl-12"
             >
               Terms of Service
             </a>
             <a
               href="#"
-              className="inline-block py-2 pl-5 font-normal no-underline hover:text-[#bebdbd] transition text-white max-[479px]:px-2.5 lg:pl-12"
+              className="text-sm inline-block py-2 pl-5 font-normal no-underline text-[#bebdbd] transition hover:text-white max-[479px]:px-2.5 lg:pl-12"
             >
               License
             </a>
             <a
               href="#"
-              className="inline-block py-2 pl-5 font-normal no-underline hover:text-[#bebdbd] transition text-white max-[479px]:px-2.5 lg:pl-12"
+              className="text-sm inline-block py-2 pl-5 font-normal no-underline text-[#bebdbd] transition hover:text-white max-[479px]:px-2.5 lg:pl-12"
             >
               Privacy Policy
             </a>

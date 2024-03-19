@@ -111,7 +111,7 @@ export default function LayoutProvider({ children }: Props) {
                     <HomeIcon />
                   </span>
                   <span
-                    className={`text-xl tracking-tight ${
+                    className={`text-xl tracking-tight font-semibold ${
                       isHomePage && !stickyMenu ? "text-white" : ""
                     }`}
                   >

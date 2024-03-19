@@ -20,7 +20,7 @@ export default async function FeaturedProperties() {
     },
   });
   return (
-    <div className={`${plusJakartaSans.className} bg-[#f6f6f7] text-[#4e4e4e]`}>
+    <div className={`${plusJakartaSans.className} bg-[#f2f2f7] text-[#4e4e4e]`}>
       <div className="w-[95%] lg:max-w-7xl mx-auto">
         <section className="flex items-center justify-start gap-12 flex-col w-full">
           <div className="flex flex-col items-center justify-center gap-5 mt-12">

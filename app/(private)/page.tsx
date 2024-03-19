@@ -1,5 +1,6 @@
 import FeaturedProperties from "@/components/landing/featured-properties";
 import Hero from "@/components/landing/hero";
+import HowItWorks from "@/components/landing/how-it-works";
 import Sale from "@/components/landing/sale";
 
 export default async function Home() {
@@ -13,6 +14,7 @@ export default async function Home() {
       <Hero />
       <Sale />
       <FeaturedProperties />
+      <HowItWorks />
     </div>
   );
 }
