@@ -1,3 +1,4 @@
+import CTA from "@/components/landing/cta";
 import FeaturedProperties from "@/components/landing/featured-properties";
 import Hero from "@/components/landing/hero";
 import HowItWorks from "@/components/landing/how-it-works";
@@ -15,6 +16,7 @@ export default async function Home() {
       <Sale />
       <FeaturedProperties />
       <HowItWorks />
+      <CTA />
     </div>
   );
 }
