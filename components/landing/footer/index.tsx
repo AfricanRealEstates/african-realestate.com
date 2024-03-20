@@ -210,7 +210,7 @@ export default function Footer() {
               Query
             </Link>
             <Link
-              href="#"
+              href="/faqs"
               className="py-2 text-sm font-normal text-[#bebdbd] transition hover:text-white no-underline"
             >
               FAQs
@@ -221,25 +221,25 @@ export default function Footer() {
               <p className="font-bold uppercase text-white">Company</p>
             </div>
             <Link
-              href="#"
+              href="/about"
               className="py-2 text-sm font-normal text-[#bebdbd] transition hover:text-white no-underline"
             >
               About
             </Link>
             <Link
-              href="#"
+              href="/blog"
               className="py-2 text-sm font-normal text-[#bebdbd] transition hover:text-white no-underline"
             >
               Blog
             </Link>
             <Link
-              href="#"
+              href="/careers"
               className="py-2 text-sm font-normal text-[#bebdbd] transition hover:text-white no-underline"
             >
               Careers
             </Link>
             <Link
-              href="#"
+              href="/partners"
               className="py-2 text-sm font-normal text-[#bebdbd] transition hover:text-white no-underline"
             >
               Partners
@@ -258,21 +258,18 @@ export default function Footer() {
             <form
               name="email-form"
               method="get"
-              className="relative max-w-full"
+              className="relative mb-4 max-w-full"
             >
               <input
                 type="email"
-                className="mb-2.5 block h-9 w-full rounded-md border border-solid border-[#333333] bg-[#ffffff0a] px-3 py-6 align-middle text-sm text-white focus:border-white"
-                name="email-5"
+                className="block h-9 w-full rounded-md  border border-solid border-black px-3 py-6 text-sm text-#ffffff0a]"
                 placeholder="Enter your email"
               />
               <input
                 type="submit"
-                value="Join"
-                className="absolute right-0 top-0 inline-block h-full cursor-pointer rounded-md bg-black px-6 py-1.5 text-center font-semibold text-white max-[479px]:relative max-[479px]:w-full sm:right-0 sm:rounded-br-[6px] md:rounded-tr-[6px]"
+                value="Subscribe"
+                className="relative top-[5px] w-full cursor-pointer rounded-md bg-black px-6 py-2.5 font-semibold text-white sm:absolute sm:right-1 sm:w-36"
               />
-              <div></div>
-              <div></div>
             </form>
           </div>
         </div>
