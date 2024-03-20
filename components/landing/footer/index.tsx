@@ -262,14 +262,14 @@ export default function Footer() {
             >
               <input
                 type="email"
-                className="mb-2.5 block h-9 w-full rounded-md border border-solid border-[#bebdbd] bg-white px-3 py-6 align-middle text-sm text-[#333333] focus:border-white"
+                className="mb-2.5 block h-9 w-full rounded-md border border-solid border-[#333333] bg-[#ffffff0a] px-3 py-6 align-middle text-sm text-white focus:border-white"
                 name="email-5"
                 placeholder="Enter your email"
               />
               <input
                 type="submit"
                 value="Join"
-                className="absolute right-0 top-0 inline-block h-full cursor-pointer rounded-md bg-black px-6 py-2.5 text-center font-semibold text-white max-[479px]:relative max-[479px]:w-full sm:right-0 sm:rounded-br-[6px] md:rounded-tr-[6px]"
+                className="absolute right-0 top-0 inline-block h-full cursor-pointer rounded-md bg-black px-6 py-1.5 text-center font-semibold text-white max-[479px]:relative max-[479px]:w-full sm:right-0 sm:rounded-br-[6px] md:rounded-tr-[6px]"
               />
               <div></div>
               <div></div>
