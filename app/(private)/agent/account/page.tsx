@@ -1,20 +1,21 @@
-import { getCurrentUser } from "@/actions/users";
 import PageTitle from "@/components/globals/page-title";
-import { currentUser } from "@clerk/nextjs";
 import dayjs from "dayjs";
 import React from "react";
 import prisma from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-options";
 
 export default async function Account() {
-  const clerkUser = await currentUser();
-  const user = await getCurrentUser();
+  // const clerkUser = await currentUser();
+  const user = await getServerSession(authOptions);
+  console.log(user);
   const propertiesCount = await prisma.property.count({
-    where: { userId: user?.data?.id },
+    where: { userId: user?.user.id },
   });
 
   const userSubsciption: any = await prisma.subscription.findFirst({
     where: {
-      userId: user.data?.id,
+      userId: user?.user.id,
     },
     orderBy: { createdAt: "desc" },
   });
@@ -45,17 +46,17 @@ export default async function Account() {
         {getSectionTitle("Basic Details")}
 
         <article className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-6">
-          {getAttribute("Name:", user.data?.username || "")}
-          {getAttribute("Email:", user.data?.email || "")}
-          {getAttribute("Loggedin User Id:", user.data?.clerkUserId || "")}
-          {getAttribute(
+          {getAttribute("Name:", user?.user.name || "")}
+          {getAttribute("Email:", user?.user.email || "")}
+          {getAttribute("Loggedin User Id:", user?.user.id as string)}
+          {/* {getAttribute(
             "Registered On:",
-            dayjs(user.data?.createdAt).format("DD MMM YYYY hh:mm A") || ""
+            dayjs(user?.user.createdAt).format("DD MMM YYYY hh:mm A") || ""
           )}
           {getAttribute(
             "Last login",
             dayjs(clerkUser?.lastSignInAt).format("DD MMM YYYY hh:mm A") || ""
-          )}
+          )} */}
           {getAttribute("Properties Posted", propertiesCount.toString())}
         </article>
         <article className="flex flex-col gap-5 mt-12">

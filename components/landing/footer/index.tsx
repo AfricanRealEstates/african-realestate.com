@@ -268,7 +268,7 @@ export default function Footer() {
               <input
                 type="submit"
                 value="Subscribe"
-                className="relative top-[5px] w-full cursor-pointer rounded-md bg-black px-6 py-2.5 font-semibold text-white sm:absolute sm:right-1 sm:w-36"
+                className="relative top-[5px] bottom-[5px] w-full cursor-pointer rounded-md bg-black px-6 py-2.5 font-semibold text-white sm:absolute sm:right-1 sm:w-36"
               />
             </form>
           </div>

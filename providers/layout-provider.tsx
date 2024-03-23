@@ -1,10 +1,10 @@
 "use client";
-import { getCurrentUser } from "@/actions/users";
+
+import UserButton from "@/components/auth/user-button";
 import Loader from "@/components/globals/loader";
 import Footer from "@/components/landing/footer";
 
-import { useClickOutside } from "@/hooks/use-click-outside";
-import { UserButton } from "@clerk/nextjs";
+import { useCurrentUser } from "@/hooks/use-current-user";
 import { User } from "@prisma/client";
 import { Button, Dropdown } from "antd";
 import { HomeIcon, Menu, X } from "lucide-react";
@@ -62,11 +62,13 @@ export default function LayoutProvider({ children }: Props) {
   const pathname = usePathname();
   const router = useRouter();
 
+  const user = useCurrentUser();
+
   const isHomePage = pathname === "/";
 
   // sticky Menu
   const handleStickyMenu = () => {
-    if (window.scrollY >= 80) {
+    if (window.scrollY >= 80 && !mobileView) {
       setStickyMenu(true);
     } else {
       setStickyMenu(false);
@@ -89,21 +91,26 @@ export default function LayoutProvider({ children }: Props) {
     return (
       <>
         <header
-          // className={`sticky top-0 z-50 w-full py-3 backdrop-blur-lg border-b border-neutral-700/80 ${nunitoSans.className}`}
-          className={`z-50 w-full top-0 fixed py-3 backdrop-blur-2xl border-b border-gray-700 ${
-            nunitoSans.className
-          } ${
+          className={` ${nunitoSans.className}  py-3 left-0 top-0 z-50 w-full ${
             stickyMenu
-              ? "bg-white text-black shadow-sm transition duration-100"
-              : "border-b border-neutral-700/80"
+              ? "shadow-nav fixed z-[999] border-b border-white/10 bg-white backdrop-blur-lg transition "
+              : "absolute bg-transparent"
           }`}
+          // className={`sticky top-0 z-50 w-full py-3 backdrop-blur-lg border-b border-neutral-700/80 ${nunitoSans.className}`}
+          // className={`w-full   top-0 left-0 z-50  bg-transparent text-black py-3 backdrop-blur-2xl border-b border-gray-700 ${
+          //   nunitoSans.className
+          // } ${
+          //   stickyMenu
+          //     ? "fixed bg-white text-black shadow-sm transition duration-100"
+          //     : "absolute border-b border-neutral-700/80"
+          // }`}
         >
-          <div className="top-0 w-full z-50 will-change-auto duration-200 bg-transparent backdrop-blur-2xl translate-y-0 transition-colors">
+          <div className="top-0 left-0 w-full z-50 will-change-auto duration-200 bg-transparent backdrop-blur-2xl translate-y-0 transition-colors">
             <div className="max-w-7xl px-4 mx-auto text-sm">
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between md:grid md:grid-cols-3  w-full">
                 <Link
                   href="/"
-                  className={`flex flex-shrink-0 items-center gap-2 text-black no-underline ${
+                  className={`flex flex-shrink-0 items-center gap-2 text-black ${
                     stickyMenu ? "text-black" : ""
                   }`}
                 >
@@ -118,7 +125,7 @@ export default function LayoutProvider({ children }: Props) {
                     African Real Estate.
                   </span>
                 </Link>
-                <ul className="hidden lg:flex ml-12 space-x-12">
+                <ul className="hidden lg:flex gap-5 ml-auto">
                   {navLinks.map((link) => {
                     const { label, href } = link;
                     return (
@@ -129,7 +136,7 @@ export default function LayoutProvider({ children }: Props) {
                           isHomePage && !stickyMenu
                             ? "text-white hover:text-gray-200"
                             : ""
-                        } no-underline text-black text-[17px]`}
+                        } font-semibold text-black text-[17px] flex items-center gap-5`}
                       >
                         {label}
                       </Link>
@@ -137,9 +144,9 @@ export default function LayoutProvider({ children }: Props) {
                   })}
                 </ul>
 
-                <div className="hidden font-semibold lg:flex justify-center space-x-12 items-center">
-                  {currentUser ? (
-                    <div className=" py-1 px-5 flex items-center space-x-2">
+                <div className="hidden w-full font-semibold lg:flex  gap-6 items-center">
+                  {user ? (
+                    <div className=" py-1 px-5 flex items-center">
                       <Dropdown
                         menu={{
                           items: menuToShow.map((item: any) => ({
@@ -158,38 +165,42 @@ export default function LayoutProvider({ children }: Props) {
                                 : ""
                             } text-[17px] text-gray-600`}
                           >
-                            Welcome, {currentUser?.username}
+                            Welcome, {user?.name}
                           </span>
                         </Button>
                       </Dropdown>
-                      <UserButton afterSignOutUrl="/sign-in" />
+                      {/* <UserButton afterSignOutUrl="/sign-in" /> */}
+                      {/* <UserButton /> */}
                     </div>
                   ) : (
                     <Link
-                      href="/sign-in"
-                      className={`${
+                      href="/login"
+                      className={` ${
                         isHomePage && !stickyMenu
                           ? "text-white hover:text-gray-200"
                           : ""
-                      } py-2 px-3 border rounded-md text-base no-underline`}
+                      } `}
                     >
                       Sign in
                     </Link>
                   )}
 
-                  <Link
-                    href="/agent/properties/create-property"
-                    className="opacity-90 hover:opacity-100 transition duration-200 text-base no-underline text-white bg-gradient-to-r from-[#eb6753] to-orange-300 py-2 px-3 rounded-md"
+                  <button
+                    // disabled={isLoading}
+                    onClick={() =>
+                      router.push("/agent/properties/create-property")
+                    }
+                    className=" cursor-pointer items-center rounded-md bg-blue-300 hover:bg-blue-400 transition-colors p-3 text-center font-semibold text-white"
                   >
-                    Place an ad
-                  </Link>
+                    Create a listing
+                  </button>
                 </div>
                 <div className="lg:hidden md:flex flex-col justify-end">
                   <button
                     onClick={toggleMobileView}
                     type="button"
                     aria-label="Menu button"
-                    className="hover:cursor-pointer bg-transparent border-[1px] border-neutral-200 p-1 rounded-sm border-solid flex items-center"
+                    className="hover:cursor-pointer bg-transparent border-[1px] border-neutral-200 p-2 rounded-sm border-solid flex items-center"
                   >
                     {mobileView ? (
                       <X className="text-gray-200" />
@@ -202,7 +213,7 @@ export default function LayoutProvider({ children }: Props) {
               {mobileView && (
                 <section
                   // ref={ref}
-                  className="shadow-xl transition-transform ease-in-out fixed right-0 z-20 gap-y-6 mt-0 bg-white w-full p-8 text-base flex flex-col  lg:hidden"
+                  className="shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)] transition-transform ease-in-out fixed right-0 z-20 gap-y-6 mt-0 bg-white w-full p-8 text-base flex flex-col  lg:hidden"
                 >
                   <nav className="flex flex-col space-y-4 shadow-[0_1px_0_#f7f7f7] pb-4">
                     {navLinks.map((link) => {
@@ -218,7 +229,7 @@ export default function LayoutProvider({ children }: Props) {
                       );
                     })}
                   </nav>
-                  <div className="border-t flex justify-between gap-6 border-gray-50 flex-1 py-8 shadow-[0_1px_0_#f7f7f7]">
+                  <div className="border-t flex justify-between gap-6 border-gray-100 flex-1 py-8 shadow-[0_1px_0_#f7f7f7]">
                     <section className="flex flex-col gap-4">
                       <p className="text-sm text-gray-500">
                         Need Customer Care
@@ -236,8 +247,8 @@ export default function LayoutProvider({ children }: Props) {
                       </p>
                     </section>
                   </div>
-                  <div className="flex gap-4 justify-between">
-                    {currentUser ? (
+                  <div className="flex items-center gap-4 justify-between">
+                    {user ? (
                       <>
                         <div className="flex items-center justify-between">
                           <Dropdown
@@ -250,16 +261,13 @@ export default function LayoutProvider({ children }: Props) {
                               })),
                             }}
                           >
-                            <Button
-                              type="link"
-                              className="text-sm hover:text-[#eb6753] capitalize text-[#bebdbd]"
-                            >
+                            <Button>
                               <span className="hover:text-black text-[17px]">
-                                Welcome, {currentUser?.username}
+                                Welcome, {user?.name}
                               </span>
                             </Button>
                           </Dropdown>
-                          <UserButton afterSignOutUrl="/sign-in" />
+                          {/* <UserButton afterSignOutUrl="/sign-in" /> */}
                         </div>
                         {/* <p className="flex-1 text-gray-600 font-semibold capitalize">
                           Welcome,
@@ -276,12 +284,21 @@ export default function LayoutProvider({ children }: Props) {
                         Sign in
                       </Link>
                     )}
-                    <Link
+                    {/* <Link
                       href="/agent/properties/create-property"
                       className="flex-1 text-center text-base no-underline text-white bg-gradient-to-r from-[#eb6753] to-orange-300 py-2 px-3 rounded-md"
                     >
                       Place an ad
-                    </Link>
+                    </Link> */}
+                    <button
+                      // disabled={isLoading}
+                      onClick={() =>
+                        router.push("/agent/properties/create-property")
+                      }
+                      className=" inline-block w-full cursor-pointer items-center rounded-md bg-blue-300 hover:bg-blue-400 transition-colors p-2 text-center font-semibold text-white"
+                    >
+                      Create a listing
+                    </button>
                   </div>
                 </section>
               )}
@@ -323,10 +340,12 @@ export default function LayoutProvider({ children }: Props) {
   const getContent = () => {
     if (isPublicRoute) return children;
     if (loading) return <Loader />;
-    if (isAdminRoute && !currentUser?.isAdmin)
+    if (isAdminRoute && user?.role !== "ADMIN")
       return (
-        <div className="py-20 lg:px-20 px-5 text-center text-gray-600">
-          You are not authrorized to view this page
+        <div className="mx-auto w-[95%] max-w-7xl px-5 py-24 md:px-10 md:py-24 lg:py-32">
+          <h2 className="mb-8 text-3xl font-bold md:text-5xl lg:mb-11 text-[#181a20]">
+            You are not authrorized to view this page
+          </h2>
         </div>
       );
     return <section className="">{children}</section>;
@@ -343,11 +362,9 @@ export default function LayoutProvider({ children }: Props) {
   const currenUser = async () => {
     try {
       setLoading(true);
-      const res: any = await getCurrentUser();
 
-      if (res.error) throw new Error(res.error.message);
-      setCurrentUser(res.data);
-      if (res.data.isAdmin) {
+      if (!user) throw new Error("User not found");
+      if (user.role === "ADMIN") {
         setMenuToShow(adminMenu);
       }
     } catch (error: any) {

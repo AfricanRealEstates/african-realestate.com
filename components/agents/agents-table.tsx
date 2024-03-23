@@ -10,13 +10,13 @@ export default function AgentsTable({ users }: { users: User[] }) {
   const columns = [
     {
       title: "Profile Pic",
-      dataIndex: "profilePic",
+      dataIndex: "image",
       render(profilePic: string) {
         return (
           <Image
             width={50}
             height={50}
-            src={profilePic}
+            src={profilePic || "/assets/placeholder.jpg"}
             alt="Profile Pic"
             className="rounded-full"
           />
@@ -25,7 +25,7 @@ export default function AgentsTable({ users }: { users: User[] }) {
     },
     {
       title: "Name",
-      dataIndex: "username",
+      dataIndex: "name",
     },
     {
       title: "Email",
@@ -62,7 +62,7 @@ export default function AgentsTable({ users }: { users: User[] }) {
       title: "Actions",
       dataIndex: "actions",
       render(actions: any, record: User) {
-        if (record.isActive && !record.isAdmin) {
+        if (record.isActive && !record.role) {
           return (
             <div className="flex items-center gap-2">
               <Tooltip

@@ -18,13 +18,14 @@ const ibmPlex = IBM_Plex_Mono({
 });
 
 export default function Hero() {
+  // md:max-h-[70dvh]
   return (
     <section
-      className={`${nunitoSans.className} relative mb-10 md:mb-0 sm:pb-2 pt-14 md:pb-8  z-10 md:grid md:place-items-center md:min-h-[420px] lg:min-h-[480px] md:max-h-[70dvh] mx-auto overflow-hidden bg-cover`}
+      className={`${nunitoSans.className} relative mb-10 md:mb-0 sm:pb-2 pt-14 md:pb-8  z-10 md:grid md:place-items-center md:min-h-[420px] lg:min-h-[480px] h-full mx-auto overflow-hidden bg-cover`}
     >
       <picture className="absolute inset-0 flex min-h-full object-center aspect-[3/4] [@media(min-width:481px)]:aspect-video -z-20 content-visibility:visible">
         <Image
-          className="w-full object-cover"
+          className="w-full h-full object-cover"
           src="/assets/house.jpg"
           alt="Nairobi"
           width={720}

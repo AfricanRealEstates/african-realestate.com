@@ -27,12 +27,12 @@ import {
   Undo,
   Wifi,
 } from "lucide-react";
-import { MdEmail } from "react-icons/md";
-import { currentUser } from "@clerk/nextjs";
-import { getCurrentUser } from "@/actions/users";
+
 import { FaSwimmingPool } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import BackProperty from "@/components/globals/back-property";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-options";
 
 const ibmPlex = IBM_Plex_Mono({
   subsets: ["latin"],
@@ -55,7 +55,7 @@ interface PropertyDetailsProps {
 export default async function PropertyDetails({
   params: { id },
 }: PropertyDetailsProps) {
-  const currentUser = await getCurrentUser();
+  const currentUser = await getServerSession(authOptions);
   const property: Property =
     ((await prisma.property.findUnique({
       where: {
@@ -135,14 +135,14 @@ export default async function PropertyDetails({
                       height={400}
                       key={image}
                       alt="Property Image"
-                      className="h-full w-full max-h-[440px] rounded-xl object-contain delay-200  opacity-100 inset-0 z-[-1]"
+                      className="h-full w-full rounded-xl object-contain delay-200  opacity-100 inset-0 z-[-1]"
                       src={image}
                     />
                   );
                 })}
             </Carousel>
           </div>
-          <div className="h-8 min-w-fit rounded-sm px-2 !absolute top-3 right-3 flex cursor-pointer items-center justify-center gap-2 bg-white font-medium leading-6">
+          <div className="h-8 min-w-fit rounded-sm px-2 !absolute bottom-6 right-3 flex cursor-pointer items-center justify-center gap-2 bg-white font-medium leading-6">
             {property.images.length} Photos
           </div>
         </div>
@@ -183,10 +183,10 @@ export default async function PropertyDetails({
             <div className="flex items-center">
               <div className="relative my-5">
                 <Image
-                  src={currentUser.data?.profilePic || ""}
+                  src={currentUser?.user.image || "/assets/placeholder.jpg"}
                   height={38}
                   width={38}
-                  alt={currentUser.data?.username || "Agent"}
+                  alt={currentUser?.user.name || "Agent"}
                   className="rounded-full object-cover"
                 />
               </div>

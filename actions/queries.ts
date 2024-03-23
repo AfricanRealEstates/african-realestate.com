@@ -1,11 +1,13 @@
 "use server";
 
-import { getCurrentUser } from "./users";
+import { getServerSession } from "next-auth";
+
 import prisma from "@/lib/prisma";
+import { authOptions } from "@/lib/auth-options";
 export const addQuery = async (query: any) => {
   try {
-    const user = await getCurrentUser();
-    query.userId = user.data?.id;
+    const user = await getServerSession(authOptions);
+    query.userId = user?.user.id;
     await prisma.query.create({
       data: query,
     });

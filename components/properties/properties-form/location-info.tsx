@@ -50,7 +50,7 @@ export default function LocationInfo({
         </Form.Item>
         <Form.Item
           name="district"
-          label="Disctrict"
+          label="District"
           rules={[
             {
               required: true,
@@ -101,16 +101,20 @@ export default function LocationInfo({
           <Input placeholder="Location" />
         </Form.Item>
       </section>
-      <div className="flex justify-end gap-5 mt">
+      <div className="flex items-center justify-end gap-5">
         <Button
           disabled={currentStep === 0}
           onClick={() => setCurrentStep(currentStep - 1)}
+          className="px-6 py-3 text-center rounded-md flex items-center justify-center"
         >
           Back
         </Button>
-        <Button htmlType="submit" type="primary">
+        <button
+          type="submit"
+          className="inline-block  cursor-pointer items-center rounded-md bg-blue-300 hover:bg-blue-400 transition-colors px-5 py-2.5 text-center font-semibold text-white"
+        >
           Next
-        </Button>
+        </button>
       </div>
     </Form>
   );

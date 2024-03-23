@@ -1,8 +1,9 @@
-import { getCurrentUser } from "@/actions/users";
 import PageTitle from "@/components/globals/page-title";
 import PropertiesForm from "@/components/properties/properties-form";
+import { authOptions } from "@/lib/auth-options";
 import prisma from "@/lib/prisma";
 import { Property } from "@prisma/client";
+import { getServerSession } from "next-auth";
 import React from "react";
 
 export default async function CreateProperty({
@@ -10,7 +11,7 @@ export default async function CreateProperty({
 }: {
   searchParams: any;
 }) {
-  const user = await getCurrentUser();
+  const user = await getServerSession(authOptions);
   const cloneFrom = searchParams?.cloneFrom || "";
 
   let property: Property | null = null;
@@ -27,7 +28,7 @@ export default async function CreateProperty({
   const [userSubscription, propertiesCount] = (await Promise.all([
     prisma.subscription.findFirst({
       where: {
-        userId: user.data?.id,
+        userId: user?.user.id,
       },
       orderBy: {
         createdAt: "desc",
@@ -35,7 +36,7 @@ export default async function CreateProperty({
     }),
     prisma.property.count({
       where: {
-        userId: user.data?.id,
+        userId: user?.user.id,
       },
     }),
   ])) as any;

@@ -36,8 +36,10 @@
 import React from "react";
 import prisma from "@/lib/prisma";
 import ClientTable from "./client-table";
-import { getCurrentUser } from "@/actions/users";
 import { Property } from "@prisma/client";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-options";
+// import { useCurrentUser } from "@/hooks/use-current-user";
 
 interface PropertiesTableProps {
   searchParams: Record<string, any>;
@@ -48,12 +50,12 @@ export default async function PropertiesTable({
   searchParams,
   fromAdmin = false,
 }: PropertiesTableProps) {
-  const user = await getCurrentUser();
+  const user = await getServerSession(authOptions);
 
   let whereAdminCondition: Record<string, any> = { ...searchParams }; // Copy the original searchParams object
 
   if (!fromAdmin) {
-    whereAdminCondition.userId = user?.data?.id;
+    whereAdminCondition.userId = user?.user.id;
   }
 
   // Modify whereAdminCondition to handle integer or float values

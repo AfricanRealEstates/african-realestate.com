@@ -1,6 +1,7 @@
 "use server";
+import { authOptions } from "@/lib/auth-options";
 import prisma from "@/lib/prisma";
-import { getCurrentUser } from "./users";
+import { getServerSession } from "next-auth";
 
 export const saveSubscription = async ({
   paymentId,
@@ -10,11 +11,11 @@ export const saveSubscription = async ({
   plan: any;
 }) => {
   try {
-    const user = await getCurrentUser();
+    const user = await getServerSession(authOptions);
     const payload: any = {
       paymentId,
       plan,
-      userId: user.data?.id,
+      userId: user?.user?.id,
     };
     await prisma.subscription.create({ data: payload });
     return {

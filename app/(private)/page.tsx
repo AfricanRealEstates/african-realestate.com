@@ -14,7 +14,7 @@ export default async function Home() {
     </div> */}
 
       <Hero />
-      <Sale />
+      {/* <Sale /> */}
       <FeaturedProperties />
       <HowItWorks />
       <Facts />

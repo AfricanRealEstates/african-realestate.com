@@ -1,15 +1,16 @@
-import { getCurrentUser } from "@/actions/users";
 import PageTitle from "@/components/globals/page-title";
 import BuyButton from "@/components/subscriptions/buy-button";
 import { subscriptionPlans } from "@/constants";
+import { authOptions } from "@/lib/auth-options";
 import prisma from "@/lib/prisma";
 import { CircleCheckBig } from "lucide-react";
+import { getServerSession } from "next-auth";
 import React from "react";
 
 export default async function Subscriptions() {
-  const user = await getCurrentUser();
+  const user = await getServerSession(authOptions);
   const userSubscription: any = await prisma.subscription.findFirst({
-    where: { userId: user.data?.id },
+    where: { userId: user?.user?.id },
     orderBy: { createdAt: "desc" },
   });
   return (

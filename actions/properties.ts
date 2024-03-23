@@ -1,13 +1,15 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getCurrentUser } from "./users";
+
 import prisma from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-options";
 
 export const addProperty = async (property: any) => {
   try {
-    const user: any = await getCurrentUser();
-    property.userId = user.data.id;
+    const user = await getServerSession(authOptions);
+    property.userId = user?.user.id;
 
     await prisma.property.create({
       data: property,
