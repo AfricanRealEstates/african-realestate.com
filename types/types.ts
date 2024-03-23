@@ -11,3 +11,4 @@ export type LoginInputProps = {
     email: string;
     password: string
 }
+export type PropertyInputProps = {}
