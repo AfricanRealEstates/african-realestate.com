@@ -7,7 +7,7 @@ import Footer from "@/components/landing/footer";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { User } from "@prisma/client";
 import { Button, Dropdown } from "antd";
-import { HomeIcon, Menu, X } from "lucide-react";
+import { ArrowRight, HomeIcon, Menu, X } from "lucide-react";
 import { Raleway } from "next/font/google";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -186,13 +186,13 @@ export default function LayoutProvider({ children }: Props) {
                   )}
 
                   <button
-                    // disabled={isLoading}
                     onClick={() =>
                       router.push("/agent/properties/create-property")
                     }
-                    className=" cursor-pointer items-center rounded-md bg-blue-300 hover:bg-blue-400 transition-colors p-3 text-center font-semibold text-white"
+                    className="group/follow flex items-center gap-2 rounded-md bg-indigo-600 px-6 py-3 font-semibold text-white shadow-lg transition-all hover:-translate-y-0.5 active:translate-y-0 active:bg-indigo-700 active:shadow-inner"
                   >
-                    Create a listing
+                    Sell fast
+                    <ArrowRight className="transition-transform group-hover/follow:-rotate-45 group-active/follow:rotate-0" />
                   </button>
                 </div>
                 <div className="lg:hidden md:flex flex-col justify-end">
@@ -284,13 +284,16 @@ export default function LayoutProvider({ children }: Props) {
                         Sign in
                       </Link>
                     )}
-                    {/* <Link
-                      href="/agent/properties/create-property"
-                      className="flex-1 text-center text-base no-underline text-white bg-gradient-to-r from-[#eb6753] to-orange-300 py-2 px-3 rounded-md"
-                    >
-                      Place an ad
-                    </Link> */}
                     <button
+                      onClick={() =>
+                        router.push("/agent/properties/create-property")
+                      }
+                      className="flex items-center gap-2 rounded-md bg-indigo-600 px-6 py-3 font-semibold text-white shadow-lg transition-all hover:-translate-y-0.5 active:translate-y-0 active:bg-indigo-700 active:shadow-inner"
+                    >
+                      Sell fast
+                      <ArrowRight className="transition-transform" />
+                    </button>
+                    {/* <button
                       // disabled={isLoading}
                       onClick={() =>
                         router.push("/agent/properties/create-property")
@@ -298,7 +301,7 @@ export default function LayoutProvider({ children }: Props) {
                       className=" inline-block w-full cursor-pointer items-center rounded-md bg-blue-300 hover:bg-blue-400 transition-colors p-2 text-center font-semibold text-white"
                     >
                       Create a listing
-                    </button>
+                    </button> */}
                   </div>
                 </section>
               )}
@@ -379,10 +382,18 @@ export default function LayoutProvider({ children }: Props) {
   }, [isPublicRoute]);
 
   return (
-    <div>
-      {getHeader()}
-      {getContent()}
-      {getFooter()}
-    </div>
+    <>
+      {pathname.includes("/dashboard") ? ( // Check if the path includes /dashboard
+        <>
+          {children} {/* Render children directly without header and footer */}
+        </>
+      ) : (
+        <>
+          {getHeader()} {/* Render header */}
+          {getContent()} {/* Render content */}
+          {getFooter()} {/* Render footer */}
+        </>
+      )}
+    </>
   );
 }

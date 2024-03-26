@@ -1,6 +1,9 @@
+"use client";
+import { ArrowRight } from "lucide-react";
 import { Raleway } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
 const raleway = Raleway({
   subsets: ["latin"],
@@ -9,6 +12,7 @@ const raleway = Raleway({
 });
 
 export default function CTA() {
+  const router = useRouter();
   return (
     <div className={`bg-neutral-50 ${raleway.className}`}>
       <section className="mx-auto w-[95%] max-w-7xl px-5 py-16 md:px-10 md:py-24">
@@ -38,7 +42,14 @@ export default function CTA() {
               })}
             </div>
           </article>
-          <Link
+          <button
+            onClick={() => router.push("/agent/properties/create-property")}
+            className="flex items-center gap-2 rounded-md bg-indigo-600 px-6 py-3 font-semibold text-white shadow-lg transition-all hover:-translate-y-0.5 active:translate-y-0 active:bg-indigo-700 active:shadow-inner"
+          >
+            Sell fast
+            <ArrowRight className="transition-transform" />
+          </button>
+          {/* <Link
             href="/agent/properties/create-property"
             className="mb-4 no-underline flex flex-row items-center px-8 py-4 font-semibold group transition-colors duration-150 ease-in-out bg-[rgb(24,26,32,1)] text-[#bebdbd] hover:text-white [box-shadow:rgb(171,_196,245)-8px_8px] hover:[box-shadow:rgb(171,_196,_245)_0px_0px]"
           >
@@ -52,7 +63,7 @@ export default function CTA() {
               <title>Arrow Right</title>
               <polygon points="16.172 9 10.101 2.929 11.515 1.515 20 10 19.293 10.707 11.515 18.485 10.101 17.071 16.172 11 0 11 0 9"></polygon>
             </svg>
-          </Link>
+          </Link> */}
           <p className="mt-6 text-gray-600">No credit card required.</p>
         </div>
       </section>

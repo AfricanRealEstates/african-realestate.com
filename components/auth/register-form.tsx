@@ -102,7 +102,7 @@ export default function RegisterForm({ role = "USER" }: { role?: UserRole }) {
                   type="text"
                   name="fullName"
                   id="fullName"
-                  className="mb-4 text-black block h-9 w-full rounded-md border border-solid border-gray-500 px-3 py-6 pl-4 text-sm placeholder:text-gray-400 focus:border-blue-300 outline-none"
+                  className="peer w-full rounded border border-neutral-300 h-9 px-3 py-6 my-4  text-sm focus:border-indigo-500 focus:outline-none ring-1 ring-neutral-500/0 ring-offset-0 transition-shadow focus:ring-indigo-500 focus:ring-offset-2"
                   placeholder="First Name"
                 />
                 {errors.fullName && (
@@ -121,7 +121,7 @@ export default function RegisterForm({ role = "USER" }: { role?: UserRole }) {
                   type="email"
                   name="email"
                   id="email"
-                  className="mb-4 text-black block h-9 w-full rounded-md border border-solid border-gray-500 px-3 py-6 pl-4 text-sm placeholder:text-gray-400 focus:border-blue-300 outline-none"
+                  className="peer w-full rounded border border-neutral-300 h-9 px-3 py-6 my-4  text-sm focus:border-indigo-500 focus:outline-none ring-1 ring-neutral-500/0 ring-offset-0 transition-shadow focus:ring-indigo-500 focus:ring-offset-2"
                   placeholder="Email address"
                 />
                 {errors.email && (
@@ -139,7 +139,7 @@ export default function RegisterForm({ role = "USER" }: { role?: UserRole }) {
                   type="password"
                   name="password"
                   id="password"
-                  className="mb-4 text-black block h-9 w-full rounded-md border border-solid border-gray-500 px-3 py-6 pl-4 text-sm placeholder:text-gray-400 focus:border-blue-300 outline-none"
+                  className="peer w-full rounded border border-neutral-300 h-9 px-3 py-6 my-4  text-sm focus:border-indigo-500 focus:outline-none ring-1 ring-neutral-500/0 ring-offset-0 transition-shadow focus:ring-indigo-500 focus:ring-offset-2"
                   placeholder="Password (min 6 characters)"
                 />
                 {errors.password && (

@@ -56,7 +56,10 @@ export default function LoginForm() {
             Sign in to continue with African Real Estate
           </p>
           <div className="mx-auto w-full max-w-[400px]">
-            <button className="flex w-full max-w-full justify-center gap-5 items-center rounded-md bg-blue-100 hover:bg-gray-300 hover:text-gray-400 transition py-3 text-blue-400">
+            <button
+              onClick={() => signIn("google", { callbackUrl: "/" })}
+              className="flex w-full max-w-full justify-center gap-5 items-center rounded-md bg-blue-100 hover:bg-gray-300 hover:text-gray-400 transition py-3 text-blue-400"
+            >
               <svg
                 width="16"
                 height="22"
@@ -106,7 +109,7 @@ export default function LoginForm() {
                 </div>
               )}
               <div className="text-left">
-                <label htmlFor="email" className="mb-2 text-sm">
+                <label htmlFor="email" className="mb-4 text-sm">
                   Email
                 </label>
                 <input
@@ -114,7 +117,8 @@ export default function LoginForm() {
                   type="email"
                   name="email"
                   id="email"
-                  className="mb-4 text-black block h-9 w-full rounded-md border border-solid border-gray-500 px-3 py-6 pl-4 text-sm placeholder:text-gray-400 focus:border-blue-300 outline-none"
+                  // className="mb-4 text-black block h-9 w-full rounded-md border border-solid border-gray-500 px-3 py-6 pl-4 text-sm placeholder:text-gray-400 focus:border-blue-300 outline-none"
+                  className="peer w-full rounded border border-neutral-300 h-9 px-3 py-6 my-4  text-sm focus:border-indigo-500 focus:outline-none ring-1 ring-neutral-500/0 ring-offset-0 transition-shadow focus:ring-indigo-500 focus:ring-offset-2"
                   placeholder="Email address"
                 />
                 {errors.email && (
@@ -132,7 +136,7 @@ export default function LoginForm() {
                   type="password"
                   name="password"
                   id="password"
-                  className="mb-4 text-black block h-9 w-full rounded-md border border-solid border-gray-500 px-3 py-6 pl-4 text-sm placeholder:text-gray-400 focus:border-blue-300 outline-none"
+                  className="peer w-full rounded border border-neutral-300 h-9 px-3 py-6 my-4  text-sm focus:border-indigo-500 focus:outline-none ring-1 ring-neutral-500/0 ring-offset-0 transition-shadow focus:ring-indigo-500 focus:ring-offset-2"
                   placeholder="Password (min 6 characters)"
                 />
                 {errors.password && (
