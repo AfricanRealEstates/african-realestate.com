@@ -91,14 +91,23 @@ export default function Filters({ searchParams }: { searchParams: any }) {
           >
             Clear
           </Button>
-          <Button
+          <button
+            type="submit"
+            onClick={() => {
+              setShowFiltersModal(true);
+            }}
+            className="cursor-pointer items-center rounded-md bg-blue-300 hover:bg-blue-400 transition-colors px-6 py-2 text-center font-semibold text-white"
+          >
+            show Filters
+          </button>
+          {/* <Button
             type="primary"
             onClick={() => {
               setShowFiltersModal(true);
             }}
           >
             Show Filters
-          </Button>
+          </Button> */}
         </div>
       </div>
 
@@ -160,9 +169,15 @@ export default function Filters({ searchParams }: { searchParams: any }) {
               >
                 Cancel
               </Button>
-              <Button type="primary" htmlType="submit">
+              <button
+                type="submit"
+                className="cursor-pointer items-center rounded-md bg-blue-300 hover:bg-blue-400 transition-colors px-6 py-2 text-center font-semibold text-white"
+              >
                 Apply
-              </Button>
+              </button>
+              {/* <Button type="primary" htmlType="submit">
+                Apply
+              </Button> */}
             </section>
           </Form>
         </Modal>

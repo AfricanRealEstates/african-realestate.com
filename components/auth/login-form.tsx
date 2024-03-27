@@ -2,7 +2,7 @@
 import { LoginInputProps } from "@/types/types";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { signIn } from "next-auth/react";
@@ -11,6 +11,9 @@ export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const router = useRouter();
+
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
   const {
     register,
     handleSubmit,
@@ -25,11 +28,14 @@ export default function LoginForm() {
       const loginData = await signIn("credentials", {
         ...data,
         redirect: false,
+        callbackUrl,
       });
       console.log("SignIn response:", loginData);
       if (loginData?.error) {
         setIsLoading(false);
-        toast.error("Sign in error: Check your credentials");
+
+        toast.error("Invalid email or password");
+        router.push(callbackUrl);
         setShowNotification(true);
       } else {
         // Successful sign-in
@@ -57,7 +63,7 @@ export default function LoginForm() {
           </p>
           <div className="mx-auto w-full max-w-[400px]">
             <button
-              onClick={() => signIn("google", { callbackUrl: "/" })}
+              onClick={() => signIn("google", { callbackUrl })}
               className="flex w-full max-w-full justify-center gap-5 items-center rounded-md bg-blue-100 hover:bg-gray-300 hover:text-gray-400 transition py-3 text-blue-400"
             >
               <svg

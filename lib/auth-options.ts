@@ -27,11 +27,11 @@ export const authOptions: NextAuthOptions = {
         GoogleProvider({
             //Checking if the role exista and if not add USER Bydefault
             // profile(profile) {
-            //   return { role: profile.role ?? "USER", ... }
+            //     return { role: profile.role ?? "USER", ...profile }
             // },
             clientId: process.env.GOOGLE_CLIENT_ID || "",
             clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-            allowDangerousEmailAccountLinking: true,
+
         }),
         CredentialsProvider({
             name: "Credentials",

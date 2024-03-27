@@ -61,6 +61,16 @@ export default async function PropertiesTable({
   // Modify whereAdminCondition to handle integer or float values
   whereAdminCondition = Object.fromEntries(
     Object.entries(whereAdminCondition).map(([key, value]) => {
+      if (key === "userId") {
+        // If it's the userId key and value is not NaN, parse it to an integer
+        if (!isNaN(parseInt(value))) {
+          return [key, value];
+        } else {
+          // If it's not a valid integer, keep it as string
+          return [key, value];
+        }
+      }
+
       // Check if value is numeric
       if (!isNaN(parseFloat(value))) {
         // If numeric, convert value to float
