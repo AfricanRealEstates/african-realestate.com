@@ -38,7 +38,6 @@ export default function LoginForm() {
         router.push(callbackUrl);
         setShowNotification(true);
       } else {
-        // Successful sign-in
         setShowNotification(false);
         reset();
         setIsLoading(false);
