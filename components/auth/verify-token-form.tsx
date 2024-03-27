@@ -35,7 +35,7 @@ export default function VerifyTokenForm({
   userToken,
   id,
 }: {
-  userToken: number | undefined;
+  userToken: number | null;
   id: string;
 }) {
   const [loading, setLoading] = useState(false);
