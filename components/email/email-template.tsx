@@ -13,7 +13,7 @@ import {
 } from "@react-email/components";
 interface EmailTemplateProps {
   firstName?: string;
-  token: number;
+  token: number | null;
   linkText: string;
   message: string;
 }
