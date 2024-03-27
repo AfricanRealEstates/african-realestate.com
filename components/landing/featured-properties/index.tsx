@@ -19,6 +19,8 @@ export default async function FeaturedProperties() {
       updatedAt: "desc",
     },
   });
+
+  if (!properties) return <>No Featured properties</>;
   return (
     <div className={`${plusJakartaSans.className} bg-[#f2f2f7] text-[#4e4e4e]`}>
       <div className="mx-auto w-[95%] max-w-7xl px-5 py-16 md:px-10 md:py-24">

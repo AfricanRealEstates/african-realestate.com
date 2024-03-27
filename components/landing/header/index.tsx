@@ -5,7 +5,9 @@ import { UserButton } from "@clerk/nextjs";
 import { User } from "@prisma/client";
 import { Button, Dropdown } from "antd";
 import { ArrowRight, HomeIcon, Menu, X } from "lucide-react";
+import { signOut } from "next-auth/react";
 import { Nunito_Sans } from "next/font/google";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
@@ -53,6 +55,10 @@ export default function Header() {
   const [stickyMenu, setStickyMenu] = useState(false);
   const toggleMobileView = () => {
     setMobileView(!mobileView);
+  };
+
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: "/" });
   };
 
   const user = useCurrentUser();
@@ -118,23 +124,27 @@ export default function Header() {
                   <div className=" py-1 px-5 flex items-center">
                     <Dropdown
                       menu={{
-                        items: menuToShow.map((item: any) => ({
-                          label: item.name,
-                          onClick: () => {
-                            router.push(item.path);
+                        items: [
+                          ...menuToShow.map((item: any) => ({
+                            label: item.name,
+                            onClick: () => {
+                              router.push(item.path);
+                            },
+                          })),
+                          {
+                            label: "Sign Out",
+                            onClick: handleSignOut,
                           },
-                        })),
+                        ],
                       }}
                     >
-                      <Button type="link" className="text-sm capitalize">
-                        <span
-                          className={`${
-                            !stickyMenu ? "text-white hover:text-gray-200" : ""
-                          } text-[17px] text-gray-600`}
-                        >
-                          Welcome, {user?.name}
-                        </span>
-                      </Button>
+                      <Image
+                        src={user.image || "/assets/placeholder.jpg"}
+                        height={15}
+                        width={50}
+                        alt={user.name || "Avatar"}
+                        className="w-[38px] h-[38px] rounded-full object-cover border-[1px] border-gray-600"
+                      />
                     </Dropdown>
                   </div>
                 ) : (
