@@ -13,7 +13,7 @@ export default async function VerifyAccount({
   params: { id: string };
 }) {
   const user = await getUserById(id);
-  const userToken = user?.token;
+  const userToken = user?.token || null;
   return (
     <section className="mx-auto w-full max-w-3xl px-5 py-16 md:px-10 md:py-24 lg:py-32">
       <div className="max-w-xl mx-auto px-8 py-12  bg-gray-200 rounded-lg space-y-6">
