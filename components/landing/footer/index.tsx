@@ -261,7 +261,8 @@ export default function Footer() {
                   type="email"
                   name="email"
                   id="email"
-                  className="peer w-full rounded border border-neutral-300 p-2 text-sm focus:border-indigo-500 focus:outline-none ring-1 ring-neutral-500/0 ring-offset-0 transition-shadow focus:ring-indigo-500 focus:ring-offset-2"
+                  placeholder="email address"
+                  className="peer w-full rounded border text-gray-600 border-neutral-300 p-2 text-sm focus:border-indigo-500 focus:outline-none ring-1 ring-neutral-500/0 ring-offset-0 transition-shadow focus:ring-indigo-500 focus:ring-offset-2"
                 />
                 <span className="absolute left-1 top-0 -translate-y-1/2 scale-100 bg-white text-indigo-600 px-0.5 text-xs font-medium transition-transform peer-focus:scale-0">
                   Email
@@ -272,22 +273,6 @@ export default function Footer() {
                 <ArrowRight className="transition-transform" />
               </button>
             </form>
-            {/* <form
-              name="email-form"
-              method="get"
-              className="relative mb-4 max-w-full"
-            >
-              <input
-                type="email"
-                className="block h-9 w-full rounded-md  border border-solid border-black px-3 py-6 text-sm text-#ffffff0a]"
-                placeholder="Enter your email"
-              />
-              <input
-                type="submit"
-                value="Subscribe"
-                className="relative top-[5px] bottom-[5px] w-full cursor-pointer rounded-md bg-black px-6 py-2.5 font-semibold text-white sm:absolute sm:right-1 sm:w-36"
-              />
-            </form> */}
           </div>
         </div>
         <div className="mb-14 mt-16 w-full [border-bottom:0.7px_solid_rgb(255,_255,_255,__0.3)]"></div>

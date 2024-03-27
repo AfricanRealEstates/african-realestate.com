@@ -3,6 +3,7 @@
 import UserButton from "@/components/auth/user-button";
 import Loader from "@/components/globals/loader";
 import Footer from "@/components/landing/footer";
+import Header from "@/components/landing/header";
 
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { User } from "@prisma/client";
@@ -88,22 +89,65 @@ export default function LayoutProvider({ children }: Props) {
   const getHeader = () => {
     if (isPublicRoute && !currentUser) return null;
 
+    // sticky py-3 left-0 top-0 z-50 w-full backdrop-blur-lg border-b border-neutral-700/80
+
     return (
-      <>
-        <header
+      <div className="">
+        {/* <header className="sticky transition-all duration-300 py-3 left-0 top-0 z-50 w-full backdrop-blur-lg border-b border-neutral-700/80"> */}
+        {/* <header
+          className={`sticky transition-all duration-300 py-3 left-0 top-0 z-50 w-full backdrop-blur-lg border-b border-neutral-700/80 ${
+            stickyMenu
+              ? "bg-white !py-4 shadow transition duration-100 dark:bg-black"
+              : ""
+          }`}
+        >
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center flex-shrink-0">
+                <Link
+                  href="/"
+                  className={`flex flex-shrink-0 items-center gap-2 text-black`}
+                >
+                  <span className="bg-[#eb6753] text-white py-1 px-2 rounded-lg">
+                    <HomeIcon />
+                  </span>
+                  <span className={`text-xl tracking-tight font-semibold`}>
+                    African Real Estate.
+                  </span>
+                </Link>
+              </div>
+              <ul className="hidden lg:flex ml-14 gap-8">
+                {navLinks.map((navLink) => {
+                  const { href, label } = navLink;
+                  return (
+                    <li key={label}>
+                      <Link href={href}>{label}</Link>
+                    </li>
+                  );
+                })}
+              </ul>
+              <div className="hidden lg:flex justify-center gap-12 items-center">
+                <Link href="/login">Sign in</Link>
+                <button
+                  onClick={() =>
+                    router.push("/agent/properties/create-property")
+                  }
+                  className="group/follow flex items-center gap-2 rounded-md bg-indigo-600 px-6 py-2 font-semibold text-white shadow-lg transition-all hover:-translate-y-0.5 active:translate-y-0 active:bg-indigo-700 active:shadow-inner"
+                >
+                  Sell fast
+                  <ArrowRight className="transition-transform group-hover/follow:-rotate-45 group-active/follow:rotate-0" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </header> */}
+        <Header />
+        {/* <header
           className={` ${nunitoSans.className}  py-3 left-0 top-0 z-50 w-full ${
             stickyMenu
               ? "shadow-nav fixed z-[999] border-b border-white/10 bg-white backdrop-blur-lg transition "
               : "absolute bg-transparent"
           }`}
-          // className={`sticky top-0 z-50 w-full py-3 backdrop-blur-lg border-b border-neutral-700/80 ${nunitoSans.className}`}
-          // className={`w-full   top-0 left-0 z-50  bg-transparent text-black py-3 backdrop-blur-2xl border-b border-gray-700 ${
-          //   nunitoSans.className
-          // } ${
-          //   stickyMenu
-          //     ? "fixed bg-white text-black shadow-sm transition duration-100"
-          //     : "absolute border-b border-neutral-700/80"
-          // }`}
         >
           <div className="top-0 left-0 w-full z-50 will-change-auto duration-200 bg-transparent backdrop-blur-2xl translate-y-0 transition-colors">
             <div className="max-w-7xl px-4 mx-auto text-sm">
@@ -169,8 +213,6 @@ export default function LayoutProvider({ children }: Props) {
                           </span>
                         </Button>
                       </Dropdown>
-                      {/* <UserButton afterSignOutUrl="/sign-in" /> */}
-                      {/* <UserButton /> */}
                     </div>
                   ) : (
                     <Link
@@ -267,14 +309,7 @@ export default function LayoutProvider({ children }: Props) {
                               </span>
                             </Button>
                           </Dropdown>
-                          {/* <UserButton afterSignOutUrl="/sign-in" /> */}
                         </div>
-                        {/* <p className="flex-1 text-gray-600 font-semibold capitalize">
-                          Welcome,
-                          <span className="text-black ">
-                            {currentUser?.username}
-                          </span>
-                        </p> */}
                       </>
                     ) : (
                       <Link
@@ -293,51 +328,13 @@ export default function LayoutProvider({ children }: Props) {
                       Sell fast
                       <ArrowRight className="transition-transform" />
                     </button>
-                    {/* <button
-                      // disabled={isLoading}
-                      onClick={() =>
-                        router.push("/agent/properties/create-property")
-                      }
-                      className=" inline-block w-full cursor-pointer items-center rounded-md bg-blue-300 hover:bg-blue-400 transition-colors p-2 text-center font-semibold text-white"
-                    >
-                      Create a listing
-                    </button> */}
                   </div>
                 </section>
               )}
             </div>
           </div>
-        </header>
-
-        {/* <div className="bg-[rgba(0,0,0,0.02)] p-4 flex justify-between">
-          <Link
-            href="/"
-            className="text-xl text-[#272323] font-bold no-underline"
-          >
-            African Real Estate
-          </Link>
-          <div className="bg-white py-1 px-5 flex items-center space-x-4">
-            <Dropdown
-              menu={{
-                items: menuToShow.map((item: any) => ({
-                  label: item.name,
-                  onClick: () => {
-                    router.push(item.path);
-                  },
-                })),
-              }}
-            >
-              <Button
-                type="link"
-                className="capitalize text-[17px] text-[rgba(0,0,0,0.45)]"
-              >
-                {currentUser?.username}
-              </Button>
-            </Dropdown>
-            <UserButton afterSignOutUrl="/sign-in" />
-          </div>
-        </div> */}
-      </>
+        </header> */}
+      </div>
     );
   };
   const getContent = () => {

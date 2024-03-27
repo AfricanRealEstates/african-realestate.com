@@ -1,206 +1,68 @@
+import { Home, LucideIcon } from "lucide-react";
 import { Raleway } from "next/font/google";
-import Image from "next/image";
-import Link from "next/link";
-import React from "react";
 
 const raleway = Raleway({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-nunitosans",
 });
-
-const sales = [
-  {
-    image: "/assets/house-3.svg",
-    title: "Explore modern property that could be your next home sweet home",
-    cta: "Check all Rentals",
-  },
-  {
-    image: "/assets/house-1.svg",
-    title:
-      "Highlight your property&apos;s best features and attract potential buyers.",
-    cta: "Buy property",
-  },
-  {
-    image: "/assets/house-2.svg",
-    title:
-      "Browse through our curated selection of rental properties to find your ideal living space.",
-    cta: "Find a Property",
-  },
-];
-
-export default function Sale() {
+const Arrow = ({ extraStyle }: { extraStyle: string }) => {
   return (
-    <div className={`${raleway.className}`}>
-      <section className="mx-auto w-[95%] max-w-7xl px-5 py-16 md:px-10 md:py-24">
-        <div className="mb-8 text-center md:mb-12">
-          <h3 className="text-center text-3xl font-bold md:text-5xl mt-4 text-[#181a20]">
-            Why African Real Estate?
-          </h3>
-          <p className="mt-4 text-[#636262] sm:text-sm md:text-base">
-            We offer the following real estate services
-          </p>
-        </div>
-        <div className="mb-12 grid grid-cols-1 gap-5 sm:grid-cols-2 md:mb-16 md:grid-cols-3 md:gap-4">
-          {sales.map((sale) => {
-            const { cta, title, image } = sale;
-            return (
-              <div
-                key={title}
-                className="flex flex-col gap-8 border border-solid border-gray-100 p-2 rounded-xl"
-              >
-                <Image
-                  src={image}
-                  alt={cta}
-                  width={100}
-                  height={100}
-                  className="bg-neutral-50 w-full"
-                />
-                <div className="flex w-full flex-col items-start gap-5 p-0">
-                  <p className="text-[#636262]">{title}</p>
-                  <div className="h-px w-full bg-gray-50"></div>
-                  <div className="flex w-full justify-center">
-                    <Link
-                      href="/properties"
-                      className="mb-4 no-underline flex flex-row items-center px-8 py-4 font-semibold group transition-colors duration-150 ease-in-out bg-[rgb(24,26,32,1)] text-[#bebdbd] hover:text-white"
-                    >
-                      <p className="mr-6 font-bold text-[#bebdbd]">{cta}</p>
-                      <svg
-                        fill="currentColor"
-                        className="h-4 w-4 flex-none transition-all duration-150 ease-in-out group-hover:translate-x-0.5"
-                        viewBox="0 0 20 21"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <title>Arrow Right</title>
-                        <polygon points="16.172 9 10.101 2.929 11.515 1.515 20 10 19.293 10.707 11.515 18.485 10.101 17.071 16.172 11 0 11 0 9"></polygon>
-                      </svg>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </section>
+    <svg
+      className={`shrink-0 w-12 fill-gray-500 opacity-70 ${extraStyle}`}
+      viewBox="0 0 138 138"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g>
+        <path
+          fillRule="evenodd"
+          clipRule="evenodd"
+          d="M72.9644 5.31431C98.8774 43.8211 83.3812 88.048 54.9567 120.735C54.4696 121.298 54.5274 122.151 55.0896 122.639C55.6518 123.126 56.5051 123.068 56.9922 122.506C86.2147 88.9044 101.84 43.3918 75.2003 3.80657C74.7866 3.18904 73.9486 3.02602 73.3287 3.44222C72.7113 3.85613 72.5484 4.69426 72.9644 5.31431Z"
+        />
+        <path
+          fillRule="evenodd"
+          clipRule="evenodd"
+          d="M56.5084 121.007C56.9835 118.685 57.6119 115.777 57.6736 115.445C59.3456 106.446 59.5323 97.67 58.4433 88.5628C58.3558 87.8236 57.6824 87.2948 56.9433 87.3824C56.2042 87.4699 55.6756 88.1435 55.7631 88.8828C56.8219 97.7138 56.6432 106.225 55.0203 114.954C54.926 115.463 53.5093 121.999 53.3221 123.342C53.2427 123.893 53.3688 124.229 53.4061 124.305C53.5887 124.719 53.8782 124.911 54.1287 125.015C54.4123 125.13 54.9267 125.205 55.5376 124.926C56.1758 124.631 57.3434 123.699 57.6571 123.487C62.3995 120.309 67.4155 116.348 72.791 113.634C77.9171 111.045 83.3769 109.588 89.255 111.269C89.9704 111.475 90.7181 111.057 90.9235 110.342C91.1288 109.626 90.7117 108.878 89.9963 108.673C83.424 106.794 77.3049 108.33 71.5763 111.223C66.2328 113.922 61.2322 117.814 56.5084 121.007Z"
+        />
+      </g>
+    </svg>
+  );
+};
+
+const Step = ({ step, text }: { step: number; text: string }) => {
+  return (
+    <div className="w-full md:w-48 flex flex-col gap-2 items-center justify-center">
+      <div className="flex size-9 items-center justify-center rounded-full bg-[#276ef1]">
+        <p className="text-xl font-bold text-white">{step}</p>
+      </div>
+      <h3 className="font-bold">{text}</h3>
     </div>
   );
+};
+
+export default function Sales() {
+  return (
+    <section className={`${raleway.className}`}>
+      <div className="mx-auto w-[95%] max-w-7xl px-5 py-10 md:px-10 md:py-16 lg:py-24">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-center text-3xl font-bold md:text-5xl mt-4 mb-6 md:mb-8 text-[#181a20]">
+            Get personalized property searches.
+          </h2>
+          <p className="max-w-xl mx-auto text-lg text-center opacity-90 leading-relaxed mb-12 md:mb-20 text-[#4e4e4e]">
+            Use our simple platform to create, manage and sell your properties.
+            One stop solution for your real estate needs.
+          </p>
+
+          <div className="flex flex-col md:flex-row justify-center items-center md:items-start gap-6">
+            <Step step={1} text="Create an Account" />
+            <Arrow extraStyle="max-md:-scale-x-100 md:-rotate-90" />
+            <Step step={2} text=" Add Your Property" />
+            <Arrow extraStyle="md:-scale-x-100 md:-rotate-90" />
+            <Step step={3} text="Track progress" />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }
-
-// "use client";
-// import React from "react";
-// import { Plus_Jakarta_Sans, IBM_Plex_Mono, Raleway } from "next/font/google";
-// import { ArrowUpRight, Home } from "lucide-react";
-// import { Button } from "antd";
-// import Image from "next/image";
-// import { useRouter } from "next/navigation";
-// const plusJakartaSans = Raleway({
-//   subsets: ["latin"],
-//   display: "swap",
-//   variable: "--font-nunitosans",
-// });
-
-// const ibmPlex = IBM_Plex_Mono({
-//   subsets: ["latin"],
-//   weight: ["700"],
-//   display: "swap",
-//   variable: "--font-ibmplex",
-// });
-
-// export default function Sale() {
-//   const router = useRouter();
-//   return (
-//     <section className={`${plusJakartaSans.className} lg:p-[90px]`}>
-//       <div className="w-[95%] lg:max-w-7xl mx-auto">
-//         <article className="flex flex-col">
-//           <section className="flex flex-col items-center justify-center gap-5">
-//             <h2 className="mt-4 text-2xl text-center font-semibold sm:text-3xl xl:text-[40px] relative">
-//               See How{" "}
-//               <span className={` text-[#eb6753]`}>African Real Estate</span> Can
-//               Help
-//             </h2>
-//             <p className="text-[13px] text-center md:text-[17px] text-[#4e4e4e]">
-//               We offer the following real estate services
-//             </p>
-//           </section>
-
-//           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-6 mt-16">
-//             <section className="shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] bg-white rounded-xl mb-7 pt-[30px] px-5 pb-[35px] flex flex-col gap-4 hover:cursor-pointer transition-all duration-150 ease-in hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
-//               <div className="flex items-center justify-center flex-1">
-//                 <Image
-//                   src="/assets/house-3.svg"
-//                   alt="Find Rental"
-//                   width={100}
-//                   height={100}
-//                   className="object-cover text-[#666]"
-//                 />
-//               </div>
-//               <div className="flex-1 space-y-4">
-//                 <h3>Buy a property</h3>
-//                 <p className="text-[#4e4e4e] tracking-wide text-base">
-//                   Explore this stunning property that could be your next home
-//                   sweet home.
-//                 </p>
-//               </div>
-//               <Button
-//                 className="text-base flex items-center justify-center gap-4"
-//                 onClick={() => router.push("/properties")}
-//               >
-//                 Find property <ArrowUpRight />
-//               </Button>
-//             </section>
-
-//             <section className="shadow-[rgba(17,_17,_26,_0.1)_0px_0px_16px] bg-white rounded-xl mb-7 pt-[30px] px-5 pb-[35px] flex flex-col gap-4 hover:cursor-pointer transition-all duration-150 ease-in hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
-//               <div className="flex items-center justify-center">
-//                 <Image
-//                   src="/assets/house-1.svg"
-//                   alt="Create Listing"
-//                   width={100}
-//                   height={100}
-//                   className="object-cover text-[#666]"
-//                 />
-//               </div>
-//               <div className="flex-1 space-y-4">
-//                 <h3>Showcase Your Property</h3>
-//                 <p className="text-[#4e4e4e] tracking-wide text-base">
-//                   Highlight your property&apos;s best features and attract
-//                   potential buyers.
-//                 </p>
-//               </div>
-//               <Button
-//                 className="text-base flex items-center justify-center gap-4"
-//                 onClick={() => router.push("/agent/properties/create-property")}
-//               >
-//                 Create a Listing <ArrowUpRight />
-//               </Button>
-//             </section>
-
-//             <section className="shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] bg-white rounded-xl mb-7 pt-[30px] px-5 pb-[35px] flex flex-col gap-4 hover:cursor-pointer transition-all duration-150 ease-in hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
-//               <div className="flex items-center justify-center">
-//                 <Image
-//                   src="/assets/house-2.svg"
-//                   alt="Find Rental"
-//                   width={100}
-//                   height={100}
-//                   className="object-cover text-[#666] mt-3"
-//                 />
-//               </div>
-//               <div className="flex-1 space-y-4">
-//                 <h3>Discover Your Perfect Rental</h3>
-//                 <p className="text-[#4e4e4e] tracking-wide text-base">
-//                   Browse through our curated selection of rental properties to
-//                   find your ideal living space.
-//                 </p>
-//               </div>
-//               <Button
-//                 className="text-base flex items-center justify-center gap-4"
-//                 onClick={() => router.push("/properties")}
-//               >
-//                 Find a rental <ArrowUpRight />
-//               </Button>
-//             </section>
-//           </div>
-//         </article>
-//       </div>
-//     </section>
-//   );
-// }
