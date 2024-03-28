@@ -13,22 +13,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// model User {
-//   id          String   @id @default(uuid())
-//   username    String
-//   email       String   @unique
-//   profilePic  String
-//   isAdmin     Boolean  @default(false)
-//   isActive    Boolean  @default(true)
-//   clerkUserId String   @unique
-//   createdAt   DateTime @default(now())
-//   updatedAt   DateTime @updatedAt
-
-//   Property     Property[]
-//   Query        Query[]
-//   Subscription Subscription[]
-// }
-
 enum UserRole {
   USER
   AGENT
@@ -54,6 +38,7 @@ model User {
   Property      Property[]
   Query         Query[]
   Subscription  Subscription[]
+  Order         Order[]
 }
 
 model Account {
@@ -92,43 +77,45 @@ model VerificationToken {
 }
 
 model Property {
-  id               String   @id @default(uuid())
-  userId           String
-  user             User     @relation(fields: [userId], references: [id])
-  status           String
-  title            String
-  propertyType     String
-  propertyDetails  String
-  description      String
-  price            Float
-  leastPrice       Float
-  currency         String
-  country          String
-  county           String
-  district         String
-  locality         String
-  nearbyTown       String
-  location         String
-  bedrooms         Int
-  bathrooms        Int
-  landSize         Float
-  landUnits        String
-  plinthArea       Int
-  appliances       String[]
-  images           String[]
-  agentName        String
-  email            String
-  officeLine       String
-  whatsappNumber   String
-  address          String
-  postalCode       String
-  showAgentContact Boolean  @default(false)
-  isActive         Boolean  @default(true)
+  id                     String   @id @default(uuid())
+  userId                 String
+  user                   User     @relation(fields: [userId], references: [id])
+  status                 String
+  title                  String
+  propertyType           String
+  propertyDetails        String
+  description            String
+  price                  Float
+  leastPrice             Float
+  currency               String
+  country                String
+  county                 String
+  district               String
+  locality               String
+  nearbyTown             String
+  location               String
+  bedrooms               Int
+  bathrooms              Int
+  landSize               Float
+  landUnits              String
+  plinthArea             Int
+  appliances             String[]
+  images                 String[]
+  agentName              String
+  email                  String
+  officeLine             String
+  whatsappNumber         String
+  address                String
+  postalCode             String
+  isAvailableForPurchase Boolean  @default(true)
+  showAgentContact       Boolean  @default(false)
+  isActive               Boolean  @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   Query Query[]
+  Order Order[]
 }
 
 model Query {
@@ -154,6 +141,18 @@ model Subscription {
   paymentId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id        String   @id @default(uuid())
+  pricePaid Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId     String
+  propertyId String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Restrict)
 }
 
 // plan   Plan
