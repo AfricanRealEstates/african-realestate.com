@@ -28,13 +28,13 @@ const getPost = cache(async (slug: string) => {
   return post;
 });
 
-export async function generateStaticParams() {
-  const posts = await prisma.post.findMany({
-    select: { slug: true },
-  });
+// export async function generateStaticParams() {
+//   const posts = await prisma.post.findMany({
+//     select: { slug: true },
+//   });
 
-  return posts.map(({ slug }) => slug);
-}
+//   return posts.map(({ slug }) => slug);
+// }
 
 export async function generateMetadata({
   params: { slug },
@@ -69,16 +69,12 @@ export default async function SingleBlog({
             Published on: {dayjs(post.createdAt).format("DD MMM YYYY hh:mm A")}
           </div>
         </div>
-        {/* <image
-          src={post.coverImageUrl || "/assets/blog.svg"}
-          alt=""
-          className="rounded-xl mt-10 mb-11"
-        /> */}
-        <img
+
+        {/* <img
           src={`${post.coverImageUrl}`}
           alt=""
           className="rounded-xl mt-10 mb-11 w-full"
-        />
+        /> */}
         <article className="max-w-[770px] mx-auto prose">
           {post.description && <Markdown>{post.description}</Markdown>}
         </article>
