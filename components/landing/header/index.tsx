@@ -218,19 +218,27 @@ export default function Header() {
                       <div className="flex items-center justify-between">
                         <Dropdown
                           menu={{
-                            items: menuToShow.map((item: any) => ({
-                              label: item.name,
-                              onClick: () => {
-                                router.push(item.path);
+                            items: [
+                              ...menuToShow.map((item: any) => ({
+                                label: item.name,
+                                onClick: () => {
+                                  router.push(item.path);
+                                },
+                              })),
+                              {
+                                label: "Sign Out",
+                                onClick: handleSignOut,
                               },
-                            })),
+                            ],
                           }}
                         >
-                          <Button>
-                            <span className="hover:text-black text-[17px]">
-                              Welcome, {user?.name}
-                            </span>
-                          </Button>
+                          <Image
+                            src={user.image || "/assets/placeholder.jpg"}
+                            height={15}
+                            width={50}
+                            alt={user.name || "Avatar"}
+                            className="w-[38px] h-[38px] rounded-full object-cover border-[1px] border-gray-600"
+                          />
                         </Dropdown>
                       </div>
                     </>

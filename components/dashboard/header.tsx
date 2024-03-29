@@ -30,8 +30,12 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import Image from "next/image";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-options";
 
-export default function Header() {
+export default async function Header() {
+  const userId = await getServerSession(authOptions);
+  console.log(userId);
   return (
     <div>
       <header className="flex h-14 items-center gap-4 border-b bg-gray-50 px-4 lg:h-[60px] lg:px-6">
@@ -129,7 +133,7 @@ export default function Header() {
           <DropdownMenuTrigger asChild className="bg-white">
             <Button variant="secondary" size="icon" className="rounded-full">
               <Image
-                src="/assets/placeholder.jpg"
+                src={userId?.user.image || "/assets/placeholder.jpg"}
                 height={20}
                 width={30}
                 alt="User"
