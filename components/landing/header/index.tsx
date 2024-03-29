@@ -65,6 +65,9 @@ export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
 
+  // Determine if the current page is the home page
+  const isHomePage = pathname === "/";
+
   // sticky Menu
   const handleStickyMenu = () => {
     if (window.scrollY >= 80 && !mobileView) {
@@ -86,7 +89,9 @@ export default function Header() {
         } fixed transition-all duration-300 py-5 left-0 top-0 z-50 w-full bg-transparent backdrop-blur-sm ${
           stickyMenu
             ? "bg-white !py-3 shadow transition duration-100 text-gray-600"
-            : "text-white"
+            : isHomePage
+            ? "text-white"
+            : "text-gray-600 border-b border-neutral-100"
         }`}
       >
         <div className="top-0 w-full z-50 will-change-auto duration-200 bg-transparent translate-y-0 transition-colors">
@@ -102,8 +107,8 @@ export default function Header() {
                   </span>
                   <span
                     className={`${
-                      stickyMenu ? "text-gray-700" : "text-white"
-                    } text-xl  tracking-tight font-semibold`}
+                      stickyMenu || !isHomePage ? "text-gray-700" : "text-white"
+                    } text-xl tracking-tight font-semibold`}
                   >
                     African Real Estate.
                   </span>
