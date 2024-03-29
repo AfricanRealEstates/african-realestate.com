@@ -70,11 +70,11 @@ export default async function SingleBlog({
           </div>
         </div>
 
-        {/* <img
+        <img
           src={`${post.coverImageUrl}`}
           alt=""
           className="rounded-xl mt-10 mb-11 w-full"
-        /> */}
+        />
         <article className="max-w-[770px] mx-auto prose">
           {post.description && <Markdown>{post.description}</Markdown>}
         </article>
