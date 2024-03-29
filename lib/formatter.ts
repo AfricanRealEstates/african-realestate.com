@@ -13,3 +13,10 @@ const NUMBER_FORMATTER = new Intl.NumberFormat("en-US")
 export function formatNumber(number: number) {
     return NUMBER_FORMATTER.format(number)
 }
+
+export function toSlug(str: string) {
+    return str
+        .toLowerCase()
+        .replace(/ /g, "-")
+        .replace(/[^\w-]+/g, "");
+}

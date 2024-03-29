@@ -1,6 +1,11 @@
 import DashboardTitle from "@/components/dashboard/dashboard-title";
 import { Button } from "@/components/ui/button";
+import { Metadata } from "next";
 import React from "react";
+
+export const metadata: Metadata = {
+  title: "Dashboard - Orders",
+};
 
 export default function Orders() {
   return (

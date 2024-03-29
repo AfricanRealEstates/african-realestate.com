@@ -5,13 +5,22 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+
+  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
+
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+// }
 
 enum UserRole {
   USER
@@ -153,6 +162,17 @@ model Order {
   propertyId String
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   property   Property @relation(fields: [propertyId], references: [id], onDelete: Restrict)
+}
+
+model Post {
+  id            String   @id @default(uuid())
+  title         String
+  slug          String   @unique
+  description   String?
+  coverImageUrl String?
+  published     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 // plan   Plan
