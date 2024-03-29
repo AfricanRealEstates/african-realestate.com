@@ -3,14 +3,22 @@ import { LoginInputProps } from "@/types/types";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const router = useRouter();
+
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    if (session) {
+      router.push("/dashboard"); // Redirect to dashboard if already authenticated
+    }
+  }, [session]);
 
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";

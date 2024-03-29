@@ -49,7 +49,7 @@ export default async function Blog() {
                 </div>
                 <img
                   src={coverImageUrl || "/assets/blog.svg"}
-                  className="inline-block h-full w-full object-cover"
+                  className="inline-block h-full w-full object-cover rounded-lg"
                 />
               </Link>
             );

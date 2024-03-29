@@ -155,9 +155,15 @@ export default function Header() {
                 ) : (
                   <Link
                     href="/login"
-                    className={` ${
-                      !stickyMenu ? "text-white hover:text-gray-200" : ""
-                    } `}
+                    className={`${
+                      pathname === "/" && !stickyMenu
+                        ? "text-white hover:text-gray-50"
+                        : "text-gray-600"
+                    } ${
+                      stickyMenu
+                        ? "text-gray-600 transition-colors duration-200 ease-in"
+                        : "hover:text-gray-700"
+                    }`}
                   >
                     Sign in
                   </Link>

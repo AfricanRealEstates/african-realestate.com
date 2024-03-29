@@ -6,6 +6,7 @@ import prisma from "@/lib/prisma";
 import { Plus_Jakarta_Sans, Raleway } from "next/font/google";
 import Image from "next/image";
 import PropertyCard from "@/components/properties/property-card";
+import { Button } from "@/components/ui/button";
 
 const plusJakartaSans = Raleway({
   subsets: ["latin"],
@@ -38,6 +39,22 @@ export default async function FeaturedProperties() {
               return <PropertyCard key={property.id} property={property} />;
             })}
           </div>
+
+          {properties.length === 0 && (
+            <div className="flex flex-col items-center gap-1 text-center">
+              <h3 className="text-2xl font-bold tracking-tight">
+                You have no products
+              </h3>
+              {/* <p className="text-sm text-gray-500">
+                You can start selling as soon as you add a property.
+              </p> */}
+              <Button className="mt-4" asChild>
+                <Link href="/agent/properties/create-property">
+                  Add Property
+                </Link>
+              </Button>
+            </div>
+          )}
         </section>
       </div>
     </div>
