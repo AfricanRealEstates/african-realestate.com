@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function NewBlogPage() {
   return (
-    <div>
+    <div className="overflow-y-auto">
       <DashboardTitle title="Add Blog" />
       <BlogForm />
     </div>

@@ -91,7 +91,7 @@ export default function QueryModal({ propertyId }: { propertyId: string }) {
                 loading={loading}
                 type="primary"
                 htmlType="submit"
-                className=""
+                className="flex items-center justify-center  cursor-pointer rounded-md bg-blue-300 hover:!bg-blue-400 transition-colors px-5 py-2.5 text-center font-semibold text-white"
               >
                 {loading ? "Sending..." : "Send Quote"}
               </Button>
