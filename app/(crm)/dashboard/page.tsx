@@ -81,7 +81,7 @@ export default async function Dashboard() {
         body={`${formatNumber(userData.userCount)} customers`}
       />
       <DashboardCard
-        title="Active Proproperties"
+        title="Active Properties"
         subtitle={`${formatNumber(propertyData.inactiveCount)} Inactive`}
         body={`${formatNumber(propertyData.activeCount)} Active `}
       />
