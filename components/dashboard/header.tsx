@@ -41,6 +41,22 @@ export default async function Header() {
   const posts = await prisma.post.findMany({
     orderBy: { createdAt: "desc" },
   });
+
+  const [userSubscription, propertiesCount] = (await Promise.all([
+    prisma.subscription.findFirst({
+      where: {
+        userId: userId?.user.id,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    }),
+    prisma.property.count({
+      where: {
+        userId: userId?.user.id,
+      },
+    }),
+  ])) as any;
   return (
     <div>
       <header className="flex h-14 items-center gap-4 border-b bg-gray-50 px-4 lg:h-[60px] lg:px-6">
@@ -107,20 +123,36 @@ export default async function Header() {
               </Link>
             </nav>
             <div className="mt-auto">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Upgrade to Pro</CardTitle>
-                  <CardDescription>
-                    Unlock all features and get unlimited access to our support
-                    team.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button size="sm" className="w-full">
-                    Upgrade
-                  </Button>
-                </CardContent>
-              </Card>
+              {!userSubscription ? (
+                <Card>
+                  <CardHeader className="p-2 pt-0 md:p-4">
+                    <CardTitle className="text-lg">Upgrade to Pro</CardTitle>
+                    <CardDescription className="text-sm">
+                      Unlock all features and get unlimited access to our
+                      support team
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-2 pt-0 md:p-4 md:pt-0">
+                    <Button size="sm" className="w-full">
+                      Upgrade
+                    </Button>
+                  </CardContent>
+                </Card>
+              ) : (
+                <>
+                  <Card>
+                    <CardHeader className="p-2 pt-0 md:p-4">
+                      <CardTitle className="text-lg">
+                        🎉️ {userSubscription?.plan.name} Plan
+                      </CardTitle>
+                      <CardDescription className="text-sm">
+                        Congratulations! You have the Silver Package powers.
+                        Post more properties and enjoy more perks
+                      </CardDescription>
+                    </CardHeader>
+                  </Card>
+                </>
+              )}
             </div>
           </SheetContent>
         </Sheet>

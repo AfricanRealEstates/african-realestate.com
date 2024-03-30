@@ -61,7 +61,7 @@ export default async function Posts() {
                       <CheckCircle2 className="text-green-500" /> Published
                     </div>
                   ) : (
-                    <div className="flex items-center text-red-400">
+                    <div className="flex items-center gap-1 text-red-400">
                       <XCircle className="text-red-400" /> Draft
                     </div>
                   )}
