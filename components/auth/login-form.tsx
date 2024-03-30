@@ -14,11 +14,11 @@ export default function LoginForm() {
 
   const { data: session } = useSession();
 
-  useEffect(() => {
-    if (session) {
-      router.push("/dashboard"); // Redirect to dashboard if already authenticated
-    }
-  }, [session]);
+  // useEffect(() => {
+  //   if (session) {
+  //     router.push("/dashboard");
+  //   }
+  // }, [session]);
 
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";

@@ -90,7 +90,7 @@ export default function Header() {
           stickyMenu
             ? "bg-white !py-3 shadow transition duration-100 text-gray-600"
             : isHomePage
-            ? "text-white"
+            ? "text-white hover:text-gray-100"
             : "text-gray-600 border-b border-neutral-100"
         }`}
       >
@@ -153,20 +153,7 @@ export default function Header() {
                     </Dropdown>
                   </div>
                 ) : (
-                  <Link
-                    href="/login"
-                    className={`${
-                      pathname === "/" && !stickyMenu
-                        ? "text-white hover:text-gray-50"
-                        : "text-gray-600"
-                    } ${
-                      stickyMenu
-                        ? "text-gray-600 transition-colors duration-200 ease-in"
-                        : "hover:text-gray-700"
-                    }`}
-                  >
-                    Sign in
-                  </Link>
+                  <Link href="/login">Sign in</Link>
                 )}
 
                 <button
