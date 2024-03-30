@@ -29,8 +29,8 @@ const navLinks = [
     href: "/properties",
   },
   {
-    label: "Resources",
-    href: "/resources",
+    label: "Dashboard",
+    href: "/dashboard",
   },
 ];
 
