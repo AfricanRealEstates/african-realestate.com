@@ -36,7 +36,7 @@ export async function createBlogPosting(formData: FormData) {
             description: description?.trim(),
         }
     })
-    redirect("/dashboard/blog")
+    redirect("/dashboard/posts")
 }
 
 export async function togglePublished(id: string, published: boolean) {
