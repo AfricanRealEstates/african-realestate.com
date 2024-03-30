@@ -33,6 +33,7 @@ import Image from "next/image";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import prisma from "@/lib/prisma";
+import LogoutButton from "../auth/logout-button";
 
 export default async function Header() {
   const userId = await getServerSession(authOptions);
@@ -187,7 +188,9 @@ export default async function Header() {
             <DropdownMenuItem>Settings</DropdownMenuItem>
             <DropdownMenuItem>Support</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Logout</DropdownMenuItem>
+            <DropdownMenuItem>
+              <LogoutButton />
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </header>
