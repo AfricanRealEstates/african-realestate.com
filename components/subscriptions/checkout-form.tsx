@@ -77,7 +77,12 @@ export default function CheckoutForm({
           <Button onClick={() => setShowCheckoutForm(false)} disabled={loading}>
             Cancel
           </Button>
-          <Button type="primary" htmlType="submit" loading={loading}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={loading}
+            className="flex items-center justify-center  cursor-pointer rounded-md bg-blue-300 hover:!bg-blue-400 transition-colors px-5 py-2.5 text-center font-semibold text-white"
+          >
             Pay
           </Button>
         </div>

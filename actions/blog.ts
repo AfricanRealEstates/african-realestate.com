@@ -8,7 +8,7 @@ import path from "path";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 export async function createBlogPosting(formData: FormData) {
     const user = await getServerSession(authOptions)
@@ -37,4 +37,13 @@ export async function createBlogPosting(formData: FormData) {
         }
     })
     redirect("/dashboard/blog")
+}
+
+export async function togglePublished(id: string, published: boolean) {
+    await prisma.post.update({ where: { id }, data: { published } })
+}
+
+export async function deleteProduct(id: string) {
+    const post = await prisma.post.delete({ where: { id } })
+    if (post === null) return notFound()
 }

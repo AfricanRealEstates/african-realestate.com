@@ -32,10 +32,15 @@ import {
 import Image from "next/image";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
+import prisma from "@/lib/prisma";
 
 export default async function Header() {
   const userId = await getServerSession(authOptions);
-  console.log(userId);
+  // get posts
+
+  const posts = await prisma.post.findMany({
+    orderBy: { createdAt: "desc" },
+  });
   return (
     <div>
       <header className="flex h-14 items-center gap-4 border-b bg-gray-50 px-4 lg:h-[60px] lg:px-6">
@@ -68,14 +73,16 @@ export default async function Header() {
                 Dashboard
               </Link>
               <Link
-                href="/dashboard/orders"
+                href="/dashboard/posts"
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:bg-gray-100 hover:text-gray-700"
               >
                 <ShoppingCart className="h-4 w-4" />
-                Orders
-                <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                  5
-                </Badge>
+                Posts
+                {posts.length > 0 && (
+                  <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
+                    {posts.length}
+                  </Badge>
+                )}
               </Link>
               <Link
                 href="/dashboard/properties"
