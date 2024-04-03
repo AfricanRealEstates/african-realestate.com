@@ -14,6 +14,9 @@ export const addProperty = async (property: any) => {
     await prisma.property.create({
       data: property,
     });
+    revalidatePath("/")
+    revalidatePath("/buy")
+    revalidatePath("/sell")
     revalidatePath("/agent/properties");
     return {
       data: property,
@@ -34,6 +37,9 @@ export const editProperty = async (id: string, property: any) => {
       },
       data: property,
     });
+    revalidatePath("/")
+    revalidatePath("/buy")
+    revalidatePath("/sell")
     revalidatePath("/agent/properties");
     return {
       data: property,
@@ -53,6 +59,9 @@ export const deleteProperty = async (id: string) => {
         id: id,
       },
     });
+    revalidatePath("/")
+    revalidatePath("/buy")
+    revalidatePath("/sell")
     revalidatePath("/agent/properties");
     return {
       message: "Property deleted successfully",

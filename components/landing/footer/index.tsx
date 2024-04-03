@@ -51,7 +51,7 @@ const raleway = Raleway({
 
 export default function Footer() {
   return (
-    <footer className={`${raleway.className} bg-[#181a20] block`}>
+    <footer className={`${raleway.className} bg-gray-900 block`}>
       <div className="mx-auto w-full max-w-7xl px-5 py-16 md:px-10 md:py-24 lg:py-32">
         <div className="grid grid-cols-[auto] justify-between gap-6 max-[991px]:grid-flow-col max-[991px]:[grid-template:'.'_auto_'.'_auto_/_0.75fr_0.75fr_0.75fr] max-[767px]:gap-y-8 max-[479px]:auto-cols-auto max-[479px]:grid-flow-dense sm:grid-cols-2 sm:gap-4 md:grid-cols-[max-content_auto_auto_auto_auto] lg:gap-10">
           <div className="flex max-w-[360px] grid-cols-1 flex-col items-start justify-start gap-8 max-[991px]:[grid-area:span_1/span_4/span_1/span_4] max-[767px]:flex-col max-[767px]:[grid-area:span_1/span_2/span_1/span_2] lg:mr-10">
@@ -255,7 +255,47 @@ export default function Footer() {
             </p>
           </div>
           <div className="mb-4 w-full max-w-[400px]">
-            <form className="group bg-neutral-50 flex w-96 items-center justify-between rounded border border-neutral-400 p-2">
+            <form action="#" method="POST" className="">
+              <div className="flex flex-col items-center sm:flex-row sm:justify-center">
+                <div className="flex-1 w-full min-w-0 sm:px-0">
+                  <div className="relative text-gray-400 focus-within:text-gray-600">
+                    <label htmlFor="email" className="sr-only"></label>
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                      <svg
+                        className="w-5 h-5"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="1.5"
+                          d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
+                        />
+                      </svg>
+                    </div>
+                    <input
+                      type="email"
+                      name="email"
+                      id="email"
+                      placeholder="Enter email address"
+                      className="block w-full py-4 pl-10 pr-4 text-base text-black placeholder-gray-500 transition-all duration-200 border-gray-200 rounded-md sm:rounded-r-none caret-blue-600 focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="inline-flex items-center justify-center flex-shrink-0 w-full lg:w-auto px-4 py-4 mt-4 font-semibold text-white transition-all duration-200 bg-blue-600 border border-transparent rounded-md sm:mt-0 sm:rounded-l-none sm:w-auto hover:bg-blue-700 focus:bg-blue-700"
+                >
+                  Get instant access
+                </button>
+              </div>
+            </form>
+            {/* <form className="group bg-neutral-50 flex w-96 items-center justify-between rounded border border-neutral-400 p-2">
               <label htmlFor="email" className="mr-2 relative block w-full">
                 <input
                   type="email"
@@ -272,7 +312,7 @@ export default function Footer() {
                 Subscribe
                 <ArrowRight className="transition-transform" />
               </button>
-            </form>
+            </form> */}
           </div>
         </div>
         <div className="mb-14 mt-16 w-full [border-bottom:0.7px_solid_rgb(255,_255,_255,__0.3)]"></div>

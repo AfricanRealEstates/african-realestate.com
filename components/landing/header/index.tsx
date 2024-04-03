@@ -114,12 +114,14 @@ export default function Header() {
                   </span>
                 </Link>
               </div>
-              <ul className="hidden lg:flex ml-14 gap-8">
+              <ul className="hidden lg:flex lg:items-center lg:space-x-10">
                 {navLinks.map((navLink) => {
                   const { href, label } = navLink;
                   return (
                     <li key={label}>
-                      <Link href={href}>{label}</Link>
+                      <Link href={href} className="text-base font-medium">
+                        {label}
+                      </Link>
                     </li>
                   );
                 })}
@@ -160,10 +162,11 @@ export default function Header() {
                   onClick={() =>
                     router.push("/agent/properties/create-property")
                   }
-                  className="group/follow flex items-center gap-2 rounded-md bg-indigo-600 px-6 py-3 font-semibold text-white shadow-lg transition-all hover:-translate-y-0.5 active:translate-y-0 active:bg-indigo-700 active:shadow-inner"
+                  className="text-base inline-flex items-center justify-center flex-shrink-0 w-auto px-4 py-2 mt-4 font-semibold text-white transition-all duration-200 bg-blue-600 border border-transparent rounded-full sm:mt-0 sm:w-auto hover:bg-blue-700 focus:bg-blue-700"
+                  // className="group/follow flex items-center gap-2 rounded-full bg-[#276ef1] px-6 py-3 font-semibold text-white shadow-lg transition-all hover:-translate-y-0.5 active:translate-y-0 focus:opacity-70 active:shadow-inner"
                 >
-                  Sell fast
-                  <ArrowRight className="transition-transform group-hover/follow:-rotate-45 group-active/follow:rotate-0" />
+                  Sell Fast
+                  {/* <ArrowRight className="transition-transform group-hover/follow:-rotate-45 group-active/follow:rotate-0" /> */}
                 </button>
               </div>
               <div className="lg:hidden md:flex flex-col justify-end">

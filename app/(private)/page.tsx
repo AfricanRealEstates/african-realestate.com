@@ -1,9 +1,11 @@
 import CTA from "@/components/landing/cta";
 import Facts from "@/components/landing/facts";
 import FeaturedProperties from "@/components/landing/featured-properties";
+import GetQuote from "@/components/landing/get-quote";
 import Hero from "@/components/landing/hero";
 import HowItWorks from "@/components/landing/how-it-works";
 import Sale from "@/components/landing/sale";
+import Testing from "@/components/landing/testing";
 
 export default async function Home() {
   return (
@@ -13,12 +15,14 @@ export default async function Home() {
       <p className="text-white hover:text-[#bebdbd] bg-[#f7f7f7]">White</p>
     </div> */}
 
-      <Hero />
+      <Testing />
+      {/* <Hero /> */}
       <Sale />
       <FeaturedProperties />
       <HowItWorks />
       <Facts />
       <CTA />
+      {/* <GetQuote /> */}
     </div>
   );
 }
