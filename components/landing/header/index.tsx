@@ -150,7 +150,7 @@ export default function Header() {
                         height={15}
                         width={50}
                         alt={user.name || "Avatar"}
-                        className="w-[38px] h-[38px] rounded-full object-cover border-[1px] border-gray-600"
+                        className="w-[38px] h-[38px] rounded-full p-0.5 object-cover border-[1px] border-gray-400"
                       />
                     </Dropdown>
                   </div>
