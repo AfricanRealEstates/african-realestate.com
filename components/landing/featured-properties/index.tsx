@@ -120,7 +120,7 @@ async function ProductGridSection({
       <div className="flex gap-4 items-center justify-between">
         <h2 className="text-3xl font-bold">{title}</h2>
         <Button variant="outline" asChild>
-          <Link href="/buy">
+          <Link href="/properties">
             <span>View All</span>
             <ArrowRight />
           </Link>
