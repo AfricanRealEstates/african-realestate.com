@@ -18,12 +18,11 @@ export default function LoginForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
 
-  // useEffect(() => {
-  //   if (session && !isLoading) {
-  //     // Check if session is set and not currently loading
-  //     router.push("/dashboard");
-  //   }
-  // }, [session, isLoading]);
+  useEffect(() => {
+    if (session) {
+      router.push("/dashboard");
+    }
+  }, [session]);
 
   const {
     register,
@@ -38,7 +37,7 @@ export default function LoginForm() {
       console.log("Attempting to sign in with credentials:", data);
       const loginData = await signIn("credentials", {
         ...data,
-        // redirect: false,
+        redirect: false,
         callbackUrl,
       });
       console.log("SignIn response:", loginData);

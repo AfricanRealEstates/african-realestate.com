@@ -9,6 +9,9 @@ import { Metadata } from "next";
 import React from "react";
 import prisma from "@/lib/prisma";
 import { formatCurrency, formatNumber } from "@/lib/formatter";
+import Login from "@/app/(auth)/login/page";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth-options";
 
 export const metadata: Metadata = {
   title: "Dashboard",
