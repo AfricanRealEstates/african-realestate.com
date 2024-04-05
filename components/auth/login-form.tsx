@@ -18,12 +18,12 @@ export default function LoginForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
 
-  useEffect(() => {
-    if (session && !isLoading) {
-      // Check if session is set and not currently loading
-      router.push(callbackUrl);
-    }
-  }, [session, isLoading]);
+  // useEffect(() => {
+  //   if (session && !isLoading) {
+  //     // Check if session is set and not currently loading
+  //     router.push("/dashboard");
+  //   }
+  // }, [session, isLoading]);
 
   const {
     register,
