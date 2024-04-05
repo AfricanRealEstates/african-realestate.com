@@ -7,6 +7,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { signIn, useSession } from "next-auth/react";
 import toast from "react-hot-toast";
+
 export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
@@ -14,14 +15,16 @@ export default function LoginForm() {
 
   const { data: session } = useSession();
 
-  useEffect(() => {
-    if (session) {
-      router.push("/dashboard");
-    }
-  }, [session]);
-
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+
+  useEffect(() => {
+    if (session && !isLoading) {
+      // Check if session is set and not currently loading
+      router.push(callbackUrl);
+    }
+  }, [session, isLoading]);
+
   const {
     register,
     handleSubmit,
