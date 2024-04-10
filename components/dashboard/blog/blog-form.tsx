@@ -22,7 +22,10 @@ import { useFormStatus } from "react-dom";
 import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { createBlogPosting } from "@/actions/blog";
+import Image from "next/image";
+import Editor from "@/components/globals/rich-text-editor";
 export default function BlogForm() {
+  const [selectedImage, setSelectedImage] = useState<string>();
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<z.infer<typeof addBlogSchema>>({
     resolver: zodResolver(addBlogSchema),
@@ -57,7 +60,7 @@ export default function BlogForm() {
   }
   return (
     <>
-      <section className="mt-8">
+      <section className="mt-8 p-4">
         <Form {...form}>
           <form
             className="space-y-4"
@@ -94,6 +97,10 @@ export default function BlogForm() {
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         fieldValues.onChange(file);
+
+                        setSelectedImage(
+                          file ? URL.createObjectURL(file) : undefined
+                        );
                       }}
                     />
                   </FormControl>
@@ -101,6 +108,15 @@ export default function BlogForm() {
                 </FormItem>
               )}
             />
+            {selectedImage && (
+              <Image
+                src={selectedImage}
+                width={400}
+                height={400}
+                alt="Selected Image"
+                className="max-h-[400px] object-contain"
+              />
+            )}
             <FormField
               control={control}
               name="description"
@@ -108,12 +124,18 @@ export default function BlogForm() {
                 <FormItem>
                   <Label onClick={() => setFocus("description")}>Content</Label>
                   <FormControl>
-                    <RichTextEditor
+                    <Editor
                       onChange={(draft) =>
                         field.onChange(draftToMarkdown(draft))
                       }
                       ref={field.ref}
                     />
+                    {/* <RichTextEditor
+                      onChange={(draft) =>
+                        field.onChange(draftToMarkdown(draft))
+                      }
+                      ref={field.ref}
+                    /> */}
                   </FormControl>
                 </FormItem>
               )}

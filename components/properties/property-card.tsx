@@ -3,6 +3,7 @@ import { Bed, LandPlot } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { v4 as uuidv4 } from "uuid";
 
 interface PropertyCardProps {
   property: Property;
@@ -59,7 +60,8 @@ export default function PropertyCard({ property }: PropertyCardProps) {
               {images.map((image) => {
                 return (
                   <Image
-                    key={image}
+                    // key={image}
+                    key={uuidv4()}
                     src={image}
                     alt=""
                     width={350}

@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Inter, IBM_Plex_Mono, Nunito_Sans } from "next/font/google";
 import React from "react";
+import SearchForm from "./search-form";
+import SearchBar from "./search";
 
 const nunitoSans = Nunito_Sans({
   subsets: ["latin"],
@@ -50,23 +52,8 @@ export default function Hero() {
             </p>
           </div>
           <div className="max-w-3xl mt-12 flex items-center justify-center w-full">
-            <form className="bg-white rounded-xl p-5 relative w-full flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
-              <input
-                type="search"
-                placeholder=" Enter an address, neighborhood, city, or ZIP code for Buy"
-                className="placeholder:text-[#666] flex-1 ring-[1px] border-0 focus:outline-[#f7f7f7] outline-none ring-[#f6f6f6] py-4 px-5 md:py-3 md:px-6 inline-flex items-center justify-center gap-x-4 w-full"
-              />
-              <span className="lg:ml-auto px-6 flex gap-4 items-center text-[#4a4a4a]">
-                <SlidersHorizontal className="h-4 w-4" />
-                Advanced Search
-              </span>
-              <div
-                className="p-4 flex lg:items-center rounded-full bg-[#eb6753]
-              "
-              >
-                <Search className="text-white" />
-              </div>
-            </form>
+            {/* <SearchForm /> */}
+            <SearchBar />
           </div>
           {/* <div className="max-w-3xl mt-8 space-y-6 text-lg leading-[1.4] text-gray-200">
             <p>
@@ -85,46 +72,6 @@ export default function Hero() {
           </div> */}
         </div>
       </article>
-      {/* <article className="mb-12 mt-64 border-white/[0.13] md:mt-28 lg:my-28 lg:border-y lg:py-2 z-30">
-        <div className="mx-auto max-w-7xl w-full px-4 md:px-6">
-          <h2 className=" max-w-3xl text-3xl font-extrabold tracking-tight text-white lg:col-span-2 lg:text-[64px] md:text-[40px] leading-[1.1] lg:leading-[1.125]">
-            Get a Home or an Investment Opportunity
-          </h2>
-          <div className="mt-8 max-w-lg space-y-6 text-lg leading-[1.4] text-gray-200 md:max-w-xl lg:text-xl">
-            <p>
-              African Real Estate&trade; is Africa&apos;s Leading Real Estate
-              company offering the best and efficient real estate solutions
-            </p>
-            <p>Welcome to African Real Estate</p>
-          </div>
-        </div>
-      </article> */}
-      {/* <article className="w-full place-self-end mt-0 sm:mt-0 mb-20 md:mb-0 md:-translate-y-6">
-        <div className="mx-auto max-w-7xl w-full px-4 md:px-6 flex flex-col sm:flex-row gap-y-8 gap-x-6">
-          <div className="flex basis-1/2 flex-col md:flex-row items-center gap-x-4 gap-y-4">
-            <Link
-              href="/agency"
-              className="inline-block bg-white self-center overflow-hidden max-w-full px-5 py-2 ring-inset rounded-full text-base font-semibold tracking-tight transition-all duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline md:px-6 md:py-3 md:text-lg w-full md:w-auto text-center whitespace-nowrap border-2 border-white/0 hover:border-white hover:bg-white/0 hover:text-white active:bg-[rgba(161,161,170,1)] active:text-black"
-            >
-              Start Free Trial
-            </Link>
-            <div>
-              <p className="text-white text-base font-semibold md:w-52 text-center sm:text-left">
-                Start for free, get 3 months for free.
-              </p>
-            </div>
-          </div>
-          <div className="flex md:basis-1/2 justify-end">
-            <Link
-              href="/agency"
-              className="py-2 px-5 md:py-3 md:px-6 inline-flex items-center justify-center gap-x-4 w-full md:w-auto border border-white/40 rounded-full bg-[rgba(255,255,255,0.15)] text-white text-lg text-center hover:bg-white hover:text-black transition-colors ease-linear duration-200"
-            >
-              <Play />
-              Become an Agent
-            </Link>
-          </div>
-        </div>
-      </article> */}
     </section>
   );
 }

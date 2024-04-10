@@ -1,7 +1,9 @@
+"use client";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { IBM_Plex_Mono } from "next/font/google";
 import Image from "next/image";
 import React from "react";
+import SearchBar from "../hero/search";
 
 const ibmPlex = IBM_Plex_Mono({
   subsets: ["latin"],
@@ -178,6 +180,7 @@ export default function Testing() {
       <section className="relative py-10 bg-gray-900 sm:py-16 lg:py-24">
         <div className="absolute inset-0">
           <Image
+            priority
             fill
             className="object-cover w-full h-full"
             // src="https://cdn.rareblocks.xyz/collection/celebration/images/signin/2/man-eating-noodles.jpg"
@@ -207,24 +210,7 @@ export default function Testing() {
               </p>
             </div>
             <div className="max-w-3xl flex items-center justify-center w-full">
-              <form className="bg-white rounded-xl p-5 relative w-full flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
-                <input
-                  type="search"
-                  placeholder=" Enter an address, neighborhood, city, or ZIP code for Buy"
-                  className="placeholder:text-[#666] flex-1 ring-[1px] border-0 focus:outline-[#f7f7f7] outline-none ring-[#f6f6f6] py-4 px-5 md:py-3 md:px-6 inline-flex items-center justify-center gap-x-4 w-full"
-                />
-                <span className="lg:ml-auto px-6 flex gap-4 items-center text-[#4a4a4a]">
-                  <SlidersHorizontal className="h-4 w-4" />
-                  Advanced Search
-                </span>
-                <div className="p-4 flex lg:items-center gap-x-4 rounded-full bg-[#276ef1]">
-                  {/* bg-[#eb6753] */}
-                  <Search className="text-white" />
-                  <span className="lg:hidden ml-4 text-white font-semibold">
-                    Search Property
-                  </span>
-                </div>
-              </form>
+              <SearchBar />
             </div>
 
             {/* <div className="max-w-3xl mt-8 space-y-6 text-lg leading-[1.4] text-gray-200">
