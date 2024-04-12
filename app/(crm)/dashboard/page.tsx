@@ -12,10 +12,12 @@ import { formatCurrency, formatNumber } from "@/lib/formatter";
 import Login from "@/app/(auth)/login/page";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
+import { getSEOTags } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Dashboard",
-};
+export const metadata = getSEOTags({
+  title: "Dashboard | African Real Estate",
+  canonicalUrlRelative: "/dashboard",
+});
 
 // Get sales data
 async function getSalesData() {

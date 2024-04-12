@@ -3,10 +3,16 @@ import Link from "next/link";
 import React from "react";
 import prisma from "@/lib/prisma";
 import dayjs from "dayjs";
+import { getSEOTags } from "@/lib/seo";
 const raleway = Raleway({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-nunitosans",
+});
+
+export const metadata = getSEOTags({
+  title: "Blog | African Real Estate",
+  canonicalUrlRelative: "/blog",
 });
 export default async function Blog() {
   const posts = await prisma.post.findMany({

@@ -33,6 +33,7 @@ import { useRouter } from "next/navigation";
 import BackProperty from "@/components/globals/back-property";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
+import { Metadata } from "next";
 
 const ibmPlex = IBM_Plex_Mono({
   subsets: ["latin"],
@@ -52,6 +53,24 @@ interface PropertyDetailsProps {
     id: string;
   };
 }
+
+export async function generateMetadata({
+  params: { id },
+}: PropertyDetailsProps): Promise<Metadata> {
+  const property: Property =
+    ((await prisma.property.findUnique({
+      where: {
+        id: id,
+      },
+    })) as Property) || null;
+
+  return {
+    title: `${property.title} | African Real Estate`,
+    // description: post.description,
+    // coverImageUrl: post.coverImageUrl,
+  };
+}
+
 export default async function PropertyDetails({
   params: { id },
 }: PropertyDetailsProps) {

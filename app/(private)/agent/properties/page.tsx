@@ -5,8 +5,14 @@ import PageTitle from "@/components/globals/page-title";
 import LinkButton from "@/components/properties/link-button";
 import PropertiesTable from "@/components/properties/properties-table";
 import { authOptions } from "@/lib/auth-options";
+import { getSEOTags } from "@/lib/seo";
 import { getServerSession } from "next-auth";
 import React, { Suspense } from "react";
+
+export const metadata = getSEOTags({
+  title: "Agent - Properties | African Real Estate",
+  canonicalUrlRelative: "/agent/properties",
+});
 
 export default async function Properties({
   searchParams,

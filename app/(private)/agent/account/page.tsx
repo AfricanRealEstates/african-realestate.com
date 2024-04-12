@@ -4,6 +4,12 @@ import React from "react";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
+import { getSEOTags } from "@/lib/seo";
+
+export const metadata = getSEOTags({
+  title: "Agent - Account | African Real Estate",
+  canonicalUrlRelative: "/agent/account",
+});
 
 export default async function Account() {
   // const clerkUser = await currentUser();

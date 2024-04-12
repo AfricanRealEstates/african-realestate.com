@@ -1,6 +1,7 @@
 import Filter from "@/components/globals/filters";
 import Loader from "@/components/globals/loader";
 import AllProperties from "@/components/properties/all-properties";
+import { getSEOTags } from "@/lib/seo";
 import { Raleway } from "next/font/google";
 import React, { Suspense } from "react";
 
@@ -8,6 +9,11 @@ const raleway = Raleway({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-nunitosans",
+});
+
+export const metadata = getSEOTags({
+  title: "Properties | African Real Estate",
+  canonicalUrlRelative: "/properties",
 });
 
 export default function Properties({ searchParams }: { searchParams: string }) {

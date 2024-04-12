@@ -2,8 +2,14 @@ import Filters from "@/components/globals/filters";
 import PageTitle from "@/components/globals/page-title";
 import PropertiesTable from "@/components/properties/properties-table";
 import { authOptions } from "@/lib/auth-options";
+import { getSEOTags } from "@/lib/seo";
 import { getServerSession } from "next-auth";
 import React from "react";
+
+export const metadata = getSEOTags({
+  title: "Admin - Properties | African Real Estate",
+  canonicalUrlRelative: "/admin/properties",
+});
 
 export default async function Properties({
   searchParams,

@@ -1,6 +1,12 @@
+import { getSEOTags } from "@/lib/seo";
 import { Raleway } from "next/font/google";
 import Image from "next/image";
 import React from "react";
+
+export const metadata = getSEOTags({
+  title: "About | African Real Estate",
+  canonicalUrlRelative: "/about",
+});
 
 const raleway = Raleway({
   subsets: ["latin"],

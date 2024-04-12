@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import Markdown from "@/components/globals/markdown";
 import Link from "next/link";
 import Image from "next/image";
+import { getSEOTags } from "@/lib/seo";
 
 const raleway = Raleway({
   subsets: ["latin"],

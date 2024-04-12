@@ -3,9 +3,15 @@ import BuyButton from "@/components/subscriptions/buy-button";
 import { subscriptionPlans } from "@/constants";
 import { authOptions } from "@/lib/auth-options";
 import prisma from "@/lib/prisma";
+import { getSEOTags } from "@/lib/seo";
 import { CircleCheckBig } from "lucide-react";
 import { getServerSession } from "next-auth";
 import React from "react";
+
+export const metadata = getSEOTags({
+  title: "Agent - Subscriptions | African Real Estate",
+  canonicalUrlRelative: "/agent/subscriptions",
+});
 
 export default async function Subscriptions() {
   const user = await getServerSession(authOptions);
