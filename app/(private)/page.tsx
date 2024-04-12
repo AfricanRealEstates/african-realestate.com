@@ -6,7 +6,12 @@ import Hero from "@/components/landing/hero";
 import HowItWorks from "@/components/landing/how-it-works";
 import Sale from "@/components/landing/sale";
 import Testing from "@/components/landing/testing";
-import { renderSchemaTags } from "@/lib/seo";
+import { getSEOTags, renderSchemaTags } from "@/lib/seo";
+
+export const metadata = getSEOTags({
+  title: "Home | African Real Estate",
+  canonicalUrlRelative: "/",
+});
 
 export default async function Home() {
   return (
