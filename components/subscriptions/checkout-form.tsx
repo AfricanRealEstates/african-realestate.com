@@ -70,9 +70,7 @@ export default function CheckoutForm({
     >
       <form onSubmit={handleSubmit} className="mt-5">
         <PaymentElement />
-        <AddressElement
-          options={{ mode: "shipping", allowedCountries: ["US"] }}
-        />
+        <AddressElement options={{ mode: "shipping", allowedCountries: [] }} />
         <div className="flex justify-end gap-5 mt-5">
           <Button onClick={() => setShowCheckoutForm(false)} disabled={loading}>
             Cancel

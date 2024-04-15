@@ -154,6 +154,7 @@ export const landUnits = [
 export const subscriptionPlans = [
   {
     name: "Standard",
+    sell: "Everything to start",
     price: 0,
     PropertiesLimit: 3,
     imagesPropertiesLimit: 5,
@@ -168,6 +169,7 @@ export const subscriptionPlans = [
   },
   {
     name: "Silver",
+    sell: "Everything you need",
     price: 10,
     PropertiesLimit: 10,
     imagesPropertiesLimit: 10,
@@ -182,6 +184,7 @@ export const subscriptionPlans = [
   },
   {
     name: "Gold",
+    sell: "Everything to sell all",
     price: 50,
     PropertiesLimit: 20,
     imagesPropertiesLimit: 25,

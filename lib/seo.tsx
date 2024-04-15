@@ -19,7 +19,7 @@ export const getSEOTags = ({
     metadataBase: new URL(
       process.env.NODE_ENV === "development"
         ? "http://localhost:3000/"
-        : "https://www.african-realestate.com/"
+        : `https://${config.domainName}/`
     ),
     openGraph: {
       title: openGraph?.title || config.appName,

@@ -5,5 +5,5 @@ interface PageTitleProps {
 }
 
 export default function PageTitle({ title }: PageTitleProps) {
-  return <h2 className="text-xl font-bold text-[#1890ff] mb-5">{title}</h2>;
+  return <h2 className="text-xl font-bold text-indigo-500 mb-5">{title}</h2>;
 }
