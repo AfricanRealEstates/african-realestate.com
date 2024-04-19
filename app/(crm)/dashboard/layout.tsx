@@ -1,26 +1,18 @@
-import Login from "@/app/(auth)/login/page";
-import Header from "@/components/dashboard/header";
-import Sidebar from "@/components/dashboard/sidebar";
-import Sidenav from "@/components/dashboard/sidenav";
-import { authOptions } from "@/lib/auth-options";
-import { getServerSession } from "next-auth";
-import React, { ReactNode } from "react";
+import SideNav from "@/components/dashboard/updated/side-nav";
+import React from "react";
 
-// Do not cache our admin page
-export const dynamic = "force-dynamic";
-
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children,
 }: {
-  children: ReactNode;
+  children: React.ReactNode;
 }) {
   return (
-    <div className="grid h-full w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-      {/* <Sidebar /> */}
-      <Sidenav />
-      <main className="flex flex-1 flex-col">
-        <Header />
-        <section className="gap-4 p-4 lg:gap-6 lg:p-6">{children}</section>
+    <div className="flex h-screen relative flex-col md:flex-row md:overflow-hidden">
+      <div className="w-20 flex-none lg:w-64 md:border-r">
+        <SideNav />
+      </div>
+      <main className="flex-grow mt-12 md:mt-0 flex-1 w-full md:overflow-y-auto sm:p-6 md:p-12 max-w-7xl mx-auto">
+        {children}
       </main>
     </div>
   );

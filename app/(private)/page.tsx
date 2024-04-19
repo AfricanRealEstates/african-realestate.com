@@ -24,8 +24,8 @@ export default async function Home() {
 
       <Testing />
       {/* <Hero /> */}
-      <Sale />
       <FeaturedProperties />
+      <Sale />
       <HowItWorks />
       <Facts />
       <CTA />

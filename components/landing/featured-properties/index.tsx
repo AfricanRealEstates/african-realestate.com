@@ -58,7 +58,7 @@ export default async function FeaturedProperties() {
   if (!properties) return <>No Featured properties</>;
   return (
     <div
-      className={`${plusJakartaSans.className} bg-neutral-50 text-[#4e4e4e]`}
+      className={`${plusJakartaSans.className} border-b border-neutral-100  mb-4 text-[#4e4e4e]`}
     >
       <div className="mx-auto w-[95%] max-w-7xl px-5 py-9 md:px-10 md:py-12">
         <section className="flex items-center justify-start gap-12 flex-col w-full">
@@ -70,16 +70,16 @@ export default async function FeaturedProperties() {
               Explore our featured properties
             </p>
           </div>
-          {/* <div className="mx-auto mb-8 gap-8 grid w-full max-w-screen-xl grid-cols-[repeat(auto-fill,_minmax(335px,1fr))] justify-center overflow-hidden">
-            {properties.slice(0, 6).map((property) => {
+          <div className="mx-auto mb-8 gap-8 grid w-full max-w-screen-xl grid-cols-[repeat(auto-fill,_minmax(365px,1fr))] justify-center">
+            {properties.slice(0, 3).map((property) => {
               return <PropertyCard key={property.id} property={property} />;
             })}
-          </div> */}
+          </div>
 
-          <ProductGridSection
+          {/* <ProductGridSection
             title="Most popular"
             propertiesFetcher={getMostPopularProperties}
-          />
+          /> */}
           {/* <ProductGridSection
             title="Newest"
             propertiesFetcher={getNewestProperties}

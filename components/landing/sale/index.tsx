@@ -33,8 +33,8 @@ const Arrow = ({ extraStyle }: { extraStyle: string }) => {
 const Step = ({ step, text }: { step: number; text: string }) => {
   return (
     <div className="w-full md:w-48 flex flex-col gap-2 items-center justify-center">
-      <div className="flex size-9 items-center justify-center rounded-full bg-[#276ef1] ">
-        <p className="text-xl font-bold text-white">{step}</p>
+      <div className="flex size-9 items-center justify-center rounded-full bg-violet-50 ">
+        <p className="text-xl font-bold text-violet-500">{step}</p>
       </div>
       <h3 className="font-bold">{text}</h3>
     </div>
@@ -43,7 +43,7 @@ const Step = ({ step, text }: { step: number; text: string }) => {
 
 export default function Sales() {
   return (
-    <section className={`${raleway.className}`}>
+    <section className={`${raleway.className} border-b border-neutral-100 `}>
       <div className="mx-auto w-[95%] max-w-7xl px-5 py-8 md:px-10 md:py-10 lg:py-12">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-center text-3xl font-bold md:text-5xl mt-4 mb-6 md:mb-8 text-[#181a20]">

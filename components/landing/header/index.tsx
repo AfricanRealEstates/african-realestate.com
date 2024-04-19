@@ -12,6 +12,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 const nunitoSans = Nunito_Sans({
   subsets: ["latin"],
@@ -191,7 +192,7 @@ export default function Header() {
                     return (
                       <Link
                         href={href}
-                        key={href}
+                        key={label}
                         className="text-[#4a4a4a] no-underline text-base"
                       >
                         {label}
