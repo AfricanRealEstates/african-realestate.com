@@ -102,10 +102,10 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           </div>
           <Link
             href={`/properties/${id}`}
-            className="flex gap-3 justify-between mt-3"
+            className="group flex gap-3 justify-between mt-3 transition-all ease-linear"
           >
-            <div className="text-start">
-              <h4 className="text-lg font-bold capitalize leading-6 line-clamp-2">
+            <div className="text-start group-hover:text-blue-400">
+              <h4 className="text-lg text-neutral-600 font-bold capitalize leading-6 line-clamp-2">
                 {title}
               </h4>
               {/* <div className="text-base line-clamp-2 mt-2 flex items-center gap-2">
@@ -136,7 +136,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
                   <Bed className="size-5" />
                   <span className="font-extrabold">{bedrooms}</span>
                 </div>
-                <div className="text-sm font-semibold uppercase">Beds</div>
+                <div className="text-xs font-semibold uppercase">Beds</div>
               </div>
             )}
             {bathrooms > 0 && (
@@ -145,7 +145,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
                   <Bath className="size-5" />
                   <span className="font-extrabold">{bathrooms}</span>
                 </div>
-                <div className="text-sm font-semibold uppercase">Baths</div>
+                <div className="text-xs font-semibold uppercase">Baths</div>
               </div>
             )}
 
@@ -157,7 +157,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
                     {convertedLandSize.toFixed(3)}
                   </span>
                 </div>
-                <div className="text-sm font-semibold uppercase">Acres</div>
+                <div className="text-xs font-semibold uppercase">Acres</div>
               </div>
             )}
           </div>

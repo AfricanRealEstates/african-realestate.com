@@ -26,12 +26,14 @@ export default function Properties({ searchParams }: { searchParams: string }) {
       <Filter searchParams={searchParams} />
       <Suspense fallback={<Loader />} key={key}>
         {searchParams.length === 0 ? (
-          <div className="flex h-full items-center justify-center">
+          <div className="flex h-full items-center justify-center mt-8">
             No properties matched your search query. Please try again with a
             different term.
           </div>
         ) : (
-          <AllProperties searchParams={searchParams} />
+          <div className="mt-8">
+            <AllProperties searchParams={searchParams} />
+          </div>
         )}
       </Suspense>
     </div>

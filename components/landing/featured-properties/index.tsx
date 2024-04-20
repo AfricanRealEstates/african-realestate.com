@@ -17,6 +17,7 @@ import PropertyCard, {
 } from "@/components/properties/property-card";
 import { Button } from "@/components/ui/button";
 import { cache } from "@/lib/cache";
+import FeaturedCard from "@/components/properties/featured-card";
 
 const plusJakartaSans = Raleway({
   subsets: ["latin"],
@@ -60,7 +61,7 @@ export default async function FeaturedProperties() {
     <div
       className={`${plusJakartaSans.className} border-b border-neutral-100  mb-4 text-[#4e4e4e]`}
     >
-      <div className="mx-auto w-[95%] max-w-7xl px-5 py-9 md:px-10 md:py-12">
+      <div className="mx-auto w-[95%] px-3 py-9 md:px-6 md:py-12">
         <section className="flex items-center justify-start gap-12 flex-col w-full">
           <div className="flex flex-col items-center justify-center gap-5">
             <h2 className="text-center text-3xl font-bold md:text-5xl mt-4 text-[#181a20]">
@@ -70,9 +71,14 @@ export default async function FeaturedProperties() {
               Explore our featured properties
             </p>
           </div>
-          <div className="mx-auto mb-8 gap-8 grid w-full max-w-screen-xl grid-cols-[repeat(auto-fill,_minmax(365px,1fr))] justify-center">
+          <div className="mx-auto mb-8 gap-8 grid w-full max-w-screen-xl grid-cols-[repeat(auto-fill,_minmax(405px,1fr))] justify-center">
             {properties.slice(0, 3).map((property) => {
-              return <PropertyCard key={property.id} property={property} />;
+              return (
+                <>
+                  {/* <PropertyCard key={property.id} property={property} /> */}
+                  <FeaturedCard key={property.id} property={property} />
+                </>
+              );
             })}
           </div>
 

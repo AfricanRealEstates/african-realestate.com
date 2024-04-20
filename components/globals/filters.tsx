@@ -84,13 +84,6 @@ export default function Filters({ searchParams }: { searchParams: any }) {
           )}
         </div>
         <div className="flex gap-5">
-          <Button
-            onClick={() => {
-              router.push(pathname);
-            }}
-          >
-            Clear
-          </Button>
           <button
             type="submit"
             onClick={() => {
@@ -100,6 +93,13 @@ export default function Filters({ searchParams }: { searchParams: any }) {
           >
             show Filters
           </button>
+          <Button
+            onClick={() => {
+              router.push(pathname);
+            }}
+          >
+            Clear
+          </Button>
           {/* <Button
             type="primary"
             onClick={() => {
