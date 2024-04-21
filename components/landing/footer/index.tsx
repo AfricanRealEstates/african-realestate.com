@@ -1,3 +1,5 @@
+import { Button } from "@/components/utils/Button";
+import { TextField } from "@/components/utils/Fields";
 import { ArrowRight, HomeIcon, Mail } from "lucide-react";
 import { Raleway } from "next/font/google";
 import Image from "next/image";
@@ -255,7 +257,21 @@ export default function Footer() {
             </p>
           </div>
           <div className="mb-4 w-full max-w-[400px]">
-            <form action="#" method="POST" className="">
+            <form action="" className="flex w-full justify-center md:w-auto">
+              <TextField
+                type="email"
+                aria-label="Email address"
+                placeholder="Email address"
+                autoComplete="email"
+                required
+                className="w-60 min-w-0 shrink"
+              />
+              <Button type="submit" color="cyan" className="ml-4 flex-none">
+                <span className="hidden lg:inline">Join our newsletter</span>
+                <span className="lg:hidden">Join newsletter</span>
+              </Button>
+            </form>
+            {/* <form action="#" method="POST" className="">
               <div className="flex flex-col items-center sm:flex-row sm:justify-center">
                 <div className="flex-1 w-full min-w-0 sm:px-0">
                   <div className="relative text-gray-400 focus-within:text-gray-600">
@@ -294,24 +310,6 @@ export default function Footer() {
                   Get instant access
                 </button>
               </div>
-            </form>
-            {/* <form className="group bg-neutral-50 flex w-96 items-center justify-between rounded border border-neutral-400 p-2">
-              <label htmlFor="email" className="mr-2 relative block w-full">
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  placeholder="email address"
-                  className="peer w-full rounded border text-gray-600 border-neutral-300 p-2 text-sm focus:border-indigo-500 focus:outline-none ring-1 ring-neutral-500/0 ring-offset-0 transition-shadow focus:ring-indigo-500 focus:ring-offset-2"
-                />
-                <span className="absolute left-1 top-0 -translate-y-1/2 scale-100 bg-white text-indigo-600 px-0.5 text-xs font-medium transition-transform peer-focus:scale-0">
-                  Email
-                </span>
-              </label>
-              <button className="flex items-center gap-2 rounded-md bg-indigo-600 px-4 py-2 text-white shadow-lg transition-all hover:-translate-y-0.5 active:translate-y-0 active:bg-indigo-700 active:shadow-inner">
-                Subscribe
-                <ArrowRight className="transition-transform" />
-              </button>
             </form> */}
           </div>
         </div>
