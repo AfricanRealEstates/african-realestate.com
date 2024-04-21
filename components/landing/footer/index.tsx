@@ -252,7 +252,7 @@ export default function Footer() {
         <div className="flex justify-between max-[991px]:flex-col max-[991px]:gap-8 text-white">
           <div className="flex flex-col items-start gap-2">
             <h5 className="text-xl font-bold">Join our newsletter</h5>
-            <p className="text-[#bebdbd] sm:text-sm">
+            <p className="text-[#bebdbd] sm:text-sm ">
               Keep up to date with everything African Real Estate updates & news
             </p>
           </div>
@@ -266,7 +266,7 @@ export default function Footer() {
                 required
                 className="w-60 min-w-0 shrink"
               />
-              <Button type="submit" color="cyan" className="ml-4 flex-none">
+              <Button type="submit" color="blue" className="ml-4 flex-none">
                 <span className="hidden lg:inline">Join our newsletter</span>
                 <span className="lg:hidden">Join newsletter</span>
               </Button>

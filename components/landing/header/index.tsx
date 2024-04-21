@@ -12,7 +12,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { v4 as uuidv4 } from "uuid";
 
 const nunitoSans = Nunito_Sans({
@@ -49,10 +50,14 @@ const adminMenu = [
   { name: "Agents", path: "/admin/agents" },
 ];
 
+const supportMenu = [{ name: "Home", path: "/" }];
+
 export default function Header() {
   const [currentUser = null, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
   const [menuToShow = agentMenu, setMenuToShow] = useState<any>(agentMenu);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const timeoutRef = useRef<number | null>(null);
   const [mobileView, setMobileView] = useState(false);
   const [stickyMenu, setStickyMenu] = useState(false);
   const toggleMobileView = () => {
@@ -78,6 +83,18 @@ export default function Header() {
       setStickyMenu(false);
     }
   };
+
+  // Update menuToShow based on user's role
+  useEffect(() => {
+    if (user?.role === "ADMIN") {
+      setMenuToShow(adminMenu);
+    } else if (user?.role === "AGENT") {
+      setMenuToShow(agentMenu);
+    } else {
+      // Default to agent menu if role is not specified or unrecognized
+      setMenuToShow(supportMenu);
+    }
+  }, [user]);
 
   useEffect(() => {
     window.addEventListener("scroll", handleStickyMenu);
@@ -117,14 +134,44 @@ export default function Header() {
                 </Link>
               </div>
               <ul className="hidden lg:flex lg:items-center lg:space-x-10">
-                {navLinks.map((navLink) => {
+                {navLinks.map((navLink, index) => {
                   const { href, label } = navLink;
                   return (
-                    <li key={label}>
-                      <Link href={href} className="text-base font-medium">
-                        {label}
-                      </Link>
-                    </li>
+                    <Link
+                      key={label}
+                      href={href}
+                      className="relative -mx-3 -my-2 rounded-lg px-3 py-2 text-base transition-colors delay-0 hover:delay-0"
+                      onMouseEnter={() => {
+                        if (timeoutRef.current) {
+                          window.clearTimeout(timeoutRef.current);
+                        }
+                        setHoveredIndex(index);
+                      }}
+                      onMouseLeave={() => {
+                        timeoutRef.current = window.setTimeout(() => {
+                          setHoveredIndex(null);
+                        }, 200);
+                      }}
+                    >
+                      <AnimatePresence>
+                        {hoveredIndex === index && (
+                          <motion.span
+                            className="absolute inset-0 rounded-lg bg-black/10"
+                            layoutId="hoverBackground"
+                            initial={{ opacity: 0 }}
+                            animate={{
+                              opacity: 1,
+                              transition: { duration: 0.15 },
+                            }}
+                            exit={{
+                              opacity: 0,
+                              transition: { duration: 0.15 },
+                            }}
+                          />
+                        )}
+                      </AnimatePresence>
+                      <span className="relative z-10">{label}</span>
+                    </Link>
                   );
                 })}
               </ul>
@@ -165,14 +212,6 @@ export default function Header() {
                 <Button color="blue" href={`/agent/properties/create-property`}>
                   Sell fast
                 </Button>
-                {/* <button
-                  onClick={() =>
-                    router.push("/agent/properties/create-property")
-                  }
-                  className="text-base inline-flex items-center justify-center flex-shrink-0 w-auto px-4 py-2 mt-4 font-semibold text-white transition-all duration-200 bg-blue-600 border border-transparent rounded-full sm:mt-0 sm:w-auto hover:bg-blue-700 focus:bg-blue-700"
-                >
-                  Sell Fast
-                </button> */}
               </div>
               <div className="lg:hidden md:flex flex-col justify-end">
                 <button
@@ -186,10 +225,7 @@ export default function Header() {
               </div>
             </div>
             {mobileView && (
-              <section
-                // ref={ref}
-                className="shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)] transition-transform ease-in-out fixed right-0 z-20 gap-y-6 mt-0 bg-white w-full p-8 text-base flex flex-col  lg:hidden"
-              >
+              <section className="shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)] transition-transform ease-in-out fixed right-0 z-20 gap-y-6 mt-0 bg-white w-full p-8 text-base flex flex-col  lg:hidden">
                 <nav className="flex flex-col space-y-4 shadow-[0_1px_0_#f7f7f7] pb-4">
                   {navLinks.map((link) => {
                     const { href, label } = link;

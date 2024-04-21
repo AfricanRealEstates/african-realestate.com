@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/utils/Button";
 import { ArrowRight } from "lucide-react";
 import { Raleway } from "next/font/google";
 import Image from "next/image";
@@ -42,13 +43,16 @@ export default function CTA() {
               })}
             </div>
           </article>
-          <button
+          <Button href="/agent/properties/create-property" color="blue">
+            Sell fast
+          </Button>
+          {/* <button
             onClick={() => router.push("/agent/properties/create-property")}
             className="flex items-center gap-2 rounded-md bg-indigo-600 px-6 py-3 font-semibold text-white shadow-lg transition-all hover:-translate-y-0.5 active:translate-y-0 active:bg-indigo-700 active:shadow-inner"
           >
             Sell fast
             <ArrowRight className="transition-transform" />
-          </button>
+          </button> */}
           {/* <Link
             href="/agent/properties/create-property"
             className="mb-4 no-underline flex flex-row items-center px-8 py-4 font-semibold group transition-colors duration-150 ease-in-out bg-[rgb(24,26,32,1)] text-[#bebdbd] hover:text-white [box-shadow:rgb(171,_196,245)-8px_8px] hover:[box-shadow:rgb(171,_196,_245)_0px_0px]"
