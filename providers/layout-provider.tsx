@@ -4,10 +4,12 @@ import UserButton from "@/components/auth/user-button";
 import Loader from "@/components/globals/loader";
 import Footer from "@/components/landing/footer";
 import Header from "@/components/landing/header";
+import { Container } from "@/components/globals/container";
 
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { User } from "@prisma/client";
 import { Button, Dropdown } from "antd";
+import { Button as StyledButton } from "@/components/utils/Button";
 import { ArrowRight, HomeIcon, Menu, X } from "lucide-react";
 import { Raleway } from "next/font/google";
 import Link from "next/link";
@@ -342,11 +344,30 @@ export default function LayoutProvider({ children }: Props) {
     if (loading) return <Loader />;
     if (isAdminRoute && user?.role !== "ADMIN")
       return (
-        <div className="mx-auto w-[95%] max-w-7xl px-5 py-24 md:px-10 md:py-24 lg:py-32">
-          <h2 className="mb-8 text-3xl font-bold md:text-5xl lg:mb-11 text-[#181a20]">
-            You are not authrorized to view this page
-          </h2>
-        </div>
+        <>
+          <Container className="relative isolate flex h-screen flex-col items-center justify-center py-20 text-center sm:py-32">
+            <p className="text-sm font-semibold text-cyan-900">401</p>
+            <h1 className="mt-2 text-3xl font-medium tracking-tight text-cyan-500">
+              Unauthorized Page Access
+            </h1>
+            <p className="mt-2 text-lg text-gray-600">
+              Sorry, you&apos;re not authorized to access this page.
+            </p>
+            <StyledButton
+              href="/"
+              variant={`solid`}
+              color="cyan"
+              className="mt-8"
+            >
+              Go back home
+            </StyledButton>
+          </Container>
+        </>
+        // <div className="mx-auto w-[95%] max-w-7xl px-5 py-24 md:px-10 md:py-24 lg:py-32">
+        //   <h2 className="mb-8 text-3xl font-bold md:text-5xl lg:mb-11 text-[#181a20]">
+        //     You are not authorized to view this page
+        //   </h2>
+        // </div>
       );
     return <section className="">{children}</section>;
   };

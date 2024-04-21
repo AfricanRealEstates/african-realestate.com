@@ -26,7 +26,7 @@ enum UserRole {
   USER
   AGENT
   ADMIN
-  DEVELOPER
+  SUPPORT
 }
 
 model User {
@@ -36,6 +36,7 @@ model User {
   emailVerified DateTime?
   image         String?
   role          UserRole       @default(USER)
+  permissions   String[]
   password      String?
   isVerified    Boolean        @default(false)
   isActive      Boolean        @default(true)

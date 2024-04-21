@@ -82,6 +82,7 @@ export const authOptions: NextAuthOptions = {
                         name: existingUser.name,
                         email: existingUser.email,
                         role: existingUser.role,
+                        permissions: existingUser.permissions,
                         createdAt: existingUser.createdAt,
                         isActive: existingUser.isActive
                     };
@@ -111,6 +112,7 @@ export const authOptions: NextAuthOptions = {
                 name: dbUser.name,
                 email: dbUser.email,
                 role: dbUser.role,
+                permissions: dbUser.permissions,
                 picture: dbUser.image,
             };
         },
@@ -121,6 +123,7 @@ export const authOptions: NextAuthOptions = {
                 session.user.email = token.email;
                 session.user.image = token.picture;
                 session.user.role = token.role;
+                session.user.permissions = token.permissions;
 
 
             }

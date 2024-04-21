@@ -1,9 +1,10 @@
 "use client";
 
+import { Button } from "@/components/utils/Button";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { UserButton } from "@clerk/nextjs";
 import { User } from "@prisma/client";
-import { Button, Dropdown } from "antd";
+import { Dropdown } from "antd";
 import { ArrowRight, HomeIcon, Menu, X } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { Nunito_Sans } from "next/font/google";
@@ -156,19 +157,22 @@ export default function Header() {
                     </Dropdown>
                   </div>
                 ) : (
-                  <Link href="/login">Sign in</Link>
+                  <Button variant="solid" color="white" href="/login">
+                    Log in
+                  </Button>
                 )}
 
-                <button
+                <Button color="blue" href={`/agent/properties/create-property`}>
+                  Sell fast
+                </Button>
+                {/* <button
                   onClick={() =>
                     router.push("/agent/properties/create-property")
                   }
                   className="text-base inline-flex items-center justify-center flex-shrink-0 w-auto px-4 py-2 mt-4 font-semibold text-white transition-all duration-200 bg-blue-600 border border-transparent rounded-full sm:mt-0 sm:w-auto hover:bg-blue-700 focus:bg-blue-700"
-                  // className="group/follow flex items-center gap-2 rounded-full bg-[#276ef1] px-6 py-3 font-semibold text-white shadow-lg transition-all hover:-translate-y-0.5 active:translate-y-0 focus:opacity-70 active:shadow-inner"
                 >
                   Sell Fast
-                  {/* <ArrowRight className="transition-transform group-hover/follow:-rotate-45 group-active/follow:rotate-0" /> */}
-                </button>
+                </button> */}
               </div>
               <div className="lg:hidden md:flex flex-col justify-end">
                 <button
