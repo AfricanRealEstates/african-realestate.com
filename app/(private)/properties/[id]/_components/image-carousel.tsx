@@ -57,7 +57,7 @@ export default function ImageCarousel({ property }: Props) {
           <ChevronRight />
         </button>
       </div>
-      <div className="h-8 min-w-fit rounded-sm px-2 absolute bottom-6 right-3 flex cursor-pointer items-center justify-center gap-2 bg-white font-medium leading-6">
+      <div className="h-8 min-w-fit rounded-sm px-2 absolute top-3 right-3 flex cursor-pointer items-center justify-center gap-2 bg-white font-medium leading-6">
         {property.images.length} Photos
       </div>
     </div>

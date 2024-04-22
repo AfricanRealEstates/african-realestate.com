@@ -86,7 +86,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
                   {propertyType}
                 </span>
               </span> */}
-              <span className="inline-flex items-center gap-1 rounded-sm px-2 py-1 bg-rose-50 text-rose-400 text-sm overflow-hidden">
+              <span className="inline-flex items-center gap-1 rounded-sm px-2 py-1 bg-neutral-50 text-indigo-600 text-sm overflow-hidden">
                 <span className="overflow-hidden text-ellipsis whitespace-nowrap">
                   {propertyDetails}
                 </span>
