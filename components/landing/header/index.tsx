@@ -25,11 +25,11 @@ const nunitoSans = Nunito_Sans({
 const navLinks = [
   {
     label: "Let",
-    href: "/properties",
+    href: "/let",
   },
   {
     label: "Buy",
-    href: "/properties",
+    href: "/buy",
   },
   {
     label: "Dashboard",

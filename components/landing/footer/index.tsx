@@ -135,25 +135,25 @@ export default function Footer() {
               <p className="font-bold uppercase text-white">Solutions</p>
             </div>
             <Link
-              href="#"
+              href="sale"
               className="py-2 text-sm font-normal text-[#bebdbd] transition hover:text-white no-underline"
             >
               For Sale
             </Link>
             <Link
-              href="#"
+              href="let"
               className="py-2 text-sm font-normal text-[#bebdbd] transition hover:text-white no-underline"
             >
               For Let
             </Link>
             <Link
-              href="#"
+              href="/property-management"
               className="py-2 text-sm font-normal text-[#bebdbd] transition hover:text-white no-underline"
             >
               Property Management
             </Link>
             <Link
-              href="#"
+              href="/agencies"
               className="py-2 text-sm font-normal text-[#bebdbd] transition hover:text-white no-underline"
             >
               Agency
@@ -171,19 +171,19 @@ export default function Footer() {
               Properties
             </Link>
             <Link
-              href="#"
+              href="/contact"
               className="py-2 text-sm font-normal text-[#bebdbd] transition hover:text-white no-underline"
             >
               Agent Move
             </Link>
             <Link
-              href="#"
+              href="/blog"
               className="py-2 text-sm font-normal text-[#bebdbd] transition hover:text-white no-underline"
             >
               Guides
             </Link>
             <Link
-              href="#"
+              href="/contact"
               className="py-2 text-sm font-normal text-[#bebdbd] transition hover:text-white no-underline"
             >
               Valuations
@@ -194,19 +194,19 @@ export default function Footer() {
               <p className="font-bold uppercase text-white">Support</p>
             </div>
             <Link
-              href="#"
+              href="/contact"
               className="py-2 text-sm font-normal text-[#bebdbd] transition hover:text-white no-underline"
             >
               Contact
             </Link>
             <Link
-              href="#"
+              href="/contact"
               className="py-2 text-sm font-normal text-[#bebdbd] transition hover:text-white no-underline"
             >
               Pricing
             </Link>
             <Link
-              href="#"
+              href="/contact"
               className="py-2 text-sm font-normal text-[#bebdbd] transition hover:text-white no-underline"
             >
               Query
