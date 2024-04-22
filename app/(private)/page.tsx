@@ -19,7 +19,7 @@ export default async function Home() {
   const session = await getServerSession(authOptions);
   console.log(session);
   return (
-    <div className="">
+    <div className="overflow-hidden">
       {renderSchemaTags()}
       {/* <div className="bg-[#181a20] p-8">
       <h1 className="text-[#eb6753] bg-[#ffffff0a] p-4">Home page</h1>
