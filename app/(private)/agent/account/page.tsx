@@ -5,6 +5,7 @@ import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { getSEOTags } from "@/lib/seo";
+import { redirect } from "next/navigation";
 
 export const metadata = getSEOTags({
   title: "Agent - Account | African Real Estate",
@@ -14,7 +15,8 @@ export const metadata = getSEOTags({
 export default async function Account() {
   // const clerkUser = await currentUser();
   const user = await getServerSession(authOptions);
-  console.log(user);
+  if (!user) redirect("/login");
+
   const propertiesCount = await prisma.property.count({
     where: { userId: user?.user.id },
   });

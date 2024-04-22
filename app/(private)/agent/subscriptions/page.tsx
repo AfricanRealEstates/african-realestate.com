@@ -6,6 +6,7 @@ import prisma from "@/lib/prisma";
 import { getSEOTags } from "@/lib/seo";
 import { CircleCheckBig } from "lucide-react";
 import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 import React from "react";
 
 export const metadata = getSEOTags({
@@ -15,10 +16,12 @@ export const metadata = getSEOTags({
 
 export default async function Subscriptions() {
   const user = await getServerSession(authOptions);
+  if (!user) redirect("/login");
   const userSubscription: any = await prisma.subscription.findFirst({
     where: { userId: user?.user?.id },
     orderBy: { createdAt: "desc" },
   });
+
   return (
     <>
       <section className="w-full text-gray-900 bg-white px-4 lg:px-8 py-32 lg:py-40 relative overflow-hidden">

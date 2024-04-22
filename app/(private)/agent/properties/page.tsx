@@ -7,6 +7,7 @@ import PropertiesTable from "@/components/properties/properties-table";
 import { authOptions } from "@/lib/auth-options";
 import { getSEOTags } from "@/lib/seo";
 import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 import React, { Suspense } from "react";
 
 export const metadata = getSEOTags({
@@ -20,6 +21,8 @@ export default async function Properties({
   searchParams: any;
 }) {
   const key = JSON.stringify(searchParams);
+  const user = await getServerSession(authOptions);
+  if (!user) redirect("/login");
   return (
     <div className="w-[95%] lg:max-w-7xl mx-auto py-[90px] lg:py-[120px]">
       <section className="my-5 flex justify-between items-center">

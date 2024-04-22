@@ -5,6 +5,7 @@ import UserQueriesTable from "@/components/queries/user-queries-table";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { getSEOTags } from "@/lib/seo";
+import { redirect } from "next/navigation";
 
 export const metadata = getSEOTags({
   title: "Agent - Queries | African Real Estate",
@@ -13,6 +14,7 @@ export const metadata = getSEOTags({
 
 export default async function Queries() {
   const user = await getServerSession(authOptions);
+  if (!user) redirect("/login");
   console.log(user);
   const queries = await prisma.query.findMany({
     where: {

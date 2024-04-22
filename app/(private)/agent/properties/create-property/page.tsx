@@ -6,6 +6,7 @@ import prisma from "@/lib/prisma";
 import { Property } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import React from "react";
 
 export default async function CreateProperty({
@@ -14,6 +15,7 @@ export default async function CreateProperty({
   searchParams: any;
 }) {
   const user = await getServerSession(authOptions);
+  if (!user) redirect("/login");
   const cloneFrom = searchParams?.cloneFrom || "";
 
   let property: Property | null = null;
