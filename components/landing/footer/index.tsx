@@ -135,13 +135,13 @@ export default function Footer() {
               <p className="font-bold uppercase text-white">Solutions</p>
             </div>
             <Link
-              href="sale"
+              href="/buy"
               className="py-2 text-sm font-normal text-[#bebdbd] transition hover:text-white no-underline"
             >
               For Sale
             </Link>
             <Link
-              href="let"
+              href="/let"
               className="py-2 text-sm font-normal text-[#bebdbd] transition hover:text-white no-underline"
             >
               For Let

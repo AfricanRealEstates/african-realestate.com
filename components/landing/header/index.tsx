@@ -49,7 +49,10 @@ const adminMenu = [
   { name: "Agents", path: "/admin/agents" },
 ];
 
-const supportMenu = [{ name: "Home", path: "/" }];
+const supportMenu = [
+  { name: "Home", path: "/" },
+  { name: "Properties", path: "/agent/properties" },
+];
 
 export default function Header() {
   const [currentUser = null, setCurrentUser] = useState<User | null>(null);
