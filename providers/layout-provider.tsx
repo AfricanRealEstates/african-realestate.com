@@ -1,12 +1,10 @@
 "use client";
 
-import UserButton from "@/components/auth/user-button";
 import Loader from "@/components/globals/loader";
 import Footer from "@/components/landing/footer";
 import Header from "@/components/landing/header";
 import { Container } from "@/components/globals/container";
 
-import { useCurrentUser } from "@/hooks/use-current-user";
 import { User } from "@prisma/client";
 import { Button, Dropdown } from "antd";
 import { Button as StyledButton } from "@/components/utils/Button";
@@ -15,6 +13,7 @@ import { Raleway } from "next/font/google";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 const nunitoSans = Raleway({
   subsets: ["latin"],
@@ -65,7 +64,8 @@ export default function LayoutProvider({ children }: Props) {
   const pathname = usePathname();
   const router = useRouter();
 
-  const user = useCurrentUser();
+  const session = useSession();
+  const user = session.data?.user;
 
   const isHomePage = pathname === "/";
 
@@ -401,10 +401,11 @@ export default function LayoutProvider({ children }: Props) {
 
   return (
     <>
-      {pathname.includes("/dashboard") ? ( // Check if the path includes /dashboard
-        <>
-          {children} {/* Render children directly without header and footer */}
-        </>
+      {pathname.includes("/dashboard") ||
+      pathname.includes("/register") ||
+      pathname.includes("/login") ||
+      pathname.includes("/verify-token") ? (
+        <>{children}</>
       ) : (
         <>
           {getHeader()} {/* Render header */}

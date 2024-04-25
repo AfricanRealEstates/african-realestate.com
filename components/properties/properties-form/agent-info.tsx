@@ -4,8 +4,9 @@ import { PropertiesFormStepProps } from "./index";
 import { Button, Form, Input, Select } from "antd";
 import { uploadFilesToFirebase } from "@/lib/utils/upload-media";
 import { addProperty, editProperty } from "@/actions/properties";
-import toast from "react-hot-toast";
 import { useRouter, useParams } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
+import { Loader2 } from "lucide-react";
 
 export default function AgentInfo({
   currentStep,
@@ -16,6 +17,7 @@ export default function AgentInfo({
   setLoading,
   isEdit = false,
 }: PropertiesFormStepProps) {
+  const { toast } = useToast();
   const { id }: any = useParams();
   const router = useRouter();
   const onSubmit = async (values: any) => {
@@ -48,13 +50,16 @@ export default function AgentInfo({
       if (res.error) throw new Error(res.error);
       // Toast messages
       if (isEdit) {
-        toast.success("Edit saved successfully");
+        toast({ description: "Edit saved successfully" });
       } else {
-        toast.success("Property added successfully");
+        toast({ description: "Property added successfully" });
       }
       router.push(`/agent/properties`);
     } catch (error: any) {
-      toast.error("Failed to create property");
+      toast({
+        variant: "destructive",
+        description: "Failed to create property",
+      });
       console.error(error.message);
     } finally {
       setLoading(false);
@@ -160,22 +165,6 @@ export default function AgentInfo({
           />
         </Form.Item>
       </section>
-      {/* <div className="flex justify-end gap-5">
-        <Button
-          disabled={currentStep === 0}
-          onClick={() => setCurrentStep(currentStep - 1)}
-        >
-          Back
-        </Button>
-        <Button type="primary" htmlType="submit" loading={loading}>
-          {loading ? (
-            <>{isEdit ? "Saving..." : "Submitting..."}</>
-          ) : (
-            <>{isEdit ? "Save Edited Property" : "Save Property"}</>
-          )}
-        </Button>
-      </div> */}
-
       <div className="flex items-center justify-end gap-5">
         <Button
           disabled={currentStep === 0}
@@ -189,7 +178,19 @@ export default function AgentInfo({
           className="inline-block  cursor-pointer items-center rounded-md bg-blue-300 hover:bg-blue-400 transition-colors px-5 py-2.5 text-center font-semibold text-white"
         >
           {loading ? (
-            <>{isEdit ? "Saving..." : "Submitting..."}</>
+            <>
+              {!isEdit ? (
+                <div className="flex items-center">
+                  <Loader2 className="size-3 animate-spin mr-2" />
+                  Saving...
+                </div>
+              ) : (
+                <div className="flex items-center">
+                  <Loader2 className="size-3 animate-spin mr-2" />
+                  Submitting...
+                </div>
+              )}
+            </>
           ) : (
             <>{isEdit ? "Save Edited Property" : "Save Property"}</>
           )}

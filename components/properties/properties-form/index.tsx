@@ -56,19 +56,20 @@ export default function PropertiesForm({
       title: "Location Info",
       content: <LocationInfo {...commonSteps} />,
     },
-    {
-      title: "Amenities",
-      content: <Amenities {...commonSteps} />,
-    },
+
     {
       title: "Media",
       content: <Media {...commonSteps} />,
     },
-
     {
-      title: "Agent Info",
-      content: <AgentInfo {...commonSteps} />,
+      title: "Amenities",
+      content: <Amenities {...commonSteps} />,
     },
+
+    // {
+    //   title: "Agent Info",
+    //   content: <AgentInfo {...commonSteps} />,
+    // },
   ];
 
   useEffect(() => {

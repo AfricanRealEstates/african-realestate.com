@@ -19,7 +19,7 @@ export default function ImageCarousel({ property }: Props) {
         ref={ref}
         autoplay
         className="overflow-hidden rounded-lg"
-        style={{ maxHeight: "500px" }} // Set max height for the Carousel
+        style={{ maxHeight: "550px" }} // Set max height for the Carousel
       >
         {property.images &&
           property.images.map((image) => {
@@ -29,8 +29,8 @@ export default function ImageCarousel({ property }: Props) {
                   height={500}
                   width={500}
                   alt="Property Image"
-                  className="object-cover object-center w-full h-[500px] overflow-hidden lg:h-full bg-gradient-to-l from-black to-75%"
-                  style={{ maxHeight: "500px" }} // Ensure all images have max height
+                  className="object-cover object-center w-full h-[550px] overflow-hidden lg:h-full bg-gradient-to-l from-black to-75%"
+                  style={{ maxHeight: "550px" }} // Ensure all images have max height
                   src={image}
                 />
               </div>

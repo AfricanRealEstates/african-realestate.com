@@ -1,19 +1,19 @@
-import SideNav from "@/components/dashboard/updated/side-nav";
-import React from "react";
+"use client";
+import Header from "@/components/dashboard/header";
+import Sidebar from "@/components/dashboard/sidebar";
+import React, { useState } from "react";
 
-export default function DashboardLayout({
-  children,
-}: {
+interface DashboardLayoutProps {
   children: React.ReactNode;
-}) {
+}
+
+export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
-    <div className="flex h-screen relative flex-col md:flex-row md:overflow-hidden">
-      <div className="w-20 flex-none lg:w-64 md:border-r">
-        <SideNav />
-      </div>
-      <main className="flex-grow mt-12 md:mt-0 flex-1 w-full md:overflow-y-auto sm:p-6 md:p-12 max-w-7xl mx-auto">
-        {children}
-      </main>
+    <div>
+      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      <Header setSidebarOpen={setSidebarOpen} />
+      <main className="xl:pl-72">{children}</main>
     </div>
   );
 }

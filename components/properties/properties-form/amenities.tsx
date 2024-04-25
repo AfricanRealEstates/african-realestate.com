@@ -2,16 +2,73 @@ import React from "react";
 import { PropertiesFormStepProps } from "./index";
 import { Button, Checkbox, Form, InputNumber, Select } from "antd";
 import { appliances, landUnits } from "@/constants";
+import { useToast } from "@/components/ui/use-toast";
+import { useParams, useRouter } from "next/navigation";
+import { uploadFilesToFirebase } from "@/lib/utils/upload-media";
+import { addProperty, editProperty } from "@/actions/properties";
+import { Loader2 } from "lucide-react";
 
 export default function Amenities({
   currentStep,
   setCurrentStep,
   finalValues,
   setFinalValues,
+  loading,
+  setLoading,
+  isEdit = false,
 }: PropertiesFormStepProps) {
-  const onSubmit = (values: any) => {
-    setFinalValues({ ...finalValues, amenities: values });
-    setCurrentStep(currentStep + 1);
+  // const onSubmit = (values: any) => {
+  //   setFinalValues({ ...finalValues, amenities: values });
+  //   setCurrentStep(currentStep + 1);
+  // };
+
+  const { toast } = useToast();
+  const { id }: any = useParams();
+  const router = useRouter();
+  const onSubmit = async (values: any) => {
+    try {
+      setLoading(true);
+      const tempFinalValues = { ...finalValues, amenities: values };
+
+      // Handle images upload
+      const tempMedia = tempFinalValues.media;
+      const newImagesURLs = await uploadFilesToFirebase(
+        tempMedia.newlyUploadFiles
+      );
+
+      tempMedia.images = [...tempMedia.images, ...newImagesURLs];
+
+      tempFinalValues.media = tempMedia;
+      // ...tempFinalValues.agentInfo,
+      const savedValues = {
+        ...tempFinalValues.basicInfo,
+        ...tempFinalValues.locationInfo,
+        ...tempFinalValues.amenities,
+        images: tempFinalValues.media.images,
+      };
+      let res = null;
+      if (isEdit) {
+        res = await editProperty(id, savedValues);
+      } else {
+        res = await addProperty(savedValues);
+      }
+      if (res.error) throw new Error(res.error);
+      // Toast messages
+      if (isEdit) {
+        toast({ description: "Edit saved successfully" });
+      } else {
+        toast({ description: "Property added successfully" });
+      }
+      router.push(`/agent/properties`);
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        description: "Failed to create property",
+      });
+      console.error(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <Form
@@ -20,7 +77,7 @@ export default function Amenities({
       initialValues={finalValues.amenities}
     >
       {/* bedrooms, bathrooms, plinth_area, land_size, land_units */}
-      <section className="grid grid-cols-1 lg:grid-cols-3 gap-x-4 gap-y-2">
+      <section className="grid grid-cols-1 lg:grid-cols-4 gap-x-4 gap-y-2">
         <Form.Item
           name="bedrooms"
           label="Bedrooms"
@@ -30,7 +87,7 @@ export default function Amenities({
               message: "Bedrooms is required",
             },
           ]}
-          className="col-span-full"
+          className="col-span-2"
         >
           <InputNumber className="w-full" placeholder="eg. 3" />
         </Form.Item>
@@ -43,7 +100,7 @@ export default function Amenities({
               message: "Bathrooms is required",
             },
           ]}
-          className="col-span-full"
+          className="col-span-2"
         >
           <InputNumber className="w-full" placeholder="eg. 3" />
         </Form.Item>
@@ -86,7 +143,7 @@ export default function Amenities({
               message: "Plinth Area is required",
             },
           ]}
-          className="col-span-1"
+          className="col-span-2"
         >
           <InputNumber className="w-full" placeholder="eg.100" />
         </Form.Item>
@@ -116,8 +173,30 @@ export default function Amenities({
           type="submit"
           className="inline-block  cursor-pointer items-center rounded-md bg-blue-300 hover:bg-blue-400 transition-colors px-5 py-2.5 text-center font-semibold text-white"
         >
-          Next
+          {loading ? (
+            <>
+              {!isEdit ? (
+                <div className="flex items-center">
+                  <Loader2 className="size-3 animate-spin mr-2" />
+                  Saving...
+                </div>
+              ) : (
+                <div className="flex items-center">
+                  <Loader2 className="size-3 animate-spin mr-2" />
+                  Submitting...
+                </div>
+              )}
+            </>
+          ) : (
+            <>{isEdit ? "Save Edited Property" : "Save Property"}</>
+          )}
         </button>
+        {/* <button
+          type="submit"
+          className="inline-block  cursor-pointer items-center rounded-md bg-blue-300 hover:bg-blue-400 transition-colors px-5 py-2.5 text-center font-semibold text-white"
+        >
+          Next
+        </button> */}
       </div>
     </Form>
   );

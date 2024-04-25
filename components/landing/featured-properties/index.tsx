@@ -15,9 +15,9 @@ import Image from "next/image";
 import PropertyCard, {
   PropertyCardSkeleton,
 } from "@/components/properties/property-card";
-import { Button } from "@/components/ui/button";
 import { cache } from "@/lib/cache";
 import FeaturedCard from "@/components/properties/featured-card";
+import { Button } from "@/components/utils/Button";
 
 const plusJakartaSans = Raleway({
   subsets: ["latin"],
@@ -29,7 +29,7 @@ const getMostPopularProperties = cache(
   () => {
     return prisma.property.findMany({
       where: { isAvailableForPurchase: true },
-      orderBy: { Query: { _count: "desc" } },
+      orderBy: { queries: { _count: "desc" } },
       take: 3,
     });
   },
@@ -94,15 +94,17 @@ export default async function FeaturedProperties() {
           {properties.length === 0 && (
             <div className="flex flex-col items-center gap-1 text-center">
               <h3 className="text-2xl font-bold tracking-tight">
-                You have no products
+                There are no featured listings at the moment
               </h3>
-              {/* <p className="text-sm text-gray-500">
-                You can start selling as soon as you add a property.
-              </p> */}
-              <Button className="mt-4" asChild>
-                <Link href="/agent/properties/create-property">
-                  Add Property
-                </Link>
+
+              <Button
+                href="/properties"
+                type="submit"
+                color="blue"
+                className="mt-4 flex-none"
+              >
+                <span className="hidden lg:inline">View Listings</span>
+                <span className="lg:hidden">View More Property Listings</span>
               </Button>
             </div>
           )}
@@ -125,7 +127,7 @@ async function ProductGridSection({
     <div className="space-y-4">
       <div className="flex gap-4 items-center justify-between">
         <h2 className="text-3xl font-bold">{title}</h2>
-        <Button variant="outline" asChild>
+        <Button variant="outline">
           <Link href="/properties">
             <span>View All</span>
             <ArrowRight />

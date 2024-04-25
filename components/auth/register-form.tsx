@@ -1,179 +1,261 @@
 "use client";
-import { createUser } from "@/actions/users";
-import { RegisterInputProps } from "@/types/types";
-import { UserRole } from "@prisma/client";
-import { Loader2 } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
+import { Button } from "../utils/Button";
+import { HomeIcon, Loader2 } from "lucide-react";
+import Link from "next/link";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { CreateUserInput, createUserSchema } from "@/lib/validation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useToast } from "../ui/use-toast";
+import { signIn } from "next-auth/react";
 
-export default function RegisterForm({ role = "USER" }: { role?: UserRole }) {
+export default function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
+
+  const { toast } = useToast();
+  const methods = useForm<CreateUserInput>({
+    resolver: zodResolver(createUserSchema),
+  });
+
   const {
-    register,
     handleSubmit,
-    reset,
+    register,
     formState: { errors },
-  } = useForm<RegisterInputProps>();
+  } = methods;
 
-  const onSubmit = async (data: RegisterInputProps) => {
-    setIsLoading(true);
-    data.role = role;
-
+  const onSubmitHandler: SubmitHandler<CreateUserInput> = async (values) => {
     try {
-      const user = await createUser(data);
-      if (user && user.status === 200) {
-        reset();
-        setIsLoading(false);
-        toast.success("Account created successfully");
-        router.push(`/verify-account/${user.data.id}`);
-        console.log(user.data);
-      } else {
-        setIsLoading(false);
-        toast.error(user.error);
-        reset();
-        router.refresh();
-        console.log(user.error);
+      setIsLoading(true);
+      const res = await fetch("/api/register", {
+        method: "POST",
+        body: JSON.stringify(values),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+
+        if (Array.isArray(errorData.errors) && errorData.errors.length > 0) {
+          errorData.errors.forEach((error: any) => {
+            toast({
+              variant: "destructive",
+              title: "Uh oh! Something went wrong",
+              description: `${error.message}`,
+            });
+          });
+          return;
+        }
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong",
+          description: `${errorData.message}`,
+        });
+
+        return;
       }
-    } catch (error) {
-      console.log(error);
+      signIn(undefined, { callbackUrl: "/" });
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong",
+        description: `${error.message}`,
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
   return (
-    <div>
-      <section className="mx-auto w-full max-w-3xl px-5 py-16 md:px-10 md:py-24 lg:py-32">
-        <div className="max-w-xl mx-auto px-8 py-12 text-center bg-gray-200 rounded-lg">
-          <h2 className="text-3xl font-bold md:text-5xl text-blue-300">
-            Create your account
-          </h2>
-          <p className="mx-auto my-5 max-w-md text-sm sm:text-base lg:mb-8 text-gray-400">
-            Get started for free
-          </p>
-          <div className="mx-auto w-full max-w-[400px]">
-            <button className="flex w-full max-w-full justify-center gap-5 items-center rounded-md bg-blue-100 hover:bg-gray-300 hover:text-gray-400 transition py-3 text-blue-400">
-              <svg
-                width="16"
-                height="22"
-                viewBox="0 0 256 262"
-                xmlns="http://www.w3.org/2000/svg"
-                preserveAspectRatio="xMidYMid"
+    <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <Link
+          href="/"
+          className={`flex items-center justify-center gap-2 no-underline`}
+        >
+          <span className="bg-[#eb6753] text-white py-1 px-2 rounded-lg">
+            <HomeIcon />
+          </span>
+        </Link>
+        <h2 className="mt-9 text-center text-xl font-bold leading-9 tracking-tight text-gray-900">
+          Get started for free
+        </h2>
+      </div>
+
+      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
+        <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
+          <form className="space-y-6" onSubmit={handleSubmit(onSubmitHandler)}>
+            <div>
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium leading-6 text-gray-900"
               >
-                <path
-                  d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622 38.755 30.023 2.685.268c24.659-22.774 38.875-56.282 38.875-96.027"
-                  fill="#4285F4"
+                Full Name
+              </label>
+              <div className="mt-2">
+                <input
+                  {...register("name")}
+                  placeholder="John Doe"
+                  className="p-2 block w-full rounded-md border-0 py-2 text-gray-900 shadow-sm outline-none ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
-                <path
-                  d="M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055-34.523 0-63.824-22.773-74.269-54.25l-1.531.13-40.298 31.187-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1"
-                  fill="#34A853"
-                />
-                <path
-                  d="M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82 0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602l42.356-32.782"
-                  fill="#FBBC05"
-                />
-                <path
-                  d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0 79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251"
-                  fill="#EB4335"
-                />
-              </svg>
-
-              <p className="text-sm md:text-base font-semibold">
-                Sign up with Google
-              </p>
-            </button>
-            {/* Divider */}
-            <div className="my-14 flex w-full justify-around text-gray-400">
-              <img src="/assets/icons/line.svg" className="hidden md:block" />
-              <p className="text-sm md:text-base">or sign up with email</p>
-              <img src="/assets/icons/line.svg" className="hidden md:block" />
+              </div>
+              {errors["name"] && (
+                <span className="text-rose-500 text-xs pt-1 block">
+                  {errors["name"]?.message as string}
+                </span>
+              )}
             </div>
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              className="mx-auto mb-4 max-w-[400px] pb-4"
-            >
-              <div className="text-left">
-                <label htmlFor="fullName" className={`mb-2 text-sm `}>
-                  Full Name
-                </label>
-                <input
-                  {...register("fullName", { required: true })}
-                  type="text"
-                  name="fullName"
-                  id="fullName"
-                  className="peer w-full rounded border border-neutral-300 h-9 px-3 py-6 my-4  text-sm focus:border-indigo-500 focus:outline-none ring-1 ring-neutral-500/0 ring-offset-0 transition-shadow focus:ring-indigo-500 focus:ring-offset-2"
-                  placeholder="First Name"
-                />
-                {errors.fullName && (
-                  <span className="text-red-500 text-sm">
-                    Full name is required
-                  </span>
-                )}
-              </div>
 
-              <div className="text-left">
-                <label htmlFor="email" className="mb-2 text-sm">
-                  Email
-                </label>
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Email address
+              </label>
+              <div className="mt-2">
                 <input
-                  {...register("email", { required: true })}
+                  {...register("email")}
+                  placeholder="john.doe@email.com"
                   type="email"
-                  name="email"
-                  id="email"
-                  className="peer w-full rounded border border-neutral-300 h-9 px-3 py-6 my-4  text-sm focus:border-indigo-500 focus:outline-none ring-1 ring-neutral-500/0 ring-offset-0 transition-shadow focus:ring-indigo-500 focus:ring-offset-2"
-                  placeholder="Email address"
+                  className="p-2 block w-full rounded-md border-0 py-2 text-gray-900 shadow-sm outline-none ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
-                {errors.email && (
-                  <span className="text-red-500 text-sm">
-                    Email is required
-                  </span>
-                )}
               </div>
-              <div className="text-left">
-                <label htmlFor="password" className="mb-2 text-sm">
-                  Password
-                </label>
+              {errors["email"] && (
+                <span className="text-rose-500 text-xs pt-1 block">
+                  {errors["email"]?.message as string}
+                </span>
+              )}
+            </div>
+
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Password
+              </label>
+              <div className="mt-2">
                 <input
-                  {...register("password", { required: true })}
+                  {...register("password")}
                   type="password"
-                  name="password"
-                  id="password"
-                  className="peer w-full rounded border border-neutral-300 h-9 px-3 py-6 my-4  text-sm focus:border-indigo-500 focus:outline-none ring-1 ring-neutral-500/0 ring-offset-0 transition-shadow focus:ring-indigo-500 focus:ring-offset-2"
-                  placeholder="Password (min 6 characters)"
+                  placeholder="Password"
+                  className="p-2 block w-full rounded-md border-0 py-2 text-gray-900 shadow-sm outline-none ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
-                {errors.password && (
-                  <span className="text-red-500 text-sm">
-                    Password is required
-                  </span>
-                )}
               </div>
-              <button
+              {errors["password"] && (
+                <span className="text-rose-500 text-xs pt-1 block">
+                  {errors["password"]?.message as string}
+                </span>
+              )}
+            </div>
+
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Confirm Password
+              </label>
+              <div className="mt-2">
+                <input
+                  {...register("passwordConfirm")}
+                  type="password"
+                  placeholder="Password"
+                  className="p-2 block w-full rounded-md border-0 py-2 text-gray-900 shadow-sm outline-none ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
+              {errors["passwordConfirm"] && (
+                <span className="text-red-500 text-xs pt-1 block">
+                  {errors["passwordConfirm"]?.message as string}
+                </span>
+              )}
+            </div>
+
+            <div>
+              <Button
+                type="submit"
                 disabled={isLoading}
-                className="mt-4 inline-block w-full cursor-pointer items-center rounded-md bg-blue-300 hover:bg-blue-400 transition-colors px-6 py-3 text-center font-semibold text-white"
+                color="blue"
+                className="w-full"
               >
                 {isLoading ? (
-                  <div className="flex items-center justify-center">
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    <span>Please wait...</span>
+                  <div className="flex items-center">
+                    <Loader2 className="animate-spin mr-2 size-4" />
+                    Creating...
                   </div>
                 ) : (
-                  "Sign up"
+                  "Create an account"
                 )}
-              </button>
-            </form>
+              </Button>
+            </div>
+          </form>
+
+          <div>
+            <div className="relative mt-10">
+              <div
+                className="absolute inset-0 flex items-center"
+                aria-hidden="true"
+              >
+                <div className="w-full border-t border-gray-200" />
+              </div>
+              <div className="relative flex justify-center text-sm font-medium leading-6">
+                <span className="bg-white px-6 text-gray-900">
+                  Or continue with
+                </span>
+              </div>
+            </div>
+
+            <div className="mt-6 grid grid-cols-1 place-content-center gap-4">
+              <Button
+                variant="outline"
+                href="#"
+                className="flex items-center gap-4"
+                // className="flex w-full items-center justify-center gap-3 rounded-md bg-[#1D9BF0] px-3 py-1.5 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#1D9BF0]"
+              >
+                <svg
+                  width="25"
+                  height="26"
+                  viewBox="0 0 256 262"
+                  xmlns="http://www.w3.org/2000/svg"
+                  preserveAspectRatio="xMidYMid"
+                >
+                  <path
+                    d="M255.878 133.451c0-10.734-.871-18.567-2.756-26.69H130.55v48.448h71.947c-1.45 12.04-9.283 30.172-26.69 42.356l-.244 1.622 38.755 30.023 2.685.268c24.659-22.774 38.875-56.282 38.875-96.027"
+                    fill="#4285F4"
+                  />
+                  <path
+                    d="M130.55 261.1c35.248 0 64.839-11.605 86.453-31.622l-41.196-31.913c-11.024 7.688-25.82 13.055-45.257 13.055-34.523 0-63.824-22.773-74.269-54.25l-1.531.13-40.298 31.187-.527 1.465C35.393 231.798 79.49 261.1 130.55 261.1"
+                    fill="#34A853"
+                  />
+                  <path
+                    d="M56.281 156.37c-2.756-8.123-4.351-16.827-4.351-25.82 0-8.994 1.595-17.697 4.206-25.82l-.073-1.73L15.26 71.312l-1.335.635C5.077 89.644 0 109.517 0 130.55s5.077 40.905 13.925 58.602l42.356-32.782"
+                    fill="#FBBC05"
+                  />
+                  <path
+                    d="M130.55 50.479c24.514 0 41.05 10.589 50.479 19.438l36.844-35.974C195.245 12.91 165.798 0 130.55 0 79.49 0 35.393 29.301 13.925 71.947l42.211 32.783c10.59-31.477 39.891-54.251 74.414-54.251"
+                    fill="#EB4335"
+                  />
+                </svg>
+
+                <span className="text-sm font-semibold leading-6">
+                  Continue with Google
+                </span>
+              </Button>
+            </div>
           </div>
-          <p className="text-sm text-[#636262]">
-            Already have an account?{" "}
-            <Link
-              href="/login"
-              className="font-semibold leading-relaxed text-blue-300 hover:text-blue-400 transition-colors"
-            >
-              Login now
-            </Link>
-          </p>
         </div>
-      </section>
+
+        <p className="mt-10 text-center text-sm text-gray-500">
+          Already a member?{" "}
+          <Link
+            href="/login"
+            className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+          >
+            Sign in
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

@@ -1,11 +1,9 @@
-import PageTitle from "@/components/globals/page-title";
+import { auth } from "@/auth";
 import BuyButton from "@/components/subscriptions/buy-button";
 import { subscriptionPlans } from "@/constants";
-import { authOptions } from "@/lib/auth-options";
 import prisma from "@/lib/prisma";
 import { getSEOTags } from "@/lib/seo";
 import { CircleCheckBig } from "lucide-react";
-import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import React from "react";
 
@@ -15,10 +13,11 @@ export const metadata = getSEOTags({
 });
 
 export default async function Subscriptions() {
-  const user = await getServerSession(authOptions);
+  const session = await auth();
+  const user = session?.user;
   if (!user) redirect("/login");
   const userSubscription: any = await prisma.subscription.findFirst({
-    where: { userId: user?.user?.id },
+    where: { userId: user?.id },
     orderBy: { createdAt: "desc" },
   });
 

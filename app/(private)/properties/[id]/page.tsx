@@ -15,6 +15,7 @@ import {
   Cat,
   Fence,
   Flower2,
+  FolderOpen,
   Grid2X2,
   Heater,
   Home,
@@ -32,8 +33,6 @@ import {
 import { FaSwimmingPool } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import BackProperty from "@/components/globals/back-property";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth-options";
 import { Metadata } from "next";
 import ImageCarousel from "./_components/image-carousel";
 import Link from "next/link";
@@ -41,6 +40,7 @@ import dayjs from "dayjs";
 import NotFound from "@/app/not-found";
 import RelatedProperty from "./_components/related-property";
 import PropertyCard from "@/components/properties/property-card";
+import { auth } from "@/auth";
 
 // no cache
 export const dynamic = "force-dynamic";
@@ -84,7 +84,7 @@ export async function generateMetadata({
 export default async function PropertyDetails({
   params: { id },
 }: PropertyDetailsProps) {
-  const currentUser = await getServerSession(authOptions);
+  const session = await auth();
   const property: Property =
     ((await prisma.property.findUnique({
       where: {
@@ -329,9 +329,7 @@ export default async function PropertyDetails({
                       <Image
                         height={50}
                         width={50}
-                        src={
-                          currentUser?.user.image || "/assets/placeholder.jpg"
-                        }
+                        src={session?.user.image || "/assets/placeholder.jpg"}
                         alt="Agent"
                         className="h-10 w-10 rounded-full bg-gray-100"
                       />
@@ -359,16 +357,20 @@ export default async function PropertyDetails({
           </div>
         </div>
 
-        <section className="mt-10 pt-10">
-          <h3 className="font-medium text-gray-950">Location</h3>
+        <section className="mt-5 pt-5">
+          <h3 className="text-lg lg:text-xl font-medium text-gray-950">
+            Location
+          </h3>
           <p className="mt-4 text-sm text-gray-400 flex items-center gap-2">
-            <MapPin className="size-4 text-indigo-400" /> {property.locality}{" "}
+            <MapPin className="size-4 text-indigo-400" /> {property.locality},{" "}
             {property.location}
           </p>
         </section>
         <section className="mt-10 pt-10 border-t border-gray-200">
-          <h3 className="font-medium text-gray-950">Amenities</h3>
-          <div className="grid grid-cols-2 gap-px sm:grid-cols-3 mt-4 text-sm">
+          <h3 className="text-lg lg:text-xl font-medium text-gray-950">
+            Amenities
+          </h3>
+          <div className="grid grid-cols-2 gap-px sm:grid-cols-3 mt-4 text-sm max-w-4xl">
             {property.appliances.map((appliance) => {
               return (
                 <div
@@ -498,17 +500,20 @@ export default async function PropertyDetails({
           </div>
         </section>
         <section className="mt-10 pt-10 border-t border-gray-200">
-          <h3 className="font-medium text-gray-950">Overview</h3>
-          <div
-            className="prose prose-sm mt-4 max-w-none text-gray-400 leading-relaxed"
-            dangerouslySetInnerHTML={{ __html: property.description }}
-          />
+          <h3 className="text-lg lg:text-xl font-medium text-gray-950">
+            Overview
+          </h3>
+          <pre
+            className={`${raleway.className} max-w-4xl text-sm whitespace-pre-wrap leading-9 text-gray-600`}
+          >
+            {property.description}
+          </pre>
         </section>
 
         {/* Related properties */}
         <section className="mx-auto mt-24 max-w-2xl sm:mt-32 lg:max-w-none">
           <div className="flex items-center justify-between space-x-4">
-            <h2 className="text-lg font-medium text-gray-950">
+            <h2 className="text-lg lg:text-xl font-medium text-gray-950">
               Related Properties
             </h2>
             <Link
@@ -526,7 +531,16 @@ export default async function PropertyDetails({
               })}
             </div>
           ) : (
-            <p>No related properties</p>
+            <Link
+              href="/properties"
+              className="mt-6 flex flex-col gap-y-4 items-center justify-center relative w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            >
+              <FolderOpen className="size-9 text-indigo-400" />
+              <span className="mt-2 block text-sm font-semibold text-gray-900">
+                No related properties
+              </span>
+              <span>Explore more properties</span>
+            </Link>
           )}
         </section>
       </div>

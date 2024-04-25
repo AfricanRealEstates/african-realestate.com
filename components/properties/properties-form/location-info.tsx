@@ -70,7 +70,7 @@ export default function LocationInfo({
               message: "Locality is required",
             },
           ]}
-          className="lg:col-span-2"
+          className="lg:col-span-1"
         >
           <Input placeholder="Locality" />
         </Form.Item>
@@ -96,7 +96,7 @@ export default function LocationInfo({
               message: "Location is required",
             },
           ]}
-          className="col-span-full"
+          className="col-span-1"
         >
           <Input placeholder="Location" />
         </Form.Item>

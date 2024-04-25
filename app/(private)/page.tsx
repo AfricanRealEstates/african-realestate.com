@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import CTA from "@/components/landing/cta";
 import Facts from "@/components/landing/facts";
 import FeaturedProperties from "@/components/landing/featured-properties";
@@ -6,9 +7,7 @@ import Hero from "@/components/landing/hero";
 import HowItWorks from "@/components/landing/how-it-works";
 import Sale from "@/components/landing/sale";
 import Testing from "@/components/landing/testing";
-import { authOptions } from "@/lib/auth-options";
 import { getSEOTags, renderSchemaTags } from "@/lib/seo";
-import { getServerSession } from "next-auth";
 
 export const metadata = getSEOTags({
   title: "Home | African Real Estate",
@@ -16,10 +15,12 @@ export const metadata = getSEOTags({
 });
 
 export default async function Home() {
-  const session = await getServerSession(authOptions);
-  console.log(session);
+  const session = await auth();
+  const user = session?.user;
+  console.log(user);
+
   return (
-    <div className="overflow-hidden">
+    <div className="">
       {renderSchemaTags()}
       {/* <div className="bg-[#181a20] p-8">
       <h1 className="text-[#eb6753] bg-[#ffffff0a] p-4">Home page</h1>

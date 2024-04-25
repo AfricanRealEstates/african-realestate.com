@@ -1,9 +1,8 @@
+import { auth } from "@/auth";
 import Filters from "@/components/globals/filters";
 import PageTitle from "@/components/globals/page-title";
 import PropertiesTable from "@/components/properties/properties-table";
-import { authOptions } from "@/lib/auth-options";
 import { getSEOTags } from "@/lib/seo";
-import { getServerSession } from "next-auth";
 import React from "react";
 
 export const metadata = getSEOTags({
@@ -16,7 +15,8 @@ export default async function Properties({
 }: {
   searchParams: any;
 }) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
+  const user = session?.user;
 
   if (session?.user.role !== "ADMIN") {
     return (

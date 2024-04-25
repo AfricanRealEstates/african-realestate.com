@@ -3,12 +3,20 @@ import React, { useState } from "react";
 import { PropertiesFormStepProps } from "./index";
 import { Button, Form, Upload } from "antd";
 import Image from "next/image";
+import { useParams, useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
+import { uploadFilesToFirebase } from "@/lib/utils/upload-media";
+import { addProperty, editProperty } from "@/actions/properties";
+import { Loader2 } from "lucide-react";
 
 export default function Media({
   currentStep,
   setCurrentStep,
   finalValues,
   setFinalValues,
+  loading,
+  setLoading,
+  isEdit = false,
 }: PropertiesFormStepProps) {
   const [tempFiles, setTempFiles] = useState<any[]>([]);
   const onSubmit = () => {
@@ -18,6 +26,7 @@ export default function Media({
     });
     setCurrentStep(currentStep + 1);
   };
+
   return (
     <div>
       <section className="flex flex-wrap gap-5 mb-5">

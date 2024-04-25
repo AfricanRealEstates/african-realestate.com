@@ -2,10 +2,9 @@ import PageTitle from "@/components/globals/page-title";
 import React from "react";
 import prisma from "@/lib/prisma";
 import UserQueriesTable from "@/components/queries/user-queries-table";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth-options";
 import { getSEOTags } from "@/lib/seo";
 import { redirect } from "next/navigation";
+import { auth } from "@/auth";
 
 export const metadata = getSEOTags({
   title: "Agent - Queries | African Real Estate",
@@ -13,12 +12,13 @@ export const metadata = getSEOTags({
 });
 
 export default async function Queries() {
-  const user = await getServerSession(authOptions);
+  const session = await auth();
+  const user = session?.user;
   if (!user) redirect("/login");
   console.log(user);
   const queries = await prisma.query.findMany({
     where: {
-      userId: user?.user?.id,
+      userId: user?.id,
     },
     include: {
       property: true,

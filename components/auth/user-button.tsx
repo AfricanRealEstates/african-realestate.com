@@ -1,61 +1,72 @@
-import { getServerSession } from "next-auth";
+import { Lock, LogOut, Settings } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
-import Login from "@/app/(auth)/login/page";
-import { authOptions } from "@/lib/auth-options";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { Button } from "../ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { signOut } from "next-auth/react";
+} from "@/components/ui/dropdown-menu";
+import { signOut } from "@/auth";
+import { Button } from "../utils/Button";
+import { User } from "next-auth";
 
-export default async function UserButton() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user) return <Login />;
+interface UserButtonProps {
+  user: User;
+}
+
+export default function UserButton({ user }: UserButtonProps) {
   return (
-    <div className="flex gap-2 items-center">
-      <span className="hidden text-sm sm:inline-flex">
-        {session.user.email}
-      </span>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="relative w-8 h-8 rounded-full">
-            <Avatar className="w-8 h-8">
-              {session.user.image && (
-                <AvatarImage
-                  src={session.user.image}
-                  alt={session.user.name ?? ""}
-                />
-              )}
-              <AvatarFallback>{session.user.email}</AvatarFallback>
-            </Avatar>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56" align="end" forceMount>
-          <DropdownMenuLabel className="font-normal">
-            <div className="flex flex-col space-y-1">
-              <p className="text-sm font-medium leading-none">
-                {session.user.name}
-              </p>
-              <p className="text-xs leading-none text-muted-foreground">
-                {session.user.email}
-              </p>
-            </div>
-          </DropdownMenuLabel>
-          <DropdownMenuItem>
-            <Button
-              variant="outline"
-              onClick={() => signOut({ redirect: false })}
-            >
-              Sign Out
-            </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" className="flex-none rounded-full">
+          <Image
+            src={user.image || "/assets/placeholder.jpg"}
+            alt="User profile picture"
+            width={50}
+            height={50}
+            className="aspect-square rounded-full bg-background object-cover"
+          />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuLabel>{user?.name || "User"}</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem asChild>
+            <Link href="/dashboard/settings">
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Settings</span>
+            </Link>
           </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+          {/* TODO: Show this only for admins */}
+          {user.role === "ADMIN" && (
+            <DropdownMenuItem asChild>
+              <Link href="/dashboard/admin">
+                <Lock className="mr-2 h-4 w-4" />
+                Admin
+              </Link>
+            </DropdownMenuItem>
+          )}
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <form
+            action={async () => {
+              "use server";
+              await signOut();
+            }}
+          >
+            <button type="submit" className="flex w-full items-center">
+              <LogOut className="mr-2 h-4 w-4" /> Sign Out
+            </button>
+          </form>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

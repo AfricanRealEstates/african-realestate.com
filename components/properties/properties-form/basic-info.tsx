@@ -41,7 +41,7 @@ export default function BasicInfo({
       layout="vertical"
       initialValues={finalValues.basicInfo}
     >
-      <section className="grid grid-cols-1 lg:grid-cols-3 gap-x-4 gap-y-2">
+      <section className="grid grid-cols-1 lg:grid-cols-4 gap-x-4 gap-y-2">
         <Form.Item
           name="status"
           label="Status"
@@ -51,7 +51,7 @@ export default function BasicInfo({
               message: "Status is required",
             },
           ]}
-          className="col-span-full"
+          className="col-span-2"
         >
           <Select options={propertyStatuses} placeholder="Select status" />
         </Form.Item>
@@ -64,7 +64,7 @@ export default function BasicInfo({
               message: "Propery title is required",
             },
           ]}
-          className="col-span-1 lg:col-span-full"
+          className="col-span-2"
         >
           <Input placeholder="Property Title" />
         </Form.Item>
@@ -77,7 +77,7 @@ export default function BasicInfo({
               message: "Property type is required",
             },
           ]}
-          className="col-span-full"
+          className="col-span-2"
         >
           <Select
             options={properyTypes}
@@ -95,7 +95,7 @@ export default function BasicInfo({
               message: "Property details is required",
             },
           ]}
-          className="col-span-full"
+          className="col-span-2"
         >
           <Select
             options={propertyDetailsOptions}
@@ -112,7 +112,7 @@ export default function BasicInfo({
               message: "Propery Description is required",
             },
           ]}
-          className="col-span-1 lg:col-span-3"
+          className="col-span-full"
         >
           <Input.TextArea
             rows={4}
@@ -128,7 +128,7 @@ export default function BasicInfo({
               message: "Price is required",
             },
           ]}
-          className="col-span-1 "
+          className="w-full"
         >
           <InputNumber className="w-full" type="number" placeholder="Price" />
         </Form.Item>
@@ -141,7 +141,7 @@ export default function BasicInfo({
               message: "Least price is required",
             },
           ]}
-          className="col-span-1"
+          className="w-full"
         >
           <InputNumber
             className="w-full"
@@ -158,7 +158,7 @@ export default function BasicInfo({
               message: "Currency is required",
             },
           ]}
-          className="col-span-1"
+          className="col-span-2"
         >
           <Select
             options={currencyOptions}

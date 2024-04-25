@@ -15,7 +15,7 @@ const raleway = Raleway({
 export default async function Agencies() {
   const agents = await prisma.user.findMany({
     include: {
-      Property: true,
+      properties: true,
     },
   });
 
@@ -23,7 +23,7 @@ export default async function Agencies() {
     where: {
       AND: [
         { role: UserRole.AGENT }, // filter users with role Agent
-        { Subscription: { some: {} } },
+        { subscriptions: { some: {} } },
       ],
     },
   });
@@ -67,7 +67,7 @@ export default async function Agencies() {
 
                   <dd className="mt-3">
                     <span className="inline-flex items-center rounded-full bg-neutral-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/20">
-                      {agent.Property.length} listings
+                      {agent.properties.length} listings
                     </span>
                   </dd>
                 </dl>

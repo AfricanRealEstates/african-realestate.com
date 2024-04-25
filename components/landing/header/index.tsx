@@ -1,12 +1,11 @@
 "use client";
 
 import { Button } from "@/components/utils/Button";
-import { useCurrentUser } from "@/hooks/use-current-user";
 import { UserButton } from "@clerk/nextjs";
 import { User } from "@prisma/client";
 import { Dropdown } from "antd";
 import { ArrowRight, HomeIcon, Menu, X } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { Nunito_Sans } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
@@ -68,7 +67,9 @@ export default function Header() {
     await signOut({ callbackUrl: "/" });
   };
 
-  const user = useCurrentUser();
+  const session = useSession();
+  const user = session.data?.user;
+
   const pathname = usePathname();
   const router = useRouter();
 
@@ -286,7 +287,7 @@ export default function Header() {
                     </>
                   ) : (
                     <Link
-                      href="/sign-in"
+                      href="/login"
                       className="border-black inline-block flex-1 py-2 px-3 border rounded-md text-base no-underline text-black"
                     >
                       Sign in

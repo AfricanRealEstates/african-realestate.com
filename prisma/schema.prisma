@@ -6,7 +6,7 @@
 
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["fullTextSearch"]
+  previewFeatures = ["fullTextSearch", "driverAdapters"]
 }
 
 datasource db {
@@ -17,11 +17,6 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
-// datasource db {
-//   provider = "postgresql"
-//   url      = env("DATABASE_URL")
-// }
-
 enum UserRole {
   USER
   AGENT
@@ -30,7 +25,7 @@ enum UserRole {
 }
 
 model User {
-  id            String         @id @default(uuid())
+  id            String         @id @default(dbgenerated("concat('user_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
   name          String?
   email         String?        @unique
   emailVerified DateTime?
@@ -45,14 +40,16 @@ model User {
   updatedAt     DateTime       @updatedAt
   accounts      Account[]
   sessions      Session[]
-  Property      Property[]
-  Query         Query[]
-  Subscription  Subscription[]
-  Order         Order[]
+  properties    Property[]
+  queries       Query[]
+  subscriptions Subscription[]
+  orders        Order[]
+
+  @@map("users")
 }
 
 model Account {
-  id                String  @id @default(uuid())
+  id                String  @id @default(dbgenerated("concat('account_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
   userId            String
   type              String
   provider          String
@@ -68,14 +65,17 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@map("accounts")
 }
 
 model Session {
-  id           String   @id @default(uuid())
+  id           String   @id @default(dbgenerated("concat('session_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
   sessionToken String   @unique
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
 }
 
 model VerificationToken {
@@ -84,10 +84,11 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+  @@map("verification_tokens")
 }
 
 model Property {
-  id                     String   @id @default(uuid())
+  id                     String   @id @default(dbgenerated("concat('property_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
   userId                 String
   user                   User     @relation(fields: [userId], references: [id])
   status                 String
@@ -111,25 +112,27 @@ model Property {
   plinthArea             Int
   appliances             String[]
   images                 String[]
-  agentName              String
-  email                  String
-  officeLine             String
-  whatsappNumber         String
-  address                String
-  postalCode             String
+  // agentName              String // move to user
+  // email                  String
+  // officeLine             String
+  // whatsappNumber         String
+  // address                String
+  // postalCode             String
+  // showAgentContact       Boolean  @default(false) // move to user
   isAvailableForPurchase Boolean  @default(true)
-  showAgentContact       Boolean  @default(false)
   isActive               Boolean  @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  Query Query[]
-  Order Order[]
+  queries Query[]
+  orders  Order[]
+
+  @@map("properties")
 }
 
 model Query {
-  id         String   @id @default(uuid())
+  id         String   @id @default(dbgenerated("concat('query_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
   userId     String
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   propertyId String
@@ -141,20 +144,24 @@ model Query {
   message    String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+
+  @@map("queries")
 }
 
 model Subscription {
-  id        String   @id @default(uuid())
+  id        String   @id @default(dbgenerated("concat('subscription_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   plan      Json
   paymentId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("subscriptions")
 }
 
 model Order {
-  id        String   @id @default(uuid())
+  id        String   @id @default(dbgenerated("concat('order_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
   pricePaid Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -163,10 +170,12 @@ model Order {
   propertyId String
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   property   Property @relation(fields: [propertyId], references: [id], onDelete: Restrict)
+
+  @@map("orders")
 }
 
 model Post {
-  id            String   @id @default(uuid())
+  id            String   @id @default(dbgenerated("concat('post_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
   title         String
   slug          String   @unique
   description   String?
@@ -174,6 +183,8 @@ model Post {
   published     Boolean  @default(false)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  @@map("posts")
 }
 
 // plan   Plan

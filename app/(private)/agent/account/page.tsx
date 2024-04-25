@@ -2,10 +2,9 @@ import PageTitle from "@/components/globals/page-title";
 import dayjs from "dayjs";
 import React from "react";
 import prisma from "@/lib/prisma";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth-options";
 import { getSEOTags } from "@/lib/seo";
 import { redirect } from "next/navigation";
+import { auth } from "@/auth";
 
 export const metadata = getSEOTags({
   title: "Agent - Account | African Real Estate",
@@ -13,17 +12,17 @@ export const metadata = getSEOTags({
 });
 
 export default async function Account() {
-  // const clerkUser = await currentUser();
-  const user = await getServerSession(authOptions);
+  const session = await auth();
+  const user = session?.user;
   if (!user) redirect("/login");
 
   const propertiesCount = await prisma.property.count({
-    where: { userId: user?.user.id },
+    where: { userId: user.id },
   });
 
   const userSubsciption: any = await prisma.subscription.findFirst({
     where: {
-      userId: user?.user.id,
+      userId: user.id,
     },
     orderBy: { createdAt: "desc" },
   });
@@ -54,9 +53,9 @@ export default async function Account() {
         {getSectionTitle("Basic Details")}
 
         <article className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-6">
-          {getAttribute("Name:", user?.user.name || "")}
-          {getAttribute("Email:", user?.user.email || "")}
-          {getAttribute("Loggedin User Id:", user?.user.id as string)}
+          {getAttribute("Name:", user.name || "")}
+          {getAttribute("Email:", user.email || "")}
+          {getAttribute("Loggedin User Id:", user.id as string)}
           {/* {getAttribute(
             "Registered On:",
             dayjs(user?.user.createdAt).format("DD MMM YYYY hh:mm A") || ""
