@@ -265,8 +265,7 @@ export default async function PropertyDetails({
                       <Link
                         target="_blank"
                         rel="noopener noreferrer"
-                        href="#"
-                        // href={`https://wa.me/${property.whatsappNumber}`}
+                        href={`https://wa.me/${session?.user.whatsappNumber}`}
                         className="flex size-6 items-center justify-center text-gray-400 hover:text-gray-500"
                       >
                         <span className="sr-only">Contact on Whatsapp</span>
@@ -293,8 +292,7 @@ export default async function PropertyDetails({
                       <Link
                         target="_blank"
                         rel="noopener noreferrer"
-                        href="#"
-                        // href={`tel:${property.officeLine}`}
+                        href={`tel:${session?.user.officeLine}`}
                         className="flex size-6 items-center justify-center text-[#777f8a] hover:text-gray-500"
                       >
                         <span className="sr-only">Contact on Call</span>
@@ -308,16 +306,15 @@ export default async function PropertyDetails({
                       <Link
                         target="_blank"
                         rel="noopener noreferrer"
-                        href="#"
-                        // href={`mailto:${property.email}`}
+                        href={`mailto:${session?.user.email}`}
                         className="flex size-6 items-center justify-center text-[#777f8a] hover:text-gray-500"
                       >
                         <span className="sr-only">Contact on Email</span>
                         <EnvelopeIcon
                           className="h-5 w-5 text-gray-400"
-                          aria-hidden="true"
+                          // aria-hidden="true"
                         />
-                        Email
+                        {/* Email */}
                       </Link>
                     </li>
                   </ul>
@@ -341,7 +338,7 @@ export default async function PropertyDetails({
                       <h3 className="flex gap-1">
                         Agent name:
                         <span className="font-medium text-gray-900">
-                          {/* {property.agentName} */}
+                          {session?.user.agentName}
                         </span>
                       </h3>
                       <p className="">

@@ -13,17 +13,20 @@ export async function updateProfile(values: UpdateUserInput) {
     if (!userId) {
         throw Error('Unauthorized')
     }
-    const { name } = updateUserSchema.parse(values)
+    const { agentName, agentEmail, officeLine, whatsappNumber, address, postalCode, bio } = updateUserSchema.parse(values)
 
     await prisma.user.update({
         where: { id: userId },
         data: {
-            name,
-            // email,
-            // phone,
-            // website,
+            agentName,
+            agentEmail,
+            officeLine,
+            whatsappNumber,
+            address,
+            postalCode,
+            bio,
         }
     })
 
-    revalidatePath("/dashboard")
+    revalidatePath("/dashboard/account")
 }

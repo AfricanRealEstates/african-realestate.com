@@ -44,6 +44,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 email: user.email,
                 name: user.name,
                 role: user.role,
+                agentName: user.agentName || "",
+                agentEmail: user.agentEmail || "",
+                officeLine: user.officeLine || "",
+                whatsappNumber: user.whatsappNumber || "",
+                address: user.address || "",
+                postalCode: user.postalCode || "",
+                bio: user.bio || "",
                 randomKey: "Hey auth"
             }
         }
@@ -91,6 +98,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     name: token.name,
                     image: token.picture,
                     role: token.role,
+                    agentName: token.agentName || "",
+                    agentEmail: token.agentEmail || "",
+                    officeLine: token.officeLine || "",
+                    whatsappNumber: token.whatsappNumber || "",
+                    address: token.address || "",
+                    postalCode: token.postalCode || "",
+                    bio: token.bio || "",
                     randomKey: token.randomKey
 
                 }
@@ -104,6 +118,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     id: u.id,
                     name: u.name,
                     role: u.role,
+                    agentName: u.agentName,
+                    agentEmail: u.agentEmail || "",
+                    officeLine: u.officeLine || "",
+                    whatsappNumber: u.whatsappNumber || "",
+                    address: u.address || "",
+                    postalCode: u.postalCode || "",
+                    bio: u.bio || "",
                     randomKey: u.randomKey
                 }
             }

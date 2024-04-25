@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { SignOut } from "@/components/auth/signout-button";
 import UserButton from "@/components/auth/user-button";
+import DashboardAccount from "@/components/dashboard/dashboard-account";
 import SettingsUpdatedForm from "@/components/dashboard/settings-updated-form";
 import getSession from "@/lib/getSession";
 import { getSEOTags } from "@/lib/seo";
@@ -15,16 +16,17 @@ export const metadata = getSEOTags({
 export default async function Settings() {
   const session = await getSession();
   const user = session?.user;
-
   if (!user) {
-    redirect(`/api/auth/signin?callbackUrl=/dashboard/settings`);
+    redirect(`/api/auth/signin?callbackUrl=/dashboard/account`);
   }
   console.log(user);
   return (
-    <div className="p-2">
-      <UserButton user={user} />
-      <SettingsUpdatedForm user={user} />
+    <div>
+      {/* <DashboardAccount /> */}
+      {/* <UserButton user={user} />
       <SignOut />
+       */}
+      <SettingsUpdatedForm user={user} />
     </div>
   );
 }

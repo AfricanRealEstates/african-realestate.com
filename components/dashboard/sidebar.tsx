@@ -86,8 +86,8 @@ const sales = [
 
 const platformFeatures = [
   {
-    name: "Settings",
-    href: "/dashboard/settings",
+    name: "Account",
+    href: "/dashboard/account",
     icon: Settings,
     current: false,
   },

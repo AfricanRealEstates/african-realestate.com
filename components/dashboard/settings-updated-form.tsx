@@ -19,6 +19,7 @@ import { Button } from "../utils/Button";
 import { User } from "next-auth";
 import { useSession } from "next-auth/react";
 import { Loader2 } from "lucide-react";
+import { Textarea } from "../ui/textarea";
 
 interface SettingsPageProps {
   user: User;
@@ -33,7 +34,15 @@ export default function SettingsUpdatedForm({ user }: SettingsPageProps) {
   const form = useForm<UpdateUserInput>({
     resolver: zodResolver(updateUserSchema),
     // TODO: Add default value from current user
-    defaultValues: { name: user.name || "" },
+    defaultValues: {
+      agentName: user.agentName || "",
+      agentEmail: user.agentEmail || "",
+      officeLine: user.officeLine || "",
+      whatsappNumber: user.whatsappNumber || "",
+      address: user.address || "",
+      postalCode: user.postalCode || "",
+      bio: user.bio || "",
+    },
   });
 
   async function onSubmit(data: UpdateUserInput) {
@@ -60,23 +69,110 @@ export default function SettingsUpdatedForm({ user }: SettingsPageProps) {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="max-w-sm space-y-2.5"
+            className="max-w-2xl  space-y-2.5"
           >
             <FormField
               control={form.control}
-              name="name"
+              name="agentName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Agent Name</FormLabel>
                   <FormControl>
                     <Input placeholder="Enter a username" {...field} />
                   </FormControl>
-                  <FormDescription>Your public username</FormDescription>
+                  <FormDescription>Your public name</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button color="blue" type="submit" disabled={isLoading}>
+            <FormField
+              control={form.control}
+              name="agentEmail"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Agent Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Agent Email" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="officeLine"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Office Line</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Office Line" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="whatsappNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Whatsapp Number</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Whatsapp Number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="address"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Address</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Address" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="postalCode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Postal Code</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Postal code" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="bio"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Bio</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Tell us a little bit about yourself"
+                      className="resize-none"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button
+              color="blue"
+              type="submit"
+              disabled={isLoading}
+              className="w-full"
+            >
               {isLoading ? (
                 <div className="flex items-center gap-3">
                   <Loader2 className="animate-spin size-4" />

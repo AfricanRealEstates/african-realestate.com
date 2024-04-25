@@ -9,6 +9,13 @@ declare module "next-auth/jwt" {
     interface JWT {
         id: UserId;
         role: UserRole;
+        agentName: string
+        agentEmail: string
+        officeLine: string
+        whatsappNumber: string
+        address: string
+        postalCode: string
+        bio: string
         permissions: string[];
     }
 }
@@ -32,6 +39,14 @@ declare module "next-auth" {
 
 declare module "next-auth" {
     interface User {
-        role: UserRole
+        role: UserRole,
+        agentName: string,
+        agentEmail: string,
+        officeLine: string,
+        whatsappNumber: string
+        address: string
+        postalCode: string
+        bio: string
+
     }
 }

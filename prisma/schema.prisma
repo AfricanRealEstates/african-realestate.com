@@ -25,25 +25,35 @@ enum UserRole {
 }
 
 model User {
-  id            String         @id @default(dbgenerated("concat('user_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
-  name          String?
-  email         String?        @unique
-  emailVerified DateTime?
-  image         String?
-  role          UserRole       @default(USER)
-  permissions   String[]
-  password      String?
-  isVerified    Boolean        @default(false)
-  isActive      Boolean        @default(true)
-  token         Int?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  accounts      Account[]
-  sessions      Session[]
-  properties    Property[]
-  queries       Query[]
-  subscriptions Subscription[]
-  orders        Order[]
+  id               String         @id @default(dbgenerated("concat('user_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
+  name             String?
+  email            String?        @unique
+  emailVerified    DateTime?
+  image            String?
+  role             UserRole       @default(USER)
+  permissions      String[]
+  password         String?
+  isVerified       Boolean        @default(false)
+  isActive         Boolean        @default(true)
+  token            Int?
+  agentName        String? // moved from property
+  agentEmail       String?
+  officeLine       String?
+  whatsappNumber   String?
+  address          String?
+  postalCode       String?
+  profilePhoto     String?
+  coverPhoto       String?
+  bio              String?
+  showAgentContact Boolean?       @default(false) // moved from property
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  accounts         Account[]
+  sessions         Session[]
+  properties       Property[]
+  queries          Query[]
+  subscriptions    Subscription[]
+  orders           Order[]
 
   @@map("users")
 }

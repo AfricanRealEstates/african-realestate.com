@@ -1,14 +1,22 @@
 import { z } from "zod"
 
-// export const updateProfileSchema = z.object({
-//     name: z.string().trim().min(1, "Cannot be empty"),
-// })
-
-// export type UpdateProfileValues = z.infer<typeof updateProfileSchema>
+const nonEmptyString = z.string().trim().min(3, { message: "Value must be at least 3 characters" })
 
 // Dashboard profile update
 export const updateUserSchema = z.object({
-    name: z.string({ required_error: "Full Name is required" }).min(1, "Full Name is required"),
+    agentName: nonEmptyString,
+    agentEmail: nonEmptyString.email(),
+    officeLine: nonEmptyString.regex(
+        new RegExp(/^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/),
+        { message: 'Invalid phone number' },
+    ),
+    whatsappNumber: nonEmptyString.regex(
+        new RegExp(/^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/),
+        { message: 'Invalid phone number' },
+    ),
+    address: nonEmptyString,
+    postalCode: nonEmptyString,
+    bio: nonEmptyString,
 })
 export type UpdateUserInput = z.infer<typeof updateUserSchema>
 
