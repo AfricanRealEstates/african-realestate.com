@@ -41,7 +41,7 @@ export default async function Blog() {
                 href={`${href}`}
                 className="relative flex h-[500px] flex-col gap-4 rounded-md px-4 py-8 [grid-area:1/1/2/2] md:p-0 md:[grid-area:1/1/2/4]"
               >
-                <div className="absolute bottom-12 left-8 z-20 w-80 max-w-[464px] flex-col items-start rounded-md bg-white p-6 sm:w-full md:bottom-[10px] md:left-[10px]">
+                <div className="absolute bottom-12 left-8 z-20 w-56 max-w-[464px] flex-col items-start rounded-md bg-white p-6 sm:w-full md:bottom-[10px] md:left-[10px]">
                   <div className="flex flex-col lg:items-center md:flex-row gap-x-1">
                     {tags.map((tag) => {
                       return (
