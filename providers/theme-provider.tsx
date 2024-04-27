@@ -3,12 +3,19 @@
 import { ConfigProvider } from "antd";
 import React from "react";
 
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from "@tanstack/react-query";
+
 interface Props {
   children: React.ReactNode;
 }
 export default function ThemeProvider({ children }: Props) {
+  const [queryClient] = React.useState(() => new QueryClient({}));
   return (
-    <div>
+    <QueryClientProvider client={queryClient}>
       <ConfigProvider
         theme={{
           token: {
@@ -38,6 +45,6 @@ export default function ThemeProvider({ children }: Props) {
       >
         {children}
       </ConfigProvider>
-    </div>
+    </QueryClientProvider>
   );
 }

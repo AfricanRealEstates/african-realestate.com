@@ -1,3 +1,4 @@
+import { UserRole } from "@prisma/client"
 import { z } from "zod"
 
 const nonEmptyString = z.string().trim().min(3, { message: "Value must be at least 3 characters" })
@@ -47,8 +48,16 @@ export const loginUserSchema = z.object({
 export type LoginUserInput = z.infer<typeof loginUserSchema>
 
 
+export const UpdateUserSchema = z.object({
+    role: z.custom((value) => {
+        // Check if the value is a valid UserRole
+        if (!Object.values(UserRole).includes(value as UserRole)) {
+            throw new Error(`Invalid user role: ${value}`);
+        }
 
-
+        return value;
+    })
+});
 
 
 

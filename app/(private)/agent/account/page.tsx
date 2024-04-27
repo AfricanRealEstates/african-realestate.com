@@ -26,7 +26,7 @@ export default async function Account() {
     },
     orderBy: { createdAt: "desc" },
   });
-  console.log(userSubsciption);
+  // console.log(userSubsciption);
 
   const getSectionTitle = async (title: string) => {
     return (

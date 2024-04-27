@@ -1,32 +1,14 @@
-import { auth } from "@/auth";
-import { SignOut } from "@/components/auth/signout-button";
-import UserButton from "@/components/auth/user-button";
-import DashboardAccount from "@/components/dashboard/dashboard-account";
-import SettingsUpdatedForm from "@/components/dashboard/settings-updated-form";
-import getSession from "@/lib/getSession";
-import { getSEOTags } from "@/lib/seo";
-import { redirect } from "next/navigation";
 import React from "react";
 
-export const metadata = getSEOTags({
-  title: "Dashboard - settings | African Real Estate",
-  canonicalUrlRelative: "/dashboard/settings",
-});
-
-export default async function Settings() {
-  const session = await getSession();
-  const user = session?.user;
-  if (!user) {
-    redirect(`/api/auth/signin?callbackUrl=/dashboard/account`);
-  }
-  console.log(user);
+export default function DashboardAccount() {
   return (
-    <div>
-      {/* <DashboardAccount /> */}
-      {/* <UserButton user={user} />
-      <SignOut />
-       */}
-      <SettingsUpdatedForm user={user} />
-    </div>
+    <section className="max-w-7xl mx-auto px-8 w-full mt-9">
+      <div className="grid gap-1 mb-4">
+        <h2 className="text-2xl md:text-3xl">Account</h2>
+        <p className="text-base text-muted-foreground">
+          Manage account and website settings.
+        </p>
+      </div>
+    </section>
   );
 }

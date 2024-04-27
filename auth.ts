@@ -77,7 +77,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
             if (isOnAuthPage) {
                 // Redirect to /dashboard/settings, if logged in and is on an auth page
-                if (isLoggedIn) return NextResponse.redirect(new URL("/dashboard/settings", nextUrl));
+                if (isLoggedIn) return NextResponse.redirect(new URL("/dashboard", nextUrl));
 
             } else if (isProtectedPage) {
                 // Redirect to /login,if not logged in but is on a protected page

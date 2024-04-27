@@ -5,7 +5,7 @@ import LayoutProvider from "@/providers/layout-provider";
 import { Analytics } from "@vercel/analytics/react";
 import { getSEOTags } from "@/lib/seo";
 import { SessionProvider } from "next-auth/react";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
 
 const nunitoSans = Nunito_Sans({
   subsets: ["latin"],
@@ -23,13 +23,13 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${nunitoSans.variable} antialiased`}>
-        <SessionProvider>
-          <ThemeProvider>
+        <ThemeProvider>
+          <SessionProvider>
             <LayoutProvider>{children}</LayoutProvider>
             <Analytics />
-            <Toaster />
-          </ThemeProvider>
-        </SessionProvider>
+            <Toaster richColors position="bottom-right" />
+          </SessionProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

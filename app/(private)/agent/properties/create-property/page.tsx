@@ -16,6 +16,10 @@ export default async function CreateProperty({
   const session = await auth();
   const user = session?.user;
   if (!user) redirect("/login");
+
+  // if (user.role !== "AGENT") {
+  //   redirect("/onboarding");
+  // }
   const cloneFrom = searchParams?.cloneFrom || "";
 
   let property: Property | null = null;
@@ -66,7 +70,11 @@ export default async function CreateProperty({
       ) : (
         <section className="flex flex-col justify-center items-center gap-6 h-[25vh]">
           <span className="text-lg text-gray-600">{errorMessage}</span>
-          <Button asChild>
+          <Button
+            variant={"ghost"}
+            asChild
+            className="border-indigo-400 bg-indigo-500 hover:bg-indigo-600 text-white transition-colors ease-linear hover:text-white"
+          >
             <Link href="/agent/subscriptions">Upgrade you plan</Link>
           </Button>
         </section>

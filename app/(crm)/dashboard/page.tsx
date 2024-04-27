@@ -1,6 +1,9 @@
 import { auth } from "@/auth";
-import prisma from "@/lib/prisma";
+import { EmptyPlaceholder } from "@/components/globals/empty-placeholder";
+import { Button } from "@/components/ui/button";
 import { getSEOTags } from "@/lib/seo";
+import { Plus } from "lucide-react";
+import { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -17,18 +20,49 @@ export default async function Dashboard() {
   if (!user) {
     redirect("/login");
   }
-  // fetch all users from database
-  const users = await prisma.user.findMany({});
+
   return (
-    <main className="p-2">Main Dashboard</main>
-    // <div className="grid h-screen place-content-center">
-    //   {users.map((user) => {
-    //     return (
-    //       <Link href={`/dashboard/users/${user.id}`} key={user.id}>
-    //         {user.name || `User ${user.id}`}
-    //       </Link>
-    //     );
-    //   })}
-    // </div>
+    <div className="h-full bg-background">
+      <section className="border-b bg-card mt-10">
+        <div className="max-w-7xl mx-auto w-full px-8 flex flex-wrap items-center justify-between gap-6 py-8">
+          <p className="text-3xl font-bold">
+            Hello,{" "}
+            <strong className="text-indigo-400 mr-1">{user.name}!</strong>
+            👋️
+          </p>
+
+          <div className="flex items-center gap-3">
+            <Button
+              asChild
+              variant={"outline"}
+              className="flex items-center gap-x-2 border-indigo-500 bg-indigo-500 text-white hover:bg-indigo-700 hover:text-white"
+            >
+              <Link href="/agent/properties/create-property">
+                <Plus />
+                <span>Create listing</span>
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+      <section className="w-full max-w-7xl mx-auto px-8 mt-16">
+        <EmptyPlaceholder>
+          <EmptyPlaceholder.Icon name="post" />
+          <EmptyPlaceholder.Title>No property created</EmptyPlaceholder.Title>
+          <EmptyPlaceholder.Description>
+            You don&apos;t have any property yet. Start creating a listing.
+          </EmptyPlaceholder.Description>
+          <Button variant={"outline"} asChild>
+            <Link
+              href="/agent/properties/create-property"
+              className="flex items-center gap-x-4"
+            >
+              <Plus />
+              <span>Add a listing</span>
+            </Link>
+          </Button>
+        </EmptyPlaceholder>
+      </section>
+    </div>
   );
 }
