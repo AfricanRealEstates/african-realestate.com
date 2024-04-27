@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { RoleComboBox } from "@/components/crm/role-combobox";
+import RoleComboBox from "@/components/crm/role-combobox";
 import Logo from "@/components/globals/logo";
 import {
   Card,
