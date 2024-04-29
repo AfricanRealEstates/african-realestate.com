@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import PageTitle from "@/components/globals/page-title";
 import PropertiesForm from "@/components/properties/properties-form";
 import prisma from "@/lib/prisma";
+import { getSEOTags } from "@/lib/seo";
 import { redirect } from "next/navigation";
 import React from "react";
 
@@ -10,6 +11,11 @@ interface EditPropertyProps {
     id: string;
   };
 }
+
+export const metadata = getSEOTags({
+  title: "Edit Property | African Real Estate",
+  canonicalUrlRelative: `/agent/edit-property`,
+});
 
 export default async function EditProperty({ params }: EditPropertyProps) {
   const property = await prisma.property.findUnique({

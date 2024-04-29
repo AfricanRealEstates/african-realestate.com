@@ -3,10 +3,16 @@ import PageTitle from "@/components/globals/page-title";
 import PropertiesForm from "@/components/properties/properties-form";
 import { Button } from "@/components/ui/button";
 import prisma from "@/lib/prisma";
+import { getSEOTags } from "@/lib/seo";
 import { Property } from "@prisma/client";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
+
+export const metadata = getSEOTags({
+  title: "Create Property | African Real Estate",
+  canonicalUrlRelative: "/agent/create-property",
+});
 
 export default async function CreateProperty({
   searchParams,

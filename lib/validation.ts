@@ -1,20 +1,54 @@
-import { UserRole } from "@prisma/client"
+import parsePhoneNumberFromString from 'libphonenumber-js';
 import { z } from "zod"
 
 const nonEmptyString = z.string().trim().min(3, { message: "Value must be at least 3 characters" })
 
+// Phone number validation
+const phoneRegex = new RegExp(
+    /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/
+);
 // Dashboard profile update
 export const updateUserSchema = z.object({
     agentName: nonEmptyString,
     agentEmail: nonEmptyString.email(),
-    officeLine: nonEmptyString.regex(
-        new RegExp(/^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/),
-        { message: 'Invalid phone number' },
-    ),
-    whatsappNumber: nonEmptyString.regex(
-        new RegExp(/^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/),
-        { message: 'Invalid phone number' },
-    ),
+    officeLine: nonEmptyString.transform((arg, ctx) => {
+        const phone = parsePhoneNumberFromString(arg, {
+
+            defaultCountry: 'KE',
+
+            extract: false,
+        });
+
+        if (phone && phone.isValid()) {
+            return phone.number;
+        }
+
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Invalid phone number',
+        });
+        return z.NEVER;
+    }),
+    whatsappNumber: nonEmptyString.transform((arg, ctx) => {
+        const phone = parsePhoneNumberFromString(arg, {
+
+            defaultCountry: 'KE',
+
+
+            extract: false,
+        });
+
+
+        if (phone && phone.isValid()) {
+            return phone.number;
+        }
+
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Invalid phone number',
+        });
+        return z.NEVER;
+    }),
     address: nonEmptyString,
     postalCode: nonEmptyString,
     bio: nonEmptyString,
@@ -47,17 +81,6 @@ export const loginUserSchema = z.object({
 
 export type LoginUserInput = z.infer<typeof loginUserSchema>
 
-
-export const UpdateUserSchema = z.object({
-    role: z.custom((value) => {
-        // Check if the value is a valid UserRole
-        if (!Object.values(UserRole).includes(value as UserRole)) {
-            throw new Error(`Invalid user role: ${value}`);
-        }
-
-        return value;
-    })
-});
 
 
 

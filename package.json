@@ -54,6 +54,7 @@
     "framer": "^2.4.1",
     "froala-editor": "^4.2.0",
     "input-otp": "^1.2.2",
+    "libphonenumber-js": "^1.10.61",
     "lucide-react": "^0.356.0",
     "markdown-draft-js": "^2.4.0",
     "motion": "^10.17.0",
