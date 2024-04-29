@@ -5,8 +5,8 @@ import { Button, Form, Input, Select } from "antd";
 import { uploadFilesToFirebase } from "@/lib/utils/upload-media";
 import { addProperty, editProperty } from "@/actions/properties";
 import { useRouter, useParams } from "next/navigation";
-import { useToast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 export default function AgentInfo({
   currentStep,
@@ -17,7 +17,6 @@ export default function AgentInfo({
   setLoading,
   isEdit = false,
 }: PropertiesFormStepProps) {
-  const { toast } = useToast();
   const { id }: any = useParams();
   const router = useRouter();
   const onSubmit = async (values: any) => {
@@ -50,16 +49,13 @@ export default function AgentInfo({
       if (res.error) throw new Error(res.error);
       // Toast messages
       if (isEdit) {
-        toast({ description: "Edit saved successfully" });
+        toast.success("Edit saved successfully");
       } else {
-        toast({ description: "Property added successfully" });
+        toast.success("Property added successfully");
       }
       router.push(`/agent/properties`);
     } catch (error: any) {
-      toast({
-        variant: "destructive",
-        description: "Failed to create property",
-      });
+      toast.error("Failed to create property");
       console.error(error.message);
     } finally {
       setLoading(false);

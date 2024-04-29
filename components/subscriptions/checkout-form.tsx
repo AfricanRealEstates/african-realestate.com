@@ -9,7 +9,7 @@ import {
 import { Button, Modal } from "antd";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 interface CheckoutFormProps {
   subscription: any;
