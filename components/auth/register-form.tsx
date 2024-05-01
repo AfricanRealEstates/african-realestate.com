@@ -6,12 +6,13 @@ import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { CreateUserInput, createUserSchema } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useToast } from "../ui/use-toast";
 import { signIn } from "next-auth/react";
-import { toast } from "sonner";
 
 export default function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
 
+  const { toast } = useToast();
   const methods = useForm<CreateUserInput>({
     resolver: zodResolver(createUserSchema),
   });
@@ -38,17 +39,29 @@ export default function RegisterForm() {
 
         if (Array.isArray(errorData.errors) && errorData.errors.length > 0) {
           errorData.errors.forEach((error: any) => {
-            toast.error("Uh oh! Something went wrong");
+            toast({
+              variant: "destructive",
+              title: "Uh oh! Something went wrong",
+              description: `${error.message}`,
+            });
           });
           return;
         }
-        toast.error("Uh oh! Something went wrong");
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong",
+          description: `${errorData.message}`,
+        });
 
         return;
       }
       signIn(undefined, { callbackUrl: "/" });
     } catch (error: any) {
-      toast("Uh oh! Something went wrong");
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong",
+        description: `${error.message}`,
+      });
     } finally {
       setIsLoading(false);
     }

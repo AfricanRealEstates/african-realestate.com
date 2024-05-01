@@ -2,7 +2,7 @@
 import { addQuery } from "@/actions/queries";
 import { Button, Form, Input, InputNumber, Modal } from "antd";
 import React, { useState } from "react";
-import { toast } from "sonner";
+import toast from "react-hot-toast";
 
 export default function QueryModal({ propertyId }: { propertyId: string }) {
   const [showQueryModal, setShowQueryModal] = useState(false);

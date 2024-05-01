@@ -6,9 +6,9 @@ import dayjs from "dayjs";
 import { PencilLine, Save, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 import PropertyQueries from "./property-queries";
 import Link from "next/link";
-import { toast } from "sonner";
 
 interface ClientTableProps {
   properties: Property[];
@@ -131,7 +131,7 @@ export default function ClientTable({
       dataIndex: "agent",
       key: "agent",
       render(value: any, record: any) {
-        return <div className="flex gap-5">{record.user.username}</div>;
+        return <div className="flex gap-5">{record.user.agentName}</div>;
       },
     });
   }

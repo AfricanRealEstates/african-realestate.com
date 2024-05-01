@@ -1,5 +1,8 @@
 import { auth } from "@/auth";
+import DeleteAccount from "@/components/crm/delete-account";
 import UserUpdateForm from "@/components/crm/user-update-form";
+import { Button } from "@/components/ui/button";
+import { HeartCrackIcon } from "lucide-react";
 import { redirect } from "next/navigation";
 import React from "react";
 
@@ -34,6 +37,18 @@ export default async function DashboardAccount() {
           }}
         />
       </section>
+      {/* <div className="flex w-52 flex-col space-y-2 mt-6">
+        <p>Delete account:</p>
+        <DeleteAccount
+          email={session.user.email!}
+          trigger={
+            <Button variant="destructive" size="sm">
+              <HeartCrackIcon size={14} />
+              <span>Delete Account</span>
+            </Button>
+          }
+        />
+      </div> */}
     </section>
   );
 }

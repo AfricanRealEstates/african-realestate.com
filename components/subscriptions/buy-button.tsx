@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { getStripeClientSecret } from "@/actions/payments";
+import toast from "react-hot-toast";
 import CheckoutForm from "./checkout-form";
 import { Button } from "../ui/button";
 

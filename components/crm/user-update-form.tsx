@@ -70,7 +70,7 @@ export default function UserUpdateForm({ user }: UserUpdateFormProps) {
         toast.error("Error while updating profile information");
       } else {
         toast.success("Your profile information  has been updated!");
-        session.update(data);
+        session.update();
       }
     });
   });

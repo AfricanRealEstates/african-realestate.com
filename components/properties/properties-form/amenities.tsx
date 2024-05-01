@@ -2,11 +2,12 @@ import React from "react";
 import { PropertiesFormStepProps } from "./index";
 import { Button, Checkbox, Form, InputNumber, Select } from "antd";
 import { appliances, landUnits } from "@/constants";
-import { useToast } from "@/components/ui/use-toast";
 import { useParams, useRouter } from "next/navigation";
 import { uploadFilesToFirebase } from "@/lib/utils/upload-media";
 import { addProperty, editProperty } from "@/actions/properties";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { Icons } from "@/components/globals/icons";
 
 export default function Amenities({
   currentStep,
@@ -22,7 +23,6 @@ export default function Amenities({
   //   setCurrentStep(currentStep + 1);
   // };
 
-  const { toast } = useToast();
   const { id }: any = useParams();
   const router = useRouter();
   const onSubmit = async (values: any) => {
@@ -55,16 +55,13 @@ export default function Amenities({
       if (res.error) throw new Error(res.error);
       // Toast messages
       if (isEdit) {
-        toast({ description: "Edit saved successfully" });
+        toast.success("Edit saved successfully");
       } else {
-        toast({ description: "Property added successfully" });
+        toast.success("Property added successfully");
       }
       router.push(`/agent/properties`);
     } catch (error: any) {
-      toast({
-        variant: "destructive",
-        description: "Failed to create property",
-      });
+      toast.error("Failed to create property");
       console.error(error.message);
     } finally {
       setLoading(false);
@@ -177,12 +174,12 @@ export default function Amenities({
             <>
               {!isEdit ? (
                 <div className="flex items-center">
-                  <Loader2 className="size-3 animate-spin mr-2" />
+                  <Icons.spinner className="size-4 animate-spin mr-2" />
                   Saving...
                 </div>
               ) : (
                 <div className="flex items-center">
-                  <Loader2 className="size-3 animate-spin mr-2" />
+                  <Icons.spinner className="size-4 animate-spin mr-2" />
                   Submitting...
                 </div>
               )}
