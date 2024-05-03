@@ -18,9 +18,7 @@ export default function LocationInfo({
       onFinish={onSubmit}
       initialValues={finalValues.locationInfo}
     >
-      {/* location, county, country, district, nearby_town, locality */}
-
-      <section className="grid grid-cols-1 lg:grid-cols-3 gap-x-4 gap-y-3">
+      {/* <section className="grid grid-cols-1 lg:grid-cols-3 gap-x-4 gap-y-3">
         <Form.Item
           name="country"
           label="Country"
@@ -100,7 +98,7 @@ export default function LocationInfo({
         >
           <Input placeholder="Location" />
         </Form.Item>
-      </section>
+      </section> */}
       <div className="flex items-center justify-end gap-5">
         <Button
           disabled={currentStep === 0}

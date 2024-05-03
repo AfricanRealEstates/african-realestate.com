@@ -58,7 +58,7 @@ export default async function CreateProperty({
   let showForm = true;
   let errorMessage = "";
 
-  if (!userSubscription && propertiesCount >= 3) {
+  if (!userSubscription && propertiesCount >= 10) {
     showForm = false;
     errorMessage = `You have reached the maximum number of properties ${3}. Please upgrade your subscription plan.`;
   }

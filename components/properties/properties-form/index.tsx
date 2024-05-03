@@ -49,13 +49,13 @@ export default function PropertiesForm({
   };
   const steps = [
     {
-      title: "Basic Info",
+      title: "Property Information",
       content: <BasicInfo {...commonSteps} />,
     },
-    {
-      title: "Location Info",
-      content: <LocationInfo {...commonSteps} />,
-    },
+    // {
+    //   title: "Location Info",
+    //   content: <LocationInfo {...commonSteps} />,
+    // },
 
     {
       title: "Media",

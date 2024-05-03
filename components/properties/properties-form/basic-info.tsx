@@ -115,7 +115,7 @@ export default function BasicInfo({
           className="col-span-full"
         >
           <Input.TextArea
-            rows={4}
+            rows={8}
             placeholder="Brief description of your property"
           />
         </Form.Item>
@@ -165,6 +165,90 @@ export default function BasicInfo({
             className="w-full"
             placeholder="Select currency"
           />
+        </Form.Item>
+      </section>
+      <h2 className="text-lg font-medium my-4 text-blue-600">
+        Location Details
+      </h2>
+      <section className="grid grid-cols-1 lg:grid-cols-3 gap-x-4 gap-y-3">
+        <Form.Item
+          name="country"
+          label="Country"
+          rules={[
+            {
+              required: true,
+              message: "Country is required",
+            },
+          ]}
+          className="col-span-1"
+        >
+          <Input placeholder="Country" />
+        </Form.Item>
+
+        <Form.Item
+          name="county"
+          label="County/State"
+          rules={[
+            {
+              required: true,
+              message: "County or state is required",
+            },
+          ]}
+          className="col-span-1"
+        >
+          <Input placeholder="County/State" />
+        </Form.Item>
+        <Form.Item
+          name="district"
+          label="District"
+          rules={[
+            {
+              required: true,
+              message: "District is required",
+            },
+          ]}
+          className="col-span-1"
+        >
+          <Input placeholder="District" />
+        </Form.Item>
+        <Form.Item
+          name="locality"
+          label="Locality"
+          rules={[
+            {
+              required: true,
+              message: "Locality is required",
+            },
+          ]}
+          className="lg:col-span-1"
+        >
+          <Input placeholder="Locality" />
+        </Form.Item>
+        <Form.Item
+          name="nearbyTown"
+          label="Nearby Town"
+          rules={[
+            {
+              required: true,
+              message: "Nearby Town is required",
+            },
+          ]}
+          className="col-span-1"
+        >
+          <Input placeholder="Nearby Town" />
+        </Form.Item>
+        <Form.Item
+          name="location"
+          label="Location"
+          rules={[
+            {
+              required: true,
+              message: "Location is required",
+            },
+          ]}
+          className="col-span-1"
+        >
+          <Input placeholder="Location" />
         </Form.Item>
       </section>
       <div className="flex items-center justify-end gap-5">
