@@ -29,7 +29,7 @@ export default function FeaturedCard({ property }: PropertyCardsProps) {
   } = property;
   return (
     <section className="flex flex-col rounded-lg shadow-2xl bg-white relative">
-      <div className="relative w-full min-h-[20rem] pt-[56.25%] overflow-hidden rounded-lg text-white">
+      <div className="group relative w-full min-h-[20rem] pt-[56.25%] overflow-hidden rounded-lg text-white">
         {images.map((image) => {
           return (
             <Image
@@ -38,7 +38,7 @@ export default function FeaturedCard({ property }: PropertyCardsProps) {
               width={350}
               height={300}
               priority
-              className="absolute rounded-md top-0 w-full h-full object-cover"
+              className="absolute rounded-md top-0 w-full h-full object-cover transition duration-300 group-hover:scale-110"
               alt=""
             />
           );

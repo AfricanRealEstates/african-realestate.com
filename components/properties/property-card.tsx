@@ -63,7 +63,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
             <Heart className="size-5 text-neutral-500 peer-checked:group-[]:text-red-600" />
           </span>
         </label>
-        <div className="w-full min-h-[12rem] pt-[56.25%] relative rounded-sm">
+        <div className="group w-full min-h-[12rem] pt-[56.25%] relative rounded-sm">
           {images.map((image) => {
             return (
               <Image
@@ -72,7 +72,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
                 width={350}
                 height={300}
                 priority
-                className="absolute rounded-md top-0 w-full h-full object-cover"
+                className="absolute rounded-md top-0 w-full h-full object-cover transition duration-300 group-hover:scale-[1.02]"
                 alt=""
               />
             );
