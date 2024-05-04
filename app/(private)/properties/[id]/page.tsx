@@ -99,11 +99,23 @@ export default async function PropertyDetails({
   const relatedProperties = await prisma.property.findMany({
     where: {
       NOT: {
-        id: property.id, // Exclude the fetched property
+        id: id, // Exclude the fetched property
       },
-      OR: [
-        { location: property.location },
-        { propertyDetails: property.propertyDetails },
+      AND: [
+        {
+          OR: [
+            { location: property.location }, // Related properties with the same location
+            { propertyDetails: property.propertyDetails }, // Related properties with the same property details
+            { status: property.status }, // Related properties with the same status
+          ],
+        },
+        {
+          price: {
+            // Define the price range based on the property's price
+            gte: property.price - 50000, // Assuming a range of +/- 50000 from the property's price
+            lte: property.price + 50000,
+          },
+        },
       ],
     },
   });
