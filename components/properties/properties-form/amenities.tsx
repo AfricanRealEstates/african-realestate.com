@@ -40,9 +40,9 @@ export default function Amenities({
 
       tempFinalValues.media = tempMedia;
       // ...tempFinalValues.agentInfo,
+      // ...tempFinalValues.locationInfo,
       const savedValues = {
         ...tempFinalValues.basicInfo,
-        ...tempFinalValues.locationInfo,
         ...tempFinalValues.amenities,
         images: tempFinalValues.media.images,
       };
