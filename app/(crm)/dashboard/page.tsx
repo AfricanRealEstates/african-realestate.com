@@ -1,12 +1,13 @@
 import { auth } from "@/auth";
 import { EmptyPlaceholder } from "@/components/globals/empty-placeholder";
+import PropertiesTable from "@/components/properties/properties-table";
 import { Button } from "@/components/ui/button";
 import { getSEOTags } from "@/lib/seo";
-import { Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import React from "react";
+import React, { Suspense } from "react";
 
 export const metadata = getSEOTags({
   title: "Dashboard | African Real Estate",
@@ -46,7 +47,10 @@ export default async function Dashboard() {
         </div>
       </section>
       <section className="w-full max-w-7xl mx-auto px-8 mt-16">
-        <EmptyPlaceholder>
+        <Suspense fallback={<Loader2 className="animate-spin" />}>
+          <PropertiesTable />
+        </Suspense>
+        {/* <EmptyPlaceholder>
           <EmptyPlaceholder.Icon name="post" />
           <EmptyPlaceholder.Title>No property created</EmptyPlaceholder.Title>
           <EmptyPlaceholder.Description>
@@ -61,7 +65,7 @@ export default async function Dashboard() {
               <span>Add a listing</span>
             </Link>
           </Button>
-        </EmptyPlaceholder>
+        </EmptyPlaceholder> */}
       </section>
     </div>
   );

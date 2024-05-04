@@ -42,7 +42,7 @@ import { auth } from "@/auth";
 // import { useCurrentUser } from "@/hooks/use-current-user";
 
 interface PropertiesTableProps {
-  searchParams: Record<string, any>;
+  searchParams?: Record<string, any>;
   fromAdmin?: boolean;
 }
 
