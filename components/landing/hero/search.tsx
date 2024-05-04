@@ -93,7 +93,7 @@ export default function SearchBar() {
                     {queryResults.map((query) => (
                       <CommandItem
                         onSelect={(e) => {
-                          router.push(`/properties/${e}`);
+                          router.push(`/properties/${query.id}`);
                           router.refresh();
                         }}
                         key={query.id}
