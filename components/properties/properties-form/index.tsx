@@ -61,10 +61,10 @@ export default function PropertiesForm({
       title: "Media",
       content: <Media {...commonSteps} />,
     },
-    {
-      title: "Amenities",
-      content: <Amenities {...commonSteps} />,
-    },
+    // {
+    //   title: "Amenities",
+    //   content: <Amenities {...commonSteps} />,
+    // },
 
     // {
     //   title: "Agent Info",
@@ -77,7 +77,7 @@ export default function PropertiesForm({
   }, [finalValues]);
 
   return (
-    <section className=" mb-9">
+    <section className="max-w-5xl mx-auto shadow-2xl p-8 mb-9">
       <Steps items={steps} current={currentStep} />
       <div className="mt-8">{steps[currentStep].content}</div>
     </section>

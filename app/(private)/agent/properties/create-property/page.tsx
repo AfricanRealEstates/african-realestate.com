@@ -69,8 +69,8 @@ export default async function CreateProperty({
   }
 
   return (
-    <div className="w-[95%] lg:max-w-7xl mx-auto py-[90px] lg:py-[120px]">
-      <PageTitle title="Create Property" />
+    <div className="w-[95%] px-16 lg:max-w-6xl mx-auto py-[90px] lg:py-[120px]">
+      <PageTitle title="Add your listing" />
       {showForm ? (
         <PropertiesForm initialValues={property ? property : {}} />
       ) : (

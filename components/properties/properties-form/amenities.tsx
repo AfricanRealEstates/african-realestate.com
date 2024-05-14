@@ -41,9 +41,9 @@ export default function Amenities({
       tempFinalValues.media = tempMedia;
       // ...tempFinalValues.agentInfo,
       // ...tempFinalValues.locationInfo,
+      // ...tempFinalValues.amenities,
       const savedValues = {
         ...tempFinalValues.basicInfo,
-        ...tempFinalValues.amenities,
         images: tempFinalValues.media.images,
       };
       let res = null;
@@ -188,12 +188,6 @@ export default function Amenities({
             <>{isEdit ? "Save Edited Property" : "Save Property"}</>
           )}
         </button>
-        {/* <button
-          type="submit"
-          className="inline-block  cursor-pointer items-center rounded-md bg-blue-300 hover:bg-blue-400 transition-colors px-5 py-2.5 text-center font-semibold text-white"
-        >
-          Next
-        </button> */}
       </div>
     </Form>
   );

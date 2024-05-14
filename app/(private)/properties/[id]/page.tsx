@@ -374,8 +374,10 @@ export default async function PropertyDetails({
             Location
           </h3>
           <p className="mt-4 text-sm text-gray-400 flex items-center gap-2">
-            <MapPin className="size-4 text-indigo-400" /> {property.locality},{" "}
-            {property.location}
+            <MapPin className="size-4 text-indigo-400" />{" "}
+            <span className="inline-flex gap-1 capitalize">
+              {property.locality}, {property.nearbyTown}, {property.county}
+            </span>
           </p>
         </section>
         <section className="mt-10 pt-10 border-t border-gray-200">

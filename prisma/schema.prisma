@@ -10,10 +10,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
@@ -101,6 +99,7 @@ model Property {
   id                     String   @id @default(dbgenerated("concat('property_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
   userId                 String
   user                   User     @relation(fields: [userId], references: [id])
+  slug                   String?  @unique
   status                 String
   title                  String
   propertyType           String
@@ -111,15 +110,16 @@ model Property {
   currency               String
   country                String
   county                 String
-  district               String
   locality               String
   nearbyTown             String
-  location               String
+  district               String?
+  location               String?
   bedrooms               Int
   bathrooms              Int
   landSize               Float
   landUnits              String
   plinthArea             Int
+  videoLink              String?
   appliances             String[]
   images                 String[]
   // agentName              String // move to user

@@ -1,7 +1,22 @@
 import React, { useState } from "react";
 import { PropertiesFormStepProps } from "./index";
-import { Button, Form, Input, InputNumber, Select } from "antd";
-import { currencyOptions, propertyStatuses, properyTypes } from "@/constants";
+import {
+  Button,
+  Checkbox,
+  Form,
+  Input,
+  InputNumber,
+  Radio,
+  Select,
+} from "antd";
+import {
+  currencyOptions,
+  propertyStatuses,
+  properyTypes,
+  appliances,
+  landUnits,
+  countries,
+} from "@/constants";
 
 export default function BasicInfo({
   currentStep,
@@ -41,8 +56,25 @@ export default function BasicInfo({
       layout="vertical"
       initialValues={finalValues.basicInfo}
     >
-      <section className="grid grid-cols-1 lg:grid-cols-4 gap-x-4 gap-y-2">
+      <section className="grid grid-cols-1 lg:grid-cols-3 gap-x-4 gap-y-2">
         <Form.Item
+          label="Status"
+          name="status"
+          rules={[
+            {
+              required: true,
+              message: "Status is required",
+            },
+          ]}
+          className="col-span-full"
+        >
+          <Radio.Group>
+            <Radio value="sale"> Sale </Radio>
+            <Radio value="let"> Let </Radio>
+          </Radio.Group>
+        </Form.Item>
+
+        {/* <Form.Item
           name="status"
           label="Status"
           rules={[
@@ -54,7 +86,7 @@ export default function BasicInfo({
           className="col-span-2"
         >
           <Select options={propertyStatuses} placeholder="Select status" />
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item
           name="title"
           label="Property Title"
@@ -64,7 +96,7 @@ export default function BasicInfo({
               message: "Propery title is required",
             },
           ]}
-          className="col-span-2"
+          className=""
         >
           <Input placeholder="Property Title" />
         </Form.Item>
@@ -77,7 +109,7 @@ export default function BasicInfo({
               message: "Property type is required",
             },
           ]}
-          className="col-span-2"
+          className=""
         >
           <Select
             options={properyTypes}
@@ -95,7 +127,7 @@ export default function BasicInfo({
               message: "Property details is required",
             },
           ]}
-          className="col-span-2"
+          className=""
         >
           <Select
             options={propertyDetailsOptions}
@@ -115,7 +147,7 @@ export default function BasicInfo({
           className="col-span-full"
         >
           <Input.TextArea
-            rows={8}
+            rows={5}
             placeholder="Brief description of your property"
           />
         </Form.Item>
@@ -128,7 +160,7 @@ export default function BasicInfo({
               message: "Price is required",
             },
           ]}
-          className="w-full"
+          className=""
         >
           <InputNumber className="w-full" type="number" placeholder="Price" />
         </Form.Item>
@@ -141,7 +173,7 @@ export default function BasicInfo({
               message: "Least price is required",
             },
           ]}
-          className="w-full"
+          className=""
         >
           <InputNumber
             className="w-full"
@@ -158,7 +190,7 @@ export default function BasicInfo({
               message: "Currency is required",
             },
           ]}
-          className="col-span-2"
+          className=""
         >
           <Select
             options={currencyOptions}
@@ -170,8 +202,25 @@ export default function BasicInfo({
       <h2 className="text-lg font-medium my-4 text-blue-600">
         Location Details
       </h2>
-      <section className="grid grid-cols-1 lg:grid-cols-3 gap-x-4 gap-y-3">
+      <section className="grid grid-cols-1 lg:grid-cols-4 gap-x-4 gap-y-3">
         <Form.Item
+          name="country"
+          label="Country"
+          rules={[
+            {
+              required: true,
+              message: "Country is required",
+            },
+          ]}
+          className=""
+        >
+          <Select
+            options={countries}
+            className="w-full"
+            placeholder="Select Country"
+          />
+        </Form.Item>
+        {/* <Form.Item
           name="country"
           label="Country"
           rules={[
@@ -183,11 +232,11 @@ export default function BasicInfo({
           className="col-span-1"
         >
           <Input placeholder="Country" />
-        </Form.Item>
+        </Form.Item> */}
 
         <Form.Item
           name="county"
-          label="County/State"
+          label="County/State/Province"
           rules={[
             {
               required: true,
@@ -198,19 +247,7 @@ export default function BasicInfo({
         >
           <Input placeholder="County/State" />
         </Form.Item>
-        <Form.Item
-          name="district"
-          label="District"
-          rules={[
-            {
-              required: true,
-              message: "District is required",
-            },
-          ]}
-          className="col-span-1"
-        >
-          <Input placeholder="District" />
-        </Form.Item>
+
         <Form.Item
           name="locality"
           label="Locality"
@@ -237,18 +274,97 @@ export default function BasicInfo({
         >
           <Input placeholder="Nearby Town" />
         </Form.Item>
+      </section>
+      <h2 className="text-lg font-medium my-4 text-blue-600">Amenities</h2>
+      <section className="grid grid-cols-1 lg:grid-cols-3 gap-x-4 gap-y-2">
         <Form.Item
-          name="location"
-          label="Location"
+          name="bedrooms"
+          label="Bedrooms"
           rules={[
             {
               required: true,
-              message: "Location is required",
+              message: "Bedrooms is required",
             },
           ]}
+          className=""
+        >
+          <InputNumber className="w-full" placeholder="eg. 3" />
+        </Form.Item>
+        <Form.Item
+          name="bathrooms"
+          label="Bathrooms"
+          rules={[
+            {
+              required: true,
+              message: "Bathrooms is required",
+            },
+          ]}
+          className=""
+        >
+          <InputNumber className="w-full" placeholder="eg. 3" />
+        </Form.Item>
+        <Form.Item
+          name="landSize"
+          label="Land Size"
+          rules={[
+            {
+              required: true,
+              message: "Land Size is required",
+            },
+          ]}
+          className=""
+        >
+          <InputNumber className="w-full" placeholder="eg.2" />
+        </Form.Item>
+        <Form.Item
+          name="landUnits"
+          label="Land Units"
+          rules={[
+            {
+              required: true,
+              message: "Land Units is required",
+            },
+          ]}
+          className=""
+        >
+          <Select
+            options={landUnits}
+            className="w-full"
+            placeholder="Select land units"
+          />
+        </Form.Item>
+        <Form.Item
+          name="plinthArea"
+          label="Plinth Area"
+          rules={[
+            {
+              required: true,
+              message: "Plinth Area is required",
+            },
+          ]}
+          className=""
+        >
+          <InputNumber className="w-full" placeholder="eg.100" />
+        </Form.Item>
+        <Form.Item
+          name="videoLink"
+          label="Property Video Description (Optional)"
           className="col-span-1"
         >
-          <Input placeholder="Location" />
+          <Input placeholder="Video link (optional)" />
+        </Form.Item>
+        <Form.Item
+          name="appliances"
+          label="Appliances"
+          rules={[
+            {
+              required: true,
+              message: "Appliances is required",
+            },
+          ]}
+          className="flex w-full items-center justify-start col-span-full gap-5"
+        >
+          <Checkbox.Group options={appliances} className="w-full gap-5" />
         </Form.Item>
       </section>
       <div className="flex items-center justify-end gap-5">
