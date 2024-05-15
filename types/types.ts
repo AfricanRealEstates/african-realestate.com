@@ -1,5 +1,7 @@
 import { Icons } from "@/components/globals/icons";
 import { UserRole } from "@prisma/client";
+import type { Route as NextRoute } from "next";
+import { ComponentType } from "react";
 
 export type RegisterInputProps = {
     fullName: string;
@@ -36,4 +38,14 @@ export type SidebarNavItem = NavItemWithChildren
 
 export interface SearchParams {
     [key: string]: string | string[] | undefined
+}
+
+// Get ready to update to nextjs version 13.2 with X typedRoutes
+export type Route<T = string> = NextRoute;
+export type PathName = Route;
+
+export interface Page {
+    path: PathName;
+    exact?: boolean;
+    component: ComponentType<Object>;
 }
