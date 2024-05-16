@@ -333,7 +333,7 @@ export default async function PropertyDetails({
 
         <div className="mt-6 grid grid-cols-1 gap-y-6 lg:grid-cols-3 sm:gap-x-6 lg:gap-8">
           <ImageCarousel property={property} />
-          <div className="sm:col-span-1">
+          <div className="sm:col-span-1 h-full">
             <article className="flex flex-col-reverse">
               <div className="flex flex-col gap-4">
                 <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 dark:border-neutral-700 space-y-4 sm:space-y-3 px-0 sm:p-4 xl:p-4">
