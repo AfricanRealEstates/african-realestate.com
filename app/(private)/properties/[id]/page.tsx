@@ -10,9 +10,12 @@ import { Raleway, IBM_Plex_Mono } from "next/font/google";
 import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/20/solid";
 import {
   AirVentIcon,
+  Bath,
   BathIcon,
+  Bed,
   BedSingle,
   Cat,
+  ExpandIcon,
   Fence,
   Flower2,
   FolderOpen,
@@ -41,6 +44,12 @@ import NotFound from "@/app/not-found";
 import RelatedProperty from "./_components/related-property";
 import PropertyCard from "@/components/properties/property-card";
 import { auth } from "@/auth";
+import Avatar from "@/components/globals/avatar";
+import Badge from "./_components/badge";
+import LikeSaveBtns from "./_components/like-save-btns";
+import Amenities from "./_components/amenities";
+import OverviewInfo from "./_components/overview-info";
+import { ButtonSecondary } from "@/components/globals/button-secondary";
 
 // no cache
 export const dynamic = "force-dynamic";
@@ -175,6 +184,98 @@ export default async function PropertyDetails({
     property.landUnits
   );
 
+  const renderSection1 = () => {
+    return (
+      <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 dark:border-neutral-700 sm:space-y-8 pb-10 px-0 sm:p-4 xl:p-8 !space-y-6">
+        {/* 1 */}
+        <div className="flex justify-between items-center">
+          <Badge name="Property Info" />
+          <LikeSaveBtns />
+        </div>
+
+        {/* 2 */}
+        {/* <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold">
+          Beach House in Collingwood
+        </h2> */}
+
+        {/* 3 */}
+        <div className="flex items-center space-x-4">
+          <span className="flex items-center bg-neutral-100 rounded-full px-2">
+            <MapPin className="size-4" />
+            <span className="py-1.5 px-3 text-sm flex rounded-lg">
+              {property.locality}, {property.county}
+            </span>
+          </span>
+        </div>
+
+        {/* 4 */}
+        <div className="flex items-center">
+          <Avatar
+            hasChecked
+            sizeClass="h-10 w-10"
+            radius="rounded-full"
+            imgUrl={session?.user.image}
+          />
+          <span className="ml-2.5 text-neutral-500 dark:text-neutral-400">
+            Agent{" "}
+            <span className="text-neutral-900 text-sm font-medium">
+              {session?.user.agentName}
+            </span>
+          </span>
+        </div>
+
+        {/* 5 */}
+        <div className="w-full border-b border-neutral-100 dark:border-neutral-700" />
+
+        {/* 6 */}
+        <div className="flex items-center justify-between xl:justify-start space-x-8 xl:space-x-12 text-sm text-neutral-700 dark:text-neutral-300">
+          {property.bedrooms > 0 && (
+            <div className="flex items-center space-x-3 ">
+              <Bed className="size-4 text-neutral-600" />
+              <span className="ml-1">
+                {property.bedrooms}{" "}
+                <span className="hidden sm:inline-block">bedrooms</span>
+              </span>
+            </div>
+          )}
+
+          {property.bathrooms > 0 && (
+            <div className="flex items-center space-x-3">
+              <Bath className="size-4 text-neutral-600" />
+              <span className="ml-1">
+                {property.bathrooms}{" "}
+                <span className="hidden sm:inline-block">baths</span>
+              </span>
+            </div>
+          )}
+          <div className="flex items-center space-x-3">
+            <ExpandIcon className="size-4 text-neutral-600" />
+            <span className=" ">
+              {convertedLandSize.toPrecision(2)}{" "}
+              <span className="hidden sm:inline-block">acres</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderSidebar = () => {
+    return (
+      <div
+        className={`w-full flex flex-col rounded-2xl border-b border-t border-l border-r border-neutral-200  space-y-4 xl:space-y-7 pb-10 p-2 sm:p-4 xl:px-8 xl:py-6 shadow-xl ${raleway.className}`}
+      >
+        <h2 className="text-xl font-semibold">Send a Quote</h2>
+        <div className=" border-b border-neutral-100 dark:border-neutral-700" />
+        <div className="text-neutral-600 text-sm">
+          Make a quote today and <br /> let us turn your vision into reality!
+        </div>
+        <div className=" border-b border-neutral-100 dark:border-neutral-700" />
+        <QueryModal propertyId={property.id} />
+      </div>
+    );
+  };
+
   return (
     <div className="bg-white py-12 md:py-0">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
@@ -230,138 +331,149 @@ export default async function PropertyDetails({
           </h2>
         </div>
 
-        <div className="mt-6 grid grid-cols-1 gap-y-6 sm:grid-cols-3 sm:gap-x-6 lg:gap-8">
+        <div className="mt-6 grid grid-cols-1 gap-y-6 lg:grid-cols-3 sm:gap-x-6 lg:gap-8">
           <ImageCarousel property={property} />
           <div className="sm:col-span-1">
             <article className="flex flex-col-reverse">
               <div className="flex flex-col gap-4">
-                <p className="rounded-full font-semibold w-fit bg-neutral-50 px-2 py-1 text-indigo-500">
-                  For {property.status}
-                </p>
-                <h2 className="inline-flex font-medium gap-x-1.5 items-center text-gray-500">
-                  Price:
-                  <span className="bg-gray-50 text-indigo-500 px-2 py-1 rounded-full">
-                    <span className="">{property.currency} </span>
-                    <span className="text-xl tracking-tight sm:text-2xl font-semibold">
-                      {property.price.toLocaleString()}
+                <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 dark:border-neutral-700 space-y-4 sm:space-y-5 px-0 sm:p-5 xl:p-5">
+                  <p className="rounded-full font-semibold w-fit bg-neutral-50 px-2 py-1 text-indigo-500">
+                    For {property.status}
+                  </p>
+                  <h2 className="inline-flex text-xl font-medium gap-x-1.5 items-center text-gray-500">
+                    Price:
+                    <span className="bg-gray-50 text-indigo-500 px-2 py-1 rounded-full text-3xl font-semibold">
+                      <span className="">{property.currency} </span>
+                      <span className=" tracking-tight">
+                        {property.price.toLocaleString()}
+                      </span>
                     </span>
-                  </span>
-                </h2>
-                <h2 id="information-heading" className="sr-only">
-                  Property price
-                </h2>
-                <p className="text-sm font-medium text-gray-500">
-                  Plinth Area:
-                  <span className="ml-2 bg-gray-50 text-indigo-500 px-2 py-1 rounded-full">
-                    {property.plinthArea} Sq.m
-                  </span>
-                </p>
-                {property.bedrooms > 0 && (
+                  </h2>
+                  <h2 id="information-heading" className="sr-only">
+                    Property price
+                  </h2>
                   <p className="text-sm font-medium text-gray-500">
-                    Number of Bedrooms:
+                    Plinth Area:
                     <span className="ml-2 bg-gray-50 text-indigo-500 px-2 py-1 rounded-full">
-                      {property.bedrooms}
+                      {property.plinthArea} Sq.m
                     </span>
                   </p>
-                )}
-                <p className="text-sm font-medium text-gray-500">
-                  Size of Land:{" "}
-                  <span className="ml-2 bg-gray-50 text-indigo-500 px-2 py-1 rounded-full">
-                    {convertedLandSize.toPrecision(2)} Acres
-                  </span>
-                </p>
-                <div className="mt-5 border-t border-gray-200 pt-5">
-                  <h3 className=" font-medium text-gray-900">Contact Agent</h3>
-                  <ul className="mt-4 flex items-center space-x-8" role="list">
-                    <li>
-                      <Link
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        href={`https://wa.me/${session?.user.whatsappNumber}`}
-                        className="flex size-6 items-center justify-center text-gray-400 hover:text-gray-500"
-                      >
-                        <span className="sr-only">Contact on Whatsapp</span>
-                        <svg
-                          viewBox="0 0 256 259"
-                          width="256"
-                          height="259"
-                          xmlns="http://www.w3.org/2000/svg"
-                          preserveAspectRatio="xMidYMid"
-                          className="size-6"
-                        >
-                          <path
-                            d="m67.663 221.823 4.185 2.093c17.44 10.463 36.971 15.346 56.503 15.346 61.385 0 111.609-50.224 111.609-111.609 0-29.297-11.859-57.897-32.785-78.824-20.927-20.927-48.83-32.785-78.824-32.785-61.385 0-111.61 50.224-110.912 112.307 0 20.926 6.278 41.156 16.741 58.594l2.79 4.186-11.16 41.156 41.853-10.464Z"
-                            fill="#00E676"
-                          />
-                          <path
-                            d="M219.033 37.668C195.316 13.254 162.531 0 129.048 0 57.898 0 .698 57.897 1.395 128.35c0 22.322 6.278 43.947 16.742 63.478L0 258.096l67.663-17.439c18.834 10.464 39.76 15.347 60.688 15.347 70.453 0 127.653-57.898 127.653-128.35 0-34.181-13.254-66.269-36.97-89.986ZM129.048 234.38c-18.834 0-37.668-4.882-53.712-14.648l-4.185-2.093-40.458 10.463 10.463-39.76-2.79-4.186C7.673 134.63 22.322 69.058 72.546 38.365c50.224-30.692 115.097-16.043 145.79 34.181 30.692 50.224 16.043 115.097-34.18 145.79-16.045 10.463-35.576 16.043-55.108 16.043Zm61.385-77.428-7.673-3.488s-11.16-4.883-18.136-8.371c-.698 0-1.395-.698-2.093-.698-2.093 0-3.488.698-4.883 1.396 0 0-.697.697-10.463 11.858-.698 1.395-2.093 2.093-3.488 2.093h-.698c-.697 0-2.092-.698-2.79-1.395l-3.488-1.395c-7.673-3.488-14.648-7.674-20.229-13.254-1.395-1.395-3.488-2.79-4.883-4.185-4.883-4.883-9.766-10.464-13.253-16.742l-.698-1.395c-.697-.698-.697-1.395-1.395-2.79 0-1.395 0-2.79.698-3.488 0 0 2.79-3.488 4.882-5.58 1.396-1.396 2.093-3.488 3.488-4.883 1.395-2.093 2.093-4.883 1.395-6.976-.697-3.488-9.068-22.322-11.16-26.507-1.396-2.093-2.79-2.79-4.883-3.488H83.01c-1.396 0-2.79.698-4.186.698l-.698.697c-1.395.698-2.79 2.093-4.185 2.79-1.395 1.396-2.093 2.79-3.488 4.186-4.883 6.278-7.673 13.951-7.673 21.624 0 5.58 1.395 11.161 3.488 16.044l.698 2.093c6.278 13.253 14.648 25.112 25.81 35.575l2.79 2.79c2.092 2.093 4.185 3.488 5.58 5.58 14.649 12.557 31.39 21.625 50.224 26.508 2.093.697 4.883.697 6.976 1.395h6.975c3.488 0 7.673-1.395 10.464-2.79 2.092-1.395 3.487-1.395 4.882-2.79l1.396-1.396c1.395-1.395 2.79-2.092 4.185-3.487 1.395-1.395 2.79-2.79 3.488-4.186 1.395-2.79 2.092-6.278 2.79-9.765v-4.883s-.698-.698-2.093-1.395Z"
-                            fill="#FFF"
-                          />
-                        </svg>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        href={`tel:${session?.user.officeLine}`}
-                        className="flex size-6 items-center justify-center text-[#777f8a] hover:text-gray-500"
-                      >
-                        <span className="sr-only">Contact on Call</span>
-                        <PhoneIcon
-                          className="h-5 w-5 text-gray-400"
-                          aria-hidden="true"
-                        />
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        href={`mailto:${session?.user.email}`}
-                        className="flex size-6 items-center justify-center text-[#777f8a] hover:text-gray-500"
-                      >
-                        <span className="sr-only">Contact on Email</span>
-                        <EnvelopeIcon
-                          className="h-5 w-5 text-gray-400"
-                          // aria-hidden="true"
-                        />
-                        {/* Email */}
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-                <div className="mt-5 border-t border-gray-200 pt-5">
-                  <h3 className="font-medium text-gray-900">
-                    Agent Information
-                  </h3>
+                  {property.bedrooms > 0 && (
+                    <p className="text-sm font-medium text-gray-500">
+                      Number of Bedrooms:
+                      <span className="ml-2 bg-gray-50 text-indigo-500 px-2 py-1 rounded-full">
+                        {property.bedrooms}
+                      </span>
+                    </p>
+                  )}
+                  <p className="text-sm font-medium text-gray-500">
+                    Size of Land:{" "}
+                    <span className="ml-2 bg-gray-50 text-indigo-500 px-2 py-1 rounded-full">
+                      {convertedLandSize.toPrecision(2)} Acres
+                    </span>
+                  </p>
+                  {/* HEADING */}
+                  <h2 className="text-2xl font-semibold">Agent Information</h2>
+                  <div className="w-full border-b border-neutral-200"></div>
 
-                  <div className="flex space-x-4 text-sm text-gray-500">
-                    <div className="flex-none py-5">
-                      <Image
-                        height={50}
-                        width={50}
-                        src={session?.user.image || "/assets/placeholder.jpg"}
-                        alt="Agent"
-                        className="h-10 w-10 rounded-full bg-gray-100"
-                      />
+                  {/* host */}
+                  <div className="flex items-center space-x-4">
+                    <Avatar
+                      hasChecked
+                      hasCheckedClass="w-4 h-4 -top-0.5 right-0.5"
+                      sizeClass="size-8"
+                      radius="rounded-full"
+                      imgUrl={session?.user.image}
+                    />
+                    <div>
+                      <Link className="block text-xl font-medium" href="##">
+                        {session?.user.agentName}
+                      </Link>
+                      <div className="mt-1 flex items-center text-sm text-neutral-500">
+                        All properties
+                        <span className="mx-2">·</span>
+                        <span>{23}</span>
+                      </div>
                     </div>
-                    <div className="flex-1 py-4 space-y-4">
-                      <h3 className="flex gap-1">
-                        Agent name:
-                        <span className="font-medium text-gray-900">
-                          {session?.user.agentName}
-                        </span>
-                      </h3>
-                      <p className="">
-                        Agent since:{" "}
-                        <span className="font-medium text-gray-900">
-                          {dayjs(property.createdAt).format(
-                            "DD MMM YYYY hh:mm A"
-                          ) || ""}
-                        </span>
-                      </p>
-                    </div>
+                  </div>
+
+                  {/* info */}
+                  <div className="block text-neutral-500 ml-12 space-y-1.5">
+                    <h3 className=" font-medium text-gray-900">
+                      Contact Agent
+                    </h3>
+                    <ul
+                      className="mt-4 flex items-center space-x-8"
+                      role="list"
+                    >
+                      <li>
+                        <Link
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          href={`https://wa.me/${session?.user.whatsappNumber}`}
+                          className="flex size-6 items-center justify-center text-gray-400 hover:text-gray-500"
+                        >
+                          <span className="sr-only">Contact on Whatsapp</span>
+                          <svg
+                            viewBox="0 0 256 259"
+                            width="256"
+                            height="259"
+                            xmlns="http://www.w3.org/2000/svg"
+                            preserveAspectRatio="xMidYMid"
+                            className="size-6"
+                          >
+                            <path
+                              d="m67.663 221.823 4.185 2.093c17.44 10.463 36.971 15.346 56.503 15.346 61.385 0 111.609-50.224 111.609-111.609 0-29.297-11.859-57.897-32.785-78.824-20.927-20.927-48.83-32.785-78.824-32.785-61.385 0-111.61 50.224-110.912 112.307 0 20.926 6.278 41.156 16.741 58.594l2.79 4.186-11.16 41.156 41.853-10.464Z"
+                              fill="#00E676"
+                            />
+                            <path
+                              d="M219.033 37.668C195.316 13.254 162.531 0 129.048 0 57.898 0 .698 57.897 1.395 128.35c0 22.322 6.278 43.947 16.742 63.478L0 258.096l67.663-17.439c18.834 10.464 39.76 15.347 60.688 15.347 70.453 0 127.653-57.898 127.653-128.35 0-34.181-13.254-66.269-36.97-89.986ZM129.048 234.38c-18.834 0-37.668-4.882-53.712-14.648l-4.185-2.093-40.458 10.463 10.463-39.76-2.79-4.186C7.673 134.63 22.322 69.058 72.546 38.365c50.224-30.692 115.097-16.043 145.79 34.181 30.692 50.224 16.043 115.097-34.18 145.79-16.045 10.463-35.576 16.043-55.108 16.043Zm61.385-77.428-7.673-3.488s-11.16-4.883-18.136-8.371c-.698 0-1.395-.698-2.093-.698-2.093 0-3.488.698-4.883 1.396 0 0-.697.697-10.463 11.858-.698 1.395-2.093 2.093-3.488 2.093h-.698c-.697 0-2.092-.698-2.79-1.395l-3.488-1.395c-7.673-3.488-14.648-7.674-20.229-13.254-1.395-1.395-3.488-2.79-4.883-4.185-4.883-4.883-9.766-10.464-13.253-16.742l-.698-1.395c-.697-.698-.697-1.395-1.395-2.79 0-1.395 0-2.79.698-3.488 0 0 2.79-3.488 4.882-5.58 1.396-1.396 2.093-3.488 3.488-4.883 1.395-2.093 2.093-4.883 1.395-6.976-.697-3.488-9.068-22.322-11.16-26.507-1.396-2.093-2.79-2.79-4.883-3.488H83.01c-1.396 0-2.79.698-4.186.698l-.698.697c-1.395.698-2.79 2.093-4.185 2.79-1.395 1.396-2.093 2.79-3.488 4.186-4.883 6.278-7.673 13.951-7.673 21.624 0 5.58 1.395 11.161 3.488 16.044l.698 2.093c6.278 13.253 14.648 25.112 25.81 35.575l2.79 2.79c2.092 2.093 4.185 3.488 5.58 5.58 14.649 12.557 31.39 21.625 50.224 26.508 2.093.697 4.883.697 6.976 1.395h6.975c3.488 0 7.673-1.395 10.464-2.79 2.092-1.395 3.487-1.395 4.882-2.79l1.396-1.396c1.395-1.395 2.79-2.092 4.185-3.487 1.395-1.395 2.79-2.79 3.488-4.186 1.395-2.79 2.092-6.278 2.79-9.765v-4.883s-.698-.698-2.093-1.395Z"
+                              fill="#FFF"
+                            />
+                          </svg>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          href={`tel:${session?.user.officeLine}`}
+                          className="flex size-6 items-center justify-center text-[#777f8a] hover:text-gray-500"
+                        >
+                          <span className="sr-only">Contact on Call</span>
+                          <PhoneIcon
+                            className="h-5 w-5 text-gray-400"
+                            aria-hidden="true"
+                          />
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          href={`mailto:${session?.user.email}`}
+                          className="flex size-6 items-center justify-center text-[#777f8a] hover:text-gray-500"
+                        >
+                          <span className="sr-only">Contact on Email</span>
+                          <EnvelopeIcon
+                            className="h-5 w-5 text-gray-400"
+                            // aria-hidden="true"
+                          />
+                          {/* Email */}
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* == */}
+                  <div className="w-full border-b border-neutral-200"></div>
+                  <div className="flex items-center">
+                    <Link
+                      href="/"
+                      className="font-medium border bg-white border-neutral-200 text-neutral-700 text-center hover:bg-neutral-100 px-3 rounded-full text-lg"
+                    >
+                      See agent profile
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -369,150 +481,7 @@ export default async function PropertyDetails({
           </div>
         </div>
 
-        <section className="mt-5 pt-5">
-          <h3 className="text-lg lg:text-xl font-medium text-gray-950">
-            Location
-          </h3>
-          <p className="mt-4 text-sm text-gray-400 flex items-center gap-2">
-            <MapPin className="size-4 text-indigo-400" />{" "}
-            <span className="inline-flex gap-1 capitalize">
-              {property.locality}, {property.nearbyTown}, {property.county}
-            </span>
-          </p>
-        </section>
-        <section className="mt-10 pt-10 border-t border-gray-200">
-          <h3 className="text-lg lg:text-xl font-medium text-gray-950">
-            Amenities
-          </h3>
-          <div className="grid grid-cols-2 gap-px sm:grid-cols-3 mt-4 text-sm max-w-4xl">
-            {property.appliances.map((appliance) => {
-              return (
-                <div
-                  key={appliance}
-                  className="capitalize text-gray-400 bg-neutral-50 grid
-    h-[92px]
-    gap-5
-    bg-w-90015
-    p-3
-    first:rounded-tl-lg
-    last:rounded-br-lg
-    max-sm:[&:nth-child(2)]:rounded-tr-lg
-    max-sm:[&:nth-child(2n+1):nth-last-child(-n+2)]:rounded-bl-lg
-    max-sm:[&:nth-child(2n+2):nth-last-child(-n+2)]:rounded-br-lg
-    sm:[&:nth-child(3)]:rounded-tr-lg
-    sm:[&:nth-child(3n+1):nth-last-child(-n+3)]:rounded-bl-lg
-    sm:[&:nth-child(3n+3):nth-last-child(-n+3)]:rounded-br-lg
-    "
-                >
-                  {appliance.toLowerCase() === "parking" ? (
-                    <>
-                      <ParkingCircle className="text-indigo-400" />
-                      Parking
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                  {appliance.toLowerCase() === "flower" ? (
-                    <>
-                      <Flower2 className="text-indigo-400" />
-                      Flow Garden
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                  {appliance.toLowerCase() === "swimming" ? (
-                    <>
-                      <FaSwimmingPool className="text-indigo-400" />
-                      Swimming Pool
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                  {appliance.toLowerCase() === "internet" ? (
-                    <>
-                      <Wifi className="text-indigo-400" />
-                      Internet
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                  {appliance.toLowerCase() === "heating" ? (
-                    <>
-                      <Thermometer className="text-indigo-400" />
-                      Heating
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                  {appliance.toLowerCase() === "dstv" ? (
-                    <>
-                      <Tv className="text-indigo-400" />
-                      DSTV / Cables
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                  {appliance.toLowerCase() === "air" ? (
-                    <>
-                      <AirVentIcon className="text-indigo-400" />
-                      Air Condition
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                  {appliance.toLowerCase() === "furnitures" ? (
-                    <>
-                      <Sofa className="text-indigo-400" />
-                      Furnitures
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                  {appliance.toLowerCase() === "pet" ? (
-                    <>
-                      <Cat className="text-indigo-400" />
-                      Pet Friendly
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                  {appliance.toLowerCase() === "energy" ? (
-                    <>
-                      <Heater className="text-indigo-400" />
-                      Energy Efficient
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                  {appliance.toLowerCase() === "gates" ? (
-                    <>
-                      <Fence className="text-indigo-400" />
-                      Gated Estate
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                  {appliance.toLowerCase() === "servant" ? (
-                    <>
-                      <Home className="text-indigo-400" />
-                      Servant Quarters
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                  {appliance.toLowerCase() === "borehole" ? (
-                    <>
-                      <FaWater className="text-indigo-400" />
-                      Borehole
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </section>
+        {/*
         <section className="mt-10 pt-10 border-t border-gray-200">
           <h3 className="text-lg lg:text-xl font-medium text-gray-950">
             Overview
@@ -522,7 +491,18 @@ export default async function PropertyDetails({
           >
             {property.description}
           </pre>
-        </section>
+        </section> */}
+
+        <main className="relative z-10 mt-16 flex flex-col lg:flex-row">
+          <section className="w-full lg:w-3/5 xl:w-2/3 space-y-8 lg:space-y-10 lg:pr-10">
+            {renderSection1()}
+            <OverviewInfo description={property.description} />
+            <Amenities amenities={property.appliances} />
+          </section>
+          <section className="hidden lg:block flex-grow mt-14 lg:mt-0">
+            <div className="sticky top-28">{renderSidebar()}</div>
+          </section>
+        </main>
 
         {/* Related properties */}
         <section className="mx-auto mt-24 max-w-2xl sm:mt-32 lg:max-w-none">
@@ -559,363 +539,5 @@ export default async function PropertyDetails({
         </section>
       </div>
     </div>
-
-    //     <div
-    //       className={` ${raleway.className} w-[95%] lg:max-w-7xl mx-auto py-[90px] lg:py-[120px]`}
-    //     >
-    //       <div className="mb-4">
-    //         <BackProperty />
-    //       </div>
-
-    //       <section className="h-full max-h-[550px] w-full grid-cols-3 gap-6 md:grid">
-    //         <div className="relative col-span-2 row-span-2 mr-4 aspect-video h-full w-full rounded-xl">
-    //           <div className="rounded-xl object-cover relative isolate h-full w-full">
-    //             <Carousel
-    //               autoplay
-    //               className="rounded-xl object-cover relative isolate h-full w-full"
-    //             >
-    //               {property.images &&
-    //                 property.images.map((image) => {
-    //                   return (
-    //                     <Image
-    //                       priority
-    //                       width={400}
-    //                       height={400}
-    //                       key={image}
-    //                       alt="Property Image"
-    //                       className="h-full w-full rounded-xl object-contain delay-200  opacity-100 inset-0 z-[-1]"
-    //                       src={image}
-    //                     />
-    //                   );
-    //                 })}
-    //             </Carousel>
-    //           </div>
-    //           <div className="h-8 min-w-fit rounded-sm px-2 !absolute bottom-6 right-3 flex cursor-pointer items-center justify-center gap-2 bg-white font-medium leading-6">
-    //             {property.images.length} Photos
-    //           </div>
-    //         </div>
-    //         <div className="hr h-px bg-[#f6f7f6] mt-9 md:mt-0 lg:hidden"></div>
-    //         <div className="hidden lg:block relative max-h-[254px] w-full rounded-xl">
-    //           <article className=" ">
-    //             <div className="mb-4 max-w-fit px-2 py-1 rounded-md text-white bg-[rgba(38,38,38,.8)] uppercase font-medium mt-8 lg:mt-0">
-    //               For {property.status}
-    //             </div>
-    //             <div className="mb-6 grid grid-cols-1 gap-6">
-    //               <div className="grid grid-cols-3 gap-2">
-    //                 <div>Price:</div>
-    //                 <div className="font-medium col-span-2">
-    //                   {property.currency} {property.price.toLocaleString()}
-    //                 </div>
-    //               </div>
-    //               <div className="grid grid-cols-3 gap-2">
-    //                 <div className="">Property Type:</div>
-    //                 <div className="font-medium">{property.propertyDetails}</div>
-    //               </div>
-    //               <div className="grid grid-cols-3 gap-2">
-    //                 <div className="">Land size:</div>
-    //                 <div className="font-medium">
-    //                   <span>{convertedLandSize.toFixed(3)}</span>
-    //                   <span>ha</span>
-    //                 </div>
-    //               </div>
-    //             </div>
-    //           </article>
-    //         </div>
-
-    //         <div className="hidden md:block relative max-h-[254px] w-full cursor-pointer rounded-xl">
-    //           <article>
-    //             <div className="mb-2 text-[#4e4e4e] uppercase text-sm">
-    //               Need to take a tour?
-    //             </div>
-    //             <div className="text-2xl mb-2 font-medium">Agent Information</div>
-    //             <div className="flex items-center">
-    //               <div className="relative my-5">
-    //                 <Image
-    //                   src={currentUser?.user.image || "/assets/placeholder.jpg"}
-    //                   height={38}
-    //                   width={38}
-    //                   alt={currentUser?.user.name || "Agent"}
-    //                   className="rounded-full object-cover"
-    //                 />
-    //               </div>
-    //               <div className="ml-4 leading-3">
-    //                 <h4 className="mb-1 font-extrabold">{property.agentName}</h4>
-    //                 <span className="text-sm opacity-70">Agent</span>
-    //               </div>
-    //             </div>
-    //             <div className="w-full flex flex-wrap gap-4 mb-2">
-    //               <li className="flex items-center gap-4">
-    //                 <Mail className="h-5 w-5 text-[#4e4e4e]" />
-    //                 <div>
-    //                   <span className="text-[rgb(38,38,38,.8)] font-medium">
-    //                     {property.email}
-    //                   </span>
-    //                 </div>
-    //               </li>
-    //               <li className="flex items-center gap-4">
-    //                 <Phone className="h-5 w-5 text-[#4e4e4e]" />
-    //                 <div>
-    //                   <span className="text-[rgb(38,38,38,.8)] font-medium">
-    //                     {property.officeLine}
-    //                   </span>
-    //                 </div>
-    //               </li>
-    //               <li className="flex items-center gap-4">
-    //                 <FaWhatsapp className="h-5 w-5 text-[#4e4e4e]" />
-    //                 <div>
-    //                   <span className="text-[rgb(38,38,38,.8)] font-medium">
-    //                     {property.whatsappNumber}
-    //                   </span>
-    //                 </div>
-    //               </li>
-    //             </div>
-    //           </article>
-    //         </div>
-    //       </section>
-
-    //       <section className=" z-40 mx-auto mt-[1.5rem] lg:mt-[3.5rem] flex w-full flex-col justify-between gap-6 rounded-xl md:flex-row">
-    //         <article className="w-full lg:w-[calc(100%_-_420px)]">
-    //           <div className="mb-3 text-base font-medium capitalize text-[#4e4e4e] flex items-center space-x-2">
-    //             <MapPin className="h-4 w-4" />
-    //             <span>
-    //               {property.locality}, {property.county}, {property.country}
-    //             </span>
-    //           </div>
-    //           <h1
-    //             className={`mb-4 ${ibmPlex.className} text-[rgba(38,38,38,.9)] text-2xl font-medium lg:text-4xl`}
-    //           >
-    //             {property.title}
-    //           </h1>
-    //           <div className="flex flex-wrap items-center gap-3 md:gap-6 mb-6">
-    //             {property.bedrooms > 0 && (
-    //               <div className="flex items-center gap-1 text-sm">
-    //                 <BedSingle className="h-4 w-4" />
-    //                 <span>{property.bedrooms} bedrooms</span>
-    //               </div>
-    //             )}
-    //             {property.bathrooms > 0 && (
-    //               <div className="flex items-center gap-1 text-sm">
-    //                 <BathIcon className="h-4 w-4" />
-    //                 <span>{property.bathrooms} bathrooms</span>
-    //               </div>
-    //             )}
-    //             {property.plinthArea && (
-    //               <div className="flex items-center gap-1 text-sm">
-    //                 <Grid2X2 className="h-4 w-4" />
-    //                 <span>{property.plinthArea} sq ft</span>
-    //               </div>
-    //             )}
-    //           </div>
-    //           <div className="hr mt-4 h-px bg-[#f6f7f6] lg:mt-6"></div>
-    //           <pre
-    //             className={`${raleway.className} mb-16 mt-6 leading-6 text-[#4e4e4e]`}
-    //           >
-    //             {property.description}
-    //           </pre>
-
-    //           <div className="relative mb-10 lg:mb-12 flex flex-col md:mb-14">
-    //             <h3 className="mb-5 text-2xl font-medium">Amenities</h3>
-    //             <div className="grid grid-cols-2 gap-px sm:grid-cols-3">
-    //               {property.appliances.map((appliance) => {
-    //                 return (
-    //                   <div
-    //                     key={appliance}
-    //                     className="capitalize text-[#4e4e4e] bg-[#fafafa] grid
-    // h-[92px]
-    // gap-5
-    // bg-w-90015
-    // p-3
-    // first:rounded-tl-lg
-    // last:rounded-br-lg
-    // max-sm:[&:nth-child(2)]:rounded-tr-lg
-    // max-sm:[&:nth-child(2n+1):nth-last-child(-n+2)]:rounded-bl-lg
-    // max-sm:[&:nth-child(2n+2):nth-last-child(-n+2)]:rounded-br-lg
-    // sm:[&:nth-child(3)]:rounded-tr-lg
-    // sm:[&:nth-child(3n+1):nth-last-child(-n+3)]:rounded-bl-lg
-    // sm:[&:nth-child(3n+3):nth-last-child(-n+3)]:rounded-br-lg
-    // "
-    //                   >
-    //                     {appliance.toLowerCase() === "parking" ? (
-    //                       <>
-    //                         <ParkingCircle />
-    //                         Parking
-    //                       </>
-    //                     ) : (
-    //                       <></>
-    //                     )}
-    //                     {appliance.toLowerCase() === "flower" ? (
-    //                       <>
-    //                         <Flower2 />
-    //                         Flow Garden
-    //                       </>
-    //                     ) : (
-    //                       <></>
-    //                     )}
-    //                     {appliance.toLowerCase() === "swimming" ? (
-    //                       <>
-    //                         <FaSwimmingPool />
-    //                         Swimming Pool
-    //                       </>
-    //                     ) : (
-    //                       <></>
-    //                     )}
-    //                     {appliance.toLowerCase() === "internet" ? (
-    //                       <>
-    //                         <Wifi />
-    //                         Internet
-    //                       </>
-    //                     ) : (
-    //                       <></>
-    //                     )}
-    //                     {appliance.toLowerCase() === "heating" ? (
-    //                       <>
-    //                         <Thermometer />
-    //                         Heating
-    //                       </>
-    //                     ) : (
-    //                       <></>
-    //                     )}
-    //                     {appliance.toLowerCase() === "dstv" ? (
-    //                       <>
-    //                         <Tv />
-    //                         DSTV / Cables
-    //                       </>
-    //                     ) : (
-    //                       <></>
-    //                     )}
-    //                     {appliance.toLowerCase() === "air" ? (
-    //                       <>
-    //                         <AirVentIcon />
-    //                         Air Condition
-    //                       </>
-    //                     ) : (
-    //                       <></>
-    //                     )}
-    //                     {appliance.toLowerCase() === "furnitures" ? (
-    //                       <>
-    //                         <Sofa />
-    //                         Furnitures
-    //                       </>
-    //                     ) : (
-    //                       <></>
-    //                     )}
-    //                     {appliance.toLowerCase() === "pet" ? (
-    //                       <>
-    //                         <Cat />
-    //                         Pet Friendly
-    //                       </>
-    //                     ) : (
-    //                       <></>
-    //                     )}
-    //                     {appliance.toLowerCase() === "energy" ? (
-    //                       <>
-    //                         <Heater />
-    //                         Energy Efficient
-    //                       </>
-    //                     ) : (
-    //                       <></>
-    //                     )}
-    //                     {appliance.toLowerCase() === "gates" ? (
-    //                       <>
-    //                         <Fence />
-    //                         Gated Estate
-    //                       </>
-    //                     ) : (
-    //                       <></>
-    //                     )}
-    //                     {appliance.toLowerCase() === "servant" ? (
-    //                       <>
-    //                         <Home />
-    //                         Servant Quarters
-    //                       </>
-    //                     ) : (
-    //                       <></>
-    //                     )}
-    //                     {appliance.toLowerCase() === "borehole" ? (
-    //                       <>
-    //                         <FaWater />
-    //                         Borehole
-    //                       </>
-    //                     ) : (
-    //                       <></>
-    //                     )}
-    //                   </div>
-    //                 );
-    //               })}
-    //             </div>
-    //           </div>
-    //         </article>
-    //         <article className="block min-w-[385px]">
-    //           <div className="sticky top-[5.5rem]">
-    //             <div className="relative z-10 mb-6 rounded-xl p-5 backdrop-blur-2xl border-[1.2px_solid_#404040]">
-    //               <div className="-mb-5 flex flex-col">
-    //                 <div className="text-[#404040]">
-    //                   <div className="mb-1 flex text-xl font-semibold text-[rgb(38,38,38)]">
-    //                     Make a Query about this Property
-    //                   </div>
-    //                   <div className="mb-2 flex text-sm">
-    //                     You can make an offer of the property directly to the owner.
-    //                   </div>
-    //                   <div className="-mx-5 flex items-center gap-4 border-t border-w-[rgb(64,64,64)] px-5 pb-5 pt-4 w-full">
-    //                     <QueryModal propertyId={property.id} />
-    //                   </div>
-    //                 </div>
-    //               </div>
-    //             </div>
-    //           </div>
-    //         </article>
-    //       </section>
-    //     </div>
   );
 }
-
-// interface RelatedPropertyProps {
-//   property: Property;
-// }
-
-// const RelatedProperty = ({ property }: RelatedPropertyProps) => {
-//   return (
-//     <>
-//       {property.images &&
-//         property.images.map((image) => {
-//           return (
-//             <>
-//               <Image
-//                 key={image}
-//                 height={400}
-//                 width={400}
-//                 src={image}
-//                 alt={property.title}
-//                 className="object-cover object-center"
-//               />
-//               <article className="group relative">
-//                 <div className="aspect-h-3 aspect-w-4 overflow-hidden rounded-lg bg-gray-100">
-//                   <div
-//                     className="flex items-end p-4 opacity-0 group-hover:opacity-100"
-//                     aria-hidden="true"
-//                   >
-//                     <div className="w-full rounded-md bg-white bg-opacity-75 px-4 py-2 text-center text-sm font-medium text-gray-900 backdrop-blur backdrop-filter">
-//                       View Product
-//                     </div>
-//                   </div>
-//                 </div>
-
-//                 <div className="mt-4 flex items-center justify-between space-x-8 text-base font-medium text-gray-900">
-//                   <h3>
-//                     <a href="#">
-//                       <span aria-hidden="true" className="absolute inset-0" />
-//                       {property.title}
-//                     </a>
-//                   </h3>
-//                   <p>{property.price}</p>
-//                 </div>
-//                 <p className="mt-1 text-sm text-gray-500">
-//                   {property.propertyType}
-//                 </p>
-//               </article>
-//             </>
-//           );
-//         })}
-//     </>
-//   );
-// };
