@@ -91,7 +91,7 @@ export default function GallerySlider({
                   fill
                   alt="Property Card"
                   className={`object-cover ${imageClass}`}
-                  onLoadingComplete={() => setLoaded(true)}
+                  onLoad={() => setLoaded(true)}
                   sizes="(max-width: 1025px) 100vw, 300px"
                 />
               </motion.div>
@@ -106,20 +106,20 @@ export default function GallerySlider({
             <div className="opacity-0 group-hover/cardGallerySlider:opacity-100 transition-opacity ">
               {index > 0 && (
                 <button
-                  className="absolute w-8 h-8 left-3 top-[calc(50%-16px)] bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-6000 dark:hover:border-neutral-500 rounded-full flex items-center justify-center hover:border-neutral-300 focus:outline-none"
+                  className="absolute w-8 h-8 left-3 top-[calc(50%-16px)] backdrop-blur-xs text-w-3005 pointer-events-auto z-50 hidden -translate-y-1/2 place-items-center rounded-full bg-black/40 opacity-0 transition-opacity hover:text-white group-hover:opacity-100 md:grid right-4"
                   style={{ transform: "translate3d(0, 0, 0)" }}
                   onClick={() => changePhotoId(index - 1)}
                 >
-                  <ChevronLeftIcon className="h-4 w-4" />
+                  <ChevronLeftIcon className="h-4 w-4 text-neutral-400 transition-colors hover:text-white" />
                 </button>
               )}
               {index + 1 < images.length && (
                 <button
-                  className="absolute w-8 h-8 right-3 top-[calc(50%-16px)] bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-6000 dark:hover:border-neutral-500 rounded-full flex items-center justify-center hover:border-neutral-300 focus:outline-none"
+                  className="absolute w-8 h-8 right-3 top-[calc(50%-16px)] backdrop-blur-xs text-w-3005 pointer-events-auto z-50 hidden -translate-y-1/2 place-items-center rounded-full bg-black/40 opacity-0 transition-opacity hover:text-white group-hover:opacity-100 md:grid"
                   style={{ transform: "translate3d(0, 0, 0)" }}
                   onClick={() => changePhotoId(index + 1)}
                 >
-                  <ChevronRightIcon className="h-4 w-4" />
+                  <ChevronRightIcon className="h-4 w-4 text-neutral-400 transition-colors hover:text-white" />
                 </button>
               )}
             </div>
