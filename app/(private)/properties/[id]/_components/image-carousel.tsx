@@ -133,7 +133,7 @@ export default function ImageCarousel({ property }: Props) {
               </AnimatePresence>
             </div>
 
-            <div className="absolute right-6 bottom-6 flex justify-center items-center overflow-hidden">
+            <div className="absolute left-1/2 bottom-2">
               <motion.div
                 initial={false}
                 animate={{
@@ -144,7 +144,7 @@ export default function ImageCarousel({ property }: Props) {
                   }%`,
                 }}
                 style={{ aspectRatio: fullAspectRatio, gap: `${gap}%` }}
-                className="flex h-14"
+                className="flex h-14 w-14"
               >
                 {property.images.map((image, i) => (
                   <motion.button
@@ -168,7 +168,10 @@ export default function ImageCarousel({ property }: Props) {
                       },
                     }}
                   >
-                    <motion.img src={image} className="h-full object-cover" />
+                    <motion.img
+                      src={image}
+                      className="h-full w-full object-cover"
+                    />
                   </motion.button>
                 ))}
               </motion.div>
