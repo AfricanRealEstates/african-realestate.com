@@ -13,7 +13,7 @@ interface Props {
   property: Property;
 }
 
-let collapsedAspectRatio = 1 / 3;
+let collapsedAspectRatio = 1 / 2;
 let fullAspectRatio = 3 / 2;
 let gap = 2;
 let margin = 12;
@@ -96,7 +96,7 @@ export default function ImageCarousel({ property }: Props) {
                       key={image}
                       src={image}
                       animate={{ opacity: i === index ? 1 : 0.3 }}
-                      className="h-full min-w-full max-w-full object-cover rounded-xl" // Ensure the image takes up full width without extending beyond
+                      className="aspect-[3/2] h-full min-w-full max-w-full object-cover rounded-xl" // Ensure the image takes up full width without extending beyond
                     />
                   );
                 })}
@@ -133,7 +133,9 @@ export default function ImageCarousel({ property }: Props) {
               </AnimatePresence>
             </div>
 
-            <div className="absolute left-1/2 bottom-2">
+            <div className="absolute bottom-0 inset-x-0 h-20 bg-gradient-to-t from-black opacity-50 rounded-b-lg"></div>
+
+            {/* <div className="absolute left-1/2 bottom-2">
               <motion.div
                 initial={false}
                 animate={{
@@ -175,7 +177,7 @@ export default function ImageCarousel({ property }: Props) {
                   </motion.button>
                 ))}
               </motion.div>
-            </div>
+            </div> */}
 
             <div className="h-8 min-w-fit rounded-sm px-2 absolute top-3 right-3 flex cursor-pointer items-center justify-center gap-2 bg-white font-medium leading-6">
               {property.images.length} Photos
