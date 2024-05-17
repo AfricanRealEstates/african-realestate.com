@@ -1,47 +1,15 @@
 import React from "react";
 import prisma from "@/lib/prisma";
 import { Property } from "@prisma/client";
-import LinkButton from "@/components/properties/link-button";
-import { Carousel } from "antd";
+
 import QueryModal from "@/components/globals/query-modal";
-import { FaWater, FaWhatsapp } from "react-icons/fa6";
-import Image from "next/image";
 import { Raleway, IBM_Plex_Mono } from "next/font/google";
 import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/20/solid";
-import {
-  AirVentIcon,
-  Bath,
-  BathIcon,
-  Bed,
-  BedSingle,
-  Cat,
-  ExpandIcon,
-  Fence,
-  Flower2,
-  FolderOpen,
-  Grid2X2,
-  Heater,
-  Home,
-  Mail,
-  MapPin,
-  ParkingCircle,
-  Phone,
-  Sofa,
-  Thermometer,
-  Tv,
-  Undo,
-  Wifi,
-} from "lucide-react";
-
-import { FaSwimmingPool } from "react-icons/fa";
-import { useRouter } from "next/navigation";
-import BackProperty from "@/components/globals/back-property";
+import { Bath, Bed, ExpandIcon, FolderOpen, MapPin } from "lucide-react";
 import { Metadata } from "next";
 import ImageCarousel from "./_components/image-carousel";
 import Link from "next/link";
-import dayjs from "dayjs";
 import NotFound from "@/app/not-found";
-import RelatedProperty from "./_components/related-property";
 import PropertyCard from "@/components/properties/property-card";
 import { auth } from "@/auth";
 import Avatar from "@/components/globals/avatar";
@@ -49,17 +17,9 @@ import Badge from "./_components/badge";
 import LikeSaveBtns from "./_components/like-save-btns";
 import Amenities from "./_components/amenities";
 import OverviewInfo from "./_components/overview-info";
-import { ButtonSecondary } from "@/components/globals/button-secondary";
 
 // no cache
 export const dynamic = "force-dynamic";
-
-const ibmPlex = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["700"],
-  display: "swap",
-  variable: "--font-ibmplex",
-});
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -331,9 +291,11 @@ export default async function PropertyDetails({
           </h2>
         </div>
 
-        <div className="mt-6 grid grid-cols-1 gap-y-6 lg:grid-cols-3 sm:gap-x-6 lg:gap-8">
+        {/* <div className="mt-6 grid grid-cols-1 gap-y-6 lg:grid-cols-3 sm:gap-x-6 lg:gap-8"></div> */}
+        <section className="flex flex-col lg:flex-row mt-8 w-full">
+          {/* relative z-10 mt-16 flex flex-col lg:flex-row */}
           <ImageCarousel property={property} />
-          <div className="sm:col-span-1 h-full">
+          <div className="flex-grow mt-14 lg:mt-0">
             <article className="flex flex-col-reverse">
               <div className="flex flex-col gap-4">
                 <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 dark:border-neutral-700 space-y-4 sm:space-y-6 px-0 sm:p-4 xl:p-4">
@@ -479,7 +441,7 @@ export default async function PropertyDetails({
               </div>
             </article>
           </div>
-        </div>
+        </section>
 
         {/*
         <section className="mt-10 pt-10 border-t border-gray-200">
