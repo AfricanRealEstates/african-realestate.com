@@ -207,7 +207,10 @@ export default function GallerySlider({
                     className={`w-1.5 h-1.5 rounded-full ${
                       i === index ? "bg-white" : "bg-white/60 "
                     }`}
-                    onClick={() => changePhotoId(i)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      changePhotoId(i);
+                    }}
                     key={i}
                   />
                 ))}
