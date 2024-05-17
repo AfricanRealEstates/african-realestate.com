@@ -92,10 +92,13 @@ export default function ImageCarousel({ property }: Props) {
               >
                 {property.images.map((image, i) => {
                   return (
-                    <motion.img
+                    <Image
                       key={image}
                       src={image}
-                      animate={{ opacity: i === index ? 1 : 0.3 }}
+                      width={300}
+                      height={300}
+                      alt="Property Image"
+                      // animate={{ opacity: i === index ? 1 : 0.3 }}
                       className="aspect-[3/2] h-full min-w-full max-w-full object-cover rounded-xl" // Ensure the image takes up full width without extending beyond
                     />
                   );
