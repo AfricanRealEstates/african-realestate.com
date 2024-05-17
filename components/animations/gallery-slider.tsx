@@ -139,76 +139,83 @@ export default function GallerySlider({
     //     </>
     //   </div>
     // </MotionConfig>
+    <Link href={href}>
+      <MotionConfig transition={{ duration: 0.7, ease: [0.32, 0.72, 0, 1] }}>
+        <div className="h-full bg-black">
+          <div className="mx-auto flex h-full max-w-7xl flex-col justify-center">
+            <div className="relative overflow-hidden group">
+              <motion.div
+                animate={{ x: `-${index * 100}%` }}
+                className="flex h-[300px]"
+              >
+                {galleryImgs.map((image) => {
+                  return (
+                    <Image
+                      key={image}
+                      src={image}
+                      height={300}
+                      width={400}
+                      className="object-cover w-full h-full transition duration-300 group-hover:scale-[1.01]"
+                      sizes="(max-width: 1025px) 100vw, 300px"
+                      alt="Property Image"
+                    />
+                  );
+                })}
+              </motion.div>
 
-    <MotionConfig transition={{ duration: 0.7, ease: [0.32, 0.72, 0, 1] }}>
-      <div className="h-full bg-black">
-        <div className="mx-auto flex h-full max-w-7xl flex-col justify-center">
-          <div className="relative overflow-hidden group">
-            <motion.div
-              animate={{ x: `-${index * 100}%` }}
-              className="flex h-[300px]"
-            >
-              {galleryImgs.map((image) => {
-                return (
-                  <Image
-                    key={image}
-                    src={image}
-                    height={300}
-                    width={400}
-                    className="object-cover w-full h-full transition duration-300 group-hover:scale-[1.01]"
-                    sizes="(max-width: 1025px) 100vw, 300px"
-                    alt="Property Image"
+              <AnimatePresence initial={false}>
+                {index > 0 && (
+                  <motion.button
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 0.7 }}
+                    exit={{ opacity: 0, pointerEvents: "none" }}
+                    whileHover={{ opacity: 1 }}
+                    className="absolute left-2 top-1/2 -mt-4 flex size-6 items-center justify-center rounded-full text-black bg-black/40 opacity-0 transition-opacity hover:text-white group-hover:opacity-100 pointer-events-auto z-50 backdrop-blur-xs"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIndex(index - 1);
+                    }}
+                  >
+                    <ChevronLeftIcon className="size-4" />
+                  </motion.button>
+                )}
+              </AnimatePresence>
+
+              <AnimatePresence initial={false}>
+                {index + 1 < images.length && (
+                  <motion.button
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 0.7 }}
+                    exit={{ opacity: 0, pointerEvents: "none" }}
+                    whileHover={{ opacity: 1 }}
+                    className="absolute right-2 top-1/2 -mt-4 flex size-6 items-center justify-center rounded-full text-black bg-black/40 opacity-0 transition-opacity hover:text-white group-hover:opacity-100 pointer-events-auto z-50 backdrop-blur-xs"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIndex(index + 1);
+                    }}
+                  >
+                    <ChevronRightIcon className="size-4" />
+                  </motion.button>
+                )}
+              </AnimatePresence>
+
+              <div className="absolute bottom-0 inset-x-0 h-10 bg-gradient-to-t from-neutral-900 opacity-50 rounded-b-lg"></div>
+
+              <div className="flex items-center justify-center absolute bottom-2 left-1/2 transform -translate-x-1/2 space-x-1.5">
+                {images.map((_, i) => (
+                  <button
+                    className={`w-1.5 h-1.5 rounded-full ${
+                      i === index ? "bg-white" : "bg-white/60 "
+                    }`}
+                    onClick={() => changePhotoId(i)}
+                    key={i}
                   />
-                );
-              })}
-            </motion.div>
-
-            <AnimatePresence initial={false}>
-              {index > 0 && (
-                <motion.button
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 0.7 }}
-                  exit={{ opacity: 0, pointerEvents: "none" }}
-                  whileHover={{ opacity: 1 }}
-                  className="absolute left-2 top-1/2 -mt-4 flex size-6 items-center justify-center rounded-full text-black bg-black/40 opacity-0 transition-opacity hover:text-white group-hover:opacity-100 pointer-events-auto z-50 backdrop-blur-xs"
-                  onClick={() => setIndex(index - 1)}
-                >
-                  <ChevronLeftIcon className="size-4" />
-                </motion.button>
-              )}
-            </AnimatePresence>
-
-            <AnimatePresence initial={false}>
-              {index + 1 < images.length && (
-                <motion.button
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 0.7 }}
-                  exit={{ opacity: 0, pointerEvents: "none" }}
-                  whileHover={{ opacity: 1 }}
-                  className="absolute right-2 top-1/2 -mt-4 flex size-6 items-center justify-center rounded-full text-black bg-black/40 opacity-0 transition-opacity hover:text-white group-hover:opacity-100 pointer-events-auto z-50 backdrop-blur-xs"
-                  onClick={() => setIndex(index + 1)}
-                >
-                  <ChevronRightIcon className="size-4" />
-                </motion.button>
-              )}
-            </AnimatePresence>
-
-            <div className="absolute bottom-0 inset-x-0 h-10 bg-gradient-to-t from-neutral-900 opacity-50 rounded-b-lg"></div>
-
-            <div className="flex items-center justify-center absolute bottom-2 left-1/2 transform -translate-x-1/2 space-x-1.5">
-              {images.map((_, i) => (
-                <button
-                  className={`w-1.5 h-1.5 rounded-full ${
-                    i === index ? "bg-white" : "bg-white/60 "
-                  }`}
-                  onClick={() => changePhotoId(i)}
-                  key={i}
-                />
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </MotionConfig>
+      </MotionConfig>
+    </Link>
   );
 }
