@@ -63,6 +63,32 @@ export default async function PropertyDetails({
     return <NotFound />;
   }
 
+  let priceRange = {
+    // Define default price range of +/- 50000 from the property's price
+    gte: property.price - 50000,
+    lte: property.price + 50000,
+  };
+
+  if (property.status === "sale") {
+    // Adjust price range based on property status (sale)
+    if (property.price >= 0 && property.price <= 10000000) {
+      priceRange = {
+        gte: 2000000, // Adjust price range for sale properties between 0 to 10 million
+        lte: 4000000,
+      };
+    } else if (property.price > 10000000 && property.price <= 20000000) {
+      priceRange = {
+        gte: 4000000, // Adjust price range for sale properties between 11 to 20 million
+        lte: 6000000,
+      };
+    } else if (property.price > 20000000 && property.price <= 30000000) {
+      priceRange = {
+        gte: 6000000, // Adjust price range for sale properties between 21 to 30 million
+        lte: 10000000,
+      };
+    }
+  }
+
   const relatedProperties = await prisma.property.findMany({
     where: {
       NOT: {
@@ -77,17 +103,13 @@ export default async function PropertyDetails({
           ],
         },
         {
-          price: {
-            // Define the price range based on the property's price
-            gte: property.price - 50000, // Assuming a range of +/- 50000 from the property's price
-            lte: property.price + 50000,
-          },
+          price: priceRange, // Use adjusted price range
         },
       ],
     },
   });
 
-  if (!relatedProperties) {
+  if (!relatedProperties || relatedProperties.length === 0) {
     return (
       <>
         <p>No related property</p>
