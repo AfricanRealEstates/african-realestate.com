@@ -2,7 +2,7 @@
 import { propertyStatuses, properyTypes } from "@/constants";
 import { Button, Form, Input, InputNumber, Modal, Select, Tag } from "antd";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export default function Filters({ searchParams }: { searchParams: any }) {
   const [showFiltersModal, setShowFiltersModal] = useState(false);
@@ -11,6 +11,9 @@ export default function Filters({ searchParams }: { searchParams: any }) {
   >([]);
   const [propertyDetailsDisabled, setPropertyDetailsDisabled] =
     useState<boolean>(false);
+  const [filteredPropertyStatuses, setFilteredPropertyStatuses] =
+    useState<{ label: string; value: string }[]>(propertyStatuses);
+
   const handlePropertyTypeChange = (value: string) => {
     // Find the selected property type and get its subOptions
     const selectedPropertyType = properyTypes.find(
@@ -30,6 +33,18 @@ export default function Filters({ searchParams }: { searchParams: any }) {
   const pathname = usePathname();
   const router = useRouter();
 
+  useEffect(() => {
+    if (pathname.includes("buy")) {
+      setFilteredPropertyStatuses(
+        propertyStatuses.filter((status) => status.value === "sale")
+      );
+    } else if (pathname.includes("let")) {
+      setFilteredPropertyStatuses(
+        propertyStatuses.filter((status) => status.value === "let")
+      );
+    }
+  }, [pathname]);
+
   const onSubmit = (values: any) => {
     // remove undefined/null values
     const formattedData: any = {};
@@ -47,6 +62,7 @@ export default function Filters({ searchParams }: { searchParams: any }) {
     router.push(`${pathname}?${queryString}`);
     setShowFiltersModal(false);
   };
+
   return (
     <>
       <div className="flex flex-col lg:flex-row lg:items-center gap-y-7 justify-between p-3 mb-5 border rounded-sm border-solid border-gray-100">
@@ -91,7 +107,7 @@ export default function Filters({ searchParams }: { searchParams: any }) {
             }}
             className="cursor-pointer items-center rounded-md bg-blue-300 hover:bg-blue-400 transition-colors px-6 py-2 text-center font-semibold text-white"
           >
-            show Filters
+            Show Filters
           </button>
           <Button
             onClick={() => {
@@ -100,14 +116,6 @@ export default function Filters({ searchParams }: { searchParams: any }) {
           >
             Clear
           </Button>
-          {/* <Button
-            type="primary"
-            onClick={() => {
-              setShowFiltersModal(true);
-            }}
-          >
-            Show Filters
-          </Button> */}
         </div>
       </div>
 
@@ -147,7 +155,10 @@ export default function Filters({ searchParams }: { searchParams: any }) {
                 />
               </Form.Item>
               <Form.Item label="Sale / Let" name="status">
-                <Select options={propertyStatuses} placeholder="Status" />
+                <Select
+                  options={filteredPropertyStatuses}
+                  placeholder="Status"
+                />
               </Form.Item>
 
               <Form.Item label="County" name="county">
@@ -175,9 +186,6 @@ export default function Filters({ searchParams }: { searchParams: any }) {
               >
                 Apply
               </button>
-              {/* <Button type="primary" htmlType="submit">
-                Apply
-              </Button> */}
             </section>
           </Form>
         </Modal>
