@@ -265,7 +265,11 @@ export default function Header() {
                   {navLinks.map((link) => {
                     const { label, href } = link;
                     return (
-                      <Link key={label} href={href}>
+                      <Link
+                        key={label}
+                        href={href}
+                        className="text-neutral-600"
+                      >
                         {label}
                       </Link>
                     );
