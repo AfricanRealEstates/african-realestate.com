@@ -469,7 +469,7 @@ export default async function PropertyDetails({
                   <div className="flex items-center">
                     <Link
                       href={`/agencies/${agent.id}`}
-                      className="font-medium border bg-white border-neutral-200 text-neutral-700 text-center hover:bg-neutral-100 px-3 rounded-full text-lg"
+                      className="font-medium border mb-8 lg:mb-0 bg-white border-neutral-200 text-neutral-700 text-center hover:bg-neutral-100 px-3 rounded-full text-lg"
                     >
                       See agent profile
                     </Link>
