@@ -88,7 +88,7 @@ export default async function Agencies() {
                   </div>
                   <div className="-ml-px flex w-0 flex-1 bg-neutral-50 text-indigo-500 hover:bg-indigo-600 hover:text-neutral-50 transition-colors ease-linear">
                     <Link
-                      href={`/properties`}
+                      href={`/agencies/${agent.id}`}
                       className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold"
                     >
                       {/* <PhoneIcon
