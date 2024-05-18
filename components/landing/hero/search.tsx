@@ -85,7 +85,11 @@ export default function SearchBar() {
 
         {searchQuery.length > 0 ? (
           <CommandList className="absolute bg-white top-full inset-x-0 shadow rounded-b-md">
-            {isFetched && <CommandEmpty>No results found</CommandEmpty>}
+            {isFetched && (
+              <CommandEmpty>
+                No results found. Try another keywords.
+              </CommandEmpty>
+            )}
             {(queryResults?.length ?? 0) > 0 ? (
               <>
                 {queryResults && queryResults?.length > 0 && (
