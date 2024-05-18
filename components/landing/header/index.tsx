@@ -65,6 +65,7 @@ export default function Header() {
   const timeoutRef = useRef<number | null>(null);
   const [mobileView, setMobileView] = useState(false);
   const [stickyMenu, setStickyMenu] = useState(false);
+  const [newLinks, setNewLinks] = useState(navLinks);
   const toggleMobileView = () => {
     setMobileView(!mobileView);
   };
@@ -79,12 +80,18 @@ export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
 
-  if (user) {
-    navLinks.push({
-      label: "Dashboard",
-      href: "/dashboard",
-    });
-  }
+  // Add "Dashboard" link if user is authenticated
+  useEffect(() => {
+    if (user && !navLinks.some((link) => link.label === "Dashboard")) {
+      setNewLinks((prevLinks) => [
+        ...prevLinks,
+        {
+          label: "Dashboard",
+          href: "/dashboard",
+        },
+      ]);
+    }
+  }, [user]);
 
   // Determine if the current page is the home page
   const isHomePage = pathname === "/";
