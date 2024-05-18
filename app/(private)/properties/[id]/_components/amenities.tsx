@@ -93,12 +93,12 @@ export default function Amenities({ amenities }: AmenitiesProps) {
             View all {amenities.length} amenities
           </ButtonSecondary>
         </div>
-        {renderMotalAmenities()}
+        {renderModalAmenities()}
       </div>
     );
   };
 
-  const renderMotalAmenities = () => {
+  const renderModalAmenities = () => {
     return (
       <Transition appear show={isOpenModalAmenities} as={Fragment}>
         <Dialog
@@ -135,41 +135,39 @@ export default function Amenities({ amenities }: AmenitiesProps) {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <div className="inline-block py-8 h-screen w-full max-w-4xl">
-                <div className="inline-flex pb-2 flex-col w-full text-left align-middle transition-all transform overflow-hidden rounded-2xl bg-white dark:bg-neutral-900 dark:border dark:border-neutral-700 dark:text-neutral-100 shadow-xl h-full">
-                  <div className="relative flex-shrink-0 px-6 py-4 border-b border-neutral-200 dark:border-neutral-800 text-center">
-                    <h3
-                      className="text-lg font-medium leading-6 text-gray-900"
-                      id="headlessui-dialog-title-70"
-                    >
-                      Amenities
-                    </h3>
-                    <span className="absolute left-3 top-3">
-                      <ButtonClose onClick={closeModalAmenities} />
-                    </span>
-                  </div>
+              <div className="inline-block w-full max-w-4xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-neutral-900 dark:border dark:border-neutral-700 dark:text-neutral-100 shadow-xl rounded-2xl">
+                <div className="relative flex-shrink-0 px-6 py-4 border-b border-neutral-200 dark:border-neutral-800 text-center">
+                  <h3
+                    className="text-lg font-medium leading-6 text-gray-900"
+                    id="headlessui-dialog-title-70"
+                  >
+                    Amenities
+                  </h3>
+                  <span className="absolute left-3 top-3">
+                    <ButtonClose onClick={closeModalAmenities} />
+                  </span>
+                </div>
 
-                  <div className="px-8 overflow-auto text-neutral-700 dark:text-neutral-300 divide-y divide-neutral-200">
-                    {amenities
-                      .filter((amenity) =>
-                        appliances.find((app) => app.value === amenity)
-                      ) // Filter out amenities that don't have corresponding icons
-                      .map((amenity) => (
-                        <div
-                          key={amenity}
-                          className="flex items-center py-2.5 sm:py-4 lg:py-5 space-x-5 lg:space-x-8"
-                        >
-                          {amenityIcons[amenity]}{" "}
-                          {/* Render the corresponding icon */}
-                          <span className="capitalize">
-                            {
-                              appliances.find((app) => app.value === amenity)
-                                ?.label
-                            }
-                          </span>
-                        </div>
-                      ))}
-                  </div>
+                <div className="px-8 overflow-auto text-neutral-700 dark:text-neutral-300 divide-y divide-neutral-200">
+                  {amenities
+                    .filter((amenity) =>
+                      appliances.find((app) => app.value === amenity)
+                    ) // Filter out amenities that don't have corresponding icons
+                    .map((amenity) => (
+                      <div
+                        key={amenity}
+                        className="flex items-center py-2.5 sm:py-4 lg:py-5 space-x-5 lg:space-x-8"
+                      >
+                        {amenityIcons[amenity]}{" "}
+                        {/* Render the corresponding icon */}
+                        <span className="capitalize">
+                          {
+                            appliances.find((app) => app.value === amenity)
+                              ?.label
+                          }
+                        </span>
+                      </div>
+                    ))}
                 </div>
               </div>
             </Transition.Child>
