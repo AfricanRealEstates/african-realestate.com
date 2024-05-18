@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { v4 as uuidv4 } from "uuid";
+import Resources from "./resources";
 
 const nunitoSans = Nunito_Sans({
   subsets: ["latin"],
@@ -30,9 +31,11 @@ const navLinks = [
     label: "Buy",
     href: "/buy",
   },
+
   {
-    label: "Dashboard",
-    href: "/dashboard",
+    label: "Resources",
+    href: "#", // This can be set to a real route if necessary
+    component: Resources, // Add the Resources component here
   },
 ];
 
@@ -75,6 +78,13 @@ export default function Header() {
 
   const pathname = usePathname();
   const router = useRouter();
+
+  if (user) {
+    navLinks.push({
+      label: "Dashboard",
+      href: "/dashboard",
+    });
+  }
 
   // Determine if the current page is the home page
   const isHomePage = pathname === "/";
@@ -141,41 +151,49 @@ export default function Header() {
                 {navLinks.map((navLink, index) => {
                   const { href, label } = navLink;
                   return (
-                    <Link
-                      key={label}
-                      href={href}
-                      className="relative -mx-3 -my-2 rounded-lg px-3 py-2 text-base transition-colors delay-0 hover:delay-0"
-                      onMouseEnter={() => {
-                        if (timeoutRef.current) {
-                          window.clearTimeout(timeoutRef.current);
-                        }
-                        setHoveredIndex(index);
-                      }}
-                      onMouseLeave={() => {
-                        timeoutRef.current = window.setTimeout(() => {
-                          setHoveredIndex(null);
-                        }, 200);
-                      }}
-                    >
-                      <AnimatePresence>
-                        {hoveredIndex === index && (
-                          <motion.span
-                            className="absolute inset-0 rounded-lg bg-black/10"
-                            layoutId="hoverBackground"
-                            initial={{ opacity: 0 }}
-                            animate={{
-                              opacity: 1,
-                              transition: { duration: 0.15 },
-                            }}
-                            exit={{
-                              opacity: 0,
-                              transition: { duration: 0.15 },
-                            }}
-                          />
-                        )}
-                      </AnimatePresence>
-                      <span className="relative z-10">{label}</span>
-                    </Link>
+                    <>
+                      <Link
+                        key={label}
+                        href={href}
+                        className="relative -mx-3 -my-2 rounded-lg px-3 py-2 text-base transition-colors delay-0 hover:delay-0"
+                        onMouseEnter={() => {
+                          if (timeoutRef.current) {
+                            window.clearTimeout(timeoutRef.current);
+                          }
+                          setHoveredIndex(index);
+                        }}
+                        onMouseLeave={() => {
+                          timeoutRef.current = window.setTimeout(() => {
+                            setHoveredIndex(null);
+                          }, 200);
+                        }}
+                      >
+                        <AnimatePresence>
+                          {hoveredIndex === index && (
+                            <motion.span
+                              className="absolute inset-0 rounded-lg bg-black/10"
+                              layoutId="hoverBackground"
+                              initial={{ opacity: 0 }}
+                              animate={{
+                                opacity: 1,
+                                transition: { duration: 0.15 },
+                              }}
+                              exit={{
+                                opacity: 0,
+                                transition: { duration: 0.15 },
+                              }}
+                            />
+                          )}
+                        </AnimatePresence>
+                        <span className="relative z-10">{label}</span>
+                      </Link>
+
+                      {/* {label === "Resources" && hoveredIndex === index && (
+                        <div className="">
+                          <Resources />
+                        </div>
+                      )} */}
+                    </>
                   );
                 })}
               </ul>
