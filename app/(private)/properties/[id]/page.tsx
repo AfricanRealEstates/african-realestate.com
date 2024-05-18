@@ -5,7 +5,7 @@ import { Property } from "@prisma/client";
 import QueryModal from "@/components/globals/query-modal";
 import { Raleway, IBM_Plex_Mono } from "next/font/google";
 import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/20/solid";
-import { Bath, Bed, ExpandIcon, FolderOpen, MapPin } from "lucide-react";
+import { Bath, Bed, ExpandIcon, FolderOpen, MapPin, User } from "lucide-react";
 import { Metadata } from "next";
 import ImageCarousel from "./_components/image-carousel";
 import Link from "next/link";
@@ -45,8 +45,6 @@ export async function generateMetadata({
 
   return {
     title: `${property.title} | African Real Estate`,
-    // description: post.description,
-    // coverImageUrl: post.coverImageUrl,
   };
 }
 
@@ -95,6 +93,19 @@ export default async function PropertyDetails({
         <p>No related property</p>
       </>
     );
+  }
+
+  const agent = await prisma.user.findUnique({
+    where: {
+      id: property.userId,
+    },
+    include: {
+      properties: true,
+    },
+  });
+
+  if (!agent) {
+    return <NotFound />;
   }
 
   const getDetail = ({
@@ -153,11 +164,6 @@ export default async function PropertyDetails({
           <LikeSaveBtns />
         </div>
 
-        {/* 2 */}
-        {/* <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold">
-          Beach House in Collingwood
-        </h2> */}
-
         {/* 3 */}
         <div className="flex items-center space-x-4">
           <span className="flex items-center bg-neutral-100 rounded-full px-2">
@@ -174,12 +180,12 @@ export default async function PropertyDetails({
             hasChecked
             sizeClass="h-10 w-10"
             radius="rounded-full"
-            imgUrl={session?.user.image}
+            imgUrl={agent.image}
           />
           <span className="ml-2.5 text-neutral-500 dark:text-neutral-400">
             Agent{" "}
             <span className="text-neutral-900 text-sm font-medium">
-              {session?.user.agentName}
+              {agent.agentName}
             </span>
           </span>
         </div>
@@ -345,17 +351,26 @@ export default async function PropertyDetails({
                       hasCheckedClass="w-4 h-4 -top-0.5 right-0.5"
                       sizeClass="size-8"
                       radius="rounded-full"
-                      imgUrl={session?.user.image}
+                      imgUrl={agent.image}
                     />
                     <div>
-                      <Link className="block text-xl font-medium" href="##">
-                        {session?.user.agentName}
+                      {agent?.agentName ? (
+                        <p className="block text-xl text-indigo-500 font-medium">
+                          {agent.agentName}
+                        </p>
+                      ) : (
+                        <p>No name yet</p>
+                      )}
+                      <Link
+                        href={`/agencies/${agent.id}`}
+                        className="mt-1 flex items-center gap-1 text-sm text-neutral-500"
+                      >
+                        <span className="">View all</span>
+                        <span className="text-indigo-500 font-semibold">
+                          {agent.properties.length}
+                        </span>
+                        <span>properties</span>
                       </Link>
-                      <div className="mt-1 flex items-center text-sm text-neutral-500">
-                        All properties
-                        <span className="mx-2">·</span>
-                        <span>{23}</span>
-                      </div>
                     </div>
                   </div>
 
@@ -372,7 +387,7 @@ export default async function PropertyDetails({
                         <Link
                           target="_blank"
                           rel="noopener noreferrer"
-                          href={`https://wa.me/${session?.user.whatsappNumber}`}
+                          href={`https://wa.me/${agent.whatsappNumber}`}
                           className="flex size-6 items-center justify-center text-gray-400 hover:text-gray-500"
                         >
                           <span className="sr-only">Contact on Whatsapp</span>
@@ -399,7 +414,7 @@ export default async function PropertyDetails({
                         <Link
                           target="_blank"
                           rel="noopener noreferrer"
-                          href={`tel:${session?.user.officeLine}`}
+                          href={`tel:${agent.officeLine}`}
                           className="flex size-6 items-center justify-center text-[#777f8a] hover:text-gray-500"
                         >
                           <span className="sr-only">Contact on Call</span>
@@ -413,7 +428,7 @@ export default async function PropertyDetails({
                         <Link
                           target="_blank"
                           rel="noopener noreferrer"
-                          href={`mailto:${session?.user.email}`}
+                          href={`mailto:${agent.email}`}
                           className="flex size-6 items-center justify-center text-[#777f8a] hover:text-gray-500"
                         >
                           <span className="sr-only">Contact on Email</span>
@@ -431,7 +446,7 @@ export default async function PropertyDetails({
                   <div className="w-full border-b border-neutral-200"></div>
                   <div className="flex items-center">
                     <Link
-                      href="/"
+                      href={`/agencies/${agent.id}`}
                       className="font-medium border bg-white border-neutral-200 text-neutral-700 text-center hover:bg-neutral-100 px-3 rounded-full text-lg"
                     >
                       See agent profile
