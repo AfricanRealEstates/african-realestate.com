@@ -71,7 +71,7 @@ export default function SearchBar() {
 
   return (
     <>
-      <Command className="relative rounded-lg border max-w-lg z-50 overflow-visible">
+      <Command className="relative rounded-lg border max-w-lg z-20 overflow-visible">
         <CommandInput
           isLoading={isFetching}
           value={searchQuery}
