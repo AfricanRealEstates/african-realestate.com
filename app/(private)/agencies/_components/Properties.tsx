@@ -68,11 +68,11 @@ const RenderSection1 = ({ properties, agent }: Props) => {
                       ))
                   ) : (
                     <div className="col-span-full text-center text-neutral-500 border border-neutral-100 rounded-md p-8">
-                      No properties available for{" "}
+                      {agent.agentName} has properties available for{" "}
                       <span className="font-semibold text-indigo-500">
                         {status}
-                      </span>
-                      .
+                      </span>{" "}
+                      right now.
                     </div>
                   )}
                 </div>

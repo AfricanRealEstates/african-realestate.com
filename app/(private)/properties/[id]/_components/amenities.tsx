@@ -75,6 +75,7 @@ export default function Amenities({ amenities }: AmenitiesProps) {
             .filter((amenity) =>
               appliances.find((app) => app.value === amenity)
             ) // Filter out amenities that don't have corresponding icons
+            .slice(0, 6)
             .map((amenity) => (
               <div key={amenity} className="flex items-center space-x-3">
                 {amenityIcons[amenity]} {/* Render the corresponding icon */}
