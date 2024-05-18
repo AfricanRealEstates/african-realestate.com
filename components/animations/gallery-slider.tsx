@@ -170,7 +170,7 @@ export default function GallerySlider({
                     animate={{ opacity: 0.7 }}
                     exit={{ opacity: 0, pointerEvents: "none" }}
                     whileHover={{ opacity: 1 }}
-                    className="absolute left-2 top-1/2 -mt-4 flex size-6 items-center justify-center rounded-full text-black bg-black/40 opacity-0 transition-opacity hover:text-white group-hover:opacity-100 pointer-events-auto z-50 backdrop-blur-xs"
+                    className="absolute left-2 top-1/2 -mt-4 flex size-6 items-center justify-center rounded-full text-neutral-200 bg-black/40 opacity-0 transition-opacity hover:text-white group-hover:opacity-100 pointer-events-auto z-20 backdrop-blur-xs"
                     onClick={(e) => {
                       e.preventDefault();
                       setIndex(index - 1);
@@ -188,7 +188,7 @@ export default function GallerySlider({
                     animate={{ opacity: 0.7 }}
                     exit={{ opacity: 0, pointerEvents: "none" }}
                     whileHover={{ opacity: 1 }}
-                    className="absolute right-2 top-1/2 -mt-4 flex size-6 items-center justify-center rounded-full text-black bg-black/40 opacity-0 transition-opacity hover:text-white group-hover:opacity-100 pointer-events-auto z-50 backdrop-blur-xs"
+                    className="absolute right-2 top-1/2 -mt-4 z-20 flex size-6 items-center justify-center rounded-full text-neutral-200 bg-black/40 opacity-0 transition-opacity hover:text-white group-hover:opacity-100 pointer-events-auto backdrop-blur-xs"
                     onClick={(e) => {
                       e.preventDefault();
                       setIndex(index + 1);
