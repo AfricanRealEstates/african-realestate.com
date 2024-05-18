@@ -62,7 +62,7 @@ export default async function Agencies() {
                 </h3>
                 <dl className="mt-1 flex flex-grow flex-col justify-between">
                   <dt className="sr-only">Title</dt>
-                  <dd className="text-sm my-4 text-gray-500">{agent.role}</dd>
+                  <dd className="text-sm my-4 text-gray-500">AGENT</dd>
                   <dt className="sr-only">Role</dt>
 
                   <dd className="mt-3">
