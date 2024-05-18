@@ -248,8 +248,8 @@ export default function Header() {
             </div>
             {mobileView && (
               <section className="shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)] transition-transform ease-in-out fixed right-0 z-20 gap-y-6 mt-0 bg-white w-full p-8 text-base flex flex-col  lg:hidden">
-                <nav className="flex flex-col space-y-4 shadow-[0_1px_0_#f7f7f7] pb-4">
-                  {navLinks.map((link) => {
+                <nav className="flex flex-col space-y-4 pb-4">
+                  {/* {navLinks.map((link) => {
                     const { href, label } = link;
                     return (
                       <Link
@@ -260,18 +260,31 @@ export default function Header() {
                         {label}
                       </Link>
                     );
+                  })} */}
+
+                  {navLinks.map((link) => {
+                    const { label, href } = link;
+                    return (
+                      <Link key={label} href={href}>
+                        {label}
+                      </Link>
+                    );
                   })}
                 </nav>
-                <div className="border-t flex justify-between gap-6 border-gray-100 flex-1 py-8 ">
+                <div className="border-t flex flex-col lg:flex-row justify-between gap-x-6 gap-y-4 border-gray-100 flex-1 py-8 ">
                   <section className="flex flex-col gap-4">
-                    <p className="text-sm text-gray-500">Need Customer Care</p>
-                    <p className="font-semibold text-sm text-black">
+                    <p className="text-sm text-neutral-500">
+                      Need Customer Care
+                    </p>
+                    <p className="font-medium text-sm text-indigo-500">
                       +254 732945534
                     </p>
                   </section>
                   <section className="flex flex-col gap-4">
-                    <p className="text-sm text-gray-500">Need Live Support?</p>
-                    <p className="font-semibold text-sm text-black">
+                    <p className="text-sm text-neutral-500">
+                      Need Live Support?
+                    </p>
+                    <p className="font-medium text-sm text-indigo-500">
                       Africanrealestate0@gmail.com
                     </p>
                   </section>

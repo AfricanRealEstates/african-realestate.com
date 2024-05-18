@@ -65,7 +65,7 @@ export default function Footer() {
                 <span className="bg-[#eb6753] text-white py-1 px-2 rounded-lg">
                   <HomeIcon />
                 </span>
-                <span className={`text-xl tracking-tight font-bold`}>
+                <span className={`lg:text-xl tracking-tight font-bold`}>
                   African Real Estate.
                 </span>
               </Link>
@@ -132,7 +132,9 @@ export default function Footer() {
 
           <div className="flex flex-col items-start font-semibold">
             <div className="mb-4">
-              <p className="font-bold uppercase text-white">Solutions</p>
+              <p className="font-bold uppercase text-sm text-white">
+                Solutions
+              </p>
             </div>
             <Link
               href="/buy"
@@ -162,7 +164,7 @@ export default function Footer() {
 
           <div className="flex flex-col items-start font-semibold">
             <div className="mb-4">
-              <p className="font-bold uppercase text-white">Products</p>
+              <p className="font-bold text-sm uppercase text-white">Products</p>
             </div>
             <Link
               href="/properties"
@@ -191,7 +193,7 @@ export default function Footer() {
           </div>
           <div className="flex flex-col items-start font-semibold">
             <div className="mb-4">
-              <p className="font-bold uppercase text-white">Support</p>
+              <p className="font-bold text-sm uppercase text-white">Support</p>
             </div>
             <Link
               href="/contact"
@@ -220,7 +222,7 @@ export default function Footer() {
           </div>
           <div className="flex flex-col items-start font-semibold">
             <div className="mb-4">
-              <p className="font-bold uppercase text-white">Company</p>
+              <p className="font-bold text-sm uppercase text-white">Company</p>
             </div>
             <Link
               href="/about"
