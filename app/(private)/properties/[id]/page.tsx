@@ -97,7 +97,7 @@ export default async function PropertyDetails({
       AND: [
         {
           OR: [
-            { location: property.location }, // Related properties with the same location
+            { county: property.county }, // Related properties with the same location
             { propertyDetails: property.propertyDetails }, // Related properties with the same property details
             { status: property.status }, // Related properties with the same status
           ],
@@ -109,13 +109,13 @@ export default async function PropertyDetails({
     },
   });
 
-  if (!relatedProperties || relatedProperties.length === 0) {
-    return (
-      <>
-        <p>No related property</p>
-      </>
-    );
-  }
+  // if (!relatedProperties || relatedProperties.length === 0) {
+  //   return (
+  //     <>
+  //       <p>No related property</p>
+  //     </>
+  //   );
+  // }
 
   const agent = await prisma.user.findUnique({
     where: {

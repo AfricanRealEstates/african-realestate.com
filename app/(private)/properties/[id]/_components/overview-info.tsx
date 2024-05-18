@@ -29,7 +29,7 @@ export default function OverviewInfo({ description }: { description: string }) {
   // Determine the text for the "Read More" or "Read Less" button
   const buttonText = showFullDescription ? "Read Less" : "Read More";
   return (
-    <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 dark:border-neutral-700 space-y-6 sm:space-y-8 pb-10 px-0 sm:p-4 xl:p-8">
+    <div className="mt-4 lg:mt-0 w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 dark:border-neutral-700 space-y-6 sm:space-y-8 pb-10 px-0 sm:p-4 xl:p-8">
       <h2 className="text-2xl font-semibold">Overview</h2>
       <div className="w-14 border-b border-neutral-200"></div>
 
