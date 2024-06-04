@@ -48,12 +48,12 @@ export default function LoginForm() {
         router.push(callbackUrl);
       } else {
         const message = "Invalid email or password";
-        toast("Uh oh! Something went wrong");
+        toast.error("Uh oh! Something went wrong");
         setError(message);
         reset({ password: "" });
       }
     } catch (error: any) {
-      toast("Uh oh! Something went wrong");
+      toast.error("Uh oh! Something went wrong");
       setError(error.message);
     } finally {
       setIsLoading(false);

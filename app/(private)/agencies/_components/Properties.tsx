@@ -3,12 +3,14 @@ import { ButtonSecondary } from "@/components/globals/button-secondary";
 import PropertyCard from "@/components/properties/new/PropertyCard";
 import { Tab } from "@headlessui/react";
 import { Property, User } from "@prisma/client";
+
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import React, { Fragment, useState, useEffect } from "react";
 
 interface Props {
   properties: Property[];
-  agent: User;
+  agent: User | null;
 }
 
 const RenderSection1 = ({ properties, agent }: Props) => {
@@ -23,12 +25,16 @@ const RenderSection1 = ({ properties, agent }: Props) => {
     setFilteredProperties(filtered);
   }, [selectedTab, properties]);
 
+  const agentName = agent?.agentName ?? "Realtor";
+
+  const router = useRouter();
+
   return (
     <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 dark:border-neutral-700 space-y-6 sm:space-y-8 pb-10 px-0 sm:p-4 xl:p-8">
       <div>
-        <h2 className="text-2xl text-indigo-500 font-semibold">{`${agent?.agentName} listings`}</h2>
+        <h2 className="text-2xl text-indigo-500 font-semibold">{`${agentName} listings`}</h2>
         <span className="block mt-2 text-neutral-500 dark:text-neutral-400">
-          {`${agent?.agentName}'s listings are very rich, and 5-star reviews help them to be more branded.`}
+          {`${agentName}'s listings are very rich, and 5-star reviews help them to be more branded.`}
         </span>
       </div>
       <div className="w-full border-b border-neutral-100"></div>
@@ -67,13 +73,22 @@ const RenderSection1 = ({ properties, agent }: Props) => {
                         <PropertyCard key={property.id} data={property} />
                       ))
                   ) : (
-                    <div className="col-span-full text-center text-neutral-500 border border-neutral-100 rounded-md p-8">
-                      {agent.agentName} has properties available for{" "}
-                      <span className="font-semibold text-indigo-500">
-                        {status}
-                      </span>{" "}
-                      right now.
-                    </div>
+                    <>
+                      <div className="col-span-full flex flex-col gap-y-4 text-center text-neutral-500 border border-neutral-100 rounded-md p-8">
+                        <div className="flex gap-1">
+                          {agentName} has zero (0) properties available for{" "}
+                          <span className="font-semibold text-indigo-500">
+                            {status}
+                          </span>{" "}
+                          right now.
+                        </div>
+                        <ButtonSecondary
+                          onClick={() => router.push("/properties")}
+                        >
+                          View All Listings
+                        </ButtonSecondary>
+                      </div>
+                    </>
                   )}
                 </div>
                 {filteredProperties.length > 0 && (

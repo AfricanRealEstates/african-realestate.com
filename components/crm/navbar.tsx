@@ -74,7 +74,7 @@ function DesktopNavbar() {
   const session = useSession();
   const user = session.data?.user;
   return (
-    <header className="hidden border-separate border-b bg-background md:flex">
+    <header className="hidden border-separate border-b border-neutral-50 bg-background md:flex">
       <nav className="max-w-7xl mx-auto w-full flex items-center justify-between px-8">
         <div className="flex h-[80px] min-h-[60px] items-center gap-x-4">
           <Logo />

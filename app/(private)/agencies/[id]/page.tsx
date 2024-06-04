@@ -72,12 +72,16 @@ export default async function SingleAgency({
         />
 
         {/* ---- */}
-        <div className="space-y-3 text-center flex flex-col items-center">
-          <h2 className="text-xl text-indigo-500 font-semibold">
-            {agent.agentName}
-          </h2>
-          {/* <StartRating className="!text-base" /> */}
-        </div>
+        {agent?.name ? (
+          <div className="space-y-3 text-center flex flex-col items-center">
+            <h2 className="text-xl text-indigo-500 font-semibold">
+              {agent?.agentName}
+            </h2>
+            {/* <StartRating className="!text-base" /> */}
+          </div>
+        ) : (
+          <p className="text-neutral-500">No agent yet</p>
+        )}
 
         <div className="border-b border-neutral-50 w-full"></div>
 

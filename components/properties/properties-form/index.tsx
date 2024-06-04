@@ -77,7 +77,7 @@ export default function PropertiesForm({
   }, [finalValues]);
 
   return (
-    <section className="max-w-5xl mx-auto shadow-2xl p-8 mb-9">
+    <section className="w-full lg:max-w-5xl mx-auto shadow-2xl p-4 lg:p-8 mb-9">
       <Steps items={steps} current={currentStep} />
       <div className="mt-8">{steps[currentStep].content}</div>
     </section>

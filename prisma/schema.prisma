@@ -114,14 +114,18 @@ model Property {
   nearbyTown             String
   district               String?
   location               String?
-  bedrooms               Int
-  bathrooms              Int
-  landSize               Float
-  landUnits              String
+  bedrooms               Int?
+  bathrooms              Int?
+  landSize               Float?
+  landUnits              String?
   plinthArea             Int
   videoLink              String?
+  serviceCharge          String?
+  parkings               String?
+  tenure                 String?
   appliances             String[]
   images                 String[]
+  coverPhotos            String[]
   // agentName              String // move to user
   // email                  String
   // officeLine             String

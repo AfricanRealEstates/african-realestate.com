@@ -337,12 +337,67 @@ export const appliances = [
   { value: "furnitures", label: "Furnitures" },
   { value: "pet", label: "Pet Friendly" },
   { value: "energy", label: "Energy Efficient" },
-  { value: "gates", label: "Gated Estate" },
+  { value: "gates", label: "Gated Residence" },
   { value: "servant", label: "Servant Quarters" },
   { value: "borehole", label: "Borehole" },
   { value: "waste", label: "Waste Management" },
 ];
 
+export const commercialAppliances = [
+  { value: "parking", label: "Visitor parkings" },
+  { value: "heating", label: "Heating" },
+  { value: "pet", label: "Pet Friendly" },
+  { value: "borehole", label: "Borehole" },
+  { value: "flower", label: "Flower Garden" },
+  { value: "dstv", label: "DSTV / Cables" },
+  { value: "energy", label: "Energy Efficient" },
+  { value: "waste", label: "Waste Management" },
+  { value: "swimming", label: "Swimming Pool" },
+  { value: "air", label: "Air Condition" },
+  { value: "internet", label: "Internet" },
+  { value: "gym", label: "Gym" },
+]
+
+export const industrialAppliances = [
+  { value: "parking", label: "Visitor parkings" },
+  { value: "heating", label: "Heating" },
+  { value: "pet", label: "Pet Friendly" },
+  { value: "borehole", label: "Borehole" },
+  { value: "green", label: "Green Spaces" },
+  { value: "dstv", label: "DSTV / Cables" },
+  { value: "energy", label: "Energy Efficient" },
+  { value: "waste", label: "Waste Management" },
+  { value: "swimming", label: "Swimming Pool" },
+  { value: "air", label: "Air Condition" },
+  { value: "internet", label: "Internet" },
+  { value: "gym", label: "Gym" },
+]
+
+export const vacationalAppliances = [
+  { value: "parking", label: "Visitor parkings" },
+  { value: "heating", label: "Heating" },
+  { value: "pet", label: "Pet Friendly" },
+  { value: "borehole", label: "Borehole" },
+  { value: "green", label: "Green Spaces" },
+  { value: "dstv", label: "DSTV / Cables" },
+  { value: "energy", label: "Energy Efficient" },
+  { value: "waste", label: "Waste Management" },
+  { value: "swimming", label: "Swimming Pool" },
+  { value: "air", label: "Air Condition" },
+  { value: "gates", label: "Gated Residence" },
+  { value: "internet", label: "Internet" },
+  { value: "gym", label: "Gym" },
+]
+
+export const landAppliances = [
+  { value: "power", label: "Power Connected" },
+  { value: "gates", label: "Gated Estate" },
+  { value: "pet", label: "Pet Friendly" },
+  { value: "borehole", label: "Borehole" },
+  { value: "waste", label: "Waste Management" },
+  { value: "internet", label: "Internet" },
+  { value: "energy", label: "Energy Efficient" },
+]
 export const landUnits = [
   // { value: "Unit measurement", text: "Unit measurement" },
   { value: "Sqm", label: "Sqm" },

@@ -48,8 +48,13 @@ export default function PropertyCard({ property }: PropertyCardProps) {
     }
   };
 
+  let convertedLandSize = null;
+  if (landSize && landUnits) {
+    convertedLandSize = convertToHectares(landSize, landUnits);
+  }
+
   // Converted land size in hectares
-  const convertedLandSize = convertToHectares(landSize, landUnits);
+  // const convertedLandSize = convertToHectares(landSize, landUnits);
 
   return (
     <>
@@ -131,7 +136,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
             </div>
             <div className="mt-auto pt-2 border-b border-neutral-100"></div>
             <div className="flex gap-3 mt-2 flex-wrap justify-between text-gray-400">
-              {bedrooms > 0 && (
+              {bedrooms && bedrooms > 0 && (
                 <div>
                   <div className="flex gap-1 items-center">
                     <Bed className="size-5" />
@@ -140,7 +145,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
                   <div className="text-xs font-semibold uppercase">Beds</div>
                 </div>
               )}
-              {bathrooms > 0 && (
+              {bathrooms && bathrooms > 0 && (
                 <div>
                   <div className="flex gap-1 items-center">
                     <Bath className="size-5" />
@@ -150,12 +155,12 @@ export default function PropertyCard({ property }: PropertyCardProps) {
                 </div>
               )}
 
-              {landSize > 0 && (
+              {landSize && landSize > 0 && (
                 <div>
                   <div className="flex gap-1 items-center">
                     <LandPlot className="size-5" />
                     <span className="font-extrabold">
-                      {convertedLandSize.toFixed(3)}
+                      {convertedLandSize?.toFixed(3)}
                     </span>
                   </div>
                   <div className="text-xs font-semibold uppercase">Acres</div>

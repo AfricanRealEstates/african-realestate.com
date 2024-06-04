@@ -103,7 +103,7 @@ export default async function PropertyDetails({
           ],
         },
         {
-          price: priceRange, // Use adjusted price range
+          price: priceRange || property.county, // Use adjusted price range
         },
       ],
     },
@@ -171,11 +171,19 @@ export default async function PropertyDetails({
     }
   };
 
-  // Converted land size in hectares
-  const convertedLandSize = convertToHectares(
-    property.landSize,
-    property.landUnits
-  );
+  let convertedLandSize = null;
+  if (property.landSize && property.landUnits) {
+    convertedLandSize = convertToHectares(
+      property.landSize,
+      property.landUnits
+    );
+  }
+
+  // // Converted land size in hectares
+  // const convertedLandSize = convertToHectares(
+  //   property.landSize,
+  //   property.landUnits
+  // );
 
   const renderSection1 = () => {
     return (
@@ -187,7 +195,7 @@ export default async function PropertyDetails({
         </div>
 
         {/* 3 */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 mb-8">
           <span className="flex items-center bg-neutral-100 rounded-full px-2">
             <MapPin className="size-4" />
             <span className="py-1.5 px-3 text-sm flex rounded-lg">
@@ -197,7 +205,7 @@ export default async function PropertyDetails({
         </div>
 
         {/* 4 */}
-        <div className="flex items-center">
+        {/* <div className="flex items-center">
           <Avatar
             hasChecked
             sizeClass="h-10 w-10"
@@ -210,24 +218,29 @@ export default async function PropertyDetails({
               {agent.agentName}
             </span>
           </span>
-        </div>
+        </div> */}
 
         {/* 5 */}
-        <div className="w-full border-b border-neutral-100 dark:border-neutral-700" />
+        <div className="w-full border-b border-neutral-100 dark:border-neutral-700 my-8" />
 
         {/* 6 */}
-        <div className="flex items-center justify-between xl:justify-start space-x-8 xl:space-x-12 text-sm text-neutral-700 dark:text-neutral-300">
-          {property.bedrooms > 0 && (
+        <div className="flex items-center justify-between xl:justify-start space-x-8 xl:space-x-12 text-sm text-neutral-700 dark:text-neutral-300 mt-8">
+          {property.bedrooms && property.bedrooms > 0 && (
             <div className="flex items-center space-x-3 ">
               <Bed className="size-4 text-neutral-600" />
               <span className="ml-1">
                 {property.bedrooms}{" "}
-                <span className="hidden sm:inline-block">bedrooms</span>
+                <span className="hidden sm:inline-block">
+                  {property.propertyType === "Commercial" ||
+                  property.propertyType === "Industrial"
+                    ? "Parkings"
+                    : "Bedrooms"}
+                </span>
               </span>
             </div>
           )}
 
-          {property.bathrooms > 0 && (
+          {property.bathrooms && property.bathrooms > 0 && (
             <div className="flex items-center space-x-3">
               <Bath className="size-4 text-neutral-600" />
               <span className="ml-1">
@@ -236,13 +249,15 @@ export default async function PropertyDetails({
               </span>
             </div>
           )}
-          <div className="flex items-center space-x-3">
-            <ExpandIcon className="size-4 text-neutral-600" />
-            <span className=" ">
-              {convertedLandSize.toPrecision(2)}{" "}
-              <span className="hidden sm:inline-block">acres</span>
-            </span>
-          </div>
+          {convertedLandSize && (
+            <div className="flex items-center space-x-3">
+              <ExpandIcon className="size-4 text-neutral-600" />
+              <span className=" ">
+                {convertedLandSize?.toPrecision(2)}{" "}
+                <span className="hidden sm:inline-block">acres</span>
+              </span>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -251,7 +266,7 @@ export default async function PropertyDetails({
   const renderSidebar = () => {
     return (
       <div
-        className={`w-full flex flex-col rounded-2xl border-b border-t border-l border-r border-neutral-200  space-y-4 xl:space-y-7 pb-10 p-2 sm:p-4 xl:px-8 xl:py-6 shadow-xl ${raleway.className}`}
+        className={`w-full flex flex-col rounded-2xl border-b border-t border-l border-r border-neutral-200  space-y-4 xl:space-y-4 pb-10 p-2 sm:p-4 xl:px-8 xl:py-4 shadow-xl ${raleway.className}`}
       >
         <h2 className="text-xl font-semibold">Send a Quote</h2>
         <div className=" border-b border-neutral-100 dark:border-neutral-700" />
@@ -348,7 +363,7 @@ export default async function PropertyDetails({
                       {property.plinthArea} Sq.m
                     </span>
                   </p>
-                  {property.bedrooms > 0 && (
+                  {property.bedrooms && property.bedrooms > 0 && (
                     <p className="text-sm font-medium text-gray-500">
                       Number of Bedrooms:
                       <span className="ml-2 bg-gray-50 text-indigo-500 px-2 py-1 rounded-full">
@@ -359,7 +374,7 @@ export default async function PropertyDetails({
                   <p className="text-sm font-medium text-gray-500">
                     Size of Land:{" "}
                     <span className="ml-2 bg-gray-50 text-indigo-500 px-2 py-1 rounded-full">
-                      {convertedLandSize.toPrecision(2)} Acres
+                      {convertedLandSize?.toPrecision(2)} Acres
                     </span>
                   </p>
                   {/* HEADING */}
@@ -383,7 +398,7 @@ export default async function PropertyDetails({
                       ) : (
                         <p>No name yet</p>
                       )}
-                      <Link
+                      {/* <Link
                         href={`/agencies/${agent.id}`}
                         className="mt-1 flex items-center gap-1 text-sm text-neutral-500"
                       >
@@ -392,7 +407,7 @@ export default async function PropertyDetails({
                           {agent.properties.length}
                         </span>
                         <span>properties</span>
-                      </Link>
+                      </Link> */}
                     </div>
                   </div>
 
@@ -471,7 +486,7 @@ export default async function PropertyDetails({
                       href={`/agencies/${agent.id}`}
                       className="font-medium border mb-8 lg:mb-0 bg-white border-neutral-200 text-neutral-700 text-center hover:bg-neutral-100 px-3 rounded-full text-lg"
                     >
-                      See agent profile
+                      View All Agent&apos;s properties
                     </Link>
                   </div>
                 </div>
@@ -495,8 +510,8 @@ export default async function PropertyDetails({
         <main className="relative z-10 mt-16 flex flex-col lg:flex-row">
           <section className="w-full lg:w-3/5 xl:w-2/3 space-y-8 lg:space-y-10 lg:pr-10">
             {renderSection1()}
-            <OverviewInfo description={property.description} />
             <Amenities amenities={property.appliances} />
+            <OverviewInfo description={property.description} />
           </section>
           <section className="hidden lg:block flex-grow mt-14 lg:mt-0">
             <div className="sticky top-28">{renderSidebar()}</div>

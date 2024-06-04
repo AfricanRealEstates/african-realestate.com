@@ -94,7 +94,7 @@
     "zustand": "^4.5.2"
   },
   "devDependencies": {
-    "@tailwindcss/typography": "^0.5.12",
+    "@tailwindcss/typography": "^0.5.13",
     "@tanstack/react-query-devtools": "^5.32.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/lodash.debounce": "^4.0.9",
