@@ -53,7 +53,7 @@ export default function PropertyCard({
   const renderTienIch = () => {
     return (
       <div className="inline-grid grid-cols-3 gap-2">
-        {bedrooms > 0 && (
+        {bedrooms && bedrooms > 0 && (
           <div className="flex items-center space-x-2">
             <span className="hidden sm:inline-block">
               <Bed className="size-3" />
@@ -65,7 +65,7 @@ export default function PropertyCard({
         )}
 
         {/* ---- */}
-        {bathrooms > 0 && (
+        {bathrooms && bathrooms > 0 && (
           <div className="flex items-center space-x-4">
             <span className="hidden sm:inline-block">
               <Bath className="size-3" />
