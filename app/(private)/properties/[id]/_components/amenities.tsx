@@ -107,7 +107,7 @@ export default function Amenities({ amenities }: AmenitiesProps) {
           onClose={closeModalAmenities}
         >
           <div className="min-h-screen px-4 text-center">
-            <Transition.Child
+            <Transition
               as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0"
@@ -116,8 +116,8 @@ export default function Amenities({ amenities }: AmenitiesProps) {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-40" />
-            </Transition.Child>
+              {/* <DialoOverlay className="fixed inset-0 bg-black bg-opacity-40" /> */}
+            </Transition>
 
             {/* This element is to trick the browser into centering the modal contents. */}
             <span
@@ -126,7 +126,7 @@ export default function Amenities({ amenities }: AmenitiesProps) {
             >
               &#8203;
             </span>
-            <Transition.Child
+            <Transition
               as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 scale-95"
@@ -170,7 +170,7 @@ export default function Amenities({ amenities }: AmenitiesProps) {
                     ))}
                 </div>
               </div>
-            </Transition.Child>
+            </Transition>
           </div>
         </Dialog>
       </Transition>
