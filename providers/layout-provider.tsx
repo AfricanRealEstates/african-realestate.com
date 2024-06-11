@@ -2,7 +2,7 @@
 
 import Loader from "@/components/globals/loader";
 import Footer from "@/components/landing/footer";
-import Header from "@/components/landing/header";
+// import Header from "@/components/landing/header";
 import { Container } from "@/components/globals/container";
 
 import { User } from "@prisma/client";
@@ -14,6 +14,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import Header from "@/components/landing/header/Header";
 
 const nunitoSans = Raleway({
   subsets: ["latin"],

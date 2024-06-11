@@ -73,14 +73,10 @@ export default async function FeaturedProperties() {
           {/* <div className="mx-auto mb-8 gap-8 grid w-full max-w-screen-xl grid-cols-[repeat(auto-fill,_minmax(335px,1fr))] justify-center"></div> */}
           <article className="grid grid-cols-1 gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 w-full">
             {properties.slice(0, 4).map((property) => {
-              return (
-                <>
-                  <PropertyCard key={property.id} data={property} />
-                  {/* <FeaturedCard key={property.id} property={property} /> */}
-                </>
-              );
+              return <PropertyCard key={property.id} data={property} />;
             })}
           </article>
+          {/* <FeaturedCard key={property.id} property={property} /> */}
 
           {/* <ProductGridSection
             title="Most popular"
