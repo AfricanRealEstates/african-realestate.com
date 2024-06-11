@@ -340,96 +340,6 @@ export default function Header() {
                 >
                   Dashboard
                 </Link>
-                {/* <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Avatar>
-                      <AvatarImage
-                        src={user.image || "/assets/placeholder.jpg"}
-                      />
-                      <AvatarFallback>CN</AvatarFallback>
-                    </Avatar>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-full">
-                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuGroup>
-                      <DropdownMenuItem>
-                        <User className="mr-2 h-4 w-4" />
-                        <span>Profile</span>
-                        <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <CreditCard className="mr-2 h-4 w-4" />
-                        <span>Billing</span>
-                        <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Settings className="mr-2 h-4 w-4" />
-                        <span>Settings</span>
-                        <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Keyboard className="mr-2 h-4 w-4" />
-                        <span>Keyboard shortcuts</span>
-                        <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
-                      </DropdownMenuItem>
-                    </DropdownMenuGroup>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuGroup>
-                      <DropdownMenuItem>
-                        <Users className="mr-2 h-4 w-4" />
-                        <span>Team</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuSub>
-                        <DropdownMenuSubTrigger>
-                          <UserPlus className="mr-2 h-4 w-4" />
-                          <span>Invite users</span>
-                        </DropdownMenuSubTrigger>
-                        <DropdownMenuPortal>
-                          <DropdownMenuSubContent>
-                            <DropdownMenuItem>
-                              <Mail className="mr-2 h-4 w-4" />
-                              <span>Email</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <MessageSquare className="mr-2 h-4 w-4" />
-                              <span>Message</span>
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>
-                              <PlusCircle className="mr-2 h-4 w-4" />
-                              <span>More...</span>
-                            </DropdownMenuItem>
-                          </DropdownMenuSubContent>
-                        </DropdownMenuPortal>
-                      </DropdownMenuSub>
-                      <DropdownMenuItem>
-                        <Plus className="mr-2 h-4 w-4" />
-                        <span>New Team</span>
-                        <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
-                      </DropdownMenuItem>
-                    </DropdownMenuGroup>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>
-                      <Github className="mr-2 h-4 w-4" />
-                      <span>GitHub</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <LifeBuoy className="mr-2 h-4 w-4" />
-                      <span>Support</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem disabled>
-                      <Cloud className="mr-2 h-4 w-4" />
-                      <span>API</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>
-                      <LogOut className="mr-2 h-4 w-4" />
-                      <span>Log out</span>
-                      <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu> */}
                 <Popover className="relative">
                   <PopoverButton className="group flex items-center gap-x-1 text-sm font-semibold leading-6">
                     <Image
@@ -597,15 +507,73 @@ export default function Header() {
                   </Disclosure>
                 </div>
                 <div className="py-6">
-                  <Link
-                    href="/login"
-                    className="w-full -mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                  >
-                    <span className="group inline-flex items-center">
-                      Log in{" "}
-                      <ChevronRightIcon className="ml-1 size-3 transition-transform duration-300 group-hover:translate-x-1" />
-                    </span>
-                  </Link>
+                  {user ? (
+                    <div className="flex gap-x-10 items-center w-full">
+                      <Link
+                        href="/dashboard"
+                        className="flex items-center gap-x-10 text-sm font-semibold leading-6"
+                      >
+                        Welcome, {user.name}
+                      </Link>
+                      <Popover className="relative">
+                        <PopoverButton className="group flex items-center gap-x-1 text-sm font-semibold leading-6">
+                          <Image
+                            src={user.image || `/assets/placeholder.jpg`}
+                            width={50}
+                            height={50}
+                            alt=""
+                            className="rounded-full"
+                          />
+                        </PopoverButton>
+                        <Transition
+                          enter="transition ease-out duration-200"
+                          enterFrom="opacity-0 translate-y-1"
+                          enterTo="opacity-100 translate-y-0"
+                          leave="transition ease-in duration-150"
+                          leaveFrom="opacity-100 translate-y-0"
+                          leaveTo="opacity-0 translate-y-1"
+                        >
+                          <PopoverPanel className="max-w-64 absolute -left-8 top-full z-10 mt-3 w-96 rounded-xl text-gray-600 bg-white p-4 shadow-lg ring-1 ring-gray-900/5">
+                            <div className=" relative rounded-lg p-2 hover:bg-gray-50">
+                              <p className="group cursor-pointer rounded-lg px-3.5 py-0.5 focus:outline-none sm:px-3 sm:py-0.5 flex items-center gap-x-3">
+                                <User className="size-3" />
+                                {user.name}
+                              </p>
+                            </div>
+                            <p className="relative rounded-lg p-2 hover:bg-gray-50">
+                              <Link
+                                href={`/dashboard`}
+                                className="group cursor-pointer rounded-lg px-3.5 py-0.5 focus:outline-none sm:px-3 sm:py-0.5 flex items-center gap-x-3"
+                              >
+                                <LayoutGrid className="size-3" />
+                                Dashboard
+                              </Link>
+                            </p>
+                            <div className="relative rounded-lg p-2 hover:bg-gray-50">
+                              <button
+                                onClick={handleSignOut}
+                                className="group cursor-pointer rounded-lg px-3.5 py-0.5 focus:outline-none sm:px-3 sm:py-0.5 flex items-center gap-x-3"
+                              >
+                                <LogOutIcon className="size-3" />
+                                Sign out
+                                {/* <span className="absolute inset-0" /> */}
+                              </button>
+                            </div>
+                          </PopoverPanel>
+                        </Transition>
+                      </Popover>
+                    </div>
+                  ) : (
+                    <Link
+                      href="/login"
+                      className="w-full -mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                    >
+                      <span className="group inline-flex items-center">
+                        Log in{" "}
+                        <ChevronRightIcon className="ml-1 size-3 transition-transform duration-300 group-hover:translate-x-1" />
+                      </span>
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>
