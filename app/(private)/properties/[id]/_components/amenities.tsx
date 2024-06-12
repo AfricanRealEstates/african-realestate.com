@@ -100,7 +100,7 @@ export default function Amenities({ amenities }: AmenitiesProps) {
 
   const renderModalAmenities = () => {
     return (
-      <Transition appear show={isOpenModalAmenities} as={Fragment}>
+      <Transition appear show={isOpenModalAmenities}>
         <Dialog
           as="div"
           className="fixed inset-0 z-50 overflow-y-auto"
