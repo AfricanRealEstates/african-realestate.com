@@ -196,7 +196,7 @@ export default function Testing() {
 
         <article className=" w-full mb-12  border-white/[0.01] lg:border-x lg:py-2 lg:border-y z-30 md:py-0">
           <div className="flex items-center justify-center flex-col mx-auto max-w-7xl w-full px-4 lg:px-6 border-white/[0.03] lg:border-x">
-            <div className="flex items-center flex-col my-10 mt-16 lg:mt-10 space-y-6 z-30">
+            <div className="flex items-center flex-col my-10 mt-16 lg:mt-10 space-y-6 z-10">
               <p className="text-sm tracking-wide font-semibold uppercase text-white hidden md:block">
                 The best way to
               </p>
