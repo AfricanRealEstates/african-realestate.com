@@ -36,7 +36,7 @@ export default function Hero() {
       </picture>
       <div className="absolute inset-0 bg-black/60 -z-10"></div>
 
-      <article className="w-full mb-12 mt-32 border-white/[0.01] lg:border-x md:mt-28 lg:my-28 lg:py-2 lg:border-y  z-30 py-12 md:py-0">
+      <article className="w-full mb-12 mt-32 border-white/[0.01] lg:border-x md:mt-28 lg:my-28 lg:py-2 lg:border-y z-20 py-12 md:py-0">
         <div className="flex items-center justify-center flex-col mx-auto max-w-7xl w-full px-4 lg:px-6 border-white/[0.03] lg:border-x">
           <div className="flex items-center flex-col space-y-8 mt-24">
             <p className="text-sm tracking-wide font-semibold uppercase text-white">
