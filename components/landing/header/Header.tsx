@@ -17,14 +17,15 @@ import {
   ArrowRightStartOnRectangleIcon,
   Bars3Icon,
   ChartPieIcon,
+  ChevronDownIcon,
   ChevronRightIcon,
+  ChevronUpIcon,
   CursorArrowRaysIcon,
   FingerPrintIcon,
   SquaresPlusIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import {
-  ChevronDownIcon,
   LightBulbIcon,
   PhoneIcon,
   PlayCircleIcon,
@@ -33,6 +34,8 @@ import {
 } from "@heroicons/react/20/solid";
 
 import {
+  ArrowDown,
+  ChevronUp,
   Cloud,
   CreditCard,
   Github,
@@ -51,9 +54,10 @@ import {
   User,
   UserPlus,
   Users,
+  Heart,
+  Package,
 } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -73,9 +77,12 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { HomeIcon } from "lucide-react";
 import clsx from "clsx";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
+import ProductMenu from "./ProductMenu";
+import CompanyMenu from "./CompanyMenu";
+import { Button } from "@/components/utils/Button";
+import AvatarMenu from "./AvatarMenu";
 
 const products = [
   {
@@ -144,6 +151,9 @@ const company = [
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [stickyMenu, setStickyMenu] = useState(false);
+  const [showProductMenu, setShowProductMenu] = useState(false);
+  const [showCompanyMenu, setShowCompanyMenu] = useState(false);
+  const [showAvatarMenu, setShowAvatarMenu] = useState(false);
 
   const session = useSession();
   const user = session.data?.user;
@@ -212,7 +222,42 @@ export default function Header() {
               />
             </button>
           </div>
-          <PopoverGroup className="hidden lg:flex lg:gap-x-16">
+
+          <div className="hidden lg:flex lg:flex-1 lg:gap-x-16 lg:justify-end mr-2 relative">
+            <div
+              className="py-3 flex items-center gap-1 font-medium group"
+              onMouseEnter={() => setShowProductMenu(true)}
+              onMouseLeave={() => setShowProductMenu(false)}
+            >
+              Product{" "}
+              <ChevronUp className="size-4 font-medium group-hover:rotate-180 transition-transform duration-300 group-hover:translate-y-1 hover:underline underline-offset-4" />{" "}
+              {showProductMenu && <ProductMenu />}
+            </div>
+
+            <Link
+              href="/let"
+              className="flex items-center gap-x-1 font-medium leading-6 transition-transform hover:underline underline-offset-4"
+            >
+              Let
+            </Link>
+            <Link
+              href="/buy"
+              className="flex items-center gap-x-1 font-medium leading-6 transition-transform hover:underline underline-offset-4"
+            >
+              Buy
+            </Link>
+
+            <div
+              className="py-3 flex items-center gap-1 font-medium group"
+              onMouseEnter={() => setShowCompanyMenu(true)}
+              onMouseLeave={() => setShowCompanyMenu(false)}
+            >
+              Company{" "}
+              <ChevronUp className="size-4 font-medium group-hover:rotate-180 transition-transform duration-300 group-hover:translate-y-1 hover:underline underline-offset-4" />
+              {showCompanyMenu && <CompanyMenu />}
+            </div>
+          </div>
+          {/* <PopoverGroup className="hidden lg:flex lg:gap-x-16">
             <Popover className="relative">
               <PopoverButton className="group flex items-center gap-x-1 text-sm font-semibold leading-6">
                 Product
@@ -330,8 +375,8 @@ export default function Header() {
                 </PopoverPanel>
               </Transition>
             </Popover>
-          </PopoverGroup>
-          <div className="hidden lg:flex lg:flex-1 lg:justify-end mr-2">
+          </PopoverGroup> */}
+          <div className="hidden lg:flex lg:flex-1 lg:justify-end">
             {user ? (
               <div className="flex gap-x-6">
                 <Link
@@ -340,61 +385,33 @@ export default function Header() {
                 >
                   Dashboard
                 </Link>
-                <Popover className="relative">
-                  <PopoverButton className="group flex items-center gap-x-1 text-sm font-semibold leading-6">
-                    <Image
-                      src={user.image || `/assets/placeholder.jpg`}
-                      width={30}
-                      height={30}
-                      alt=""
-                      className="rounded-full"
-                    />
-                  </PopoverButton>
-                  <Transition
-                    enter="transition ease-out duration-200"
-                    enterFrom="opacity-0 translate-y-1"
-                    enterTo="opacity-100 translate-y-0"
-                    leave="transition ease-in duration-150"
-                    leaveFrom="opacity-100 translate-y-0"
-                    leaveTo="opacity-0 translate-y-1"
-                  >
-                    <PopoverPanel className="max-w-64 absolute -left-8 top-full z-10 mt-3 w-96 rounded-xl text-gray-600 bg-white p-4 shadow-lg ring-1 ring-gray-900/5">
-                      <div className=" relative rounded-lg p-2 hover:bg-gray-50">
-                        <p className="group cursor-pointer rounded-lg px-3.5 py-0.5 focus:outline-none sm:px-3 sm:py-0.5 flex items-center gap-x-3">
-                          <User className="size-3" />
-                          {user.name}
-                        </p>
-                      </div>
-                      <p className="relative rounded-lg p-2 hover:bg-gray-50">
-                        <Link
-                          href={`/dashboard`}
-                          className="group cursor-pointer rounded-lg px-3.5 py-0.5 focus:outline-none sm:px-3 sm:py-0.5 flex items-center gap-x-3"
-                        >
-                          <LayoutGrid className="size-3" />
-                          Dashboard
-                        </Link>
-                      </p>
-                      <div className="relative rounded-lg p-2 hover:bg-gray-50">
-                        <button
-                          onClick={handleSignOut}
-                          className="group cursor-pointer rounded-lg px-3.5 py-0.5 focus:outline-none sm:px-3 sm:py-0.5 flex items-center gap-x-3"
-                        >
-                          <LogOutIcon className="size-3" />
-                          Sign out
-                          {/* <span className="absolute inset-0" /> */}
-                        </button>
-                      </div>
-                    </PopoverPanel>
-                  </Transition>
-                </Popover>
+                <div
+                  className="relative py-3 flex items-center gap-1 font-medium group"
+                  onMouseEnter={() => setShowAvatarMenu(true)}
+                  onMouseLeave={() => setShowAvatarMenu(false)}
+                >
+                  <Image
+                    src={user?.image ?? "/assets/placeholder.jpg"} // default avatar
+                    height={40}
+                    width={40}
+                    alt={user?.name ?? "User Avatar"} // default avatar
+                    className="rounded-full border h-8 w-8"
+                  />
+                  {showAvatarMenu && <AvatarMenu />}
+                </div>
               </div>
             ) : (
-              <Link href="/login" className="text-sm font-semibold leading-6">
-                <span className="group inline-flex items-center">
-                  Log in{" "}
-                  <ChevronRightIcon className="ml-1 size-3 transition-transform duration-300 group-hover:translate-x-1" />
-                </span>
-              </Link>
+              <div className="flex items-center gap-x-8">
+                <Link href="/login" className="text-sm font-semibold leading-6">
+                  <span className="group inline-flex items-center">
+                    Log in{" "}
+                    <ChevronRightIcon className="ml-1 size-3 transition-transform duration-300 group-hover:translate-x-1" />
+                  </span>
+                </Link>
+                <Button type="submit" color="blue">
+                  Add listing
+                </Button>
+              </div>
             )}
           </div>
         </nav>
@@ -405,7 +422,7 @@ export default function Header() {
           onClose={setMobileMenuOpen}
         >
           <div className="fixed inset-0 z-50" />
-          <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+          <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10 transition-transform duration-300">
             <div className="flex items-center justify-between">
               <Link href="/" className="flex flex-shrink-0 items-center gap-2">
                 {/* <span className="bg-[#eb6753] text-white py-1 px-2 rounded-lg">
