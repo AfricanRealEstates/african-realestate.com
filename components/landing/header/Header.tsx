@@ -84,6 +84,12 @@ import CompanyMenu from "./CompanyMenu";
 import { Button } from "@/components/utils/Button";
 import AvatarMenu from "./AvatarMenu";
 
+import { Inter, Nunito_Sans } from "next/font/google";
+const nunito = Nunito_Sans({
+  subsets: ["latin"],
+  weight: ["600"],
+});
+
 const products = [
   {
     name: "Analytics",
@@ -178,7 +184,9 @@ export default function Header() {
   }, []);
   return (
     <header
-      className={`fixed transition-all duration-300 py-5 left-0 top-0 z-30 w-full bg-transparent backdrop-blur-sm ${
+      className={`${
+        nunito.className
+      } fixed transition-all duration-300 py-5 left-0 top-0 z-30 w-full bg-transparent backdrop-blur-sm ${
         stickyMenu
           ? "bg-white !py-3 shadow-sm transition duration-100 text-gray-600"
           : isHomePage
@@ -381,7 +389,7 @@ export default function Header() {
               <div className="flex gap-x-6">
                 <Link
                   href="/dashboard"
-                  className="flex items-center gap-x-1 text-sm font-semibold leading-6"
+                  className="flex items-center gap-x-1 font-semibold leading-6"
                 >
                   Dashboard
                 </Link>

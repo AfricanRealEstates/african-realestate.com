@@ -58,8 +58,8 @@ export default function PropertyCard({ property }: PropertyCardProps) {
 
   return (
     <>
-      <Link href={`/properties/${id}`}>
-        <section className="flex p-3 rounded-lg shadow hover:shadow-xl transition-shadow bg-white flex-col relative">
+      <Link href={`/properties/${id}`} className="">
+        <section className="flex p-3 rounded-lg shadow hover:shadow-xl transition-shadow bg-white flex-col relative border-solid border-[#e4e4e4]">
           <label
             aria-label="Favorite"
             className="absolute end-6 top-6 z-10 rounded-full cursor-pointer"

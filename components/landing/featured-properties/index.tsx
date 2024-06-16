@@ -10,7 +10,7 @@ import {
 import Link from "next/link";
 import React from "react";
 import prisma from "@/lib/prisma";
-import { Plus_Jakarta_Sans, Raleway } from "next/font/google";
+import { Josefin_Sans, Plus_Jakarta_Sans, Raleway } from "next/font/google";
 import Image from "next/image";
 
 import { cache } from "@/lib/cache";
@@ -24,6 +24,10 @@ const plusJakartaSans = Raleway({
   variable: "--font-nunitosans",
 });
 
+const josefin = Josefin_Sans({
+  subsets: ["latin"],
+  weight: ["600"],
+});
 const getMostPopularProperties = cache(
   () => {
     return prisma.property.findMany({
@@ -57,25 +61,37 @@ export default async function FeaturedProperties() {
 
   if (!properties) return <>No Featured properties</>;
   return (
-    <div
-      className={`${plusJakartaSans.className} border-b border-neutral-100  mb-4 text-[#4e4e4e]`}
-    >
-      <div className="mx-auto w-[95%] max-w-7xl px-2 py-16 md:px-2 md:py-24 lg:py-32">
+    <div className={`border-b border-neutral-100  mb-4 text-[#4e4e4e]`}>
+      <div className="mx-auto w-[95%] max-w-7xl px-2 py-16 md:px-2 md:py-24 lg:py-20">
         <section className="flex items-center justify-start gap-12 flex-col w-full">
           <div className="flex flex-col items-center justify-center gap-5">
-            <h2 className="text-center text-3xl font-bold md:text-5xl mt-4 text-[#181a20]">
-              Featured Properties
-            </h2>
-            <p className="text-[13px] text-center md:text-[17px] text-[#4e4e4e]">
+            <p
+              className={`text-[14px] uppercase text-blue-600 font-semibold leading-relaxed ${josefin.className}`}
+            >
               Explore our featured properties
             </p>
+            <h2
+              className={`${josefin.className} text-center text-3xl font-bold md:text-5xl my-3`}
+            >
+              Recommended For You
+            </h2>
           </div>
           {/* <div className="mx-auto mb-8 gap-8 grid w-full max-w-screen-xl grid-cols-[repeat(auto-fill,_minmax(335px,1fr))] justify-center"></div> */}
-          <article className="grid grid-cols-1 gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 w-full">
+          {/* <article className="grid grid-cols-1 gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 w-full">
             {properties.slice(0, 4).map((property) => {
               return <PropertyCard key={property.id} data={property} />;
             })}
+          </article> */}
+
+          <article className="mx-auto mb-8 gap-8 grid w-full max-w-screen-xl grid-cols-[repeat(auto-fill,_minmax(335px,1fr))] justify-center">
+            {properties.slice(0, 6).map((property) => {
+              return <PropertyCard key={property.id} data={property} />;
+            })}
           </article>
+
+          <Button color="blue" href={`/properties`}>
+            View all Properties
+          </Button>
           {/* <FeaturedCard key={property.id} property={property} /> */}
 
           {/* <ProductGridSection
