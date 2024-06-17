@@ -76,7 +76,7 @@ export default function OurServices() {
                 >
                   {title}
                 </h5>
-                <p className="mt-3 text-[#5c6368] leading-relaxed">
+                <p className="mt-3 text-[#5c6368] leading-relaxed text-sm">
                   {description}
                 </p>
               </div>

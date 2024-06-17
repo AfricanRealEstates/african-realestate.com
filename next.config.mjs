@@ -25,6 +25,9 @@ const nextConfig = {
       {
         hostname: "lh3.googleusercontent.com",
       },
+      {
+        hostname: "avatar.vercel.sh",
+      },
     ],
   },
 };

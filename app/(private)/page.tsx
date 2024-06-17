@@ -5,6 +5,7 @@ import FeaturedProperties from "@/components/landing/featured-properties";
 import GetQuote from "@/components/landing/get-quote";
 import Hero from "@/components/landing/hero";
 import HowItWorks from "@/components/landing/how-it-works";
+import Reviews from "@/components/landing/reviews";
 import Sale from "@/components/landing/sale";
 import OurServices from "@/components/landing/services/OurServices";
 import Testing from "@/components/landing/testing";
@@ -32,8 +33,9 @@ export default async function Home() {
       {/* <Hero /> */}
       <FeaturedProperties />
       <OurServices />
-      <Sale />
-      <HowItWorks />
+      <Reviews />
+      {/* <Sale />
+      <HowItWorks /> */}
       <Facts />
       <CTA />
       {/* <GetQuote /> */}
