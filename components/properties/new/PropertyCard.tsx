@@ -6,8 +6,8 @@ import { MapPinIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { Bath, Bed, ExpandIcon, Eye, Heart, MapPinned } from "lucide-react";
 
-import { Josefin_Sans } from "next/font/google";
-const josefin = Josefin_Sans({
+import { Josefin_Sans, Raleway } from "next/font/google";
+const josefin = Raleway({
   subsets: ["latin"],
   weight: ["600"],
 });
@@ -130,7 +130,7 @@ export default function PropertyCard({
         <div className="space-y-2 px-4">
           <div className="flex items-center space-x-2">
             <h2
-              className={`${josefin.className} leading-relaxed font-bold capitalize text-[20px] transition duration-300 ease-in-out hover:text-[#ed2027]
+              className={`${josefin.className} leading-relaxed font-semibold capitalize text-[17px] transition duration-300 ease-in-out hover:text-[#ed2027]
               }`}
             >
               <span className="line-clamp-1">{title}</span>
@@ -138,7 +138,7 @@ export default function PropertyCard({
           </div>
 
           <div
-            className={` ${josefin.className} leading-relaxed gap-4 flex items-center`}
+            className={` ${josefin.className} leading-relaxed gap-4 text-[14px] flex items-center`}
           >
             {size === "default" && (
               <MapPinned className="size-4 text-[#5c6368]" />
@@ -156,7 +156,7 @@ export default function PropertyCard({
             <span>Price</span>
           </div>
           <div className="flex items-center">
-            <h2 className="flex items-center gap-x-0.5 text-xl leading-7 font-semibold">
+            <h2 className="flex items-center gap-x-0.5 text-lg leading-7 font-semibold">
               <span>{currency}</span>
               {price.toLocaleString()}
 

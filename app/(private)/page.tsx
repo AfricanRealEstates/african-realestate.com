@@ -6,6 +6,7 @@ import GetQuote from "@/components/landing/get-quote";
 import Hero from "@/components/landing/hero";
 import HowItWorks from "@/components/landing/how-it-works";
 import Sale from "@/components/landing/sale";
+import OurServices from "@/components/landing/services/OurServices";
 import Testing from "@/components/landing/testing";
 import { getSEOTags, renderSchemaTags } from "@/lib/seo";
 
@@ -30,6 +31,7 @@ export default async function Home() {
       <Testing />
       {/* <Hero /> */}
       <FeaturedProperties />
+      <OurServices />
       <Sale />
       <HowItWorks />
       <Facts />

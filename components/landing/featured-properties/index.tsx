@@ -18,7 +18,7 @@ import FeaturedCard from "@/components/properties/featured-card";
 import { Button } from "@/components/utils/Button";
 import PropertyCard from "@/components/properties/new/PropertyCard";
 
-const plusJakartaSans = Raleway({
+const raleway = Raleway({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-nunitosans",
