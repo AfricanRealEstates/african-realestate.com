@@ -11,6 +11,7 @@ import Sale from "@/components/landing/sale";
 import OurServices from "@/components/landing/services/OurServices";
 import Testing from "@/components/landing/testing";
 import { getSEOTags, renderSchemaTags } from "@/lib/seo";
+import Article from "../article/page";
 
 export const metadata = getSEOTags({
   title: "Home | African Real Estate",
@@ -39,7 +40,7 @@ export default async function Home() {
       <HowItWorks /> */}
       <Facts />
       <CTA />
-      <LatestNews />
+      <Article />
       {/* <GetQuote /> */}
     </div>
   );
