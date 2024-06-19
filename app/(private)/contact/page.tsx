@@ -211,11 +211,12 @@ export default function Contact() {
                   unique and modern architecturial designs that needs exposure.
                 </p>
                 <p className="mt-2">
-                  <a
+                  <Link
+                    target="_blank"
                     className="group inline-flex items-center gap-x-2 font-medium text-sm text-blue-500 decoration-2 hover:underline underline-offset-8 focus:outline-none focus:underline"
-                    href="#"
+                    href="mailto:Africanrealestate0@gmail.com"
                   >
-                    Advertise
+                    Advertise here
                     <svg
                       className="flex-shrink-0 size-4 transition group-hover:translate-x-0.5  group-focus:translate-x-0.5"
                       xmlns="http://www.w3.org/2000/svg"
@@ -231,7 +232,7 @@ export default function Contact() {
                       <path d="M5 12h14" />
                       <path d="m12 5 7 7-7 7" />
                     </svg>
-                  </a>
+                  </Link>
                 </p>
               </div>
             </div>
