@@ -10,7 +10,235 @@ export const metadata = getSEOTags({
 export default function Contact() {
   return (
     <>
-      <section className="px-5 py-24 md:px-10 md:py-24 lg:py-32">
+      <section className="max-w-7xl px-4 md:px-10 py-32 lg:py-36 mx-auto">
+        <div className="max-w-3xl mb-10 lg:mb-14">
+          <h2 className="font-semibold text-2xl md:text-4xl md:leading-tight text-blue-500">
+            Contact us
+          </h2>
+          <p className="mt-2 text-neutral-400">
+            Whatever your inquiry - we will get you there.
+          </p>
+        </div>
+
+        <article className="grid grid-cols-1 md:grid-cols-2 gap-x-10 lg:gap-x-16">
+          <div className="md:order-2 border-b border-neutral-100 pb-10 mb-10 md:border-b-0 md:pb-0 md:mb-0">
+            <form>
+              <div className="space-y-4">
+                <div className="relative">
+                  <input
+                    type="text"
+                    id="name"
+                    className="peer p-4 block w-full bg-neutral-100 border-transparent rounded-lg text-sm text-neutral-500 placeholder:text-transparent focus:outline-none focus:ring-0 focus:border-transparent disabled:opacity-50 disabled:pointer-events-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2 autofill:pt-6 autofill:pb-2"
+                    placeholder="Name"
+                  />
+                  <label
+                    htmlFor="name"
+                    className="absolute top-0 start-0 p-4 h-full text-neutral-400 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent peer-disabled:opacity-50 peer-disabled:pointer-events-none peer-focus:text-xs peer-focus:-translate-y-1.5 peer-focus:text-neutral-400 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-neutral-400"
+                  >
+                    Name
+                  </label>
+                </div>
+
+                <div className="relative">
+                  <input
+                    type="email"
+                    id="email"
+                    className="peer p-4 block w-full bg-neutral-100 border-transparent rounded-lg text-sm text-neutral-500 placeholder:text-transparent focus:outline-none focus:ring-0 focus:border-transparent disabled:opacity-50 disabled:pointer-events-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2 autofill:pt-6 autofill:pb-2"
+                    placeholder="Email"
+                  />
+                  <label
+                    htmlFor="email"
+                    className="absolute top-0 start-0 p-4 h-full text-neutral-400 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent peer-disabled:opacity-50 peer-disabled:pointer-events-none peer-focus:text-xs peer-focus:-translate-y-1.5 peer-focus:text-neutral-400 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-neutral-400"
+                  >
+                    Email
+                  </label>
+                </div>
+
+                <div className="relative">
+                  <input
+                    type="text"
+                    id="agency"
+                    className="peer p-4 block w-full bg-neutral-100 border-transparent rounded-lg text-sm text-neutral-500 placeholder:text-transparent focus:outline-none focus:ring-0 focus:border-transparent disabled:opacity-50 disabled:pointer-events-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2 autofill:pt-6 autofill:pb-2"
+                    placeholder="Agency"
+                  />
+                  <label
+                    htmlFor="agency"
+                    className="absolute top-0 start-0 p-4 h-full text-neutral-400 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent peer-disabled:opacity-50 peer-disabled:pointer-events-none peer-focus:text-xs peer-focus:-translate-y-1.5 peer-focus:text-neutral-400 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-neutral-400"
+                  >
+                    Agency
+                  </label>
+                </div>
+
+                <div className="relative">
+                  <input
+                    type="tel"
+                    id="phone"
+                    className="peer p-4 block w-full bg-neutral-100 border-transparent rounded-lg text-sm text-neutral-500 placeholder:text-transparent focus:outline-none focus:ring-0 focus:border-transparent disabled:opacity-50 disabled:pointer-events-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2 autofill:pt-6 autofill:pb-2"
+                    placeholder="Phone"
+                  />
+                  <label
+                    htmlFor="phone"
+                    className="absolute top-0 start-0 p-4 h-full text-neutral-400 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent peer-disabled:opacity-50 peer-disabled:pointer-events-none peer-focus:text-xs peer-focus:-translate-y-1.5 peer-focus:text-neutral-400 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-neutral-400"
+                  >
+                    Phone
+                  </label>
+                </div>
+
+                <div className="relative">
+                  <textarea
+                    id="message"
+                    className="peer p-6 block w-full bg-neutral-100 border-transparent rounded-lg text-sm text-neutral-500 placeholder:text-transparent focus:outline-none focus:ring-0 focus:border-transparent disabled:opacity-50 disabled:pointer-events-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2 autofill:pt-6 autofill:pb-2"
+                    placeholder="Enter brief message here"
+                  ></textarea>
+                  <label
+                    htmlFor="message"
+                    className="absolute top-0 start-0 p-4 h-full text-neutral-400 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent peer-disabled:opacity-50 peer-disabled:pointer-events-none peer-focus:text-xs peer-focus:-translate-y-1.5 peer-focus:text-neutral-400 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-neutral-400"
+                  >
+                    Enter brief message here
+                  </label>
+                </div>
+              </div>
+
+              <div className="mt-4">
+                <p className="text-xs text-neutral-500">
+                  All fields are required
+                </p>
+
+                <p className="mt-5">
+                  <a
+                    className="group inline-flex items-center gap-x-2 py-3 px-4 bg-blue-500 text-white font-medium text-sm rounded-full focus:outline-none"
+                    href="#"
+                  >
+                    Send a message
+                    <svg
+                      className="flex-shrink-0 size-4 transition group-hover:translate-x-0.5 group-focus:translate-x-0.5"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M5 12h14" />
+                      <path d="m12 5 7 7-7 7" />
+                    </svg>
+                  </a>
+                </p>
+              </div>
+            </form>
+          </div>
+
+          <div className="space-y-14">
+            <div className="flex gap-x-5">
+              <svg
+                className="flex-shrink-0 size-6 text-neutral-500"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+
+              <div className="grow">
+                <h4 className="text-neutral-700 font-semibold">Our address:</h4>
+                <address className="mt-1 text-neutral-500 text-sm not-italic">
+                  Nairobi, Kenya
+                </address>
+              </div>
+            </div>
+
+            <div className="flex gap-x-5">
+              <svg
+                className="flex-shrink-0 size-6 text-neutral-500"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M21.2 8.4c.5.38.8.97.8 1.6v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V10a2 2 0 0 1 .8-1.6l8-6a2 2 0 0 1 2.4 0l8 6Z" />
+                <path d="m22 10-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 10" />
+              </svg>
+
+              <div className="grow">
+                <h4 className="text-neutral-700 font-semibold">Email us:</h4>
+                <Link
+                  className="mt-1 text-neutral-500 text-sm"
+                  href="mailto:Africanrealestate0@gmail.com"
+                  target="_blank"
+                >
+                  Africanrealestate0@gmail.com
+                </Link>
+              </div>
+            </div>
+
+            <div className="flex gap-x-5">
+              <svg
+                className="flex-shrink-0 size-6 text-neutral-500"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="m3 11 18-5v12L3 14v-3z" />
+                <path d="M11.6 16.8a3 3 0 1 1-5.8-1.6" />
+              </svg>
+              <div className="grow">
+                <h4 className="text-neutral-700 font-semibold">
+                  Need property coverage?
+                </h4>
+                <p className="mt-1 text-neutral-400 text-sm">
+                  We&apos;re thrilled to announce that we&apos;re documenting
+                  unique and modern architecturial designs that needs exposure.
+                </p>
+                <p className="mt-2">
+                  <a
+                    className="group inline-flex items-center gap-x-2 font-medium text-sm text-blue-500 decoration-2 hover:underline underline-offset-8 focus:outline-none focus:underline"
+                    href="#"
+                  >
+                    Advertise
+                    <svg
+                      className="flex-shrink-0 size-4 transition group-hover:translate-x-0.5  group-focus:translate-x-0.5"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path d="M5 12h14" />
+                      <path d="m12 5 7 7-7 7" />
+                    </svg>
+                  </a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+      {/* <section className="px-5 py-24 md:px-10 md:py-24 lg:py-32">
         <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl bg-gray-100 p-4">
           <div className="max-w-2xl mx-auto text-center">
             <h2 className="text-3xl font-bold leading-tight text-gray-900 sm:text-4xl lg:text-5xl">
@@ -42,9 +270,6 @@ export default function Contact() {
                   <p className="mt-6 text-lg font-medium text-gray-900">
                     +254 732945534
                   </p>
-                  {/* <p className="mt-1 text-lg font-medium text-gray-900">
-                    +1-446-526-0117
-                  </p> */}
                 </div>
               </div>
 
@@ -67,9 +292,6 @@ export default function Contact() {
                   <p className="mt-6 text-lg font-medium text-gray-900">
                     Africanrealestate0@gmail.com
                   </p>
-                  {/* <p className="mt-1 text-lg font-medium text-gray-900">
-                    hr@example.com
-                  </p> */}
                 </div>
               </div>
 
@@ -276,76 +498,6 @@ export default function Contact() {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-      {/* <section className="py-10 bg-gray-100 sm:py-16 lg:py-24">
-        <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
-          <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-3xl font-bold leading-tight text-black sm:text-4xl lg:text-5xl">
-              Get full access to Celebration
-            </h2>
-            <p className="max-w-xl mx-auto mt-4 text-base leading-relaxed text-gray-600">
-              Amet minim mollit non deserunt ullamco est sit aliqua dolor do
-              amet sint. Velit officia consequat duis enim velit mollit.
-              Exercitation veniam consequat sunt nostrud amet.
-            </p>
-          </div>
-
-          <form action="#" method="POST" className="max-w-xl mx-auto mt-12">
-            <div className="flex flex-col items-center sm:flex-row sm:justify-center">
-              <div className="flex-1 w-full min-w-0 px-4 sm:px-0">
-                <label htmlFor="email" className="sr-only"></label>
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  placeholder="Enter email to get started"
-                  className="block w-full px-4 py-4 text-base text-black placeholder-gray-500 transition-all duration-200 border-transparent rounded-md caret-indigo-600 focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600"
-                  required
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="inline-flex items-center justify-center w-auto px-4 py-4 mt-4 font-semibold text-white transition-all duration-200 bg-indigo-600 border border-transparent rounded-md sm:ml-4 sm:mt-0 sm:w-auto hover:bg-indigo-700 focus:bg-indigo-700"
-              >
-                Get instant access
-                <svg
-                  className="w-5 h-5 ml-3 -mr-1"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </button>
-            </div>
-          </form>
-
-          <div className="flex items-center justify-center px-8 mt-8 sm:px-0">
-            <svg
-              className="flex-shrink-0 w-5 h-5 text-gray-600"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="1.5"
-                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-              />
-            </svg>
-            <span className="ml-2 text-sm text-gray-600">
-              {" "}
-              Your data is complely secured with us. We don’t share with anyone.{" "}
-            </span>
           </div>
         </div>
       </section> */}
