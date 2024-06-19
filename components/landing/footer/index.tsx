@@ -291,7 +291,7 @@ const navigation = {
     { name: "Pricing", href: "/contact" },
     { name: "Contact", href: "/contact" },
     { name: "Query", href: "/contact" },
-    { name: "FAQ", href: "/faq" },
+    { name: "FAQ", href: "/faqs" },
   ],
   company: [
     { name: "About", href: "/about" },
