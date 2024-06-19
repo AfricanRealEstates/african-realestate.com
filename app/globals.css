@@ -75,6 +75,16 @@
   }
 }
 
+html,
+body {
+  scroll-behavior: smooth !important;
+}
+
+/* It makes the HTML progress bar filling smooth when value change. */
+progress::-webkit-progress-value {
+  transition: 0.6s width ease-out;
+}
+
 @layer components {
   .navLink {
     @apply md:!justify-start space-x-2 md:!my-1.5 !px-3 w-full;
