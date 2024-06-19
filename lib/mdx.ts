@@ -1,143 +1,70 @@
-// import { type ImageProps } from 'next/image'
-// import glob from 'fast-glob'
-
-// async function loadEntries<T extends { date: string }>(
-//     directory: string,
-//     metaName: string,
-// ): Promise<Array<MDXEntry<T>>> {
-//     return (
-//         await Promise.all(
-//             (await glob('**/page.mdx', { cwd: `app/${directory}` })).map(
-//                 async (filename) => {
-//                     let metadata = (await import(`../app/${directory}/${filename}`))[
-//                         metaName
-//                     ] as T
-//                     return {
-//                         ...metadata,
-//                         metadata,
-//                         href: `/${directory}/${filename.replace(/\/page\.mdx$/, '')}`,
-//                     }
-//                 },
-//             ),
-//         )
-//     ).sort((a, b) => b.date.localeCompare(a.date))
-// }
-
-// type ImagePropsWithOptionalAlt = Omit<ImageProps, 'alt'> & { alt?: string }
-
-// export type MDXEntry<T> = T & { href: string; metadata: T }
-
-// export interface Article {
-//     date: string
-//     title: string
-//     coverImage: string
-//     tags: string[]
-//     description: string
-//     author: {
-//         name: string
-//         role: string
-//         image: ImagePropsWithOptionalAlt
-//     }
-// }
-
-// export interface CaseStudy {
-//     date: string
-//     client: string
-//     title: string
-//     description: string
-//     summary: Array<string>
-//     logo: ImageProps['src']
-//     image: ImagePropsWithOptionalAlt
-//     service: string
-//     testimonial: {
-//         author: {
-//             name: string
-//             role: string
-//         }
-//         content: string
-//     }
-// }
-
-// export function loadArticles() {
-//     return loadEntries<Article>('blog', 'article')
-// }
-
-// export function loadCaseStudies() {
-//     return loadEntries<CaseStudy>('work', 'caseStudy')
-// }
-
-
-
-import { type ImageProps } from 'next/image';
-import glob from 'fast-glob';
-import path from 'path';
+import { type ImageProps } from 'next/image'
+import glob from 'fast-glob'
 
 async function loadEntries<T extends { date: string }>(
-    baseDir: string,
     directory: string,
     metaName: string,
 ): Promise<Array<MDXEntry<T>>> {
-    // Get absolute path for the given base directory and subdirectory
-    const directoryPath = path.join(process.cwd(), baseDir, directory);
-    const files = await glob('**/page.mdx', { cwd: directoryPath });
-
     return (
         await Promise.all(
-            files.map(async (filename) => {
-                // Construct the relative path for dynamic import
-                const relativePath = path.join('..', baseDir, directory, filename);
-                const modules = await import(relativePath);
-                const metadata = modules[metaName] as T;
-
-                return {
-                    ...metadata,
-                    metadata,
-                    href: `/${directory}/${filename.replace(/\/page\.mdx$/, '')}`,
-                };
-            }),
+            (await glob('**/page.mdx', { cwd: `app/${directory}` })).map(
+                async (filename) => {
+                    let metadata = (await import(`../app/${directory}/${filename}`))[
+                        metaName
+                    ] as T
+                    return {
+                        ...metadata,
+                        metadata,
+                        href: `/${directory}/${filename.replace(/\/page\.mdx$/, '')}`,
+                    }
+                },
+            ),
         )
-    ).sort((a, b) => b.date.localeCompare(a.date));
+    ).sort((a, b) => b.date.localeCompare(a.date))
 }
 
-type ImagePropsWithOptionalAlt = Omit<ImageProps, 'alt'> & { alt?: string };
+type ImagePropsWithOptionalAlt = Omit<ImageProps, 'alt'> & { alt?: string }
 
-export type MDXEntry<T> = T & { href: string; metadata: T };
+export type MDXEntry<T> = T & { href: string; metadata: T }
 
 export interface Article {
-    date: string;
-    title: string;
-    coverImage: string;
-    tags: string[];
-    description: string;
+    date: string
+    title: string
+    coverImage: string
+    tags: string[]
+    description: string
     author: {
-        name: string;
-        role: string;
-        image: ImagePropsWithOptionalAlt;
-    };
+        name: string
+        role: string
+        image: ImagePropsWithOptionalAlt
+    }
 }
 
 export interface CaseStudy {
-    date: string;
-    client: string;
-    title: string;
-    description: string;
-    summary: Array<string>;
-    logo: ImageProps['src'];
-    image: ImagePropsWithOptionalAlt;
-    service: string;
+    date: string
+    client: string
+    title: string
+    description: string
+    summary: Array<string>
+    logo: ImageProps['src']
+    image: ImagePropsWithOptionalAlt
+    service: string
     testimonial: {
         author: {
-            name: string;
-            role: string;
-        };
-        content: string;
-    };
+            name: string
+            role: string
+        }
+        content: string
+    }
 }
 
 export function loadArticles() {
-    return loadEntries<Article>('components/landing', 'latest-news', 'article');
+    return loadEntries<Article>('blog', 'article')
 }
 
 export function loadCaseStudies() {
-    return loadEntries<CaseStudy>('app', 'work', 'caseStudy');
+    return loadEntries<CaseStudy>('work', 'caseStudy')
 }
+
+
+
