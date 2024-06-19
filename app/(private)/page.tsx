@@ -2,16 +2,11 @@ import { auth } from "@/auth";
 import CTA from "@/components/landing/cta";
 import Facts from "@/components/landing/facts";
 import FeaturedProperties from "@/components/landing/featured-properties";
-import GetQuote from "@/components/landing/get-quote";
-import Hero from "@/components/landing/hero";
-import HowItWorks from "@/components/landing/how-it-works";
-import LatestNews from "@/components/landing/latest-news";
 import Reviews from "@/components/landing/reviews";
-import Sale from "@/components/landing/sale";
 import OurServices from "@/components/landing/services/OurServices";
 import Testing from "@/components/landing/testing";
 import { getSEOTags, renderSchemaTags } from "@/lib/seo";
-import Article from "../article/page";
+import React from "react";
 
 export const metadata = getSEOTags({
   title: "Home | African Real Estate",
@@ -21,7 +16,6 @@ export const metadata = getSEOTags({
 export default async function Home() {
   const session = await auth();
   const user = session?.user;
-  console.log(user);
 
   return (
     <div className="">
@@ -40,7 +34,7 @@ export default async function Home() {
       <HowItWorks /> */}
       <Facts />
       <CTA />
-      <Article />
+
       {/* <GetQuote /> */}
     </div>
   );
