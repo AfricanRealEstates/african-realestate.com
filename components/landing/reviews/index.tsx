@@ -93,7 +93,7 @@ export default function Reviews() {
           What&apos;s People Say&apos;s
         </h4>
       </div>
-      <article className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden py-20">
+      <article className="relative flex h-full w-full max-w-7xl mx-auto flex-col items-center justify-center overflow-hidden py-16">
         <Marquee pauseOnHover className="[--duration:20s]">
           {firstRow.map((review) => {
             return <ReviewCard key={review.username} {...review} />;

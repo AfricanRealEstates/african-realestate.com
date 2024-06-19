@@ -20,6 +20,7 @@ export default async function Blog() {
   // const posts = await prisma.post.findMany({
   //   orderBy: { createdAt: "desc" },
   // });
+
   let posts = await loadArticles();
   return (
     <div className={`text-[#181a20] ${raleway.className}`}>
