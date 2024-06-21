@@ -386,7 +386,7 @@ export default function Header() {
           </PopoverGroup> */}
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
             {user ? (
-              <div className="flex gap-x-6">
+              <div className="flex gap-x-9 items-center">
                 <Link
                   href="/dashboard"
                   className="flex items-center gap-x-1 font-semibold leading-6"
@@ -407,6 +407,14 @@ export default function Header() {
                   />
                   {showAvatarMenu && <AvatarMenu />}
                 </div>
+                <Button
+                  type="submit"
+                  color="blue"
+                  href={`/agent/properties/create-property`}
+                  className="h-fit"
+                >
+                  Add listing
+                </Button>
               </div>
             ) : (
               <div className="flex items-center gap-x-8">
@@ -416,7 +424,11 @@ export default function Header() {
                     <ChevronRightIcon className="ml-1 size-3 transition-transform duration-300 group-hover:translate-x-1" />
                   </span>
                 </Link>
-                <Button type="submit" color="blue">
+                <Button
+                  type="submit"
+                  color="blue"
+                  href={`/agent/properties/create-property`}
+                >
                   Add listing
                 </Button>
               </div>

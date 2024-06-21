@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import CTA from "@/components/landing/cta";
 import Facts from "@/components/landing/facts";
 import FeaturedProperties from "@/components/landing/featured-properties";
+import PartnersCTA from "@/components/landing/partners-cta";
 import Reviews from "@/components/landing/reviews";
 import OurServices from "@/components/landing/services/OurServices";
 import Testing from "@/components/landing/testing";
@@ -33,7 +34,8 @@ export default async function Home() {
       {/* <Sale />
       <HowItWorks /> */}
       <Facts />
-      <CTA />
+      <PartnersCTA />
+      {/* <CTA /> */}
 
       {/* <GetQuote /> */}
     </div>
