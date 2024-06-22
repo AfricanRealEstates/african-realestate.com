@@ -237,7 +237,7 @@ export default function Header() {
               onMouseEnter={() => setShowProductMenu(true)}
               onMouseLeave={() => setShowProductMenu(false)}
             >
-              Product{" "}
+              Resources{" "}
               <ChevronUp className="size-4 font-medium group-hover:rotate-180 transition-transform duration-300 group-hover:translate-y-1 hover:underline underline-offset-4" />{" "}
               {showProductMenu && <ProductMenu />}
             </div>
