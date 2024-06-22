@@ -12,8 +12,8 @@ const josefin = Josefin_Sans({
 export default function PartnersCTA() {
   return (
     <section className="max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24 mx-auto ">
-      <div className="flex justify-between items-center rounded-2xl bg-[#f7f7f7]">
-        <div className="py-16 pl-12 pr-20">
+      <div className="flex gap-y-16 flex-col lg:flex-row justify-between items-center rounded-2xl bg-[#f7f7f7]">
+        <div className="py-16 pl-12 pr-20 ">
           <div className="my-7 space-y-6">
             <h5
               className={`text-blue-500 font-semibold uppercase text-[14px] tracking-widest ${josefin.className}`}
