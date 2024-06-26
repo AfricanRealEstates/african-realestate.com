@@ -190,7 +190,7 @@ export default async function PropertyDetails({
       <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 dark:border-neutral-700 sm:space-y-8 pb-10 px-0 sm:p-4 xl:p-8 !space-y-6">
         {/* 1 */}
         <div className="flex justify-between items-center">
-          <Badge name="Property Info" />
+          <Badge name="Location Info" />
           <LikeSaveBtns />
         </div>
 
@@ -221,43 +221,47 @@ export default async function PropertyDetails({
         </div> */}
 
         {/* 5 */}
-        <div className="w-full border-b border-neutral-100 dark:border-neutral-700 my-8" />
+        <div className="w-full border-b border-neutral-100 my-8" />
 
         {/* 6 */}
-        <div className="flex items-center justify-between xl:justify-start space-x-8 xl:space-x-12 text-sm text-neutral-700 dark:text-neutral-300 mt-8">
-          {property.bedrooms && property.bedrooms > 0 && (
-            <div className="flex items-center space-x-3 ">
-              <Bed className="size-4 text-neutral-600" />
-              <span className="ml-1">
-                {property.bedrooms}{" "}
-                <span className="hidden sm:inline-block">
-                  {property.propertyType === "Commercial" ||
-                  property.propertyType === "Industrial"
-                    ? "Parkings"
-                    : "Bedrooms"}
+        <div className="flex flex-col space-y-6 sm:space-y-8">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 text-sm text-neutral-700 mt-8">
+            {property.bedrooms && property.bedrooms > 0 && (
+              <div className="flex items-center space-x-3 ">
+                <Bed className="size-4 text-neutral-600" />
+                <span className="ml-1">
+                  {property.bedrooms}{" "}
+                  <span className="hidden sm:inline-block">
+                    {property.propertyType === "Commercial" ||
+                    property.propertyType === "Industrial"
+                      ? "Parkings"
+                      : "Bedrooms"}
+                  </span>
                 </span>
-              </span>
-            </div>
-          )}
+              </div>
+            )}
 
-          {property.bathrooms && property.bathrooms > 0 && (
-            <div className="flex items-center space-x-3">
-              <Bath className="size-4 text-neutral-600" />
-              <span className="ml-1">
-                {property.bathrooms}{" "}
-                <span className="hidden sm:inline-block">baths</span>
-              </span>
-            </div>
-          )}
-          {convertedLandSize && (
-            <div className="flex items-center space-x-3">
-              <ExpandIcon className="size-4 text-neutral-600" />
-              <span className=" ">
-                {convertedLandSize?.toPrecision(2)}{" "}
-                <span className="hidden sm:inline-block">acres</span>
-              </span>
-            </div>
-          )}
+            {property.bathrooms && property.bathrooms > 0 && (
+              <div className="flex items-center space-x-3">
+                <Bath className="size-4 text-neutral-600" />
+                <span className="ml-1">
+                  {property.bathrooms}{" "}
+                  <span className="hidden sm:inline-block">baths</span>
+                </span>
+              </div>
+            )}
+            {convertedLandSize && (
+              <div className="flex items-center space-x-3">
+                <ExpandIcon className="size-4 text-neutral-600" />
+                <span className=" ">
+                  {convertedLandSize?.toPrecision(2)}{" "}
+                  <span className="hidden sm:inline-block">acres</span>
+                </span>
+              </div>
+            )}
+          </div>
+
+          <Amenities amenities={property.appliances} />
         </div>
       </div>
     );
@@ -510,7 +514,7 @@ export default async function PropertyDetails({
         <main className="relative z-10 mt-16 flex flex-col lg:flex-row">
           <section className="w-full lg:w-3/5 xl:w-2/3 space-y-8 lg:space-y-10 lg:pr-10">
             {renderSection1()}
-            <Amenities amenities={property.appliances} />
+
             <OverviewInfo description={property.description} />
           </section>
           <section className="hidden lg:block flex-grow mt-14 lg:mt-0">

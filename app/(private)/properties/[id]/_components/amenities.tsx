@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Route } from "@/types/types";
 import ButtonClose from "@/components/globals/button-close";
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, DialogBackdrop, Transition } from "@headlessui/react";
 import React, { Fragment, ButtonHTMLAttributes, FC, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -61,16 +61,16 @@ export default function Amenities({ amenities }: AmenitiesProps) {
 
   const renderSection3 = () => {
     return (
-      <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 dark:border-neutral-700 space-y-6 sm:space-y-8 pb-10 px-0 sm:p-4 xl:p-8">
-        <div>
+      <div className="w-full flex flex-col sm:rounded-2xl space-y-6 sm:space-y-8 pb-10">
+        {/* <div>
           <h2 className="text-2xl font-semibold">Amenities </h2>
           <span className="block mt-2 text-neutral-500 dark:text-neutral-400">
             {` About the property's amenities and services`}
           </span>
-        </div>
-        <div className="w-14 border-b border-neutral-200 dark:border-neutral-700"></div>
+        </div> */}
+        {/* <div className="w-14 border-b border-neutral-200"></div> */}
         {/* 6 */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 text-sm text-neutral-700">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 text-sm text-neutral-700 mt-4">
           {amenities
             .filter((amenity) =>
               appliances.find((app) => app.value === amenity)
@@ -100,15 +100,15 @@ export default function Amenities({ amenities }: AmenitiesProps) {
 
   const renderModalAmenities = () => {
     return (
-      <Transition appear show={isOpenModalAmenities}>
+      <Transition appear show={isOpenModalAmenities} as={Fragment}>
         <Dialog
           as="div"
           className="fixed inset-0 z-50 overflow-y-auto"
           onClose={closeModalAmenities}
         >
           <div className="min-h-screen px-4 text-center">
-            <Transition
-              as={Fragment}
+            <Transition.Child
+              as="div"
               enter="ease-out duration-300"
               enterFrom="opacity-0"
               enterTo="opacity-100"
@@ -116,8 +116,13 @@ export default function Amenities({ amenities }: AmenitiesProps) {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              {/* <DialoOverlay className="fixed inset-0 bg-black bg-opacity-40" /> */}
-            </Transition>
+              {/* The backdrop, rendered as a fixed sibling to the panel container */}
+              <DialogBackdrop className="fixed inset-0 bg-black/30" />
+
+              {/* Full-screen container to center the panel */}
+              <div className="fixed inset-0 flex w-screen items-center justify-center p-4" />
+              {/* The actual dialog panel  */}
+            </Transition.Child>
 
             {/* This element is to trick the browser into centering the modal contents. */}
             <span
@@ -126,7 +131,7 @@ export default function Amenities({ amenities }: AmenitiesProps) {
             >
               &#8203;
             </span>
-            <Transition
+            <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 scale-95"
@@ -135,8 +140,8 @@ export default function Amenities({ amenities }: AmenitiesProps) {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <div className="inline-block w-full max-w-4xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-neutral-900 dark:border dark:border-neutral-700 dark:text-neutral-100 shadow-xl rounded-2xl">
-                <div className="relative flex-shrink-0 px-6 py-4 border-b border-neutral-200 dark:border-neutral-800 text-center">
+              <div className="inline-block w-full max-w-4xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white  shadow-xl rounded-2xl">
+                <div className="relative flex-shrink-0  text-center">
                   <h3
                     className="text-lg font-medium leading-6 text-gray-900"
                     id="headlessui-dialog-title-70"
@@ -148,7 +153,7 @@ export default function Amenities({ amenities }: AmenitiesProps) {
                   </span>
                 </div>
 
-                <div className="px-8 overflow-auto text-neutral-700 dark:text-neutral-300 divide-y divide-neutral-200">
+                <div className="px-8 overflow-auto text-neutral-700 divide-y divide-neutral-200">
                   {amenities
                     .filter((amenity) =>
                       appliances.find((app) => app.value === amenity)
@@ -170,10 +175,84 @@ export default function Amenities({ amenities }: AmenitiesProps) {
                     ))}
                 </div>
               </div>
-            </Transition>
+            </Transition.Child>
           </div>
         </Dialog>
       </Transition>
+      // <Transition appear show={isOpenModalAmenities}>
+      //   <Dialog
+      //     as="div"
+      //     className="fixed inset-0 z-50 overflow-y-auto"
+      //     onClose={closeModalAmenities}
+      //   >
+      //     <div className="min-h-screen px-4 text-center">
+      //       <Transition
+      //         as={Fragment}
+      //         enter="ease-out duration-300"
+      //         enterFrom="opacity-0"
+      //         enterTo="opacity-100"
+      //         leave="ease-in duration-200"
+      //         leaveFrom="opacity-100"
+      //         leaveTo="opacity-0"
+      //       >
+      //         {/* <DialoOverlay className="fixed inset-0 bg-black bg-opacity-40" /> */}
+      //       </Transition>
+
+      //       {/* This element is to trick the browser into centering the modal contents. */}
+      //       <span
+      //         className="inline-block h-screen align-middle"
+      //         aria-hidden="true"
+      //       >
+      //         &#8203;
+      //       </span>
+      //       <Transition.Child
+      //         as={Fragment}
+      //         enter="ease-out duration-300"
+      //         enterFrom="opacity-0 scale-95"
+      //         enterTo="opacity-100 scale-100"
+      //         leave="ease-in duration-200"
+      //         leaveFrom="opacity-100 scale-100"
+      //         leaveTo="opacity-0 scale-95"
+      //       >
+      //         <div className="inline-block w-full max-w-4xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-neutral-900 dark:border dark:border-neutral-700 dark:text-neutral-100 shadow-xl rounded-2xl">
+      //           <div className="relative flex-shrink-0 px-6 py-4 border-b border-neutral-200 dark:border-neutral-800 text-center">
+      //             <h3
+      //               className="text-lg font-medium leading-6 text-gray-900"
+      //               id="headlessui-dialog-title-70"
+      //             >
+      //               Amenities
+      //             </h3>
+      //             <span className="absolute left-3 top-3">
+      //               <ButtonClose onClick={closeModalAmenities} />
+      //             </span>
+      //           </div>
+
+      //           <div className="px-8 overflow-auto text-neutral-700 dark:text-neutral-300 divide-y divide-neutral-200">
+      //             {amenities
+      //               .filter((amenity) =>
+      //                 appliances.find((app) => app.value === amenity)
+      //               ) // Filter out amenities that don't have corresponding icons
+      //               .map((amenity) => (
+      //                 <div
+      //                   key={amenity}
+      //                   className="flex items-center py-2.5 sm:py-4 lg:py-5 space-x-5 lg:space-x-8"
+      //                 >
+      //                   {amenityIcons[amenity]}{" "}
+      //                   {/* Render the corresponding icon */}
+      //                   <span className="capitalize">
+      //                     {
+      //                       appliances.find((app) => app.value === amenity)
+      //                         ?.label
+      //                     }
+      //                   </span>
+      //                 </div>
+      //               ))}
+      //           </div>
+      //         </div>
+      //       </Transition.Child>
+      //     </div>
+      //   </Dialog>
+      // </Transition>
     );
   };
   return <div>{renderSection3()}</div>;
