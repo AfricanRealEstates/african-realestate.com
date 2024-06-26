@@ -232,6 +232,18 @@ export default function Header() {
           </div>
 
           <div className="hidden lg:flex lg:flex-1 lg:gap-x-16 lg:justify-end mr-2 relative">
+            <Link
+              href="/buy"
+              className="flex items-center gap-x-1 font-medium leading-6 transition-transform hover:underline underline-offset-4"
+            >
+              Buy
+            </Link>
+            <Link
+              href="/let"
+              className="flex items-center gap-x-1 font-medium leading-6 transition-transform hover:underline underline-offset-4"
+            >
+              Let
+            </Link>
             <div
               className="py-3 flex items-center gap-1 font-medium group"
               onMouseEnter={() => setShowProductMenu(true)}
@@ -242,20 +254,7 @@ export default function Header() {
               {showProductMenu && <ProductMenu />}
             </div>
 
-            <Link
-              href="/let"
-              className="flex items-center gap-x-1 font-medium leading-6 transition-transform hover:underline underline-offset-4"
-            >
-              Let
-            </Link>
-            <Link
-              href="/buy"
-              className="flex items-center gap-x-1 font-medium leading-6 transition-transform hover:underline underline-offset-4"
-            >
-              Buy
-            </Link>
-
-            <div
+            {/* <div
               className="py-3 flex items-center gap-1 font-medium group"
               onMouseEnter={() => setShowCompanyMenu(true)}
               onMouseLeave={() => setShowCompanyMenu(false)}
@@ -263,136 +262,12 @@ export default function Header() {
               Company{" "}
               <ChevronUp className="size-4 font-medium group-hover:rotate-180 transition-transform duration-300 group-hover:translate-y-1 hover:underline underline-offset-4" />
               {showCompanyMenu && <CompanyMenu />}
-            </div>
+            </div> */}
           </div>
-          {/* <PopoverGroup className="hidden lg:flex lg:gap-x-16">
-            <Popover className="relative">
-              <PopoverButton className="group flex items-center gap-x-1 text-sm font-semibold leading-6">
-                Product
-                <ChevronDownIcon
-                  className="size-5 flex-none transition-transform duration-300 group-hover:rotate-180"
-                  aria-hidden="true"
-                />
-              </PopoverButton>
-              <Transition
-                enter="transition ease-out duration-200"
-                enterFrom="opacity-0 translate-y-1"
-                enterTo="opacity-100 translate-y-0"
-                leave="transition ease-in duration-150"
-                leaveFrom="opacity-100 translate-y-0"
-                leaveTo="opacity-0 translate-y-1"
-              >
-                <PopoverPanel className="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
-                  <div className="p-4">
-                    {products.map((product) => {
-                      const { name, href, description, icon } = product;
-                      return (
-                        <div
-                          key={name}
-                          className="group relative flex gap-x-6 rounded-lg p-4 leading-6 hover:bg-gray-50"
-                        >
-                          <div className="mt-1 flex size-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                            <product.icon
-                              className="size-6 text-gray-600 group-hover:text-indigo-600"
-                              aria-hidden="true"
-                            />
-                          </div>
-                          <div className="flex-auto">
-                            <Link
-                              href={href}
-                              className="block text-sm font-semibold text-gray-400"
-                            >
-                              {name}
-                              <span className="absolute inset-0" />
-                            </Link>
-                            <p className="mt-1 text-gray-600">{description}</p>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
-                    {callsToAction.map((action) => {
-                      return (
-                        <Link
-                          key={action.name}
-                          href={action.href}
-                          className="flex items-center justify-center gap-x-2.5 p-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100"
-                        >
-                          <action.icon
-                            className="size-5 flex-none text-gray-400"
-                            aria-hidden="true"
-                          />
-                          {action.name}
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </PopoverPanel>
-              </Transition>
-            </Popover>
-            <Link
-              href="/let"
-              className="flex items-center gap-x-1 text-sm font-semibold leading-6"
-            >
-              Let
-            </Link>
-            <Link
-              href="/buy"
-              className="flex items-center gap-x-1 text-sm font-semibold leading-6"
-            >
-              Buy
-            </Link>
 
-            <Popover className="relative">
-              <PopoverButton className="group flex items-center gap-x-1 text-sm font-semibold leading-6">
-                Company
-                <ChevronDownIcon
-                  aria-hidden="true"
-                  className="size-5 flex-none transition-transform duration-300 group-hover:translate-y-0.5"
-                />
-              </PopoverButton>
-              <Transition
-                enter="transition ease-out duration-200"
-                enterFrom="opacity-0 translate-y-1"
-                enterTo="opacity-100 translate-y-0"
-                leave="transition ease-in duration-150"
-                leaveFrom="opacity-100 translate-y-0"
-                leaveTo="opacity-0 translate-y-1"
-              >
-                <PopoverPanel className="absolute -left-8 top-full z-10 mt-3 w-96 rounded-3xl bg-white p-4 shadow-lg ring-1 ring-gray-900/5">
-                  {company.map((item) => {
-                    return (
-                      <div
-                        className="relative rounded-lg p-4 hover:bg-gray-50"
-                        key={item.name}
-                      >
-                        <Link
-                          href={item.href}
-                          className="block font-semibold leading-6 text-gray-400"
-                        >
-                          {item.name}
-                          <span className="absolute inset-0" />
-                        </Link>
-                        <p className="mt-1 text-sm leading-6 text-gray-600">
-                          {item.description}
-                        </p>
-                      </div>
-                    );
-                  })}
-                </PopoverPanel>
-              </Transition>
-            </Popover>
-          </PopoverGroup> */}
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
             {user ? (
               <div className="flex gap-x-9 items-center">
-                <Link
-                  href="/dashboard"
-                  className="flex items-center gap-x-1 font-semibold leading-6"
-                >
-                  Dashboard
-                </Link>
                 <div
                   className="relative py-3 flex items-center gap-1 font-medium group"
                   onMouseEnter={() => setShowAvatarMenu(true)}
@@ -413,7 +288,7 @@ export default function Header() {
                   href={`/agent/properties/create-property`}
                   className="h-fit"
                 >
-                  Add listing
+                  Sell fast
                 </Button>
               </div>
             ) : (
@@ -429,7 +304,7 @@ export default function Header() {
                   color="blue"
                   href={`/agent/properties/create-property`}
                 >
-                  Add listing
+                  Sell fast
                 </Button>
               </div>
             )}
@@ -474,7 +349,7 @@ export default function Header() {
                     {({ open }) => (
                       <>
                         <DisclosureButton className="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 text-gray-700 hover:bg-gray-50">
-                          Product
+                          Products
                           <ChevronDownIcon
                             className={clsx(
                               open ? "rotate-180" : "",
@@ -502,16 +377,17 @@ export default function Header() {
                   </Disclosure>
 
                   <Link
-                    href="/let"
-                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-400 hover:bg-gray-50"
-                  >
-                    Let
-                  </Link>
-                  <Link
                     href="/buy"
                     className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-400 hover:bg-gray-50"
                   >
                     Buy
+                  </Link>
+
+                  <Link
+                    href="/let"
+                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-400 hover:bg-gray-50"
+                  >
+                    Let
                   </Link>
 
                   <Disclosure as="div" className={`-mx-3`}>

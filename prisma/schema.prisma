@@ -96,6 +96,11 @@ model VerificationToken {
   @@map("verification_tokens")
 }
 
+model propertyDetail {
+  id   String @id @default(dbgenerated("concat('propertyDetail_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
+  name String
+}
+
 model Property {
   id                     String   @id @default(dbgenerated("concat('property_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
   userId                 String

@@ -20,6 +20,10 @@ export const properyTypes = [
         value: "Town Houses",
       },
       {
+        label: "Duplexes",
+        value: "Duplexes"
+      },
+      {
         label: "Apartments",
         value: "Apartments",
       },

@@ -5,6 +5,10 @@ import React from "react";
 
 const avatar = [
   {
+    name: "Dashboard",
+    href: "/dashboard",
+  },
+  {
     name: "My properties",
     href: "/dashboard",
   },
@@ -20,8 +24,8 @@ export default function AvatarMenu() {
   };
   return (
     <section className="border rounded-sm shadow-md bg-white absolute top-full text-gray-400">
-      <div className="flex cursor-pointer p-3">
-        <div className="flex flex-col items-start space-y-3">
+      <div className="flex cursor-pointer p-2">
+        <div className="flex flex-col items-start space-y-2">
           {avatar.map((link) => {
             const { name, href } = link;
             return (
@@ -30,8 +34,8 @@ export default function AvatarMenu() {
                 key={name}
                 className="group flex items-center gap-4"
               >
-                <div className="space-y-2 p-2">
-                  <p className="w-40 font-medium text-neutral-500 hover:text-blue-400 transition-colors">
+                <div className="space-y-2">
+                  <p className="w-40 p-2 rounded font-medium text-neutral-500 hover:text-blue-400 transition-colors hover:bg-gray-100 focus:ring-2 focus:ring-blue-500">
                     {name}
                   </p>
                 </div>
@@ -40,7 +44,7 @@ export default function AvatarMenu() {
           })}
           <button
             onClick={handleSignOut}
-            className="group cursor-pointer rounded-lg px-3.5 py-0.5 focus:outline-none sm:px-3 sm:py-0.5 flex items-center gap-x-3"
+            className="group hover:bg-blue-400 hover:text-white pt-1 border-t w-full border-neutral-100 cursor-pointer rounded-lg px-3.5 py-2 focus:outline-none sm:px-3 sm:py-0.5 flex items-center gap-x-3"
           >
             <LogOutIcon className="size-3" />
             Sign out
