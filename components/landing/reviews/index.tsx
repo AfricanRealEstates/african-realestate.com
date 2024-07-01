@@ -16,16 +16,28 @@ const reviews = [
     img: "/assets/realtor-1.jpeg",
   },
   {
-    name: "Jill",
-    username: "@jill",
-    body: "I don't know what to say. I'm speechless. This is amazing.",
+    name: "Irungu",
+    username: "@ill_tw",
+    body: "I am lucky to have interacted to the officials of the site and I love it.",
     img: "/assets/placeholder.jpg",
+  },
+  {
+    name: "Trustpilot",
+    username: "@trustpilot",
+    body: "4.95",
+    img: "/assets/trustpilot.svg",
   },
   {
     name: "John",
     username: "@john",
-    body: "I'm at a loss for words. This is amazing. I love it.",
+    body: "Very friendly house hunting platform. I recommend them",
     img: "https://avatar.vercel.sh/john",
+  },
+  {
+    name: "Google Reviews",
+    username: "",
+    body: "4.9",
+    img: "/assets/google-wordmark.svg",
   },
   {
     name: "Jane",
