@@ -19,6 +19,7 @@ import Amenities from "./_components/amenities";
 import OverviewInfo from "./_components/overview-info";
 import Image from "next/image";
 import { Button } from "@/components/utils/Button";
+import MessageWidget from "./_components/message-widget";
 
 // no cache
 export const dynamic = "force-dynamic";
@@ -538,7 +539,7 @@ export default async function PropertyDetails({
             <div className="sticky top-28">{renderSidebar()}</div>
           </section>
         </main>
-
+        <MessageWidget />
         {/* Related properties */}
         <section className="mx-auto mt-24 max-w-2xl sm:mt-32 lg:max-w-none">
           <div className="flex items-center justify-between space-x-4">
