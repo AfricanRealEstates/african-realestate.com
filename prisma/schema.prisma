@@ -124,7 +124,7 @@ model Property {
   bathrooms              Int?
   landSize               Float?
   landUnits              String?
-  plinthArea             Int
+  plinthArea             Int?
   videoLink              String?
   serviceCharge          String?
   parkings               String?

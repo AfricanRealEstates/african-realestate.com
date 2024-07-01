@@ -31,14 +31,21 @@ export default function ThemeProvider({ children }: Props) {
               colorText: "rgba(0,0,0,0.65)",
             },
             Input: {
-              controlHeight: 35,
+              controlHeight: 45,
+              boxShadow: "none",
+              controlOutline: "none",
+              colorBorder: "rgba(0,0,0,0.15)",
+              colorText: "rgba(0,0,0,0.65)",
             },
             Select: {
-              controlHeight: 35,
+              controlHeight: 40,
               boxShadow: "none",
+              controlOutline: "none",
+              colorBorder: "rgba(0,0,0,0.15)",
+              colorText: "rgba(0,0,0,0.65)",
             },
             InputNumber: {
-              controlHeight: 35,
+              controlHeight: 40,
             },
           },
         }}

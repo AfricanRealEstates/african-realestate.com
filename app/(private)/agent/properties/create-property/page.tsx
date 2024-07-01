@@ -8,6 +8,11 @@ import { Property } from "@prisma/client";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
+import { Josefin_Sans } from "next/font/google";
+const josefin = Josefin_Sans({
+  subsets: ["latin"],
+  weight: ["600"],
+});
 
 export const metadata = getSEOTags({
   title: "Create Property | African Real Estate",
@@ -69,9 +74,11 @@ export default async function CreateProperty({
   }
 
   return (
-    <div className="w-full px-1 md:px-4 lg:px-16 lg:max-w-6xl mx-auto py-[90px] lg:py-[120px]">
+    <div className="w-full px-1 md:px-4 lg:px-16 lg:max-w-7xl mx-auto py-[90px] lg:py-[120px]">
       {/* <PageTitle title="Add your listing" /> */}
-      <h2 className="text-2xl capitalize font-medium my-6 text-neutral-400">
+      <h2
+        className={`${josefin.className} text-2xl capitalize font-medium my-6 text-blue-400`}
+      >
         Add your listing
       </h2>
       {showForm ? (

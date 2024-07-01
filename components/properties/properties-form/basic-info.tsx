@@ -71,6 +71,17 @@ export default function BasicInfo({
 
   const handlePropertyTypeChange = (value: string) => {
     setPropertyType(value);
+
+    const selectedPropertyType = properyTypes.find(
+      (type) => type.value === value
+    );
+    const subOptions = selectedPropertyType
+      ? selectedPropertyType.subOptions
+      : [];
+
+    setPropertyDetailsOptions(subOptions);
+
+    setPropertyDetailsDisabled(subOptions.length === 0);
   };
 
   const onStatusChange = (e: any) => {
@@ -137,7 +148,10 @@ export default function BasicInfo({
           ]}
           className=""
         >
-          <Input placeholder="Property Title" />
+          <Input
+            placeholder="Property Title"
+            className="border border-gray-300 rounded-md"
+          />
         </Form.Item>
         <Form.Item
           name="propertyType"
@@ -154,6 +168,7 @@ export default function BasicInfo({
             options={properyTypes}
             placeholder="Select Property Type"
             onChange={handlePropertyTypeChange}
+            className="border border-gray-300 rounded-md"
           />
         </Form.Item>
 
@@ -340,7 +355,10 @@ export default function BasicInfo({
           ]}
           className="col-span-1"
         >
-          <Input placeholder="County/State" />
+          <Input
+            placeholder="County/State"
+            className="border border-gray-300 rounded-md"
+          />
         </Form.Item>
 
         <Form.Item
@@ -354,7 +372,10 @@ export default function BasicInfo({
           ]}
           className="col-span-1"
         >
-          <Input placeholder="Nearby Town" />
+          <Input
+            placeholder="Nearby Town"
+            className="border border-gray-300 rounded-md"
+          />
         </Form.Item>
         <Form.Item
           name="locality"
@@ -367,7 +388,10 @@ export default function BasicInfo({
           ]}
           className="lg:col-span-1"
         >
-          <Input placeholder="Locality" />
+          <Input
+            placeholder="Locality"
+            className="border border-gray-300 rounded-md"
+          />
         </Form.Item>
       </section>
 
@@ -434,6 +458,16 @@ export default function BasicInfo({
               required: true,
               message: "Least price is required",
             },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || value < getFieldValue("price")) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(
+                  new Error("Least price must be lower than asking price")
+                );
+              },
+            }),
           ]}
           className=""
         >

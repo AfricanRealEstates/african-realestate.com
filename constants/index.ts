@@ -344,6 +344,8 @@ export const appliances = [
   { value: "gates", label: "Gated Residence" },
   { value: "servant", label: "Servant Quarters" },
   { value: "borehole", label: "Borehole" },
+  { value: "gym", label: "Gym" },
+  { value: "club", label: "Club House" },
   { value: "waste", label: "Waste Management" },
 ];
 
