@@ -4,15 +4,15 @@ import React, { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { Disclosure, Transition } from "@headlessui/react";
 
-// type formInputs = {
-//   name: string,
-//   email: string,
-//   message: string,
-//   apikey: string,
-//   subject: string,
-//   from_name: string,
-//   botcheck: string,
-// };
+type formInputs = {
+  name: string;
+  email: string;
+  message: string;
+  apikey: string;
+  subject: string;
+  from_name: string;
+  botcheck: string;
+};
 
 export default function MessageWidget() {
   const {
@@ -184,6 +184,7 @@ export default function MessageWidget() {
                         {errors.name && (
                           <div className="invalid-feedback mt-1 text-sm text-red-400">
                             {/* {errors.name.message} */}
+                            Enter your name
                           </div>
                         )}
                       </div>
@@ -216,6 +217,7 @@ export default function MessageWidget() {
                         {errors.email && (
                           <div className="invalid-feedback mt-1 text-sm text-red-400">
                             {/* {errors.email.message} */}
+                            Enter valid email
                           </div>
                         )}
                       </div>
@@ -244,6 +246,7 @@ export default function MessageWidget() {
                         {errors.message && (
                           <div className="invalid-feedback mt-1 text-sm text-red-400">
                             {/* {errors.message.message} */}
+                            Enter message
                           </div>
                         )}
                       </div>
