@@ -22,23 +22,12 @@ const reviews = [
     img: "/assets/placeholder.jpg",
   },
   {
-    name: "Trustpilot",
-    username: "@trustpilot",
-    body: "4.95",
-    img: "/assets/trustpilot.svg",
-  },
-  {
     name: "John",
     username: "@john",
     body: "Very friendly house hunting platform. I recommend them",
     img: "https://avatar.vercel.sh/john",
   },
-  {
-    name: "Google Reviews",
-    username: "",
-    body: "4.9",
-    img: "/assets/google-wordmark.svg",
-  },
+
   {
     name: "Jane",
     username: "@jane",
@@ -110,6 +99,8 @@ export default function Reviews() {
           {firstRow.map((review) => {
             return <ReviewCard key={review.username} {...review} />;
           })}
+          <ReviewCard2 />
+          <ReviewCard3 />
         </Marquee>
         {/* <Marquee reverse pauseOnHover className="[--duratio:20s]">
           {secondRow.map((review) => {
@@ -124,3 +115,43 @@ export default function Reviews() {
 }
 
 //
+function ReviewCard2() {
+  return (
+    <div className="flex flex-col items-center justify-center rounded-md p-4 min-w-[300px] border border-neutral-200 hover:bg-neutral-100/80 transition-colors duration-100 group">
+      <img
+        src="/assets/trustpilot.svg"
+        alt="Trust Pilot"
+        className="mb-4 h-10 select-none"
+      />
+      <div className="mb-3 flex flex-col space-y-1 items-center justify-center">
+        <p className="truncate font-medium text-balance text-center select-all">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full font-medium bg-neutral-100 border border-neutral-200 text-neutral-600 hover:underline hover:bg-neutral-200 transition-colors duration-100">
+            Rating: 4.8/5
+          </span>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function ReviewCard3() {
+  return (
+    <div className="flex flex-col items-center justify-center rounded-md p-4 min-w-[240px] border border-neutral-200 hover:bg-neutral-100/80 transition-colors duration-100 group">
+      <div className="flex items-center">
+        <img
+          src="/assets/reviews-io.svg"
+          alt="Reviews.io"
+          className="mb-4 h-10 select-none"
+        />
+        <p className="mb-3 text-2xl truncate font-bold text-balance text-center select-all">
+          Reviews.io
+        </p>
+      </div>
+      <div className="flex flex-col space-y-1 items-center justify-center">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full font-medium bg-neutral-100 border border-neutral-200 text-neutral-600 hover:underline hover:bg-neutral-200 transition-colors duration-100">
+          Rating: 4.7/5
+        </span>
+      </div>
+    </div>
+  );
+}
