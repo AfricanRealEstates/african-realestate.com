@@ -148,7 +148,7 @@ const PropertiesTable = async ({
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {properties.slice(0, 5).map((property) => (
+                {properties.slice(0, 10).map((property) => (
                   <tr key={property.id}>
                     <td className="whitespace-nowrap py-4 pr-3 text-sm font-medium text-gray-900 pl-4">
                       {property.title}
