@@ -90,7 +90,7 @@ export default function Amenities({ amenities }: AmenitiesProps) {
         <div className="w-14 border-b border-neutral-200"></div>
         <div>
           <ButtonSecondary onClick={openModalAmenities}>
-            View all amenities
+            View all
           </ButtonSecondary>
         </div>
         {renderModalAmenities()}
