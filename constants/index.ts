@@ -397,6 +397,7 @@ export const vacationalAppliances = [
 
 export const landAppliances = [
   { value: "power", label: "Power Connected" },
+  { value: "water", label: "Water Connected" },
   { value: "gates", label: "Gated Estate" },
   { value: "pet", label: "Pet Friendly" },
   { value: "borehole", label: "Borehole" },
