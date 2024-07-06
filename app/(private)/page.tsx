@@ -32,11 +32,11 @@ export default async function Home() {
       <FeaturedProperties />
       {/* <PropertyType /> */}
       <OurServices />
-      <Reviews />
       {/* <Sale />
       <HowItWorks /> */}
       <Facts />
       <PartnersCTA />
+      <Reviews />
       {/* <CTA /> */}
 
       {/* <GetQuote /> */}
