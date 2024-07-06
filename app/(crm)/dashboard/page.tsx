@@ -87,7 +87,7 @@ const PropertiesTable = async ({
       ? searchParams.search.toLowerCase()
       : undefined;
 
-  const perPage = 5;
+  const perPage = 10;
   const totalProperties = await prisma.property.count({
     where: {
       title: {
