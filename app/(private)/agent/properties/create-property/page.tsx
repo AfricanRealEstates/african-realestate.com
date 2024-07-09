@@ -74,7 +74,7 @@ export default async function CreateProperty({
   }
 
   return (
-    <div className="w-full px-1 md:px-4 lg:px-16 lg:max-w-7xl mx-auto py-[90px] lg:py-[120px]">
+    <div className="w-full px-1 md:px-4 lg:px-16 lg:max-w-7xl mx-auto pt-[90px] lg:pt-[120px]">
       {/* <PageTitle title="Add your listing" /> */}
       <h2
         className={`${josefin.className} text-2xl capitalize font-medium my-6 text-blue-400`}
