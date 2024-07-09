@@ -61,7 +61,7 @@ export default function Amenities({ amenities }: AmenitiesProps) {
 
   const renderSection3 = () => {
     return (
-      <div className="w-full flex flex-col sm:rounded-2xl space-y-6 sm:space-y-8 pb-10">
+      <div className="w-full flex flex-col sm:rounded-2xl space-y-6 sm:space-y-8 pb-1">
         {/* <div>
           <h2 className="text-2xl font-semibold">Amenities </h2>
           <span className="block mt-2 text-neutral-500 dark:text-neutral-400">

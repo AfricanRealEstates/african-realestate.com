@@ -190,7 +190,7 @@ export default async function PropertyDetails({
 
   const renderSection1 = () => {
     return (
-      <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 dark:border-neutral-700 sm:space-y-8 pb-10 px-0 sm:p-4 xl:p-8 !space-y-6">
+      <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200  sm:space-y-8 pb-1 px-0 sm:p-4 xl:p-8 !space-y-6">
         {/* 1 */}
         <div className="flex justify-between items-center">
           <Badge name="Location Info" />
@@ -227,7 +227,8 @@ export default async function PropertyDetails({
         <div className="w-full border-b border-neutral-100 my-8" />
 
         {/* 6 */}
-        <div className="flex flex-col space-y-6 sm:space-y-8">
+        <div className="flex flex-col space-y-2">
+          <h2 className="text-2xl font-semibold mb-4">Salient Features</h2>
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 text-sm text-neutral-700 mt-8">
             {property.bedrooms && property.bedrooms > 0 && (
               <div className="flex items-center space-x-3 ">
@@ -288,7 +289,7 @@ export default async function PropertyDetails({
 
   return (
     <div className="bg-white py-12 md:py-0">
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 pt-32 pb-8 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-y-4 ">
           <nav aria-label="Breadcrumb">
             <ol className="mx-auto flex mt-4 items-center space-x-2 lg:max-w-7xl">
@@ -541,7 +542,7 @@ export default async function PropertyDetails({
         </main>
         <MessageWidget />
         {/* Related properties */}
-        <section className="mx-auto mt-24 max-w-2xl sm:mt-32 lg:max-w-none">
+        <section className="mx-auto mt-12 max-w-2xl sm:mt-16 lg:max-w-none">
           <div className="flex items-center justify-between space-x-4">
             <h2 className="text-lg lg:text-xl font-medium text-gray-950">
               Related Properties

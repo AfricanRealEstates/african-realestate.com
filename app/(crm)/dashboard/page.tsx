@@ -40,16 +40,16 @@ export default async function Dashboard({
 
   return (
     <div className="h-full bg-gray-50">
-      <section className="border-b border-neutral-50 bg-card mt-10">
-        <div className="max-w-7xl mx-auto w-full px-8 flex flex-wrap items-center justify-between gap-6 py-8">
-          <p className="text-3xl font-bold">
+      <section className="border-b border-neutral-50 bg-card mt-4">
+        <div className="max-w-7xl mx-auto w-full px-8 flex flex-wrap items-center justify-between gap-6 py-3">
+          <p className="text-2xl font-bold">
             Hello,{" "}
             <strong className="text-indigo-400 mr-1">{user.name}!</strong>
             👋️
           </p>
         </div>
       </section>
-      <section className="w-full lg:max-w-7xl mx-auto px-8 mt-16">
+      <section className="w-full lg:max-w-7xl mx-auto px-8 mt-8">
         <article className="flex items-center justify-between mt-8">
           <div className="w-80 mt-1">
             <SearchInput search={search} />
