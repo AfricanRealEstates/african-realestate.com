@@ -52,6 +52,7 @@
     "cmdk": "^0.2.0",
     "dayjs": "^1.11.10",
     "draft-js": "^0.11.7",
+    "embla-carousel-react": "^8.1.6",
     "escape-string-regexp": "^5.0.0",
     "firebase": "^10.8.1",
     "framer": "^2.4.1",
