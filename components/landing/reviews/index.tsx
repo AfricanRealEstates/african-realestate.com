@@ -3,6 +3,17 @@ import Image from "next/image";
 import React from "react";
 import Marquee from "./Marquee";
 import { Josefin_Sans } from "next/font/google";
+
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { BadgeCheck, Check } from "lucide-react";
+
 const josefin = Josefin_Sans({
   subsets: ["latin"],
   weight: ["600"],
@@ -12,38 +23,38 @@ const reviews = [
   {
     name: "Mungai Kihara",
     username: "@mtollah",
-    body: "I've never seen anything like this before. It's amazing. I love it.",
+    body: "I recently used African Real Estate to advertise my property, and I couldn't be happier with the results. I highly recommend African Real Estate to anyone looking to sell or rent their property quickly!",
     img: "/assets/realtor-1.jpeg",
   },
   {
-    name: "Irungu",
+    name: "Jacenta Kang'ethe",
     username: "@ill_tw",
-    body: "I am lucky to have interacted to the officials of the site and I love it.",
+    body: "Buying my first home was a daunting experience, but African Real Estate made it seamless and enjoyable. Thanks to African Real Estate, I found my dream home in no time!",
     img: "/assets/placeholder.jpg",
   },
   {
-    name: "John",
+    name: "John Mark",
     username: "@john",
-    body: "Very friendly house hunting platform. I recommend them",
+    body: "As a small business owner, finding the perfect office space was crucial for our growth. African Real Estate had a fantastic selection of office spaces that fit our budget and needs perfectly. Highly recommended for any business looking for new office space!",
     img: "https://avatar.vercel.sh/john",
   },
 
   {
-    name: "Jane",
+    name: "Jane M. Lochilia",
     username: "@jane",
-    body: "I'm at a loss for words. This is amazing. I love it.",
+    body: "I listed my apartment for rent on African Real Estate, and the response was overwhelming. The platform's reach is impressive, and the quality of the leads was top-notch. Within a week, I had a tenant who matched my criteria perfectly. Thanks",
     img: "https://avatar.vercel.sh/jane",
   },
   {
-    name: "Jenny",
+    name: "Alphonse Chakwera",
     username: "@jenny",
-    body: "I'm at a loss for words. This is amazing. I love it.",
+    body: "My wife and I were relocating to Nairobi and needed to find a house quickly. African Real Estate came to our rescue with its extensive and detailed listings. We were able to filter properties based on our specific needs and even schedule viewings online.",
     img: "/assets/house.jpg",
   },
   {
-    name: "James",
-    username: "@james",
-    body: "I'm at a loss for words. This is amazing. I love it.",
+    name: "Amina S.",
+    username: "@amina_es",
+    body: "As an expat moving to Nairobi, I was initially overwhelmed by the apartment search. African Real Estate made it incredibly easy to find the perfect place. The site offered a comprehensive list of properties with detailed descriptions and high-quality photos. Thank you!",
     img: "/assets/house-1.jpg",
   },
 ];
@@ -81,8 +92,94 @@ const ReviewCard = ({ img, name, username, body }: ReviewCardProps) => {
 
 export default function Reviews() {
   return (
-    <section className=" px-5 py-16 md:px-10 md:py-16 lg:py-16">
+    <section className="bg-neutral-50 px-5 py-16 md:px-10 md:py-16 lg:py-16">
       <div className="mx-auto w-[95%] max-w-7xl">
+        <h4 className={` text-[#636262] mt-4 text-3xl font-semibold`}>
+          Check out our most recent customer reviews
+        </h4>
+
+        <article className="mt-10">
+          <div className="w-full mx-auto">
+            <ul className="flex justify-between items-center">
+              <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div className="col-span-1 flex items-center gap-3">
+                  <img
+                    src="/assets/google-review.png"
+                    alt=""
+                    className="h-24"
+                  />
+                  <p className="text-3xl font-bold text-gray-600">4.8/5</p>
+                </div>
+                <div className="col-span-1 flex items-center gap-5">
+                  <img
+                    src="/assets/trustpilot.png"
+                    alt="TrustPilot"
+                    className="h-[56px]"
+                  />
+                  <p className="text-3xl font-bold text-gray-600">4.6/5</p>
+                </div>
+                <div className="col-span-1 flex items-center gap-5">
+                  <img
+                    src="/assets/reviews-io.png"
+                    alt="TrustPilot"
+                    className="h-[56px]"
+                  />
+                  {/* <span className="font-bold text-2xl">Reviews.io</span> */}
+                  <p className="text-3xl font-bold text-gray-600">4.8/5</p>
+                </div>
+              </div>
+            </ul>
+          </div>
+          <div className="bg-[#f7f7f7] p-2 mt-4">
+            <Carousel className="mt-5 max-w-3xl mx-auto px-4 lg:px-8 relative">
+              <CarouselContent>
+                {reviews.map((review) => {
+                  const { img, name, body, username } = review;
+                  return (
+                    <CarouselItem key={name} className="rounded-md">
+                      <div className="p-4">
+                        <Card className="grid grid-cols-4 gap-4 p-4 rounded-md bg-white">
+                          <div className="col-span-1 flex flex-col space-y-2">
+                            <img
+                              src={img}
+                              alt=""
+                              className="rounded-md w-full h-3/4"
+                            />
+                            <p className="font-medium capitalize">{name}</p>
+                          </div>
+                          <div className="col-span-3 flex flex-col gap-4">
+                            <div className="flex justify-between items-center">
+                              <img
+                                src="/assets/google-review.png"
+                                alt=""
+                                className="h-[54px] border border-neutral-50"
+                              />
+                              <div className="flex space-x-1 items-center">
+                                {/* <img src="/assets/verified-check.svg" alt="" />
+                                 */}
+                                <BadgeCheck className="size-5 text-[#00cf8a]" />
+                                <p className="text-base/6 font-medium text-[#00cf8a]">
+                                  Verified order
+                                </p>
+                              </div>
+                            </div>
+                            <p className="text-sm leading-relaxed tracking-wide">
+                              &ldquo;{body}&rdquo;
+                            </p>
+                          </div>
+                        </Card>
+                      </div>
+                    </CarouselItem>
+                  );
+                })}
+              </CarouselContent>
+              <CarouselPrevious className="absolute left-0" />
+              <CarouselNext className="absolute right-0" />
+            </Carousel>
+          </div>
+        </article>
+      </div>
+      {/* <div className="mx-auto w-[95%] max-w-7xl">
         <h2
           className={`text-[14px] text-blue-500 font-semibold mb-4 uppercase ${josefin.className}`}
         >
@@ -102,14 +199,9 @@ export default function Reviews() {
           <ReviewCard2 />
           <ReviewCard3 />
         </Marquee>
-        {/* <Marquee reverse pauseOnHover className="[--duratio:20s]">
-          {secondRow.map((review) => {
-            return <ReviewCard key={review.username} {...review} />;
-          })}
-        </Marquee> */}
         <div className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-white/20"></div>
         <div className="pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-gradient-to-l from-white/20"></div>
-      </article>
+      </article> */}
     </section>
   );
 }
