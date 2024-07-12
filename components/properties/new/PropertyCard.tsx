@@ -38,6 +38,7 @@ export default function PropertyCard({
     locality,
     county,
     propertyDetails,
+    propertyType,
   } = data;
 
   const renderSliderGallery = () => {
@@ -112,14 +113,25 @@ export default function PropertyCard({
         )}
 
         {/* ---- */}
-        <div className="flex items-center space-x-2">
-          <span className="hidden sm:inline-block">
-            <ExpandIcon className="size-5" />
-          </span>
-          <span className=" text-neutral-500 font-semibold">
-            {plinthArea} Sq. Ft
-          </span>
-        </div>
+        {propertyType.toLowerCase() === "land" ? (
+          <div className="flex items-center space-x-2">
+            {/* <span className="hidden sm:inline-block">
+              <ExpandIcon className="size-5" />
+            </span> */}
+            <span className=" text-neutral-500 font-semibold">
+              {propertyDetails}
+            </span>
+          </div>
+        ) : (
+          <div className="flex items-center space-x-2">
+            <span className="hidden sm:inline-block">
+              <ExpandIcon className="size-5" />
+            </span>
+            <span className=" text-neutral-500 font-semibold">
+              {plinthArea} Sq. Ft
+            </span>
+          </div>
+        )}
       </div>
     );
   };

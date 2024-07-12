@@ -145,7 +145,7 @@ export default function Reviews() {
                               alt=""
                               className="rounded-md w-full h-3/4"
                             />
-                            <p className="font-medium capitalize">{name}</p>
+                            <p className="capitalize">{name}</p>
                           </div>
                           <div className="col-span-3 flex flex-col gap-4">
                             <div className="flex justify-between items-center">
