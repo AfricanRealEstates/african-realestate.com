@@ -127,6 +127,7 @@ model Property {
   location               String?
   bedrooms               Int?
   bathrooms              Int?
+  yearsLeft              Int?
   landSize               Float?
   landUnits              String?
   plinthArea             Int?

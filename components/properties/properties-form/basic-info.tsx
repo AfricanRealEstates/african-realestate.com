@@ -38,12 +38,12 @@ export default function BasicInfo({
   const [status, setStatus] = useState<string>("sale");
   const [appliancesOptions, setAppliancesOptions] = useState(appliances);
   const [propertyType, setPropertyType] = useState("");
-
   const [tenureOptions, setTenureOptions] = useState([
     { label: "Freehold", value: "freehold" },
     { label: "Leasehold", value: "leasehold" },
     { label: "Sectional Titles", value: "sectionalTitles" },
   ]);
+  const [tenure, setTenure] = useState<string>("");
 
   useEffect(() => {
     const selectedPropertyType = properyTypes.find(
@@ -83,6 +83,10 @@ export default function BasicInfo({
     setPropertyDetailsOptions(subOptions);
 
     setPropertyDetailsDisabled(!value || subOptions.length === 0);
+  };
+
+  const handleTenureChange = (value: string) => {
+    setTenure(value);
   };
 
   const onStatusChange = (e: any) => {
@@ -192,19 +196,57 @@ export default function BasicInfo({
         </Form.Item>
 
         {propertyType === "Land" ? (
-          <Form.Item
-            name="tenure"
-            label="Tenure"
-            rules={[
-              {
-                required: true,
-                message: "Tenure is required",
-              },
-            ]}
-            className=""
-          >
-            <Select options={tenureOptions} placeholder="Select Tenure" />
-          </Form.Item>
+          <>
+            <Form.Item
+              name="tenure"
+              label="Tenure"
+              rules={[
+                {
+                  required: true,
+                  message: "Tenure is required",
+                },
+              ]}
+              className=""
+            >
+              <Select
+                options={tenureOptions}
+                placeholder="Select Tenure"
+                onChange={handleTenureChange}
+              />
+            </Form.Item>
+            <Form.Item
+              shouldUpdate={(prevValues, currentValues) =>
+                prevValues.tenure !== currentValues.tenure
+              }
+            >
+              {({ getFieldValue }) => {
+                const tenure = getFieldValue("tenure");
+                return tenure === "leasehold" ||
+                  tenure === "sectionalTitles" ? (
+                  <Form.Item
+                    name="yearsLeft"
+                    label="Years Left (0-99)"
+                    rules={[
+                      {
+                        required: true,
+                        message:
+                          "Years Left is required for Leasehold or Sectional Titles",
+                      },
+                      {
+                        type: "number",
+                        min: 0,
+                        max: 99,
+                        message: "Years Left must be between 0 and 99",
+                      },
+                    ]}
+                    className="w-full"
+                  >
+                    <InputNumber className="w-full" placeholder="eg. 25" />
+                  </Form.Item>
+                ) : null;
+              }}
+            </Form.Item>
+          </>
         ) : (
           <>
             <Form.Item
@@ -259,70 +301,6 @@ export default function BasicInfo({
           </>
         )}
       </section>
-      <section>
-        <Form.Item
-          shouldUpdate={(prevValues, currentValues) =>
-            prevValues.propertyType !== currentValues.propertyType
-          }
-        >
-          {({ getFieldValue }) => {
-            const propertyType = getFieldValue("propertyType");
-            return (
-              <section className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 gap-y-2">
-                <Form.Item
-                  name="landSize"
-                  label={`${
-                    propertyType === "Commercial" ||
-                    propertyType === "Industrial" ||
-                    propertyType === "Vacational / Social"
-                      ? "Land Size (optional)"
-                      : "Land Size"
-                  }`}
-                  rules={[
-                    {
-                      required:
-                        propertyType !== "Commercial" &&
-                        propertyType !== "Industrial" &&
-                        propertyType !== "Vacational / Social",
-                      message: "Land Size is required",
-                    },
-                  ]}
-                  className="col-span-1"
-                >
-                  <InputNumber className="w-full" placeholder="eg.2" />
-                </Form.Item>
-                <Form.Item
-                  name="landUnits"
-                  label={`${
-                    propertyType !== "Commercial" &&
-                    propertyType !== "Industrial" &&
-                    propertyType !== "Vacational / Social"
-                      ? "Land Units"
-                      : "Land Units (optional)"
-                  }`}
-                  rules={[
-                    {
-                      required:
-                        propertyType !== "Commercial" &&
-                        propertyType !== "Industrial" &&
-                        propertyType !== "Vacational / Social",
-                      message: "Land Units is required",
-                    },
-                  ]}
-                  className=""
-                >
-                  <Select
-                    options={landUnits}
-                    className="w-full"
-                    placeholder="Select land units"
-                  />
-                </Form.Item>
-              </section>
-            );
-          }}
-        </Form.Item>
-      </section>
-
       <h2 className="text-lg font-medium my-4 text-blue-600">
         Location Details
       </h2>
@@ -461,7 +439,7 @@ export default function BasicInfo({
             },
             ({ getFieldValue }) => ({
               validator(_, value) {
-                if (!value || value < getFieldValue("price")) {
+                if (!value || value <= getFieldValue("price")) {
                   return Promise.resolve();
                 }
                 return Promise.reject(
