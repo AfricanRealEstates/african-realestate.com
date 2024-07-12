@@ -44,6 +44,11 @@ model User {
   profilePhoto     String?
   coverPhoto       String?
   bio              String?
+  xLink            String?
+  titkokLink       String?
+  facebookLink     String?
+  youtubeLink      String?
+  linkedinLink     String?
   showAgentContact Boolean?       @default(false) // moved from property
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt

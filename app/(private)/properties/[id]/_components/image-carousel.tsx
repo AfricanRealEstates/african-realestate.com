@@ -101,25 +101,50 @@ export default function ImageCarousel({ property }: Props) {
               {property.images.length} Photos
             </div>
 
-            <Carousel
+            <section className="w-full absolute -bottom-9 left-0 p-4 backdrop-blur-sm rounded-md shadow-md overflow-scroll text-xs scrollbar-hide">
+              <div className="flex gap-8 w-max">
+                {property.images.map((image) => (
+                  <div
+                    key={index}
+                    className="flex flex-col items-center gap-2 cursor-pointer"
+                  >
+                    <Image
+                      src={image}
+                      alt="Stories"
+                      width={64}
+                      height={64}
+                      className="w-16 h-16 rounded-full ring-2 ring-gray-100"
+                    />
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* <Carousel
               opts={{
                 align: "start",
               }}
-              className="w-full absolute -bottom-9 left-0 px-4 bg-white/20"
+              className="w-full absolute -bottom-9 left-0 px-4 bg-white overflow-scroll scrollbar-hide"
             >
-              <CarouselContent className="w-full h-[60px]">
+              <CarouselContent className="flex gap-8 w-max">
                 {property.images.map((image) => (
                   <CarouselItem
                     key={index}
-                    className="md:basis-1/2 lg:basis-1/3 bg-black"
+                    className="flex items-center gap-2 cursor-pointer"
                   >
-                    <img src={image} alt="Property" className=" object-cover" />
+                    <Image
+                      width={64}
+                      height={64}
+                      src={image}
+                      alt="Property"
+                      className="w-16 h-16 rounded-md ring-2"
+                    />
                   </CarouselItem>
                 ))}
               </CarouselContent>
               <CarouselPrevious className="absolute bottom-0 left-0" />
               <CarouselNext className="absolute bottom-0 right-0" />
-            </Carousel>
+            </Carousel> */}
           </div>
         </div>
       </MotionConfig>
