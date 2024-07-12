@@ -34,10 +34,11 @@ export default function BasicInfo({
     { label: string; value: string }[]
   >([]);
   const [propertyDetailsDisabled, setPropertyDetailsDisabled] =
-    useState<boolean>(false);
+    useState<boolean>(true);
   const [status, setStatus] = useState<string>("sale");
   const [appliancesOptions, setAppliancesOptions] = useState(appliances);
-  const [propertyType, setPropertyType] = useState("Residential");
+  const [propertyType, setPropertyType] = useState("");
+
   const [tenureOptions, setTenureOptions] = useState([
     { label: "Freehold", value: "freehold" },
     { label: "Leasehold", value: "leasehold" },
@@ -81,7 +82,7 @@ export default function BasicInfo({
 
     setPropertyDetailsOptions(subOptions);
 
-    setPropertyDetailsDisabled(subOptions.length === 0);
+    setPropertyDetailsDisabled(!value || subOptions.length === 0);
   };
 
   const onStatusChange = (e: any) => {
