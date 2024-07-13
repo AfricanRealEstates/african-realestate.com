@@ -7,6 +7,7 @@ import { getSEOTags } from "@/lib/seo";
 import { loadArticles } from "@/lib/mdx";
 import { formatDate } from "@/lib/formatter";
 import Image from "next/image";
+import Tags from "./_components/Tags";
 const josefin = Josefin_Sans({
   subsets: ["latin"],
   display: "swap",
@@ -36,12 +37,16 @@ export default async function Blog() {
             Stay up-to-date about our company, new products, and offers.
           </p>
         </div>
+        <div className="mt-4">
+          <Tags />
+        </div>
         <article className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
           {posts.map((post) => {
             const { title, href, date, coverImage, tags, author, description } =
               post;
             return (
-              <div
+              <Link
+                href={href}
                 key={href}
                 className="flex flex-col items-start justify-between"
               >
@@ -99,7 +104,7 @@ export default async function Blog() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             );
           })}
         </article>
