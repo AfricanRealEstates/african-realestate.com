@@ -132,10 +132,11 @@ model Property {
   landUnits              String?
   plinthArea             Int?
   videoLink              String?
-  serviceCharge          String?
+  serviceCharge          Int?
   parkings               String?
   tenure                 String?
   appliances             String[]
+  surroundingFeatures    String[]
   images                 String[]
   coverPhotos            String[]
   // agentName              String // move to user
