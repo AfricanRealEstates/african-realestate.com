@@ -94,8 +94,10 @@ export default function Reviews() {
   return (
     <section className="bg-neutral-50 px-5 py-16 md:px-10 md:py-16 lg:py-16">
       <div className="mx-auto w-[95%] max-w-7xl">
-        <h4 className={` text-[#636262] mt-4 text-3xl font-semibold`}>
-          Check out our most recent customer reviews
+        <h4
+          className={` text-[#636262] mt-4 text-3xl font-semibold capitalize text center`}
+        >
+          Our recent customer reviews
         </h4>
 
         <article className="mt-10">
