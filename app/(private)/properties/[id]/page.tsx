@@ -277,11 +277,11 @@ export default async function PropertyDetails({
         className={`w-full flex flex-col rounded-2xl border-b border-t border-l border-r border-neutral-200  space-y-4 xl:space-y-4 pb-10 p-2 sm:p-4 xl:px-8 xl:py-4 shadow-xl ${raleway.className}`}
       >
         <h2 className="text-xl font-semibold">Send a Quote</h2>
-        <div className=" border-b border-neutral-100 dark:border-neutral-700" />
+        <div className=" border-b border-neutral-100 " />
         <div className="text-neutral-600 text-sm">
           Make a quote today and <br /> let us turn your vision into reality!
         </div>
-        <div className=" border-b border-neutral-100 dark:border-neutral-700" />
+        <div className=" border-b border-neutral-100 " />
         <QueryModal propertyId={property.id} />
       </div>
     );

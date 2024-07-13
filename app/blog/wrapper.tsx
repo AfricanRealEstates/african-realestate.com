@@ -8,6 +8,15 @@ import { Raleway } from "next/font/google";
 import Link from "next/link";
 import React from "react";
 
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+
 const raleway = Raleway({
   subsets: ["latin"],
   display: "swap",
@@ -28,7 +37,7 @@ export default async function BlogWrapper({
 
   return (
     <div className={`text-[#181a20] ${raleway.className}`}>
-      <section className="mx-auto w-full max-w-5xl px-5 py-24 md:px-10 md:py-28 lg:py-32">
+      <section className="mx-auto w-full max-w-7xl px-5 py-24 md:px-10 md:py-28 lg:py-32">
         <div className="space-y-5 lg:space-y-8 py-8">
           <Link
             className="inline-flex items-center gap-x-1.5 text-sm text-gray-600 decoration-2 hover:underline dark:text-blue-500"
@@ -51,7 +60,7 @@ export default async function BlogWrapper({
             Back to Blog
           </Link>
         </div>
-        <FadeIn>
+        <FadeIn className="">
           <div className="max-w-[770px] mx-auto text-center mb-4">
             <div className="my-5 flex items-center justify-center gap-x-2">
               {article.tags.map((tag) => {
@@ -83,9 +92,18 @@ export default async function BlogWrapper({
         </FadeIn>
         <Border />
         <FadeIn>
-          <MDXComponents.wrapper className="w-full mx-auto mt-10 sm:mt-12 lg:mt-16 prose-lg">
-            {children}
-          </MDXComponents.wrapper>
+          <section className="flex gap-x-4 relative">
+            <div className="sticky top-28 block">
+              <RecentArticles />
+            </div>
+            <MDXComponents.wrapper className="w-full max-w-5xl mx-auto mt-10 sm:mt-12 lg:mt-16 prose-lg">
+              {children}
+            </MDXComponents.wrapper>
+            <div className="sticky top-28 block">
+              <RecentArticles />
+              {/* <RecentTags /> */}
+            </div>
+          </section>
         </FadeIn>
 
         <article className="mt-10 sm:mt-12 lg:mt-16 grid lg:flex lg:justify-between lg:items-center gap-y-5 lg:gap-y-0">
@@ -288,6 +306,59 @@ export default async function BlogWrapper({
         />
       )} */}
     </div>
+  );
+}
+
+async function RecentTags() {
+  let allArticles = await loadArticles();
+  return (
+    <>
+      <Card className="w-[200px]">
+        <CardContent>
+          <span className="text-xs font-semibold p-1 text-white bg-blue-400 rounded-full">
+            Mortgage
+          </span>
+        </CardContent>
+      </Card>
+    </>
+  );
+}
+
+async function RecentArticles() {
+  let allArticles = await loadArticles();
+  return (
+    <Carousel
+      opts={{
+        align: "start",
+      }}
+      orientation="vertical"
+      className="w-full max-w-xl mt-64"
+    >
+      <CarouselContent className="-mt-1 h-[200px]">
+        {allArticles.map((article) => (
+          <CarouselItem
+            key={article.href}
+            className="pt-1 md:basis-1/2 xl:basis-1/3"
+          >
+            <div className="p-1">
+              <Card className="w-[200px]">
+                <CardContent className="flex flex-col p-3 space-y-3">
+                  <Link
+                    href={article.href}
+                    className="text-xs text-blue-400 text-ellipsis font-medium"
+                  >
+                    {article.title}
+                  </Link>
+                  <p className="text-xs">Author: {article.author.name}</p>
+                </CardContent>
+              </Card>
+            </div>
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      <CarouselPrevious />
+      <CarouselNext />
+    </Carousel>
   );
 }
 
