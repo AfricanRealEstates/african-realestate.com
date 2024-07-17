@@ -6,7 +6,7 @@ const tabs = ["Real Estate", "Mortgage", "Investing", "Home decor"];
 export default function Tags() {
   const [selected, setSelected] = useState(tabs[0]);
   return (
-    <div className="px-4 py-14 bg-gray-900 flex items-center flex-wrap gap-2 rounded-md">
+    <div className="px-4 py-14 bg-neutral-50 flex items-center flex-wrap gap-2 rounded-md">
       {tabs.map((tab) => (
         <Chip
           text={tab}
@@ -34,7 +34,7 @@ const Chip = ({
       className={`${
         selected
           ? "text-white"
-          : "text-slate-300 hover:text-slate-200 hover:bg-slate-700"
+          : "text-slate-600 hover:text-slate-200 hover:bg-blue-500"
       } text-sm transition-colors px-3.5 py-1.5 rounded-md relative`}
     >
       <span className="relative z-10">{text}</span>
