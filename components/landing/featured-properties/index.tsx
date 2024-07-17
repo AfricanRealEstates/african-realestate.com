@@ -10,7 +10,12 @@ import {
 import Link from "next/link";
 import React from "react";
 import prisma from "@/lib/prisma";
-import { Josefin_Sans, Plus_Jakarta_Sans, Raleway } from "next/font/google";
+import {
+  Josefin_Sans,
+  Lexend,
+  Plus_Jakarta_Sans,
+  Raleway,
+} from "next/font/google";
 import Image from "next/image";
 
 import { cache } from "@/lib/cache";
@@ -24,7 +29,7 @@ const raleway = Raleway({
   variable: "--font-nunitosans",
 });
 
-const josefin = Josefin_Sans({
+const lexend = Lexend({
   subsets: ["latin"],
   weight: ["600"],
 });
@@ -62,16 +67,16 @@ export default async function FeaturedProperties() {
   if (!properties) return <>No Featured properties</>;
   return (
     <div className={`border-b border-neutral-100  mb-4 text-[#4e4e4e]`}>
-      <div className="mx-auto w-[95%] max-w-7xl px-2 py-16 md:px-2 md:py-24 lg:py-20">
-        <section className="flex items-center justify-start gap-12 flex-col w-full">
-          <div className="flex flex-col items-center justify-center gap-5">
+      <div className="mx-auto w-[95%] max-w-7xl px-2 py-16 md:px-2 md:py-12 lg:py-16">
+        <section className="flex items-center justify-start gap-8 flex-col w-full">
+          <div className="flex flex-col items-center justify-center gap-2">
             <p
-              className={`text-[14px] uppercase text-blue-600 font-semibold leading-relaxed ${josefin.className}`}
+              className={`text-[12px] uppercase text-blue-600 font-semibold leading-relaxed ${lexend.className}`}
             >
               Explore our featured properties
             </p>
             <h2
-              className={`${josefin.className} text-center text-3xl font-bold md:text-5xl my-3`}
+              className={`${lexend.className} text-center tracking-tight text-3xl font-bold sm:text-4xl my-1`}
             >
               Recommended For You
             </h2>
@@ -92,16 +97,6 @@ export default async function FeaturedProperties() {
           <Button color="blue" href={`/properties`}>
             View all Properties
           </Button>
-          {/* <FeaturedCard key={property.id} property={property} /> */}
-
-          {/* <ProductGridSection
-            title="Most popular"
-            propertiesFetcher={getMostPopularProperties}
-          /> */}
-          {/* <ProductGridSection
-            title="Newest"
-            propertiesFetcher={getNewestProperties}
-          /> */}
 
           {properties.length === 0 && (
             <div className="flex flex-col items-center gap-1 text-center">
@@ -122,35 +117,6 @@ export default async function FeaturedProperties() {
           )}
         </section>
       </div>
-    </div>
-  );
-}
-
-interface ProductGridSectionProps {
-  propertiesFetcher: () => Promise<Property[]>;
-  title: string;
-}
-
-async function ProductGridSection({
-  propertiesFetcher,
-  title,
-}: ProductGridSectionProps) {
-  return (
-    <div className="space-y-4">
-      <div className="flex gap-4 items-center justify-between">
-        <h2 className="text-3xl font-bold">{title}</h2>
-        <Button variant="outline">
-          <Link href="/properties">
-            <span>View All</span>
-            <ArrowRight />
-          </Link>
-        </Button>
-      </div>
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {(await propertiesFetcher()).map((property) => (
-          <PropertyCard key={property.id} data={property} />
-        ))}
-      </section>
     </div>
   );
 }

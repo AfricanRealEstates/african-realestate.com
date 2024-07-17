@@ -56,7 +56,7 @@ export default async function Blog() {
                     src={coverImage}
                     className="w-full rounded-2xl bg-gray-100 object-cover sm:aspect-[2/1] aspect-[16/9] lg:aspect-[3/2]"
                   />
-                  <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
+                  {/* <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" />/ */}
                 </div>
                 <div className="max-w-xl">
                   <div className="mt-8 flex items-center gap-x-4 text-xs">

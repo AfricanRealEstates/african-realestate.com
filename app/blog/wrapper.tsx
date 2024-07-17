@@ -16,6 +16,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import Image from "next/image";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -93,13 +94,13 @@ export default async function BlogWrapper({
         <Border />
         <FadeIn>
           <section className="flex gap-x-4 relative">
-            <div className="sticky top-28 block">
+            <div className="hidden lg:block sticky top-28">
               <RecentArticles />
             </div>
             <MDXComponents.wrapper className="w-full max-w-5xl mx-auto mt-10 sm:mt-12 lg:mt-16 prose-lg">
               {children}
             </MDXComponents.wrapper>
-            <div className="sticky top-28 block">
+            <div className="hidden lg:block sticky top-28">
               <RecentArticles />
               {/* <RecentTags /> */}
             </div>
@@ -335,26 +336,37 @@ async function RecentArticles() {
       className="w-full max-w-xl mt-64"
     >
       <CarouselContent className="-mt-1 h-[200px]">
-        {allArticles.map((article) => (
-          <CarouselItem
-            key={article.href}
-            className="pt-1 md:basis-1/2 xl:basis-1/3"
-          >
-            <div className="p-1">
-              <Card className="w-[200px]">
-                <CardContent className="flex flex-col p-3 space-y-3">
-                  <Link
-                    href={article.href}
-                    className="text-xs text-blue-400 text-ellipsis font-medium"
-                  >
-                    {article.title}
-                  </Link>
-                  <p className="text-xs">Author: {article.author.name}</p>
-                </CardContent>
-              </Card>
-            </div>
-          </CarouselItem>
-        ))}
+        {allArticles.map((article) => {
+          const { title, href, date, coverImage, tags, author, description } =
+            article;
+          return (
+            <CarouselItem
+              key={article.href}
+              className="pt-1 md:basis-1/2 xl:basis-1/3"
+            >
+              <div className="p-1">
+                <Card className="w-[220px]">
+                  <CardContent className="flex flex-col p-3 space-y-3">
+                    {/* Image */}
+                    {/* Date */}
+                    <time className="text-xs" dateTime={article.date}>
+                      {formatDate(article.date)}
+                    </time>
+                    <Link
+                      href={article.href}
+                      className="text-xs text-blue-400 text-ellipsis font-medium"
+                    >
+                      {article.title}
+                    </Link>
+                    <div className="relative w-full">
+                      <Image src={coverImage} alt="Cover" className="w-full" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </CarouselItem>
+          );
+        })}
       </CarouselContent>
       <CarouselPrevious />
       <CarouselNext />

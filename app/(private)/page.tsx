@@ -35,7 +35,7 @@ export default async function Home() {
       {/* <Sale />
       <HowItWorks /> */}
       <Facts />
-      <PartnersCTA />
+      {/* <PartnersCTA /> */}
       <Reviews />
       {/* <CTA /> */}
 

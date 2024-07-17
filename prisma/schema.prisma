@@ -19,6 +19,7 @@ datasource db {
 enum UserRole {
   USER
   AGENT
+  AGENCY
   ADMIN
   SUPPORT
 }
