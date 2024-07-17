@@ -11,6 +11,7 @@ export interface GallerySliderProps {
   className?: string;
   // galleryImgs: (StaticImageData | string)[];
   galleryImgs: string[];
+  coverPhotos: string[];
   ratioClass?: string;
   uniqueID: string;
   href?: Route<string>;
@@ -22,6 +23,7 @@ export interface GallerySliderProps {
 export default function GallerySlider({
   className = "",
   galleryImgs,
+  coverPhotos,
   ratioClass = "aspect-w-4 aspect-h-3",
   imageClass = "",
   uniqueID = "uniqueID",
@@ -68,6 +70,19 @@ export default function GallerySlider({
                 animate={{ x: `-${index * 100}%` }}
                 className="flex h-[300px] "
               >
+                {coverPhotos.map((image) => {
+                  return (
+                    <Image
+                      key={image}
+                      src={image}
+                      height={300}
+                      width={400}
+                      className="object-cover w-full h-full transition duration-300 ease-in-out hover:scale-110 hover:opacity-50"
+                      sizes="(max-width: 1025px) 100vw, 300px"
+                      alt="Property Image"
+                    />
+                  );
+                })}
                 {galleryImgs.map((image) => {
                   return (
                     <Image

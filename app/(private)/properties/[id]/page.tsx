@@ -20,6 +20,7 @@ import OverviewInfo from "./_components/overview-info";
 import Image from "next/image";
 import { Button } from "@/components/utils/Button";
 import MessageWidget from "./_components/message-widget";
+import { capitalizeWords } from "@/lib/utils";
 
 // no cache
 export const dynamic = "force-dynamic";
@@ -47,7 +48,7 @@ export async function generateMetadata({
     })) as Property) || null;
 
   return {
-    title: `${property.title} | African Real Estate`,
+    title: `${capitalizeWords(property.title)} | African Real Estate`,
   };
 }
 
@@ -201,7 +202,7 @@ export default async function PropertyDetails({
         <div className="flex items-center space-x-4 mb-8">
           <span className="flex items-center bg-neutral-100 rounded-full px-2">
             <MapPin className="size-4" />
-            <span className="py-1.5 px-3 text-sm flex rounded-lg">
+            <span className="py-1.5 px-3 text-sm flex rounded-lg capitalize">
               {property.locality}, {property.county}
             </span>
           </span>

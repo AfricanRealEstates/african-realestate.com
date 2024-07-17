@@ -113,7 +113,7 @@ export default function ImageCarousel({ property }: Props) {
               {property.images.length} Photos
             </div>
 
-            <section className="w-full absolute -bottom-0 left-0 p-4  rounded-md shadow-md overflow-scroll text-xs scrollbar-hide">
+            <section className="w-full absolute bottom-0 -left-0 p-4  rounded-md shadow-md overflow-scroll text-xs scrollbar-hide">
               <div className="flex gap-8 w-max">
                 {property.coverPhotos.map((cover) => {
                   return (

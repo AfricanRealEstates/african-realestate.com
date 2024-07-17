@@ -35,6 +35,7 @@ export default function PropertyCard({
     bathrooms,
     title,
     images,
+    coverPhotos,
     locality,
     county,
     propertyDetails,
@@ -48,6 +49,7 @@ export default function PropertyCard({
           uniqueID={`ExperiencesCard_${id}`}
           ratioClass={ratioClass}
           galleryImgs={images}
+          coverPhotos={coverPhotos}
           href={`/properties/${id}`}
         />
         {/* <BtnLikeIcon isLiked={like} className="absolute right-3 top-3" /> */}
