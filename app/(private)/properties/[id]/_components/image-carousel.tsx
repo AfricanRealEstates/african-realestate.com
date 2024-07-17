@@ -49,9 +49,21 @@ export default function ImageCarousel({ property }: Props) {
                 animate={{ x: `-${index * 100}%` }}
                 className="flex h-full rounded-xl" // Flex container
               >
+                {property.coverPhotos.map((cover) => {
+                  return (
+                    <img
+                      key={cover}
+                      src={cover}
+                      alt="Cover"
+                      width={300}
+                      height={300}
+                      className="aspect-[3/2] h-full min-w-full max-w-full object-cover rounded-xl"
+                    />
+                  );
+                })}
                 {property.images.map((image, i) => {
                   return (
-                    <Image
+                    <img
                       key={image}
                       src={image}
                       width={300}
@@ -101,14 +113,26 @@ export default function ImageCarousel({ property }: Props) {
               {property.images.length} Photos
             </div>
 
-            <section className="w-full absolute -bottom-9 left-0 p-4 backdrop-blur-sm rounded-md shadow-md overflow-scroll text-xs scrollbar-hide">
+            <section className="w-full absolute -bottom-0 left-0 p-4  rounded-md shadow-md overflow-scroll text-xs scrollbar-hide">
               <div className="flex gap-8 w-max">
+                {property.coverPhotos.map((cover) => {
+                  return (
+                    <img
+                      key={cover}
+                      src={cover}
+                      alt="Cover"
+                      width={64}
+                      height={64}
+                      className="w-16 h-16 rounded-full ring-2 ring-gray-100"
+                    />
+                  );
+                })}
                 {property.images.map((image) => (
                   <div
                     key={index}
                     className="flex flex-col items-center gap-2 cursor-pointer"
                   >
-                    <Image
+                    <img
                       src={image}
                       alt="Stories"
                       width={64}
@@ -119,32 +143,6 @@ export default function ImageCarousel({ property }: Props) {
                 ))}
               </div>
             </section>
-
-            {/* <Carousel
-              opts={{
-                align: "start",
-              }}
-              className="w-full absolute -bottom-9 left-0 px-4 bg-white overflow-scroll scrollbar-hide"
-            >
-              <CarouselContent className="flex gap-8 w-max">
-                {property.images.map((image) => (
-                  <CarouselItem
-                    key={index}
-                    className="flex items-center gap-2 cursor-pointer"
-                  >
-                    <Image
-                      width={64}
-                      height={64}
-                      src={image}
-                      alt="Property"
-                      className="w-16 h-16 rounded-md ring-2"
-                    />
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="absolute bottom-0 left-0" />
-              <CarouselNext className="absolute bottom-0 right-0" />
-            </Carousel> */}
           </div>
         </div>
       </MotionConfig>
