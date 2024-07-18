@@ -10,6 +10,7 @@ import RenderSection1 from "../_components/Properties";
 import { FaFacebook, FaLinkedin, FaTiktok, FaYoutube } from "react-icons/fa";
 import NotFound from "@/app/not-found";
 import dayjs from "dayjs";
+import { capitalizeWords } from "@/lib/utils";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -20,6 +21,25 @@ const raleway = Raleway({
 interface SingleAgencyProps {
   params: {
     id: string;
+  };
+}
+
+export async function generateMetadata({
+  params: { id },
+}: SingleAgencyProps): Promise<Metadata> {
+  const agent = await prisma.user.findUnique({
+    where: {
+      id: id,
+    },
+    include: {
+      properties: true,
+    },
+  });
+
+  return {
+    title: `${capitalizeWords(
+      agent?.agentName!
+    )}'s Listings | African Real Estate`,
   };
 }
 

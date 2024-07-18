@@ -191,7 +191,7 @@ export default async function PropertyDetails({
 
   const renderSection1 = () => {
     return (
-      <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200  sm:space-y-8 pb-1 px-0 sm:p-4 xl:p-8 !space-y-6">
+      <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200  sm:space-y-4 pb-1 px-0 sm:p-4 xl:p-4 !space-y-4">
         {/* 1 */}
         <div className="flex justify-between items-center">
           <Badge name="Location Info" />
@@ -225,11 +225,11 @@ export default async function PropertyDetails({
         </div> */}
 
         {/* 5 */}
-        <div className="w-full border-b border-neutral-100 my-8" />
+        <div className="w-full border-b border-neutral-100 my-6" />
 
         {/* 6 */}
         <div className="flex flex-col space-y-2">
-          <h2 className="text-2xl font-semibold mb-4">Salient Features</h2>
+          <h2 className="text-2xl font-semibold mb-2">Salient Features</h2>
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 text-sm text-neutral-700 mt-8">
             {property.bedrooms && property.bedrooms > 0 && (
               <div className="flex items-center space-x-3 ">
@@ -350,7 +350,7 @@ export default async function PropertyDetails({
           <div className="flex-grow mt-14 lg:mt-0">
             <article className="flex flex-col-reverse">
               <div className="flex flex-col gap-4">
-                <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 dark:border-neutral-700 space-y-4 sm:space-y-6 px-0 sm:p-4 xl:p-4">
+                <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200  space-y-3 sm:space-y-4 px-0 sm:p-4 xl:p-4">
                   <p className="rounded-full font-semibold w-fit bg-neutral-50 px-2 py-1 text-indigo-500">
                     For {property.status}
                   </p>
@@ -531,7 +531,7 @@ export default async function PropertyDetails({
           </pre>
         </section> */}
 
-        <main className="relative z-10 mt-16 flex flex-col lg:flex-row">
+        <main className="relative z-10 mt-8 flex flex-col lg:flex-row">
           <section className="w-full lg:w-3/5 xl:w-2/3 space-y-8 lg:space-y-10 lg:pr-10">
             {renderSection1()}
 
@@ -543,14 +543,14 @@ export default async function PropertyDetails({
         </main>
         <MessageWidget />
         {/* Related properties */}
-        <section className="mx-auto mt-12 max-w-2xl sm:mt-16 lg:max-w-none">
+        <section className="mx-auto mt-12 max-w-2xl sm:mt-12 lg:max-w-none">
           <div className="flex items-center justify-between space-x-4">
             <h2 className="text-lg lg:text-xl font-medium text-gray-950">
               Related Properties
             </h2>
             <Link
               href="/properties"
-              className="flex items-center gap-2 whitespace-nowrap text-sm font-medium hover:underline underline-offset-4 text-indigo-600 hover:text-indigo-500 transition-all ease-linear"
+              className="flex items-center gap-2 whitespace-nowrap text-base/6 font-medium hover:underline underline-offset-4 text-indigo-600 hover:text-indigo-500 transition-all ease-linear"
             >
               View all
               <span aria-hidden="true">&rarr;</span>

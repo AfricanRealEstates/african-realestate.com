@@ -18,9 +18,9 @@ export interface ButtonProps {
 }
 
 const Button: FC<ButtonProps> = ({
-  className = "text-neutral-700 dark:text-neutral-200",
+  className = "text-neutral-700",
   translate = "",
-  sizeClass = "px-4 py-3 sm:px-6",
+  sizeClass = "px-3 py-2 sm:px-4",
   fontSize = "text-sm sm:text-base font-medium",
   disabled = false,
   href,
@@ -92,7 +92,7 @@ export const ButtonSecondary: React.FC<ButtonSecondaryProps> = ({
 }) => {
   return (
     <Button
-      className={`ttnc-ButtonSecondary font-medium border bg-white border-neutral-200 text-neutral-700 dark:bg-neutral-900 dark:text-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 ${className}`}
+      className={`ttnc-ButtonSecondary font-medium border bg-white border-neutral-200 text-neutral-700 hover:bg-neutral-100  ${className}`}
       {...args}
     />
   );
