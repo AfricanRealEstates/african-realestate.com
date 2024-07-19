@@ -8,7 +8,7 @@ import { uploadFilesToFirebase } from "@/lib/utils/upload-media";
 import { addProperty, editProperty } from "@/actions/properties";
 import { toast } from "sonner";
 import { Icons } from "@/components/globals/icons";
-import { surroundingAmenities } from "@/constants";
+import { surroundingFeatures } from "@/constants";
 
 export default function Media({
   currentStep,
@@ -67,6 +67,8 @@ export default function Media({
         ...tempFinalValues.basicInfo,
         images: tempFinalValues.media.images,
         coverPhotos: tempFinalValues.media.coverPhotos,
+        surroundingFeatures: tempFinalValues.media.surroundingFeatures,
+        videoLink: tempFinalValues.media.videoLink,
       };
 
       let res = null;
@@ -225,7 +227,7 @@ export default function Media({
           className="flex w-full items-center justify-start col-span-full gap-5"
         >
           <Checkbox.Group
-            options={surroundingAmenities}
+            options={surroundingFeatures}
             className="w-full gap-5"
           />
         </Form.Item>

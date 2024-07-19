@@ -3,7 +3,12 @@
 import Link from "next/link";
 import { Route } from "@/types/types";
 import ButtonClose from "@/components/globals/button-close";
-import { Dialog, DialogBackdrop, Transition } from "@headlessui/react";
+import {
+  Dialog,
+  DialogBackdrop,
+  Transition,
+  TransitionChild,
+} from "@headlessui/react";
 import React, { Fragment, ButtonHTMLAttributes, FC, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -107,7 +112,7 @@ export default function Amenities({ amenities }: AmenitiesProps) {
           onClose={closeModalAmenities}
         >
           <div className="min-h-screen px-4 text-center">
-            <Transition.Child
+            <TransitionChild
               as="div"
               enter="ease-out duration-300"
               enterFrom="opacity-0"
@@ -116,22 +121,17 @@ export default function Amenities({ amenities }: AmenitiesProps) {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              {/* The backdrop, rendered as a fixed sibling to the panel container */}
               <DialogBackdrop className="fixed inset-0 bg-black/30" />
 
-              {/* Full-screen container to center the panel */}
               <div className="fixed inset-0 flex w-screen items-center justify-center p-4" />
-              {/* The actual dialog panel  */}
-            </Transition.Child>
-
-            {/* This element is to trick the browser into centering the modal contents. */}
+            </TransitionChild>
             <span
               className="inline-block h-screen align-middle"
               aria-hidden="true"
             >
               &#8203;
             </span>
-            <Transition.Child
+            <TransitionChild
               as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 scale-95"
@@ -175,10 +175,11 @@ export default function Amenities({ amenities }: AmenitiesProps) {
                     ))}
                 </div>
               </div>
-            </Transition.Child>
+            </TransitionChild>
           </div>
         </Dialog>
       </Transition>
+
       // <Transition appear show={isOpenModalAmenities}>
       //   <Dialog
       //     as="div"

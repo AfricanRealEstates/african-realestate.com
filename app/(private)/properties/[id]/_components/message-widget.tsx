@@ -2,7 +2,12 @@
 
 import React, { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { Disclosure, Transition } from "@headlessui/react";
+import {
+  Disclosure,
+  Transition,
+  DisclosureButton,
+  DisclosurePanel,
+} from "@headlessui/react";
 
 type formInputs = {
   name: string;
@@ -67,7 +72,7 @@ export default function MessageWidget() {
       <Disclosure>
         {({ open }) => (
           <>
-            <Disclosure.Button className="ease fixed right-5 bottom-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-indigo-500 shadow-lg transition duration-300 hover:bg-indigo-600 focus:bg-indigo-600 focus:outline-none">
+            <DisclosureButton className="ease fixed right-5 bottom-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-blue-500 shadow-lg transition duration-300 hover:bg-indigo-600 focus:bg-indigo-600 focus:outline-none">
               <span className="sr-only">Open Contact form Widget</span>
               <Transition
                 as="div"
@@ -119,7 +124,7 @@ export default function MessageWidget() {
                   <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>{" "}
               </Transition>
-            </Disclosure.Button>
+            </DisclosureButton>
             <Transition
               as="div"
               className="fixed  bottom-[100px] top-0 right-0 left-0  z-50 sm:top-auto sm:right-5 sm:left-auto"
@@ -128,7 +133,7 @@ export default function MessageWidget() {
               leave="transition duration-200 transform ease"
               leaveTo="opacity-0 translate-y-5"
             >
-              <Disclosure.Panel className=" left-0 flex  h-full min-h-[250px] w-full flex-col overflow-hidden rounded-md border border-gray-300 bg-white shadow-2xl dark:border-gray-800 sm:h-[600px] sm:max-h-[calc(100vh-120px)] sm:w-[350px]">
+              <DisclosurePanel className=" left-0 flex  h-full min-h-[250px] w-full flex-col overflow-hidden rounded-md border border-gray-300 bg-white shadow-2xl dark:border-gray-800 sm:h-[600px] sm:max-h-[calc(100vh-120px)] sm:w-[350px]">
                 <div className="flex h-32 flex-col items-center justify-center bg-indigo-600 p-5">
                   <h3 className="text-lg text-white">How can we help?</h3>
                   <p className="text-white opacity-50">
@@ -361,7 +366,7 @@ export default function MessageWidget() {
                     </div>
                   )}
                 </div>
-              </Disclosure.Panel>
+              </DisclosurePanel>
             </Transition>
           </>
         )}

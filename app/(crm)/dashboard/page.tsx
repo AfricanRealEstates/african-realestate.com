@@ -163,13 +163,13 @@ const PropertiesTable = async ({
                       {property.status}
                     </td>
                     <td className="relative whitespace-nowrap py-4 pl-4 pr-4 text-right text-sm font-medium">
-                      <a
-                        href="#"
+                      <Link
+                        href="/agent/properties"
                         className="text-indigo-600 hover:text-indigo-900 inline-flex items-center"
                       >
                         Edit
                         <ChevronRightIcon className="w-4 h-4" />
-                      </a>
+                      </Link>
                     </td>
                   </tr>
                 ))}

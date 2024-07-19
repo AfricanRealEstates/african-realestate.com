@@ -395,7 +395,7 @@ export const vacationalAppliances = [
   { value: "gym", label: "Gym" },
 ]
 
-export const surroundingAmenities = [
+export const surroundingFeatures = [
   { value: "mosque", label: "Mosque" },
   { value: "church", label: "Church" },
   { value: "temple", label: "Temple" },

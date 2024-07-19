@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import DeleteAccount from "@/components/crm/delete-account";
 import UserUpdateForm from "@/components/crm/user-update-form";
+import ProfileAccountForm from "@/components/crm/profile-account-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -31,21 +32,17 @@ export default async function DashboardAccount() {
         </p>
       </div>
 
-      <Tabs defaultValue="individual" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="individual">Individual Account</TabsTrigger>
-          <TabsTrigger value="agency">Agency Account</TabsTrigger>
-        </TabsList>
+      <section className="max-w-4xl">
+        <Tabs defaultValue="individual" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-8">
+            <TabsTrigger value="individual">Individual Account</TabsTrigger>
+            <TabsTrigger value="agency">Agency Account</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="individual">
-          <Card>
-            <CardHeader>
-              <CardTitle>Individual</CardTitle>
-            </CardHeader>
-          </Card>
-        </TabsContent>
-        <TabsContent value="agency">
-          <section className="grid gap-10">
+          <TabsContent value="individual">
+            <ProfileAccountForm />
+          </TabsContent>
+          <TabsContent value="agency">
             <UserUpdateForm
               user={{
                 id: user?.id || "",
@@ -58,9 +55,9 @@ export default async function DashboardAccount() {
                 officeLine: user.officeLine || "",
               }}
             />
-          </section>
-        </TabsContent>
-      </Tabs>
+          </TabsContent>
+        </Tabs>
+      </section>
 
       {/* <div className="flex w-52 flex-col space-y-2 mt-6">
         <p>Delete account:</p>

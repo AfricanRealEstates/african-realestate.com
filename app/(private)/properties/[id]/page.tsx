@@ -5,7 +5,24 @@ import { Property } from "@prisma/client";
 import QueryModal from "@/components/globals/query-modal";
 import { Raleway, IBM_Plex_Mono } from "next/font/google";
 import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/20/solid";
-import { Bath, Bed, ExpandIcon, FolderOpen, MapPin, User } from "lucide-react";
+import {
+  Banknote,
+  Bath,
+  Bed,
+  Bus,
+  Church,
+  ExpandIcon,
+  FolderOpen,
+  Home,
+  LandPlot,
+  MapPin,
+  School,
+  ShoppingBag,
+  ShoppingBasket,
+  ShoppingCart,
+  Siren,
+  User,
+} from "lucide-react";
 import { Metadata } from "next";
 import ImageCarousel from "./_components/image-carousel";
 import Link from "next/link";
@@ -21,6 +38,23 @@ import Image from "next/image";
 import { Button } from "@/components/utils/Button";
 import MessageWidget from "./_components/message-widget";
 import { capitalizeWords } from "@/lib/utils";
+import { FaGolfBall, FaMosque, FaPlaceOfWorship } from "react-icons/fa";
+import { surroundingFeatures } from "@/constants";
+
+const amenityIcons: { [key: string]: JSX.Element } = {
+  mosque: <FaMosque className="size-4 text-neutral-600" />,
+  church: <Church className="size-4 text-neutral-600" />,
+  temple: <FaPlaceOfWorship className="size-4 text-neutral-600" />,
+  market: <ShoppingBag className="size-4 text-neutral-600" />,
+  mall: <Home className="size-4 text-neutral-600" />,
+  golf: <FaGolfBall className="size-4 text-neutral-600" />,
+  shopping: <ShoppingCart className="size-4 text-neutral-600" />,
+  supermarket: <ShoppingBasket className="size-4 text-neutral-600" />,
+  playground: <LandPlot className="size-4 text-neutral-600" />,
+  busstop: <Bus className="size-4 text-neutral-600" />,
+  policestation: <Siren className="size-4 text-neutral-600" />,
+  banks: <Banknote className="size-4 text-neutral-600" />,
+};
 
 // no cache
 export const dynamic = "force-dynamic";
@@ -62,6 +96,8 @@ export default async function PropertyDetails({
         id: id,
       },
     })) as Property) || null;
+
+  console.log(property.surroundingFeatures);
 
   if (!property) {
     return <NotFound />;
@@ -274,17 +310,29 @@ export default async function PropertyDetails({
 
   const renderSidebar = () => {
     return (
-      <div
-        className={`w-full flex flex-col rounded-2xl border-b border-t border-l border-r border-neutral-200  space-y-4 xl:space-y-4 pb-10 p-2 sm:p-4 xl:px-8 xl:py-4 shadow-xl ${raleway.className}`}
-      >
-        <h2 className="text-xl font-semibold">Send a Quote</h2>
-        <div className=" border-b border-neutral-100 " />
-        <div className="text-neutral-600 text-sm">
-          Make a quote today and <br /> let us turn your vision into reality!
+      <>
+        <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200  sm:space-y-4 pb-1 px-0 sm:p-4 xl:p-4 !space-y-4">
+          <h2 className="text-2xl font-semibold mb-2">
+            Surrounding Features/Amenities
+          </h2>
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 text-sm text-neutral-700 mt-4">
+            {property.surroundingFeatures.map((feature) => {
+              return <div key={feature}>{feature}</div>;
+            })}
+          </div>
         </div>
-        <div className=" border-b border-neutral-100 " />
-        <QueryModal propertyId={property.id} />
-      </div>
+      </>
+      // <div
+      //   className={`w-full flex flex-col rounded-2xl border-b border-t border-l border-r border-neutral-200  space-y-4 xl:space-y-4 pb-10 p-2 sm:p-4 xl:px-8 xl:py-4 shadow-xl ${raleway.className}`}
+      // >
+      //   <h2 className="text-xl font-semibold">Send a Quote</h2>
+      //   <div className=" border-b border-neutral-100 " />
+      //   <div className="text-neutral-600 text-sm">
+      //     Make a quote today and <br /> let us turn your vision into reality!
+      //   </div>
+      //   <div className=" border-b border-neutral-100 " />
+      //   <QueryModal propertyId={property.id} />
+      // </div>
     );
   };
 

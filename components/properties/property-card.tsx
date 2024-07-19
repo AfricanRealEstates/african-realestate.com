@@ -155,7 +155,17 @@ export default function PropertyCard({ property }: PropertyCardProps) {
                 </div>
               )}
 
-              {landSize && landSize > 0 && (
+              {landSize && landSize > 0 ? (
+                <div>
+                  <div className="flex gap-1 items-center">
+                    <LandPlot className="size-5" />
+                    <span className="font-extrabold">
+                      {convertedLandSize?.toFixed(3)}
+                    </span>
+                  </div>
+                  <div className="text-xs font-semibold uppercase">Acres</div>
+                </div>
+              ) : (
                 <div>
                   <div className="flex gap-1 items-center">
                     <LandPlot className="size-5" />
