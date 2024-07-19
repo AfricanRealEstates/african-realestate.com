@@ -196,7 +196,7 @@ export default function BasicInfo({
         </Form.Item>
 
         {propertyType === "Land" ? (
-          <>
+          <div className="col-span-full flex gap-x-4">
             <Form.Item
               name="tenure"
               label="Tenure"
@@ -206,7 +206,7 @@ export default function BasicInfo({
                   message: "Tenure is required",
                 },
               ]}
-              className=""
+              className="w-full"
             >
               <Select
                 options={tenureOptions}
@@ -215,38 +215,36 @@ export default function BasicInfo({
               />
             </Form.Item>
             <Form.Item
-              shouldUpdate={(prevValues, currentValues) =>
-                prevValues.tenure !== currentValues.tenure
-              }
+              name="landSize"
+              label="Land Size"
+              rules={[
+                {
+                  required: true,
+                  message: "Land Size is required",
+                },
+              ]}
+              className="w-full"
             >
-              {({ getFieldValue }) => {
-                const tenure = getFieldValue("tenure");
-                return tenure === "leasehold" ||
-                  tenure === "sectionalTitles" ? (
-                  <Form.Item
-                    name="yearsLeft"
-                    label="Years Left (0-99)"
-                    rules={[
-                      {
-                        required: true,
-                        message:
-                          "Years Left is required for Leasehold or Sectional Titles",
-                      },
-                      {
-                        type: "number",
-                        min: 0,
-                        max: 99,
-                        message: "Years Left must be between 0 and 99",
-                      },
-                    ]}
-                    className="w-full"
-                  >
-                    <InputNumber className="w-full" placeholder="eg. 25" />
-                  </Form.Item>
-                ) : null;
-              }}
+              <InputNumber className="w-full" placeholder="Enter land size" />
             </Form.Item>
-          </>
+            <Form.Item
+              name="landUnits"
+              label="Land Unit"
+              rules={[
+                {
+                  required: true,
+                  message: "Land Unit is required",
+                },
+              ]}
+              className="w-full"
+            >
+              <Select
+                options={landUnits}
+                placeholder="Select Land Unit"
+                className="w-full"
+              />
+            </Form.Item>
+          </div>
         ) : (
           <>
             <Form.Item

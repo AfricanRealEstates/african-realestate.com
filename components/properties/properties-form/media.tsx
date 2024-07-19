@@ -1,13 +1,14 @@
 "use client";
 import React, { useState } from "react";
 import { PropertiesFormStepProps } from "./index";
-import { Button, Form, Input, Modal, Upload, Spin } from "antd";
+import { Button, Form, Input, Modal, Upload, Spin, Checkbox } from "antd";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { uploadFilesToFirebase } from "@/lib/utils/upload-media";
 import { addProperty, editProperty } from "@/actions/properties";
 import { toast } from "sonner";
 import { Icons } from "@/components/globals/icons";
+import { surroundingAmenities } from "@/constants";
 
 export default function Media({
   currentStep,
@@ -118,78 +119,85 @@ export default function Media({
       onFinish={onSubmit}
       initialValues={finalValues.amenities}
     >
-      <h2 className="text-lg font-medium my-4 text-blue-600">
-        Cover Photo (1 only)
-      </h2>
-
-      <Upload
-        listType="picture-card"
-        beforeUpload={(file: any) => {
-          if (coverPhotos.length < 1) {
-            setCoverPhotoLoading(true);
-            setCoverPhotos((prev) => [...prev, file]);
-            setCoverPhotoLoading(false);
-          } else {
-            toast.error("You can only upload 1 cover photo");
-          }
-          return false;
-        }}
-      >
-        {coverPhotoLoading ? <Spin /> : "Upload Cover Photo"}
-      </Upload>
-
-      <h2 className="text-lg font-medium my-4 text-blue-600">
-        Other Photos (max. 29 photos)
-      </h2>
-      <section className="flex flex-wrap gap-5 mb-5">
-        {finalValues.media.images.map((image: string) => (
-          <div
-            key={image}
-            className="flex flex-col gap-1 border border-dashed border-gray-400 p-2 rounded justify-center items-center"
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="flex flex-col gap-4">
+          <h2 className="text-lg font-medium my-4 text-blue-600">
+            Cover Photo (1 only)
+          </h2>
+          <Upload
+            listType="picture-card"
+            beforeUpload={(file: any) => {
+              if (coverPhotos.length < 1) {
+                setCoverPhotoLoading(true);
+                setCoverPhotos((prev) => [...prev, file]);
+                setCoverPhotoLoading(false);
+              } else {
+                toast.error("You can only upload 1 cover photo");
+              }
+              return false;
+            }}
+            onPreview={handlePreview}
+            className="w-full"
           >
-            <Image
-              height={70}
-              width={70}
-              src={image}
-              alt=""
-              className="object-cover"
-            />
-            <span
-              className="text-red-500 underline text-sm cursor-pointer"
-              onClick={() => {
-                let tempMedia = finalValues.media;
-                tempMedia.images = tempMedia.images.filter(
-                  (img: string) => img !== image
-                );
-                setFinalValues({
-                  ...finalValues,
-                  media: {
-                    newlyUploadedFiles: tempFiles,
-                    images: tempMedia.images,
-                    coverPhotos: tempMedia.coverPhotos,
-                  },
-                });
-              }}
-            >
-              Delete
-            </span>
-          </div>
-        ))}
-      </section>
+            {coverPhotoLoading ? <Spin /> : "Upload Cover Photo"}
+          </Upload>
+        </div>
 
-      <Upload
-        listType="picture-card"
-        multiple
-        onPreview={handlePreview}
-        beforeUpload={(file: any) => {
-          setOtherPhotosLoading(true);
-          setTempFiles((prev) => [...prev, file]);
-          setOtherPhotosLoading(false);
-          return false;
-        }}
-      >
-        {otherPhotosLoading ? <Spin /> : "Upload Property Photos"}
-      </Upload>
+        <div className="flex flex-col gap-4">
+          <h2 className="text-lg font-medium my-4 text-blue-600">
+            Other Photos (max. 29 photos)
+          </h2>
+          <Upload
+            listType="picture-card"
+            multiple
+            onPreview={handlePreview}
+            beforeUpload={(file: any) => {
+              setOtherPhotosLoading(true);
+              setTempFiles((prev) => [...prev, file]);
+              setOtherPhotosLoading(false);
+              return false;
+            }}
+            className="w-full"
+          >
+            {otherPhotosLoading ? <Spin /> : "Upload Property Photos"}
+          </Upload>
+          <section className="flex flex-wrap gap-5 mb-5">
+            {finalValues.media.images.map((image: string) => (
+              <div
+                key={image}
+                className="flex flex-col gap-1 border border-dashed border-gray-400 p-2 rounded justify-center items-center"
+              >
+                <Image
+                  height={70}
+                  width={70}
+                  src={image}
+                  alt=""
+                  className="object-cover"
+                />
+                <span
+                  className="text-red-500 underline text-sm cursor-pointer"
+                  onClick={() => {
+                    let tempMedia = finalValues.media;
+                    tempMedia.images = tempMedia.images.filter(
+                      (img: string) => img !== image
+                    );
+                    setFinalValues({
+                      ...finalValues,
+                      media: {
+                        newlyUploadedFiles: tempFiles,
+                        images: tempMedia.images,
+                        coverPhotos: tempMedia.coverPhotos,
+                      },
+                    });
+                  }}
+                >
+                  Delete
+                </span>
+              </div>
+            ))}
+          </section>
+        </div>
+      </section>
 
       <Modal
         open={previewVisible}
@@ -200,7 +208,28 @@ export default function Media({
         <img alt="Cover Photo" style={{ width: "100%" }} src={previewImage} />
       </Modal>
 
-      <h2 className="text-lg font-medium my-8 text-blue-600"></h2>
+      <h2 className="text-lg font-medium my-8 text-blue-600">
+        Nearby Amenities within 2KM Radius
+      </h2>
+
+      <section className="grid grid-cols-1 lg:grid-cols-3 gap-x-4 gap-y-2">
+        <Form.Item
+          name="surroundingFeatures"
+          label=""
+          rules={[
+            {
+              required: true,
+              message: "Select Nearby amenities",
+            },
+          ]}
+          className="flex w-full items-center justify-start col-span-full gap-5"
+        >
+          <Checkbox.Group
+            options={surroundingAmenities}
+            className="w-full gap-5"
+          />
+        </Form.Item>
+      </section>
 
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-x-4 gap-y-2">
         <Form.Item

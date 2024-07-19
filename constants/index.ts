@@ -395,6 +395,23 @@ export const vacationalAppliances = [
   { value: "gym", label: "Gym" },
 ]
 
+export const surroundingAmenities = [
+  { value: "mosque", label: "Mosque" },
+  { value: "church", label: "Church" },
+  { value: "temple", label: "Temple" },
+  { value: "market", label: "Local Market" },
+  { value: "mall", label: "Mall" },
+  { value: "school", label: "School" },
+  { value: "hospital", label: "Hospital" },
+  { value: "golf", label: "Golf Course" },
+  { value: "shopping", label: "Shopping Centre" },
+  { value: "supermarket", label: "Supermarket" },
+  { value: "playground", label: "Play Ground/Stadium" },
+  { value: "busstop", label: "Bus Stop" },
+  { value: "policestation", label: "Police Station" },
+  { value: "banks", label: "Banks" },
+]
+
 export const landAppliances = [
   { value: "power", label: "Power Connected" },
   { value: "water", label: "Water Connected" },

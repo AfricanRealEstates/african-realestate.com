@@ -2,9 +2,17 @@ import { auth } from "@/auth";
 import DeleteAccount from "@/components/crm/delete-account";
 import UserUpdateForm from "@/components/crm/user-update-form";
 import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getSEOTags } from "@/lib/seo";
 import { HeartCrackIcon } from "lucide-react";
 import { redirect } from "next/navigation";
 import React from "react";
+
+export const metadata = getSEOTags({
+  title: "Account - Dashboard | African Real Estate",
+  canonicalUrlRelative: "/dashboard/account",
+});
 
 export default async function DashboardAccount() {
   const session = await auth();
@@ -23,20 +31,37 @@ export default async function DashboardAccount() {
         </p>
       </div>
 
-      <section className="grid gap-10">
-        <UserUpdateForm
-          user={{
-            id: user?.id || "",
-            agentName: user?.agentName || "",
-            agentEmail: user.agentEmail || "",
-            address: user.address || "",
-            bio: user.bio || "",
-            postalCode: user.postalCode || "",
-            whatsappNumber: user.whatsappNumber || "",
-            officeLine: user.officeLine || "",
-          }}
-        />
-      </section>
+      <Tabs defaultValue="individual" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="individual">Individual Account</TabsTrigger>
+          <TabsTrigger value="agency">Agency Account</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="individual">
+          <Card>
+            <CardHeader>
+              <CardTitle>Individual</CardTitle>
+            </CardHeader>
+          </Card>
+        </TabsContent>
+        <TabsContent value="agency">
+          <section className="grid gap-10">
+            <UserUpdateForm
+              user={{
+                id: user?.id || "",
+                agentName: user?.agentName || "",
+                agentEmail: user.agentEmail || "",
+                address: user.address || "",
+                bio: user.bio || "",
+                postalCode: user.postalCode || "",
+                whatsappNumber: user.whatsappNumber || "",
+                officeLine: user.officeLine || "",
+              }}
+            />
+          </section>
+        </TabsContent>
+      </Tabs>
+
       {/* <div className="flex w-52 flex-col space-y-2 mt-6">
         <p>Delete account:</p>
         <DeleteAccount

@@ -38,6 +38,8 @@ export default function PropertyCard({
     coverPhotos,
     locality,
     county,
+    landSize,
+    landUnits,
     propertyDetails,
     propertyType,
   } = data;
@@ -117,11 +119,11 @@ export default function PropertyCard({
         {/* ---- */}
         {propertyType.toLowerCase() === "land" ? (
           <div className="flex items-center space-x-2">
-            {/* <span className="hidden sm:inline-block">
+            <span className="hidden sm:inline-block">
               <ExpandIcon className="size-5" />
-            </span> */}
+            </span>
             <span className=" text-neutral-500 font-semibold">
-              {propertyDetails}
+              {landSize} {landUnits}
             </span>
           </div>
         ) : (
