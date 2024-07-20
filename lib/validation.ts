@@ -3,6 +3,51 @@ import { z } from "zod"
 
 const nonEmptyString = z.string().trim().min(3, { message: "Value must be at least 3 characters" })
 
+const ImageSchema = z
+    .custom<File | undefined>()
+    .refine(
+        (file) => !file || (file instanceof File && file.type.startsWith("image/")),
+        "Only Images Allowed"
+    )
+    .refine((file) => {
+        return !file || file.size < 1024 * 1024 * 5;
+    }, "File must be less than 5MB");
+
+export const profileFormSchema = z.object({
+    name: z
+        .string()
+        .min(2, {
+            message: "Name must be at least 2 characters.",
+        })
+        .max(30, {
+            message: "Name must not be longer than 30 characters.",
+        }),
+    email: z
+        .string({
+            required_error: "Please select an email to display.",
+        })
+        .email(),
+    bio: z.string().max(160).min(4),
+    profilePhoto: ImageSchema.optional(),
+    xLink: z.string().url({ message: "Please enter a valid URL." }).optional(),
+    tiktokLink: z
+        .string()
+        .url({ message: "Please enter a valid URL." })
+        .optional(),
+    facebookLink: z
+        .string()
+        .url({ message: "Please enter a valid URL." })
+        .optional(),
+    linkedinLink: z
+        .string()
+        .url({ message: "Please enter a valid URL." })
+        .optional(),
+    instagramLink: z
+        .string()
+        .url({ message: "Please enter a valid URL." })
+        .optional(),
+});
+
 // Phone number validation
 const phoneRegex = new RegExp(
     /^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/

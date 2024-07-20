@@ -395,10 +395,10 @@ export default async function PropertyDetails({
         <section className="flex flex-col lg:flex-row mt-8 w-full">
           {/* relative z-10 mt-16 flex flex-col lg:flex-row */}
           <ImageCarousel property={property} />
-          <div className="flex-grow mt-14 lg:mt-0">
-            <article className="flex flex-col-reverse">
+          <div className="flex-grow lg:mt-0 h-full">
+            <article className="flex flex-col-reverse h-full">
               <div className="flex flex-col gap-4">
-                <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200  space-y-3 sm:space-y-4 px-0 sm:p-4 xl:p-4">
+                <div className="space-y-8 w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 sm:space-y-6 px-0 sm:p-4 xl:p-4">
                   <p className="rounded-full font-semibold w-fit bg-neutral-50 px-2 py-1 text-indigo-500">
                     For {property.status}
                   </p>
@@ -439,11 +439,11 @@ export default async function PropertyDetails({
                   <div className="w-full border-b border-neutral-200"></div>
 
                   <section className="flex flex-col lg:flex-row gap-3">
-                    <div className="space-y-3 flex-2">
+                    <div className="space-y-3 flex-1">
                       <div className="flex items-center space-x-4">
                         <div>
                           {agent?.agentName ? (
-                            <p className="block text-xl text-indigo-500 font-medium">
+                            <p className="block text-lg text-indigo-500 font-medium">
                               {agent.agentName}
                             </p>
                           ) : (
@@ -453,7 +453,7 @@ export default async function PropertyDetails({
                       </div>
 
                       <div className="block text-neutral-500 space-y-2.5">
-                        <h3 className=" font-medium text-gray-900">
+                        <h3 className="font-medium text-gray-900">
                           Contact Agent
                         </h3>
                         <ul
@@ -511,38 +511,25 @@ export default async function PropertyDetails({
                               className="flex size-6 items-center justify-center text-[#777f8a] hover:text-gray-500"
                             >
                               <span className="sr-only">Contact on Email</span>
-                              <EnvelopeIcon
-                                className="h-5 w-5 text-gray-400"
-                                // aria-hidden="true"
-                              />
+                              <EnvelopeIcon className="h-5 w-5 text-gray-400" />
                             </Link>
                           </li>
                         </ul>
                       </div>
                     </div>
 
-                    <div className="bg-neutral-50 w-full flex-1">
-                      {/* <Avatar
-                        hasChecked
-                        hasCheckedClass="w-4 h-4 -top-0.5 right-0.5"
-                        sizeClass="size-8"
-                        radius="rounded-full"
-                        imgUrl={agent.image}
-                      /> */}
+                    <div className="bg-neutral-50 w-full flex-1 flex justify-center items-center">
                       {agent.image ? (
-                        <Image
+                        <img
                           src={agent.image}
-                          height={50}
-                          width={50}
-                          alt=""
+                          alt="Agent"
+                          className="object-cover h-24 w-24 rounded-full"
                         />
                       ) : (
-                        <Image
-                          src={`/assets/placeholder.jpg`}
-                          height={50}
-                          width={50}
-                          alt=""
-                          className="object-cover h-auto w-full rounded"
+                        <img
+                          src="/assets/placeholder.jpg"
+                          alt="Placeholder"
+                          className="object-cover h-24 w-24 rounded-full"
                         />
                       )}
                     </div>
@@ -550,8 +537,12 @@ export default async function PropertyDetails({
 
                   {/* == */}
                   <div className="w-full border-b border-neutral-200"></div>
-                  <div className="flex items-center">
-                    <Button href={`/agencies/${agent.id}`} color="blue">
+                  <div className="flex items-center mb-12">
+                    <Button
+                      href={`/agencies/${agent.id}`}
+                      color="blue"
+                      className=""
+                    >
                       View all agent&apos;s properties
                     </Button>
                     {/* <Link
