@@ -518,7 +518,7 @@ export default async function PropertyDetails({
                       </div>
                     </div>
 
-                    <div className="bg-neutral-50 w-full flex-1 flex justify-center items-center">
+                    <div className="bg-white border-l border-neutral-100 w-full flex-1 flex justify-center items-center">
                       {agent.image ? (
                         <img
                           src={agent.image}

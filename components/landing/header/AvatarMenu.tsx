@@ -10,7 +10,7 @@ const avatar = [
   },
   {
     name: "My properties",
-    href: "/dashboard",
+    href: "/agent/properties",
   },
   {
     name: "Profile Account",
