@@ -26,7 +26,8 @@ export default function ImageCarousel({ property }: Props) {
 
   const uniqueCoverPhotos = removeDuplicates(property.coverPhotos);
   const uniqueImages = removeDuplicates(property.images);
-  const allImages = [...uniqueCoverPhotos, ...uniqueImages];
+  // const allImages = [...uniqueCoverPhotos, ...uniqueImages];
+  const allImages = [...uniqueImages];
 
   useKeypress("ArrowRight", () => {
     if (index + 1 < allImages.length) {
