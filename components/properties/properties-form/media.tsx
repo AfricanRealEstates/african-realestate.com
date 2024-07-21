@@ -181,7 +181,6 @@ export default function Media({
                   media: {
                     newlyUploadedFiles: tempFiles,
                     images: tempMedia.images,
-                    coverPhotos: tempMedia.coverPhotos,
                   },
                 });
               }}
