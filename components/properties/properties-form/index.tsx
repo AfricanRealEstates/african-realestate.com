@@ -31,9 +31,13 @@ export default function PropertiesForm({
     basicInfo: initialValues,
     locationInfo: initialValues,
     media: {
+      ...initialValues,
       newlyUploadedFiles: [],
       images: initialValues.images || [],
+      coverPhotos: initialValues.coverPhotos || [],
     },
+    surroundingFeatures: initialValues.surroundingFeatures || [],
+    videoLink: initialValues.videoLink || "",
     amenities: initialValues,
     agentInfo: initialValues,
   });
@@ -47,29 +51,16 @@ export default function PropertiesForm({
     setLoading,
     isEdit,
   };
+
   const steps = [
     {
       title: "Property Information",
       content: <BasicInfo {...commonSteps} />,
     },
-    // {
-    //   title: "Location Info",
-    //   content: <LocationInfo {...commonSteps} />,
-    // },
-
     {
       title: "Media",
       content: <Media {...commonSteps} />,
     },
-    // {
-    //   title: "Amenities",
-    //   content: <Amenities {...commonSteps} />,
-    // },
-
-    // {
-    //   title: "Agent Info",
-    //   content: <AgentInfo {...commonSteps} />,
-    // },
   ];
 
   useEffect(() => {

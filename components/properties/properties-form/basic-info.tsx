@@ -25,7 +25,7 @@ import {
 export default function BasicInfo({
   currentStep,
   setCurrentStep,
-  finalValues,
+  finalValues = {},
   setFinalValues,
 }: PropertiesFormStepProps) {
   const [propertyDetailsOptions, setPropertyDetailsOptions] = useState<
@@ -33,10 +33,16 @@ export default function BasicInfo({
   >([]);
   const [propertyDetailsDisabled, setPropertyDetailsDisabled] =
     useState<boolean>(true);
-  const [status, setStatus] = useState<string>("sale");
+  const [status, setStatus] = useState<string>(
+    finalValues.basicInfo?.status || "sale"
+  );
   const [appliancesOptions, setAppliancesOptions] = useState(appliances);
-  const [propertyType, setPropertyType] = useState("");
-  const [tenure, setTenure] = useState("");
+  const [propertyType, setPropertyType] = useState<string>(
+    finalValues.basicInfo?.propertyType || ""
+  );
+  const [tenure, setTenure] = useState<string>(
+    finalValues.basicInfo?.tenure || ""
+  );
   const [tenureOptions, setTenureOptions] = useState([
     { label: "Freehold", value: "freehold" },
     { label: "Leasehold", value: "leasehold" },
@@ -111,25 +117,27 @@ export default function BasicInfo({
     <Form
       onFinish={onSubmit}
       layout="vertical"
-      initialValues={finalValues.basicInfo}
+      initialValues={finalValues.basicInfo || {}}
     >
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-x-4 gap-y-2">
-        <Form.Item
-          label="Status"
-          name="status"
-          rules={[
-            {
-              required: true,
-              message: "Status is required",
-            },
-          ]}
-          className="col-span-full"
-        >
-          <Radio.Group onChange={onStatusChange}>
-            <Radio value="sale"> Sale </Radio>
-            <Radio value="let"> Let </Radio>
-          </Radio.Group>
-        </Form.Item>
+        {!finalValues.basicInfo && (
+          <Form.Item
+            label="Status"
+            name="status"
+            rules={[
+              {
+                required: true,
+                message: "Status is required",
+              },
+            ]}
+            className="col-span-full"
+          >
+            <Radio.Group onChange={onStatusChange} defaultValue={status}>
+              <Radio value="sale"> Sale </Radio>
+              <Radio value="let"> Let </Radio>
+            </Radio.Group>
+          </Form.Item>
+        )}
 
         <Form.Item
           name="title"
@@ -147,6 +155,7 @@ export default function BasicInfo({
             className="border border-gray-300 rounded-md"
           />
         </Form.Item>
+
         <Form.Item
           name="propertyType"
           label="Property Type"
@@ -184,7 +193,7 @@ export default function BasicInfo({
           />
         </Form.Item>
 
-        {propertyType === "Land" ? (
+        {propertyType === "Land" && (
           <div className="flex w-full col-span-full gap-x-4">
             <Form.Item
               name="tenure"
@@ -220,123 +229,129 @@ export default function BasicInfo({
               </Form.Item>
             )}
           </div>
-        ) : (
-          <>
-            <Form.Item
-              label={
-                propertyType === "Commercial" || propertyType === "Industrial"
-                  ? "Parkings"
-                  : "Bedrooms"
-              }
-              name="bedrooms"
-              rules={[
-                {
-                  required: true,
-                  message: `${
-                    propertyType === "Commercial" ||
-                    propertyType === "Industrial"
-                      ? "Parkings"
-                      : "Bedrooms"
-                  } is required`,
-                },
-              ]}
-            >
-              <InputNumber className="w-full" placeholder="eg. 3" />
-            </Form.Item>
+        )}
 
-            <Form.Item
-              name="bathrooms"
-              label="Bathrooms"
-              rules={[
-                {
-                  required: true,
-                  message: "Bathrooms is required",
-                },
-              ]}
-              className=""
-            >
-              <InputNumber className="w-full" placeholder="eg. 3" />
-            </Form.Item>
+        {propertyType !== "Land" && (
+          <Form.Item
+            label={
+              propertyType === "Commercial" || propertyType === "Industrial"
+                ? "Parkings"
+                : "Bedrooms"
+            }
+            name="bedrooms"
+            rules={[
+              {
+                required: true,
+                message: `${
+                  propertyType === "Commercial" || propertyType === "Industrial"
+                    ? "Parkings"
+                    : "Bedrooms"
+                } is required`,
+              },
+            ]}
+          >
+            <InputNumber className="w-full" placeholder="eg. 3" />
+          </Form.Item>
+        )}
 
-            <Form.Item
-              name="plinthArea"
-              label="Plinth Area (sqm)"
-              rules={[
-                {
-                  required: true,
-                  message: "Plinth Area is required",
-                },
-              ]}
-              className=""
-            >
-              <InputNumber className="w-full" placeholder="eg.100" />
-            </Form.Item>
-          </>
+        {propertyType !== "Land" && (
+          <Form.Item
+            name="bathrooms"
+            label="Bathrooms"
+            rules={[
+              {
+                required: true,
+                message: "Bathrooms is required",
+              },
+            ]}
+            className=""
+          >
+            <InputNumber className="w-full" placeholder="eg. 3" />
+          </Form.Item>
+        )}
+
+        {propertyType !== "Land" && (
+          <Form.Item
+            name="plinthArea"
+            label="Plinth Area (sqm)"
+            rules={[
+              {
+                required: true,
+                message: "Plinth Area is required",
+              },
+            ]}
+            className=""
+          >
+            <InputNumber className="w-full" placeholder="eg.100" />
+          </Form.Item>
         )}
       </section>
-      <section>
-        <Form.Item
-          shouldUpdate={(prevValues, currentValues) =>
-            prevValues.propertyType !== currentValues.propertyType
-          }
-        >
-          {({ getFieldValue }) => {
-            const propertyType = getFieldValue("propertyType");
-            return (
-              <section className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 gap-y-2">
-                <Form.Item
-                  name="landSize"
-                  label={`${
-                    propertyType === "Commercial" ||
-                    propertyType === "Industrial" ||
-                    propertyType === "Vacational / Social"
-                      ? "Land Size (optional)"
-                      : "Land Size"
-                  }`}
-                  rules={[
-                    {
-                      required:
-                        propertyType !== "Commercial" &&
-                        propertyType !== "Industrial" &&
-                        propertyType !== "Vacational / Social",
-                      message: "Land Size is required",
-                    },
-                  ]}
-                  className="col-span-1"
-                >
-                  <InputNumber className="w-full" placeholder="eg.2" />
-                </Form.Item>
-                <Form.Item
-                  name="landUnits"
-                  label={`${
-                    propertyType !== "Commercial" &&
-                    propertyType !== "Industrial" &&
-                    propertyType !== "Vacational / Social"
-                      ? "Land Units"
-                      : "Land Units (optional)"
-                  }`}
-                  rules={[
-                    {
-                      required:
-                        propertyType !== "Commercial" &&
-                        propertyType !== "Industrial" &&
-                        propertyType !== "Vacational / Social",
-                      message: "Land Units is required",
-                    },
-                  ]}
-                  className=""
-                >
-                  <Select
-                    options={landUnits}
-                    className="w-full"
-                    placeholder="Select land units"
-                  />
-                </Form.Item>
-              </section>
-            );
-          }}
-        </Form.Item>
-      </section>
+
+      {propertyType && (
+        <section>
+          <Form.Item
+            shouldUpdate={(prevValues, currentValues) =>
+              prevValues.propertyType !== currentValues.propertyType
+            }
+          >
+            {({ getFieldValue }) => {
+              const propertyType = getFieldValue("propertyType");
+              return (
+                <section className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 gap-y-2">
+                  <Form.Item
+                    name="landSize"
+                    label={`${
+                      propertyType === "Commercial" ||
+                      propertyType === "Industrial" ||
+                      propertyType === "Vacational / Social"
+                        ? "Land Size (optional)"
+                        : "Land Size"
+                    }`}
+                    rules={[
+                      {
+                        required:
+                          propertyType !== "Commercial" &&
+                          propertyType !== "Industrial" &&
+                          propertyType !== "Vacational / Social",
+                        message: "Land Size is required",
+                      },
+                    ]}
+                    className="col-span-1"
+                  >
+                    <InputNumber className="w-full" placeholder="eg.2" />
+                  </Form.Item>
+                  <Form.Item
+                    name="landUnits"
+                    label={`${
+                      propertyType !== "Commercial" &&
+                      propertyType !== "Industrial" &&
+                      propertyType !== "Vacational / Social"
+                        ? "Land Units"
+                        : "Land Units (optional)"
+                    }`}
+                    rules={[
+                      {
+                        required:
+                          propertyType !== "Commercial" &&
+                          propertyType !== "Industrial" &&
+                          propertyType !== "Vacational / Social",
+                        message: "Land Units is required",
+                      },
+                    ]}
+                    className=""
+                  >
+                    <Select
+                      options={landUnits}
+                      className="w-full"
+                      placeholder="Select land units"
+                    />
+                  </Form.Item>
+                </section>
+              );
+            }}
+          </Form.Item>
+        </section>
+      )}
 
       <h2 className="text-lg font-medium my-4 text-blue-600">
         Location Details
@@ -393,6 +408,7 @@ export default function BasicInfo({
             className="border border-gray-300 rounded-md"
           />
         </Form.Item>
+
         <Form.Item
           name="locality"
           label="Locality name"
@@ -430,6 +446,7 @@ export default function BasicInfo({
           />
         </Form.Item>
       </section>
+
       <h2 className="text-lg font-medium my-4 text-blue-600">
         Amenities / Salient Features
       </h2>
@@ -451,6 +468,7 @@ export default function BasicInfo({
           />
         </Form.Item>
       </section>
+
       <h2 className="text-lg font-medium my-4 text-blue-600"></h2>
       <section className="grid grid-cols-1 lg:grid-cols-4 gap-x-4 gap-y-2">
         <Form.Item
@@ -466,6 +484,7 @@ export default function BasicInfo({
         >
           <InputNumber className="w-full" type="number" placeholder="Price" />
         </Form.Item>
+
         <Form.Item
           name="leastPrice"
           label={getLabel(propertyType, "leastPrice")}
@@ -493,6 +512,7 @@ export default function BasicInfo({
             placeholder="Least price"
           />
         </Form.Item>
+
         <Form.Item
           name="serviceCharge"
           label="Service Charge (if applicable)"
@@ -504,6 +524,7 @@ export default function BasicInfo({
             placeholder="Service charge"
           />
         </Form.Item>
+
         <Form.Item
           name="currency"
           label="Currency"
@@ -522,6 +543,7 @@ export default function BasicInfo({
           />
         </Form.Item>
       </section>
+
       <section className="border-b border-neutral-200 w-full my-8"></section>
       <div className="flex items-center justify-end gap-5 mt-4">
         <Button

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { PropertiesFormStepProps } from "./index";
 import { Button, Form, Input, Modal, Upload, Spin, Checkbox } from "antd";
 import Image from "next/image";
@@ -8,7 +8,10 @@ import { uploadFilesToFirebase } from "@/lib/utils/upload-media";
 import { addProperty, editProperty } from "@/actions/properties";
 import { toast } from "sonner";
 import { Icons } from "@/components/globals/icons";
-import { surroundingFeatures } from "@/constants";
+import {
+  surroundingFeatures as features,
+  surroundingFeatures,
+} from "@/constants";
 
 export default function Media({
   currentStep,
@@ -20,25 +23,32 @@ export default function Media({
   isEdit = false,
 }: PropertiesFormStepProps) {
   const [tempFiles, setTempFiles] = useState<any[]>([]);
-  const [coverPhotos, setCoverPhotos] = useState<any[]>(
-    finalValues.media.coverPhotos || []
-  );
-
+  const [coverPhotos, setCoverPhotos] = useState<any[]>([]);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
-
   const [coverPhotoLoading, setCoverPhotoLoading] = useState(false);
   const [otherPhotosLoading, setOtherPhotosLoading] = useState(false);
 
   const { id }: any = useParams();
   const router = useRouter();
 
+  useEffect(() => {
+    if (isEdit && id) {
+      // Fetch the existing property data and set it to finalValues here if not already done
+      // This should ensure finalValues is populated correctly for the edit form
+    }
+
+    if (finalValues.media) {
+      setCoverPhotos(finalValues.media.coverPhotos || []);
+      setTempFiles(finalValues.media.images || []);
+    }
+  }, [isEdit, id, finalValues]);
+
   const onSubmit = async (values: any) => {
     try {
       setLoading(true);
 
-      // Combine final values with amenities and media
       const tempFinalValues = {
         ...finalValues,
         amenities: values,
@@ -47,32 +57,29 @@ export default function Media({
           coverPhotos: coverPhotos,
           images: finalValues.media.images,
         },
-        surroundingFeatures: values.surroundingFeatures || [], // Include surroundingFeatures
-        videoLink: values.videoLink || "", // Include videoLink
+        surroundingFeatures: values.surroundingFeatures || [],
+        videoLink: values.videoLink || "",
       };
 
-      // Handle images upload
       const tempMedia = tempFinalValues.media;
       const newImagesURLs = await uploadFilesToFirebase(
         tempMedia.newlyUploadFiles
       );
       tempMedia.images = [...tempMedia.images, ...newImagesURLs];
 
-      // Handle cover photos upload
       const newCoverPhotosURLs = await uploadFilesToFirebase(
         tempMedia.coverPhotos
       );
-      tempMedia.coverPhotos = newCoverPhotosURLs.slice(0, 3); // Ensure only 3 cover photos
+      tempMedia.coverPhotos = newCoverPhotosURLs.slice(0, 3);
 
       tempFinalValues.media = tempMedia;
 
-      // Prepare final saved values
       const savedValues = {
         ...tempFinalValues.basicInfo,
         images: tempFinalValues.media.images,
         coverPhotos: tempFinalValues.media.coverPhotos,
-        surroundingFeatures: tempFinalValues.surroundingFeatures, // Add surroundingFeatures
-        videoLink: tempFinalValues.videoLink, // Add videoLink
+        surroundingFeatures: tempFinalValues.surroundingFeatures,
+        videoLink: tempFinalValues.videoLink,
       };
 
       let res = null;
@@ -83,12 +90,9 @@ export default function Media({
       }
       if (res.error) throw new Error(res.error);
 
-      // Toast messages
-      if (isEdit) {
-        toast.success("Edit saved successfully");
-      } else {
-        toast.success("Property added successfully");
-      }
+      toast.success(
+        isEdit ? "Edit saved successfully" : "Property added successfully"
+      );
       router.push(`/agent/properties`);
     } catch (error: any) {
       toast.error("Failed to create property");
@@ -124,17 +128,17 @@ export default function Media({
       layout="vertical"
       onFinish={onSubmit}
       initialValues={{
-        ...finalValues.amenities,
-        surroundingFeatures: finalValues.surroundingFeatures || [],
-        videoLink: finalValues.videoLink || "",
+        surroundingFeatures: finalValues.surroundingFeatures,
+        videoLink: finalValues.videoLink,
+        ...finalValues,
       }}
     >
       <h2 className="text-lg font-medium my-4 text-blue-600">
         Cover Photo (1 only)
       </h2>
-
       <Upload
         listType="picture-card"
+        fileList={coverPhotos}
         beforeUpload={(file: any) => {
           if (coverPhotos.length < 1) {
             setCoverPhotoLoading(true);
@@ -214,7 +218,6 @@ export default function Media({
       <h2 className="text-lg font-medium my-8 text-blue-600">
         Surrounding Features/Amenities
       </h2>
-
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-x-4 gap-y-2">
         <Form.Item
           name="surroundingFeatures"
@@ -222,7 +225,7 @@ export default function Media({
           rules={[
             {
               required: true,
-              message: "Appliances is required",
+              message: "Surrounding Features are required",
             },
           ]}
           className="flex w-full items-center justify-start col-span-full gap-5"
