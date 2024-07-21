@@ -120,24 +120,22 @@ export default function BasicInfo({
       initialValues={finalValues.basicInfo || {}}
     >
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-x-4 gap-y-2">
-        {!finalValues.basicInfo && (
-          <Form.Item
-            label="Status"
-            name="status"
-            rules={[
-              {
-                required: true,
-                message: "Status is required",
-              },
-            ]}
-            className="col-span-full"
-          >
-            <Radio.Group onChange={onStatusChange} defaultValue={status}>
-              <Radio value="sale"> Sale </Radio>
-              <Radio value="let"> Let </Radio>
-            </Radio.Group>
-          </Form.Item>
-        )}
+        <Form.Item
+          label="Status"
+          name="status"
+          rules={[
+            {
+              required: true,
+              message: "Status is required",
+            },
+          ]}
+          className="col-span-full"
+        >
+          <Radio.Group onChange={onStatusChange}>
+            <Radio value="sale"> Sale </Radio>
+            <Radio value="let"> Let </Radio>
+          </Radio.Group>
+        </Form.Item>
 
         <Form.Item
           name="title"
