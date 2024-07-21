@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useEffect } from "react";
 import { PropertiesFormStepProps } from "./index";
 import {
@@ -38,12 +36,12 @@ export default function BasicInfo({
   const [status, setStatus] = useState<string>("sale");
   const [appliancesOptions, setAppliancesOptions] = useState(appliances);
   const [propertyType, setPropertyType] = useState("");
+  const [tenure, setTenure] = useState("");
   const [tenureOptions, setTenureOptions] = useState([
     { label: "Freehold", value: "freehold" },
     { label: "Leasehold", value: "leasehold" },
     { label: "Sectional Titles", value: "sectionalTitles" },
   ]);
-  const [tenure, setTenure] = useState<string>("");
 
   useEffect(() => {
     const selectedPropertyType = properyTypes.find(
@@ -54,9 +52,11 @@ export default function BasicInfo({
       ? selectedPropertyType.subOptions
       : [];
     setPropertyDetailsOptions(subOptions);
-    setPropertyDetailsDisabled(subOptions.length === 0);
 
-    // Change appliances options if property type is Commercial or Industrial
+    // Enable/Disable propertyDetails based on propertyType
+    setPropertyDetailsDisabled(propertyType === "" || subOptions.length === 0);
+
+    // Change appliances options based on property type
     if (propertyType === "Commercial") {
       setAppliancesOptions(commercialAppliances);
     } else if (propertyType === "Industrial") {
@@ -72,25 +72,14 @@ export default function BasicInfo({
 
   const handlePropertyTypeChange = (value: string) => {
     setPropertyType(value);
-
-    const selectedPropertyType = properyTypes.find(
-      (type) => type.value === value
-    );
-    const subOptions = selectedPropertyType
-      ? selectedPropertyType.subOptions
-      : [];
-
-    setPropertyDetailsOptions(subOptions);
-
-    setPropertyDetailsDisabled(!value || subOptions.length === 0);
-  };
-
-  const handleTenureChange = (value: string) => {
-    setTenure(value);
   };
 
   const onStatusChange = (e: any) => {
     setStatus(e.target.value);
+  };
+
+  const handleTenureChange = (value: string) => {
+    setTenure(value);
   };
 
   const onSubmit = (values: any) => {
@@ -196,7 +185,7 @@ export default function BasicInfo({
         </Form.Item>
 
         {propertyType === "Land" ? (
-          <div className="col-span-full flex gap-x-4">
+          <div className="flex w-full col-span-full gap-x-4">
             <Form.Item
               name="tenure"
               label="Tenure"
@@ -206,44 +195,30 @@ export default function BasicInfo({
                   message: "Tenure is required",
                 },
               ]}
-              className="w-full"
+              className="flex-1"
             >
               <Select
                 options={tenureOptions}
                 placeholder="Select Tenure"
                 onChange={handleTenureChange}
-              />
-            </Form.Item>
-            <Form.Item
-              name="landSize"
-              label="Land Size"
-              rules={[
-                {
-                  required: true,
-                  message: "Land Size is required",
-                },
-              ]}
-              className="w-full"
-            >
-              <InputNumber className="w-full" placeholder="Enter land size" />
-            </Form.Item>
-            <Form.Item
-              name="landUnits"
-              label="Land Unit"
-              rules={[
-                {
-                  required: true,
-                  message: "Land Unit is required",
-                },
-              ]}
-              className="w-full"
-            >
-              <Select
-                options={landUnits}
-                placeholder="Select Land Unit"
                 className="w-full"
               />
             </Form.Item>
+            {(tenure === "leasehold" || tenure === "sectionalTitles") && (
+              <Form.Item
+                name="yearsLeft"
+                label="Years Left"
+                rules={[
+                  {
+                    required: true,
+                    message: "Years left is required",
+                  },
+                ]}
+                className="flex-1 w-full"
+              >
+                <InputNumber className="w-full" placeholder="Years left" />
+              </Form.Item>
+            )}
           </div>
         ) : (
           <>
@@ -299,6 +274,70 @@ export default function BasicInfo({
           </>
         )}
       </section>
+      <section>
+        <Form.Item
+          shouldUpdate={(prevValues, currentValues) =>
+            prevValues.propertyType !== currentValues.propertyType
+          }
+        >
+          {({ getFieldValue }) => {
+            const propertyType = getFieldValue("propertyType");
+            return (
+              <section className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 gap-y-2">
+                <Form.Item
+                  name="landSize"
+                  label={`${
+                    propertyType === "Commercial" ||
+                    propertyType === "Industrial" ||
+                    propertyType === "Vacational / Social"
+                      ? "Land Size (optional)"
+                      : "Land Size"
+                  }`}
+                  rules={[
+                    {
+                      required:
+                        propertyType !== "Commercial" &&
+                        propertyType !== "Industrial" &&
+                        propertyType !== "Vacational / Social",
+                      message: "Land Size is required",
+                    },
+                  ]}
+                  className="col-span-1"
+                >
+                  <InputNumber className="w-full" placeholder="eg.2" />
+                </Form.Item>
+                <Form.Item
+                  name="landUnits"
+                  label={`${
+                    propertyType !== "Commercial" &&
+                    propertyType !== "Industrial" &&
+                    propertyType !== "Vacational / Social"
+                      ? "Land Units"
+                      : "Land Units (optional)"
+                  }`}
+                  rules={[
+                    {
+                      required:
+                        propertyType !== "Commercial" &&
+                        propertyType !== "Industrial" &&
+                        propertyType !== "Vacational / Social",
+                      message: "Land Units is required",
+                    },
+                  ]}
+                  className=""
+                >
+                  <Select
+                    options={landUnits}
+                    className="w-full"
+                    placeholder="Select land units"
+                  />
+                </Form.Item>
+              </section>
+            );
+          }}
+        </Form.Item>
+      </section>
+
       <h2 className="text-lg font-medium my-4 text-blue-600">
         Location Details
       </h2>

@@ -6,6 +6,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { AnimatePresence, motion, MotionConfig } from "framer-motion";
 import useKeypress from "react-use-keypress";
 import { Carousel } from "antd";
+import Image from "next/image";
 // import ImageModal from "./ImageModal"; // Import the ImageModal component
 
 interface Props {
@@ -136,16 +137,16 @@ export default function ImageCarousel({ property }: Props) {
 
             <section
               ref={thumbnailRef}
-              className="w-full absolute bottom-0 -left-0 p-4 rounded-md shadow-md overflow-x-scroll text-xs scrollbar-hide"
+              className="w-full absolute bottom-0 left-0 p-2 px-4 rounded-md shadow-md overflow-x-scroll text-xs scrollbar-hide"
             >
-              <div className="flex gap-8 w-max">
+              <div className="flex gap-4 w-max">
                 {allImages.map((image, i) => (
                   <img
                     key={i}
                     src={image}
                     alt="Thumbnail"
-                    width={64}
-                    height={64}
+                    // width={64}
+                    // height={64}
                     className={`w-16 h-16 rounded-full ring-2 ring-gray-100 cursor-pointer ${
                       i === index ? "border-4 border-blue-500" : ""
                     }`}
