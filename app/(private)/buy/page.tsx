@@ -59,6 +59,12 @@ export default async function Buy({ searchParams }: { searchParams: string }) {
             {letProperties.map((property) => {
               return <PropertyCard key={property.id} property={property} />;
             })}
+
+            {letProperties.length === 0 && (
+              <p className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+                No properties to buy so far!.
+              </p>
+            )}
           </section>
         )}
       </Suspense>

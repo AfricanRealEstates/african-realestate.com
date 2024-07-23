@@ -63,6 +63,12 @@ export default async function Properties({
             {letProperties.map((property) => {
               return <PropertyCard key={property.id} property={property} />;
             })}
+
+            {letProperties.length === 0 && (
+              <p className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+                No let properties so far!.
+              </p>
+            )}
           </section>
         )}
       </Suspense>

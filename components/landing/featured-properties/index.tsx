@@ -104,7 +104,7 @@ export default async function FeaturedProperties() {
                 There are no featured listings at the moment
               </h3>
 
-              <Button
+              {/* <Button
                 href="/properties"
                 type="submit"
                 color="blue"
@@ -112,7 +112,7 @@ export default async function FeaturedProperties() {
               >
                 <span className="hidden lg:inline">View Listings</span>
                 <span className="lg:hidden">View More Property Listings</span>
-              </Button>
+              </Button> */}
             </div>
           )}
         </section>
