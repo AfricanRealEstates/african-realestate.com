@@ -141,7 +141,7 @@ export default function ImageCarousel({ property }: Props) {
             ref={thumbnailRef}
             className="w-full absolute bottom-0 left-0 p-2 px-4 rounded-md shadow-md overflow-x-scroll text-xs scrollbar-hide"
           >
-            <div className="flex gap-4 w-max">
+            <div className="flex gap-6 w-max">
               {allImages.map((image, i) => (
                 <div key={i} className="relative w-16 h-16">
                   <Image
