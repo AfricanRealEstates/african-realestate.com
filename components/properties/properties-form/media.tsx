@@ -1,4 +1,3 @@
-"use client";
 import React, { useState, useEffect } from "react";
 import { PropertiesFormStepProps } from "./index";
 import { Button, Form, Input, Modal, Upload, Spin, Checkbox } from "antd";
@@ -65,12 +64,12 @@ export default function Media({
       const newImagesURLs = await uploadFilesToFirebase(
         tempMedia.newlyUploadFiles
       );
-      tempMedia.images = [...tempMedia.images, ...newImagesURLs];
+      tempMedia.images = [...new Set([...tempMedia.images, ...newImagesURLs])]; // Prevent duplicates
 
       const newCoverPhotosURLs = await uploadFilesToFirebase(
         tempMedia.coverPhotos
       );
-      tempMedia.coverPhotos = newCoverPhotosURLs.slice(0, 3);
+      tempMedia.coverPhotos = [...new Set(newCoverPhotosURLs)].slice(0, 3); // Prevent duplicates and limit
 
       tempFinalValues.media = tempMedia;
 
@@ -197,7 +196,7 @@ export default function Media({
         onPreview={handlePreview}
         beforeUpload={(file: any) => {
           setOtherPhotosLoading(true);
-          setTempFiles((prev) => [...prev, file]);
+          setTempFiles((prev) => [...new Set([...prev, file])]); // Prevent duplicates
           setOtherPhotosLoading(false);
           return false;
         }}

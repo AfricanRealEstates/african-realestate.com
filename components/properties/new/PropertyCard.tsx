@@ -42,6 +42,7 @@ export default function PropertyCard({
     landUnits,
     propertyDetails,
     propertyType,
+    tenure,
   } = data;
 
   const renderSliderGallery = () => {
@@ -54,10 +55,6 @@ export default function PropertyCard({
           coverPhotos={coverPhotos}
           href={`/properties/${id}`}
         />
-        {/* <BtnLikeIcon isLiked={like} className="absolute right-3 top-3" /> */}
-        {/* {status && (
-          <StatusBadge status={status} className="absolute left-3 top-3" />
-        )} */}
         <div className="left-4 right-4 top-4 flex justify-between absolute items-start gap-2 flex-wrap">
           <ul className="flex gap-2">
             <li className="text-white bg-[#198754] font-semibold text-[12px] leading-5 uppercase text-center inline-block px-2 rounded transition-all cursor-pointer">
@@ -93,52 +90,131 @@ export default function PropertyCard({
       <div
         className={`${josefin.className} inline-grid grid-cols-3 gap-2 px-4`}
       >
-        {bedrooms && bedrooms > 0 && (
-          <div className="flex items-center space-x-2">
-            <span className="hidden sm:inline-block">
-              <Bed className="size-5" />
-            </span>
-            <span className=" text-neutral-500 font-semibold">
-              {bedrooms} beds
-            </span>
-          </div>
-        )}
-
-        {/* ---- */}
-        {bathrooms && bathrooms > 0 && (
-          <div className="flex items-center space-x-4">
-            <span className="hidden sm:inline-block">
-              <Bath className="size-5" />
-            </span>
-            <span className=" text-neutral-500  font-semibold">
-              {bathrooms} baths
-            </span>
-          </div>
-        )}
-
-        {/* ---- */}
         {propertyType.toLowerCase() === "land" ? (
-          <div className="flex items-center space-x-2">
-            <span className="hidden sm:inline-block">
-              <ExpandIcon className="size-5" />
-            </span>
-            <span className=" text-neutral-500 font-semibold">
-              {landSize} {landUnits}
-            </span>
-          </div>
+          <>
+            {landSize && (
+              <div className="flex items-center space-x-2">
+                <span className="hidden sm:inline-block">
+                  <ExpandIcon className="size-5" />
+                </span>
+                <span className=" text-neutral-500 font-semibold">
+                  {landSize} {landUnits}
+                </span>
+              </div>
+            )}
+            {/* Add tenure information if available */}
+            {tenure && (
+              <div className="ml-4 inline-flex items-center space-x-2 col-span-2">
+                {/* <span className="hidden sm:inline-block">
+                  <ExpandIcon className="size-5" />
+                </span> */}
+                <span className="w-full capitalize flex items-center text-neutral-500 font-semibold">
+                  {tenure}
+                  {tenure.toLowerCase() === "leasehold" ||
+                  tenure.toLowerCase() === "sectionalTitle"
+                    ? ` - ${data.yearsLeft} yrs`
+                    : ""}
+                </span>
+              </div>
+            )}
+          </>
         ) : (
-          <div className="flex items-center space-x-2">
-            <span className="hidden sm:inline-block">
-              <ExpandIcon className="size-5" />
-            </span>
-            <span className=" text-neutral-500 font-semibold">
-              {plinthArea} Sq. Ft
-            </span>
-          </div>
+          <>
+            {bedrooms && bedrooms > 0 && (
+              <div className="flex items-center space-x-2">
+                <span className="hidden sm:inline-block">
+                  <Bed className="size-5" />
+                </span>
+                <span className=" text-neutral-500 font-semibold">
+                  {bedrooms} beds
+                </span>
+              </div>
+            )}
+
+            {bathrooms && bathrooms > 0 && (
+              <div className="flex items-center space-x-4">
+                <span className="hidden sm:inline-block">
+                  <Bath className="size-5" />
+                </span>
+                <span className=" text-neutral-500 font-semibold">
+                  {bathrooms} baths
+                </span>
+              </div>
+            )}
+
+            {plinthArea && (
+              <div className="flex items-center space-x-2">
+                <span className="hidden sm:inline-block">
+                  <ExpandIcon className="size-5" />
+                </span>
+                <span className=" text-neutral-500 font-semibold">
+                  {plinthArea} Sq. Ft
+                </span>
+              </div>
+            )}
+          </>
         )}
       </div>
     );
   };
+
+  // const renderTienIch = () => {
+  //   return (
+  //     <div
+  //       className={`${josefin.className} inline-grid grid-cols-3 gap-2 px-4`}
+  //     >
+  //       {propertyType.toLowerCase() === "land" ? (
+  //         <>
+  //           {landSize && (
+  //             <div className="flex items-center space-x-2">
+  //               <span className="hidden sm:inline-block">
+  //                 <ExpandIcon className="size-5" />
+  //               </span>
+  //               <span className=" text-neutral-500 font-semibold">
+  //                 {landSize} {landUnits}
+  //               </span>
+  //             </div>
+  //           )}
+  //         </>
+  //       ) : (
+  //         <>
+  //           {bedrooms && bedrooms > 0 && (
+  //             <div className="flex items-center space-x-2">
+  //               <span className="hidden sm:inline-block">
+  //                 <Bed className="size-5" />
+  //               </span>
+  //               <span className=" text-neutral-500 font-semibold">
+  //                 {bedrooms} beds
+  //               </span>
+  //             </div>
+  //           )}
+
+  //           {bathrooms && bathrooms > 0 && (
+  //             <div className="flex items-center space-x-4">
+  //               <span className="hidden sm:inline-block">
+  //                 <Bath className="size-5" />
+  //               </span>
+  //               <span className=" text-neutral-500 font-semibold">
+  //                 {bathrooms} baths
+  //               </span>
+  //             </div>
+  //           )}
+
+  //           {plinthArea && (
+  //             <div className="flex items-center space-x-2">
+  //               <span className="hidden sm:inline-block">
+  //                 <ExpandIcon className="size-5" />
+  //               </span>
+  //               <span className=" text-neutral-500 font-semibold">
+  //                 {plinthArea} Sq. Ft
+  //               </span>
+  //             </div>
+  //           )}
+  //         </>
+  //       )}
+  //     </div>
+  //   );
+  // };
 
   const renderContent = () => {
     return (
@@ -146,8 +222,7 @@ export default function PropertyCard({
         <div className="space-y-2 px-4">
           <div className="flex items-center space-x-2">
             <h2
-              className={`${josefin.className} leading-relaxed font-semibold capitalize text-[17px] transition duration-300 ease-in-out hover:text-[#ed2027]
-              }`}
+              className={`${josefin.className} leading-relaxed font-semibold capitalize text-[17px] transition duration-300 ease-in-out hover:text-[#ed2027]`}
             >
               <span className="line-clamp-1">{title}</span>
             </h2>
@@ -188,17 +263,10 @@ export default function PropertyCard({
             </h2>
           </div>
         </div>
-        {/* <div className="flex justify-between items-center px-4">
-          {size === "default" && (
-            <span className="text-sm text-neutral-500 font-normal">Price</span>
-          )}
-          <span className="text-base font-semibold">
-            {currency} {price.toLocaleString()}
-          </span>
-        </div> */}
       </div>
     );
   };
+
   return (
     <div
       className={`group relative rounded-xl border border-[#e4e4e4] ${className}`}

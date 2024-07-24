@@ -1,32 +1,25 @@
 "use client";
-import { Property } from "@prisma/client";
 import React, { useRef, useState, useEffect } from "react";
 import { CarouselRef } from "antd/es/carousel";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { AnimatePresence, motion, MotionConfig } from "framer-motion";
 import useKeypress from "react-use-keypress";
-import { Carousel } from "antd";
 import Image from "next/image";
-// import ImageModal from "./ImageModal"; // Import the ImageModal component
 
 interface Props {
-  property: Property;
+  property: { coverPhotos: string[]; images: string[] };
 }
 
 // Utility function to remove duplicate images
-const removeDuplicates = (images: string[]) => {
-  return Array.from(new Set(images));
-};
+const removeDuplicates = (images: string[]) => Array.from(new Set(images));
 
 export default function ImageCarousel({ property }: Props) {
   const ref = useRef<CarouselRef>(null);
   const thumbnailRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
-  const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const uniqueCoverPhotos = removeDuplicates(property.coverPhotos);
   const uniqueImages = removeDuplicates(property.images);
-  // const allImages = [...uniqueCoverPhotos, ...uniqueImages];
   const allImages = [...uniqueImages];
 
   useKeypress("ArrowRight", () => {
@@ -59,18 +52,18 @@ export default function ImageCarousel({ property }: Props) {
         thumbnailElement.scrollIntoView({
           behavior: "smooth",
           block: "nearest",
-          inline: "start", // Ensure it aligns with the start of the scroll container
+          inline: "start",
         });
       }
     }
   };
 
   const handleDoubleClick = () => {
-    setIsModalVisible(true); // Open modal on double-click
+    setIsModalVisible(true);
   };
 
   const handleCloseModal = () => {
-    setIsModalVisible(false); // Close modal
+    setIsModalVisible(false);
   };
 
   useEffect(() => {
@@ -86,16 +79,18 @@ export default function ImageCarousel({ property }: Props) {
               <motion.div
                 animate={{ x: -index * 100 + "%" }}
                 className="flex h-full rounded-xl"
+                transition={{ duration: 0.5 }}
               >
                 {allImages.map((image, i) => (
-                  <img
-                    key={i}
-                    src={image}
-                    alt="Property Image"
-                    width={300}
-                    height={300}
-                    className="aspect-[3/2] h-full min-w-full max-w-full object-cover rounded-xl"
-                  />
+                  <div key={i} className="w-full h-full relative">
+                    <Image
+                      src={image}
+                      alt="Property Image"
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-xl"
+                    />
+                  </div>
                 ))}
               </motion.div>
 
@@ -142,17 +137,18 @@ export default function ImageCarousel({ property }: Props) {
             >
               <div className="flex gap-4 w-max">
                 {allImages.map((image, i) => (
-                  <img
-                    key={i}
-                    src={image}
-                    alt="Thumbnail"
-                    // width={64}
-                    // height={64}
-                    className={`w-16 h-16 rounded-full ring-2 ring-gray-100 cursor-pointer ${
-                      i === index ? "border-4 border-blue-500" : ""
-                    }`}
-                    onClick={() => handleThumbnailClick(i)}
-                  />
+                  <div key={i} className="relative w-16 h-16">
+                    <Image
+                      src={image}
+                      alt="Thumbnail"
+                      layout="fill"
+                      objectFit="cover"
+                      className={`w-full h-full rounded-full ring-2 ring-gray-100 cursor-pointer ${
+                        i === index ? "border-4 border-blue-500" : ""
+                      }`}
+                      onClick={() => handleThumbnailClick(i)}
+                    />
+                  </div>
                 ))}
               </div>
             </section>
@@ -164,62 +160,8 @@ export default function ImageCarousel({ property }: Props) {
         images={allImages}
         visible={isModalVisible}
         onClose={handleCloseModal}
-        initialIndex={index} // Pass the current index to the modal
+        initialIndex={index}
       /> */}
     </section>
   );
 }
-
-interface ImageModalProps {
-  images: string[];
-  visible: boolean;
-  onClose: () => void;
-  initialIndex: number; // Add initialIndex prop
-}
-
-const ImageModal: React.FC<ImageModalProps> = ({
-  images,
-  visible,
-  onClose,
-  initialIndex,
-}) => {
-  return (
-    <AnimatePresence>
-      {visible && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="h-screen fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
-        >
-          <div className="relative w-full h-full max-w-4xl max-h-[80vh]">
-            <button
-              className="absolute top-3 right-3 text-white text-2xl"
-              onClick={onClose}
-            >
-              &times;
-            </button>
-            <Carousel
-              className="h-full w-full"
-              dots={false}
-              arrows
-              initialSlide={initialIndex} // Set the initial slide
-              prevArrow={<ChevronLeftIcon className="h-8 w-8 text-white" />}
-              nextArrow={<ChevronRightIcon className="h-8 w-8 text-white" />}
-            >
-              {images.map((image, index) => (
-                <div key={index} className="w-full h-full">
-                  <img
-                    src={image}
-                    alt={`Modal Image ${index + 1}`}
-                    className="object-cover w-full h-full"
-                  />
-                </div>
-              ))}
-            </Carousel>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-};

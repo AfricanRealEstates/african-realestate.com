@@ -308,6 +308,93 @@ export default async function PropertyDetails({
     );
   };
 
+  const getPropertyDetails = (property: any) => {
+    switch (property.propertyType) {
+      case "Residential":
+        return (
+          <>
+            <p className="text-sm font-medium text-gray-500">
+              Plinth Area:
+              <span className="ml-2 bg-gray-50 text-indigo-500 px-2 py-1 rounded-full">
+                {property.plinthArea} Sq.m
+              </span>
+            </p>
+            {property.bedrooms && (
+              <p className="text-sm font-medium text-gray-500">
+                Number of Bedrooms:
+                <span className="ml-2 bg-gray-50 text-indigo-500 px-2 py-1 rounded-full">
+                  {property.bedrooms}
+                </span>
+              </p>
+            )}
+            <p className="text-sm font-medium text-gray-500">
+              Size of Land:
+              <span className="ml-2 bg-gray-50 text-indigo-500 px-2 py-1 rounded-full">
+                {convertedLandSize?.toPrecision(2)} Acres
+              </span>
+            </p>
+          </>
+        );
+      case "Commercial":
+      case "Industrial":
+      case "Vacational/Social":
+        return (
+          <>
+            <p className="text-sm font-medium text-gray-500">
+              Plinth Area:
+              <span className="ml-2 bg-gray-50 text-indigo-500 px-2 py-1 rounded-full">
+                {property.plinthArea} Sq.m
+              </span>
+            </p>
+            {property.bathrooms && (
+              <p className="text-sm font-medium text-gray-500">
+                Number of Bathrooms:
+                <span className="ml-2 bg-gray-50 text-indigo-500 px-2 py-1 rounded-full">
+                  {property.bathrooms}
+                </span>
+              </p>
+            )}
+            {property.bedrooms && (
+              <p className="text-sm font-medium text-gray-500">
+                Number of Parkings:
+                <span className="ml-2 bg-gray-50 text-indigo-500 px-2 py-1 rounded-full">
+                  {property.bedrooms}
+                </span>
+              </p>
+            )}
+          </>
+        );
+      case "Land":
+        return (
+          <>
+            <p className="text-sm font-medium text-gray-500">
+              Land Size:
+              <span className="ml-2 capitalize bg-gray-50 text-indigo-500 px-2 py-1 rounded-full">
+                {property.landSize} {property.landUnits}
+              </span>
+            </p>
+            <p className="text-sm font-medium text-gray-500">
+              Tenure:
+              <span className="ml-2 capitalize bg-gray-50 text-indigo-500 px-2 py-1 rounded-full">
+                {property.tenure}
+              </span>
+            </p>
+            {property.tenure === "leasehold" ||
+            property.tenure === "sectionalTitle" ? (
+              <p className="text-sm font-medium text-gray-500">
+                Years Left:
+                <span className="ml-2 bg-gray-50 text-indigo-500 px-2 py-1 rounded-full">
+                  {property.yearsLeft}
+                </span>
+              </p>
+            ) : null}
+          </>
+        );
+      default:
+        return null;
+    }
+  };
+
   const renderSidebar = () => {
     return (
       <>
@@ -391,9 +478,7 @@ export default async function PropertyDetails({
           </h2>
         </div>
 
-        {/* <div className="mt-6 grid grid-cols-1 gap-y-6 lg:grid-cols-3 sm:gap-x-6 lg:gap-8"></div> */}
         <section className="flex flex-col lg:flex-row mt-8 w-full">
-          {/* relative z-10 mt-16 flex flex-col lg:flex-row */}
           <ImageCarousel property={property} />
           <div className="flex-grow lg:mt-0 h-full">
             <article className="flex flex-col-reverse h-full">
@@ -403,7 +488,11 @@ export default async function PropertyDetails({
                     For {property.status}
                   </p>
                   <h2 className="inline-flex text-xl font-medium gap-x-1.5 items-center text-gray-500">
-                    Price:
+                    {property.status === "let" ? (
+                      <span>Rent:</span>
+                    ) : (
+                      <span>Price:</span>
+                    )}
                     <span className="bg-gray-50 text-indigo-500 px-2 rounded-full text-3xl font-semibold">
                       <span className="">{property.currency} </span>
                       <span className=" tracking-tight">
@@ -414,26 +503,7 @@ export default async function PropertyDetails({
                   <h2 id="information-heading" className="sr-only">
                     Property price
                   </h2>
-                  <p className="text-sm font-medium text-gray-500">
-                    Plinth Area:
-                    <span className="ml-2 bg-gray-50 text-indigo-500 px-2 py-1 rounded-full">
-                      {property.plinthArea} Sq.m
-                    </span>
-                  </p>
-                  {property.bedrooms && property.bedrooms > 0 && (
-                    <p className="text-sm font-medium text-gray-500">
-                      Number of Bedrooms:
-                      <span className="ml-2 bg-gray-50 text-indigo-500 px-2 py-1 rounded-full">
-                        {property.bedrooms}
-                      </span>
-                    </p>
-                  )}
-                  <p className="text-sm font-medium text-gray-500">
-                    Size of Land:{" "}
-                    <span className="ml-2 bg-gray-50 text-indigo-500 px-2 py-1 rounded-full">
-                      {convertedLandSize?.toPrecision(2)} Acres
-                    </span>
-                  </p>
+                  {getPropertyDetails(property)}
                   {/* HEADING */}
                   <h2 className="text-2xl font-semibold">Agent Information</h2>
                   <div className="w-full border-b border-neutral-200"></div>
