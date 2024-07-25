@@ -15,10 +15,12 @@ import {
   AirVentIcon,
   Building,
   Cat,
+  Dumbbell,
   Fence,
   Flower,
   GlassWater,
   Heater,
+  Martini,
   ParkingCircle,
   Sofa,
   Thermometer,
@@ -61,20 +63,14 @@ export default function Amenities({ amenities }: AmenitiesProps) {
     gates: <Fence className="size-4 text-neutral-600" />,
     servant: <Building className="size-4 text-neutral-600" />,
     borehole: <GlassWater className="size-4 text-neutral-600" />,
+    gym: <Dumbbell className="size-4 text-neutral-600" />,
+    club: <Martini className="size-4 text-neutral-600" />,
     waste: <Trash className="size-4 text-neutral-600" />,
   };
 
   const renderSection3 = () => {
     return (
       <div className="w-full flex flex-col sm:rounded-2xl space-y-6 sm:space-y-8 pb-1">
-        {/* <div>
-          <h2 className="text-2xl font-semibold">Amenities </h2>
-          <span className="block mt-2 text-neutral-500 dark:text-neutral-400">
-            {` About the property's amenities and services`}
-          </span>
-        </div> */}
-        {/* <div className="w-14 border-b border-neutral-200"></div> */}
-        {/* 6 */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 text-sm text-neutral-700 mt-4">
           {amenities
             .filter((amenity) =>
@@ -112,7 +108,7 @@ export default function Amenities({ amenities }: AmenitiesProps) {
           onClose={closeModalAmenities}
         >
           <div className="min-h-screen px-4 text-center">
-            <TransitionChild
+            <Transition.Child
               as="div"
               enter="ease-out duration-300"
               enterFrom="opacity-0"
@@ -124,14 +120,14 @@ export default function Amenities({ amenities }: AmenitiesProps) {
               <DialogBackdrop className="fixed inset-0 bg-black/30" />
 
               <div className="fixed inset-0 flex w-screen items-center justify-center p-4" />
-            </TransitionChild>
+            </Transition.Child>
             <span
               className="inline-block h-screen align-middle"
               aria-hidden="true"
             >
               &#8203;
             </span>
-            <TransitionChild
+            <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 scale-95"
@@ -140,42 +136,44 @@ export default function Amenities({ amenities }: AmenitiesProps) {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <div className="inline-block w-full max-w-4xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white  shadow-xl rounded-2xl">
-                <div className="relative flex-shrink-0  text-center">
+              <div className="inline-block w-full max-w-4xl p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+                <div className="relative flex-shrink-0 text-center">
                   <h3
                     className="text-lg font-medium leading-6 text-gray-900"
                     id="headlessui-dialog-title-70"
                   >
                     Amenities
                   </h3>
-                  <span className="absolute left-3 top-3">
+                  <span className="absolute left-2 top-2">
                     <ButtonClose onClick={closeModalAmenities} />
                   </span>
                 </div>
 
-                <div className="px-8 overflow-auto text-neutral-700 divide-y divide-neutral-200">
-                  {amenities
-                    .filter((amenity) =>
-                      appliances.find((app) => app.value === amenity)
-                    ) // Filter out amenities that don't have corresponding icons
-                    .map((amenity) => (
-                      <div
-                        key={amenity}
-                        className="flex items-center py-2.5 sm:py-4 lg:py-5 space-x-5 lg:space-x-8"
-                      >
-                        {amenityIcons[amenity]}{" "}
-                        {/* Render the corresponding icon */}
-                        <span className="capitalize">
-                          {
-                            appliances.find((app) => app.value === amenity)
-                              ?.label
-                          }
-                        </span>
-                      </div>
-                    ))}
+                <div className="px-8 overflow-auto text-neutral-700">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                    {amenities
+                      .filter((amenity) =>
+                        appliances.find((app) => app.value === amenity)
+                      ) // Filter out amenities that don't have corresponding icons
+                      .map((amenity) => (
+                        <div
+                          key={amenity}
+                          className="flex items-center py-2.5 sm:py-4 lg:py-5 space-x-5 lg:space-x-8"
+                        >
+                          {amenityIcons[amenity]}{" "}
+                          {/* Render the corresponding icon */}
+                          <span className="capitalize">
+                            {
+                              appliances.find((app) => app.value === amenity)
+                                ?.label
+                            }
+                          </span>
+                        </div>
+                      ))}
+                  </div>
                 </div>
               </div>
-            </TransitionChild>
+            </Transition.Child>
           </div>
         </Dialog>
       </Transition>

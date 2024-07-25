@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import prisma from "@/lib/prisma";
 import { Property } from "@prisma/client";
-
 import QueryModal from "@/components/globals/query-modal";
 import { Raleway, IBM_Plex_Mono } from "next/font/google";
 import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/20/solid";
@@ -10,13 +9,16 @@ import {
   Bath,
   Bed,
   Bus,
+  BusFront,
   Church,
   ExpandIcon,
   FolderOpen,
   Home,
+  Hospital,
   LandPlot,
   MapPin,
   School,
+  School2,
   ShoppingBag,
   ShoppingBasket,
   ShoppingCart,
@@ -38,8 +40,16 @@ import Image from "next/image";
 import { Button } from "@/components/utils/Button";
 import MessageWidget from "./_components/message-widget";
 import { capitalizeWords } from "@/lib/utils";
-import { FaGolfBall, FaMosque, FaPlaceOfWorship } from "react-icons/fa";
+import {
+  FaBuyNLarge,
+  FaChurch,
+  FaGolfBall,
+  FaMosque,
+  FaPlaceOfWorship,
+  FaPlay,
+} from "react-icons/fa";
 import { surroundingFeatures } from "@/constants";
+import SurroundingFeatures from "./_components/surrounding-features";
 
 const amenityIcons: { [key: string]: JSX.Element } = {
   mosque: <FaMosque className="size-4 text-neutral-600" />,
@@ -395,31 +405,41 @@ export default async function PropertyDetails({
     }
   };
 
+  const featureIcons: { [key: string]: JSX.Element } = {
+    mosque: <FaMosque className="size-4 text-[#eb6753]" />,
+    church: <FaChurch className="size-4 text-[#eb6753]" />,
+    temple: <FaPlaceOfWorship className="size-4 text-[#eb6753]" />,
+    market: <FaBuyNLarge className="size-4 text-[#eb6753]" />,
+    mall: <ShoppingBag className="size-4 text-[#eb6753]" />,
+    school: <School2 className="size-4 text-[#eb6753]" />,
+    hospital: <Hospital className="size-4 text-[#eb6753]" />,
+    golf: <FaGolfBall className="size-4 text-[#eb6753]" />,
+    shopping: <ShoppingBag className="size-4 text-[#eb6753]" />,
+    supermarket: <FaBuyNLarge className="size-4 text-[#eb6753]" />,
+    playground: <LandPlot className="size-4 text-[#eb6753]" />,
+    busstop: <BusFront className="size-4 text-[#eb6753]" />,
+    policestation: <Siren className="size-4 text-[#eb6753]" />,
+    banks: <Banknote className="size-4 text-[#eb6753]" />,
+  };
+
   const renderSidebar = () => {
     return (
       <>
-        <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200  sm:space-y-4 pb-1 px-0 sm:p-4 xl:p-4 !space-y-4">
+        <SurroundingFeatures property={property} />
+        {/* <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 sm:space-y-4 pb-1 px-0 sm:p-4 xl:p-4 !space-y-4">
           <h2 className="text-2xl font-semibold mb-2">
             Surrounding Features/Amenities
           </h2>
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 text-sm text-neutral-700 mt-4">
-            {property.surroundingFeatures.map((feature) => {
-              return <div key={feature}>{feature}</div>;
-            })}
+            {property.surroundingFeatures.map((feature) => (
+              <div key={feature} className="flex items-center space-x-3">
+                {featureIcons[feature]}{" "}
+                <span className="capitalize">{feature}</span>
+              </div>
+            ))}
           </div>
-        </div>
+        </div> */}
       </>
-      // <div
-      //   className={`w-full flex flex-col rounded-2xl border-b border-t border-l border-r border-neutral-200  space-y-4 xl:space-y-4 pb-10 p-2 sm:p-4 xl:px-8 xl:py-4 shadow-xl ${raleway.className}`}
-      // >
-      //   <h2 className="text-xl font-semibold">Send a Quote</h2>
-      //   <div className=" border-b border-neutral-100 " />
-      //   <div className="text-neutral-600 text-sm">
-      //     Make a quote today and <br /> let us turn your vision into reality!
-      //   </div>
-      //   <div className=" border-b border-neutral-100 " />
-      //   <QueryModal propertyId={property.id} />
-      // </div>
     );
   };
 
@@ -640,16 +660,18 @@ export default async function PropertyDetails({
           </pre>
         </section> */}
 
-        <main className="relative z-10 mt-8 flex flex-col lg:flex-row">
-          <section className="w-full lg:w-3/5 xl:w-2/3 space-y-8 lg:space-y-10 lg:pr-10">
+        <main className="relative z-10 mt-8 flex flex-col lg:flex-row h-full">
+          <section className="w-full lg:w-3/5 xl:w-2/3 space-y-8 lg:space-y-10 lg:pr-10 flex flex-col">
             {renderSection1()}
-
-            <OverviewInfo description={property.description} />
+            <div className="flex-grow">
+              <OverviewInfo description={property.description} />
+            </div>
           </section>
-          <section className="hidden lg:block flex-grow mt-14 lg:mt-0">
-            <div className="sticky top-28">{renderSidebar()}</div>
+          <section className="hidden lg:flex lg:w-2/5 xl:w-1/3 mt-14 lg:mt-0 flex-col">
+            <div className="sticky top-28 flex-grow">{renderSidebar()}</div>
           </section>
         </main>
+
         <MessageWidget />
         {/* Related properties */}
         <section className="mx-auto mt-12 max-w-2xl sm:mt-12 lg:max-w-none">
