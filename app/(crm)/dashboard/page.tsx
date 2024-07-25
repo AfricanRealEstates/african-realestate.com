@@ -1,16 +1,9 @@
 import { auth } from "@/auth";
 import { SearchInput } from "@/components/crm/search-input";
-import { EmptyPlaceholder } from "@/components/globals/empty-placeholder";
-// import PropertiesTable from "@/components/properties/properties-table";
-import { Button } from "@/components/ui/button";
 import prisma from "@/lib/prisma";
 import { getSEOTags } from "@/lib/seo";
-import {
-  ChevronRightIcon,
-  MagnifyingGlassIcon,
-} from "@heroicons/react/20/solid";
-import { Loader2, Plus } from "lucide-react";
-import { Metadata } from "next";
+import { ChevronRightIcon } from "@heroicons/react/20/solid";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import React, { Suspense } from "react";
@@ -70,7 +63,7 @@ export default async function Dashboard({
           </div>
         </article>
         <Suspense fallback={<Loading />}>
-          <PropertiesTable searchParams={searchParams} />
+          <PropertiesTable searchParams={searchParams} userId={user.id!} />
         </Suspense>
       </section>
     </div>
@@ -79,8 +72,10 @@ export default async function Dashboard({
 
 const PropertiesTable = async ({
   searchParams,
+  userId,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
+  userId: string;
 }) => {
   const search =
     typeof searchParams.search === "string"
@@ -90,6 +85,7 @@ const PropertiesTable = async ({
   const perPage = 10;
   const totalProperties = await prisma.property.count({
     where: {
+      userId: userId, // Filter properties by the logged-in user ID
       title: {
         contains: search?.toLowerCase(),
       },
@@ -107,6 +103,7 @@ const PropertiesTable = async ({
     take: perPage,
     skip: (page - 1) * perPage,
     where: {
+      userId: userId, // Filter properties by the logged-in user ID
       title: {
         contains: search?.toLowerCase(),
       },
@@ -199,7 +196,6 @@ const PropertiesTable = async ({
     </>
   );
 };
-
 function PreviousPage({
   page,
   currentSearchParams,
