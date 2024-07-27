@@ -215,7 +215,7 @@ export default function Media({
       </Modal>
 
       <h2 className="text-lg font-medium my-8 text-blue-600">
-        Surrounding Features/Amenities
+        Surrounding Features/Amenities (Within 2KM Radius)
       </h2>
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-x-4 gap-y-2">
         <Form.Item

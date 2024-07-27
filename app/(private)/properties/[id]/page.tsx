@@ -505,7 +505,8 @@ export default async function PropertyDetails({
               <div className="flex flex-col gap-4">
                 <div className="space-y-8 w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 sm:space-y-6 px-0 sm:p-4 xl:p-4">
                   <p className="rounded-full font-semibold w-fit bg-neutral-50 px-2 py-1 text-indigo-500">
-                    For {property.status}
+                    {property.status === "let" ? "To " : "For "}
+                    <span className="capitalize">{property.status}</span>
                   </p>
                   <h2 className="inline-flex text-xl font-medium gap-x-1.5 items-center text-gray-500">
                     {property.status === "let" ? (

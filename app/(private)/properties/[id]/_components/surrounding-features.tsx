@@ -49,17 +49,17 @@ export default function SurroundingFeatures({ property }: any) {
         <h2 className="text-2xl font-semibold mb-2">
           Surrounding Features/Amenities
         </h2>
-        <h3 className="text-xl font-medium mb-2">Within 2KM Radius</h3>
-        <div className="w-14 border-b border-neutral-200"></div>
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 text-sm text-neutral-700 mt-4">
-          {property.surroundingFeatures.slice(0, 12).map((feature: any) => (
-            <div key={feature} className="flex items-center space-x-3">
+        <h3 className="text-xl font-medium mt-4 mb-6">Within 2KM Radius</h3>
+        <div className="w-14 border-b border-neutral-200 mb-4"></div>
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 text-sm text-neutral-700 mt-8">
+          {property.surroundingFeatures.slice(0, 9).map((feature: any) => (
+            <div key={feature} className="flex items-center space-x-3 mt-3.5">
               {featureIcons[feature]}
               <span className="capitalize">{feature}</span>
             </div>
           ))}
         </div>
-        <div className="w-14 border-b border-neutral-200 mt-2"></div>
+        <div className="w-14 border-b border-neutral-200 mt-3"></div>
         <div className="">
           <ButtonSecondary onClick={openModal} className="mb-4">
             View all

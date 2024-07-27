@@ -5,7 +5,7 @@ import React from "react";
 const navigation = {
   solutions: [
     { name: "For Sale", href: "/buy" },
-    { name: "For Let", href: "/let" },
+    { name: "To Let", href: "/let" },
     { name: "Property Management", href: "/property-management" },
     { name: "Agency", href: "/agencies" },
   ],
