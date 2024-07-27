@@ -138,6 +138,7 @@ export default function Media({
       <Upload
         listType="picture-card"
         fileList={coverPhotos}
+        maxCount={1}
         beforeUpload={(file: any) => {
           if (coverPhotos.length < 1) {
             setCoverPhotoLoading(true);

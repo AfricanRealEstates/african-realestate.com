@@ -62,8 +62,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     whatsappNumber: token.whatsappNumber || "",
                     address: token.address || "",
                     postalCode: token.postalCode || "",
+                    profilePhoto: token.profilePhoto || "",
+                    phoneNumber: token.phoneNumber || "",
+                    xLink: token.xLink || "",
+                    tiktokLink: token.tiktokLink || "",
+                    facebookLink: token.facebookLink || "",
+                    linkedinLink: token.linkedinLink || "",
+                    instagramLink: token.instagramLink || "",
                     bio: token.bio || "",
                     randomKey: token.randomKey
+
 
                 }
             }
@@ -80,6 +88,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     agentEmail: u.agentEmail || "",
                     officeLine: u.officeLine || "",
                     whatsappNumber: u.whatsappNumber || "",
+                    profilePhoto: u.profilePhoto || "",
+                    phoneNumber: u.phoneNumber || "",
+                    xLink: u.xLink || "",
+                    tiktokLink: u.tiktokLink || "",
+                    facebookLink: u.facebookLink || "",
+                    linkedinLink: u.linkedinLink || "",
+                    instagramLink: u.instagramLink || "",
                     address: u.address || "",
                     postalCode: u.postalCode || "",
                     bio: u.bio || "",

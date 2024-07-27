@@ -27,6 +27,7 @@ export default function ThemeProvider({ children }: Props) {
               controlHeight: 40,
               boxShadow: "none",
               controlOutline: "none",
+              colorPrimaryBg: "#1890ff", // Updated token for button background
               colorBorder: "rgba(0,0,0,0.15)",
               colorText: "rgba(0,0,0,0.65)",
             },

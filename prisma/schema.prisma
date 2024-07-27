@@ -40,16 +40,18 @@ model User {
   agentEmail       String?
   officeLine       String?
   whatsappNumber   String?
+  phoneNumber      String?
   address          String?
   postalCode       String?
   profilePhoto     String?
   coverPhoto       String?
   bio              String?
   xLink            String?
-  titkokLink       String?
+  tiktokLink       String?
   facebookLink     String?
   youtubeLink      String?
   linkedinLink     String?
+  instagramLink    String?
   showAgentContact Boolean?       @default(false) // moved from property
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt

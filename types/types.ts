@@ -1,5 +1,5 @@
 import { Icons } from "@/components/globals/icons";
-import { UserRole } from "@prisma/client";
+import { User, UserRole } from "@prisma/client";
 import type { Route as NextRoute } from "next";
 import { ComponentType } from "react";
 
@@ -23,6 +23,18 @@ export type NavItem = {
     label?: string
     description?: string
 }
+
+export type ExtendedUser = User & {
+    profilePhoto?: string;
+    whatsappNumber?: string;
+    phoneNumber?: string;
+    xLink?: string;
+    tiktokLink?: string;
+    facebookLink?: string;
+    linkedinLink?: string;
+    instagramLink?: string;
+    bio?: string;
+};
 
 export interface NavItemWithChildren extends NavItem {
     items: NavItemWithChildren[]

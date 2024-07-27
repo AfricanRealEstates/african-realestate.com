@@ -40,7 +40,22 @@ export default async function DashboardAccount() {
           </TabsList>
 
           <TabsContent value="individual">
-            <ProfileAccountForm />
+            <ProfileAccountForm
+              user={{
+                id: user?.id || "",
+                name: user?.name || "",
+                email: user?.email || "",
+                bio: user?.bio || "",
+                whatsappNumber: user?.whatsappNumber || "",
+                profilePhoto: user?.profilePhoto || "",
+                phoneNumber: user?.phoneNumber || "",
+                xLink: user?.xLink || "",
+                tiktokLink: user?.tiktokLink || "",
+                facebookLink: user?.facebookLink || "",
+                linkedinLink: user?.linkedinLink || "",
+                instagramLink: user?.instagramLink || "",
+              }}
+            />
           </TabsContent>
           <TabsContent value="agency">
             <UserUpdateForm

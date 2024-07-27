@@ -44,6 +44,13 @@ declare module "next-auth" {
         agentEmail: string,
         officeLine: string,
         whatsappNumber: string
+        profilePhoto: string,
+        phoneNumber: string,
+        xLink: string,
+        tiktokLink: string,
+        facebookLink: string,
+        linkedinLink: string,
+        instagramLink: string,
         address: string
         postalCode: string
         bio: string

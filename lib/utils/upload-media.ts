@@ -19,3 +19,15 @@ export const uploadFilesToFirebase = async (files: []) => {
     throw new Error(error);
   }
 };
+
+export const uploadSingleFileToFirebase = async (file: any) => {
+  try {
+    const storage = getStorage(firebaseApp);
+    const storageRef = ref(storage, `/images/${file.name}`);
+    const snapshot = await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(snapshot.ref);
+    return downloadURL;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};
