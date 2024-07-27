@@ -397,7 +397,14 @@ export default async function PropertyDetails({
                   {property.yearsLeft}
                 </span>
               </p>
-            ) : null}
+            ) : (
+              <p className="text-sm font-medium text-gray-500">
+                {/* Years Left: */}
+                <span className="ml-2 bg-white text-indigo-500 px-2 py-1 rounded-full">
+                  {/* {property.yearsLeft} */}
+                </span>
+              </p>
+            )}
           </>
         );
       default:
@@ -522,11 +529,8 @@ export default async function PropertyDetails({
                         </span>
                       </span>
                     </h2>
-                    {property.status === "let" &&
-                    property.propertyType !== "Vacational / Social" ? (
+                    {property.status === "let" && (
                       <span className="font-medium">/ Per Month</span>
-                    ) : (
-                      <span className="font-medium">/ Per Day</span>
                     )}
                   </div>
                   <h2 id="information-heading" className="sr-only">
