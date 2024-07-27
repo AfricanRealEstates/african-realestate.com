@@ -130,8 +130,11 @@ export default function PropertyCard({ property }: PropertyCardProps) {
               <span className="text-lg font-extrabold text-blue-600">
                 {currency} {price.toLocaleString()}
               </span>
-              {status.toLowerCase() === "let" && (
+              {status.toLowerCase() === "let" &&
+              propertyType !== "Vacational / Social" ? (
                 <span className="text-sm text-neutral-500 ml-2">Per Month</span>
+              ) : (
+                <span className="text-sm text-neutral-500 ml-2">Per Day</span>
               )}
             </div>
             <div className="mt-auto pt-2 border-b border-neutral-100"></div>

@@ -279,7 +279,7 @@ export default async function PropertyDetails({
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 text-sm text-neutral-700 mt-8">
             {property.bedrooms && property.bedrooms > 0 && (
               <div className="flex items-center space-x-3 ">
-                <Bed className="size-4 text-neutral-600" />
+                <Bed className="size-4 text-blue-600" />
                 <span className="ml-1">
                   {property.bedrooms}{" "}
                   <span className="hidden sm:inline-block">
@@ -294,7 +294,7 @@ export default async function PropertyDetails({
 
             {property.bathrooms && property.bathrooms > 0 && (
               <div className="flex items-center space-x-3">
-                <Bath className="size-4 text-neutral-600" />
+                <Bath className="size-4 text-blue-600" />
                 <span className="ml-1">
                   {property.bathrooms}{" "}
                   <span className="hidden sm:inline-block">baths</span>
@@ -303,7 +303,7 @@ export default async function PropertyDetails({
             )}
             {convertedLandSize && (
               <div className="flex items-center space-x-3">
-                <ExpandIcon className="size-4 text-neutral-600" />
+                <ExpandIcon className="size-4 text-blue-600" />
                 <span className=" ">
                   {convertedLandSize?.toPrecision(2)}{" "}
                   <span className="hidden sm:inline-block">acres</span>
@@ -347,7 +347,7 @@ export default async function PropertyDetails({
         );
       case "Commercial":
       case "Industrial":
-      case "Vacational/Social":
+      case "Vacational / Social":
         return (
           <>
             <p className="text-sm font-medium text-gray-500">
@@ -508,19 +508,27 @@ export default async function PropertyDetails({
                     {property.status === "let" ? "To " : "For "}
                     <span className="capitalize">{property.status}</span>
                   </p>
-                  <h2 className="inline-flex text-xl font-medium gap-x-1.5 items-center text-gray-500">
-                    {property.status === "let" ? (
-                      <span>Rent:</span>
-                    ) : (
-                      <span>Price:</span>
-                    )}
-                    <span className="bg-gray-50 text-indigo-500 px-2 rounded-full text-3xl font-semibold">
-                      <span className="">{property.currency} </span>
-                      <span className=" tracking-tight">
-                        {property.price.toLocaleString()}
+                  <div className="flex items-center">
+                    <h2 className="inline-flex text-xl font-medium gap-x-1.5 items-center text-gray-500">
+                      {property.status === "let" ? (
+                        <span>Rent:</span>
+                      ) : (
+                        <span>Price:</span>
+                      )}
+                      <span className="bg-gray-50 text-indigo-500 px-2 rounded-full text-3xl font-semibold">
+                        <span className="">{property.currency} </span>
+                        <span className=" tracking-tight">
+                          {property.price.toLocaleString()}
+                        </span>
                       </span>
-                    </span>
-                  </h2>
+                    </h2>
+                    {property.status === "let" &&
+                    property.propertyType !== "Vacational / Social" ? (
+                      <span className="font-medium">/ Per Month</span>
+                    ) : (
+                      <span className="font-medium">/ Per Day</span>
+                    )}
+                  </div>
                   <h2 id="information-heading" className="sr-only">
                     Property price
                   </h2>

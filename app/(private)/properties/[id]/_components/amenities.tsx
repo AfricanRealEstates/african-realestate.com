@@ -50,22 +50,22 @@ export default function Amenities({ amenities }: AmenitiesProps) {
   }
 
   const amenityIcons: { [key: string]: JSX.Element } = {
-    parking: <ParkingCircle className="size-4 text-neutral-600" />,
-    flower: <Flower className="size-4 text-neutral-600" />,
-    swimming: <FaSwimmingPool className="size-4 text-neutral-600" />,
-    internet: <Wifi className="size-4 text-neutral-600" />,
-    heating: <Heater className="size-4 text-neutral-600" />,
-    dstv: <Tv className="size-4 text-neutral-600" />,
-    air: <AirVentIcon className="size-4 text-neutral-600" />,
-    furnitures: <Sofa className="size-4 text-neutral-600" />,
-    pet: <Cat className="size-4 text-neutral-600" />,
-    energy: <Thermometer className="size-4 text-neutral-600" />,
-    gates: <Fence className="size-4 text-neutral-600" />,
-    servant: <Building className="size-4 text-neutral-600" />,
-    borehole: <GlassWater className="size-4 text-neutral-600" />,
-    gym: <Dumbbell className="size-4 text-neutral-600" />,
-    club: <Martini className="size-4 text-neutral-600" />,
-    waste: <Trash className="size-4 text-neutral-600" />,
+    parking: <ParkingCircle className="size-4 text-blue-600" />,
+    flower: <Flower className="size-4 text-blue-600" />,
+    swimming: <FaSwimmingPool className="size-4 text-blue-600" />,
+    internet: <Wifi className="size-4 text-blue-600" />,
+    heating: <Heater className="size-4 text-blue-600" />,
+    dstv: <Tv className="size-4 text-blue-600" />,
+    air: <AirVentIcon className="size-4 text-blue-600" />,
+    furnitures: <Sofa className="size-4 text-blue-600" />,
+    pet: <Cat className="size-4 text-blue-600" />,
+    energy: <Thermometer className="size-4 text-blue-600" />,
+    gates: <Fence className="size-4 text-blue-600" />,
+    servant: <Building className="size-4 text-blue-600" />,
+    borehole: <GlassWater className="size-4 text-blue-600" />,
+    gym: <Dumbbell className="size-4 text-blue-600" />,
+    club: <Martini className="size-4 text-blue-600" />,
+    waste: <Trash className="size-4 text-blue-600" />,
   };
 
   const renderSection3 = () => {
