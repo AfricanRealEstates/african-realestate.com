@@ -254,7 +254,9 @@ export default function PropertyCard({
               {status === "let" ? (
                 <>
                   <span className="text-[#5c6368] text-sm font-normal">
-                    /per month
+                    {propertyType === "Vacational / Social"
+                      ? "/ Per Day"
+                      : "/ Per Month"}
                   </span>
                 </>
               ) : (
