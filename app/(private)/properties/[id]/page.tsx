@@ -433,19 +433,6 @@ export default async function PropertyDetails({
     return (
       <>
         <SurroundingFeatures property={property} />
-        {/* <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 sm:space-y-4 pb-1 px-0 sm:p-4 xl:p-4 !space-y-4">
-          <h2 className="text-2xl font-semibold mb-2">
-            Surrounding Features/Amenities
-          </h2>
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 text-sm text-neutral-700 mt-4">
-            {property.surroundingFeatures.map((feature) => (
-              <div key={feature} className="flex items-center space-x-3">
-                {featureIcons[feature]}{" "}
-                <span className="capitalize">{feature}</span>
-              </div>
-            ))}
-          </div>
-        </div> */}
       </>
     );
   };
@@ -530,7 +517,11 @@ export default async function PropertyDetails({
                       </span>
                     </h2>
                     {property.status === "let" && (
-                      <span className="font-medium">/ Per Month</span>
+                      <span className="font-medium">
+                        {property.propertyType === "Vacational / Social"
+                          ? "/ Per Day"
+                          : "/ Per Month"}
+                      </span>
                     )}
                   </div>
                   <h2 id="information-heading" className="sr-only">
@@ -649,11 +640,11 @@ export default async function PropertyDetails({
                       View all agent&apos;s properties
                     </Button>
                     {/* <Link
-                      href={`/agencies/${agent.id}`}
-                      className="font-medium border mb-8 lg:mb-0 bg-white border-neutral-200 text-neutral-700 text-center hover:bg-neutral-100 px-3 rounded-full text-lg"
-                    >
-                      View All Agent&apos;s properties
-                    </Link> */}
+              href={`/agencies/${agent.id}`}
+              className="font-medium border mb-8 lg:mb-0 bg-white border-neutral-200 text-neutral-700 text-center hover:bg-neutral-100 px-3 rounded-full text-lg"
+            >
+              View All Agent&apos;s properties
+            </Link> */}
                   </div>
                 </div>
               </div>
