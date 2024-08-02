@@ -1,4 +1,3 @@
-import { useSession } from "@/providers/client-provider";
 import { useQueryClient } from "@tanstack/react-query";
 import React from "react";
 import {
@@ -13,7 +12,7 @@ import { cn } from "@/lib/utils";
 import UserAvatar from "./UserAvatar";
 import Link from "next/link";
 import { LogOutIcon, UserIcon } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 interface UserButtonProps {
   className?: string;
@@ -21,7 +20,7 @@ interface UserButtonProps {
 
 export default function UserButton({ className }: UserButtonProps) {
   const session = useSession();
-  const user = session.user;
+  const user = session.data?.user;
 
   const queryClient = useQueryClient();
 
@@ -29,11 +28,11 @@ export default function UserButton({ className }: UserButtonProps) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className={cn("flex-none rounded-full", className)}>
-          <UserAvatar avatarUrl={user.image} size={40} />
+          <UserAvatar avatarUrl={user?.image} size={40} />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuLabel>Logged in as {user.name}</DropdownMenuLabel>
+        <DropdownMenuLabel>Logged in as {user?.name}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <Link href={`/dashboard/account`}>
           <DropdownMenuItem>

@@ -7,8 +7,8 @@ import { getSEOTags } from "@/lib/seo";
 import { Toaster } from "@/components/ui/sonner";
 import ModalProvider from "@/providers/modal-provider";
 import { auth } from "@/auth";
-import SessionProvider from "@/providers/client-provider";
 import { redirect } from "next/navigation";
+import SessionProvider from "@/providers/session-provider";
 
 const nunitoSans = Nunito_Sans({
   subsets: ["latin"],
@@ -26,16 +26,17 @@ export default async function RootLayout({
   const session = await auth();
   const user = session?.user;
 
-  if (!user) redirect("/login");
-  const value = {
-    user: session.user,
-    session,
-  };
+  // if (!user) redirect("/");
+
+  // const value = {
+  //   user: session.user,
+  //   session,
+  // };
   return (
     <html lang="en">
       <body className={`${nunitoSans.variable} antialiased`}>
         <ThemeProvider>
-          <SessionProvider value={value}>
+          <SessionProvider session={session}>
             <ModalProvider />
             <LayoutProvider>{children}</LayoutProvider>
             <Analytics />

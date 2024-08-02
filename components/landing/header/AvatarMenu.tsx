@@ -1,6 +1,6 @@
 "use client";
 import { LogOutIcon, UserIcon } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import React from "react";
 import {
@@ -15,7 +15,6 @@ import { cn } from "@/lib/utils";
 import UserAvatar from "@/components/crm/UserAvatar";
 import { auth } from "@/auth";
 import { useQueryClient } from "@tanstack/react-query";
-import { useSession } from "@/providers/client-provider";
 
 const avatar = [
   {
@@ -34,7 +33,7 @@ const avatar = [
 
 export default function AvatarMenu() {
   const session = useSession();
-  const user = session?.user;
+  const user = session.data?.user;
   const handleSignOut = async () => {
     await signOut({ callbackUrl: "/" });
   };
