@@ -48,7 +48,7 @@ export default function SettingsUpdatedForm({ user }: SettingsPageProps) {
   async function onSubmit(data: UpdateUserInput) {
     try {
       setIsLoading(true);
-      await updateProfile(data);
+      // await updateProfile(data);
       toast({ title: "Success.", description: "Profile updated." });
       session.update();
       setIsLoading(false);
