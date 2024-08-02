@@ -90,7 +90,7 @@ export async function updateIndividualAccount(userId: string, data: ProfileFormV
         }
 
         const {
-            profilePhoto,
+
             name,
             email,
             whatsappNumber,
@@ -108,7 +108,7 @@ export async function updateIndividualAccount(userId: string, data: ProfileFormV
                 id: userId,
             },
             data: {
-                profilePhoto,
+
                 name,
                 email,
                 whatsappNumber,
