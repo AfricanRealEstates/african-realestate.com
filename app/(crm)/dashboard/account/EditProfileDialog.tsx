@@ -1,3 +1,4 @@
+"use client";
 import { UserData } from "@/lib/types";
 import React, { useRef, useState } from "react";
 import avatarPlaceholder from "@/assets/avatar-placeholder.png";

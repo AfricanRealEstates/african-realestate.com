@@ -71,7 +71,10 @@ export default function GallerySlider({
                 className="flex h-[300px] w-full"
               >
                 {coverPhotos.map((image) => (
-                  <div key={image} className="flex-shrink-0 w-full h-full">
+                  <div
+                    key={image}
+                    className="flex-shrink-0 w-full h-full relative"
+                  >
                     <Image
                       src={image}
                       layout="fill"
@@ -81,7 +84,10 @@ export default function GallerySlider({
                   </div>
                 ))}
                 {galleryImgs.map((image) => (
-                  <div key={image} className="flex-shrink-0 w-full h-full">
+                  <div
+                    key={image}
+                    className="flex-shrink-0 w-full h-full relative"
+                  >
                     <Image
                       src={image}
                       layout="fill"
