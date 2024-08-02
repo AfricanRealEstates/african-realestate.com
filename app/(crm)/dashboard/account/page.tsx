@@ -114,7 +114,7 @@ interface UserProfileProps {
   user: UserData;
   loggedInUserId: string;
 }
-export function UserProfile({ user, loggedInUserId }: UserProfileProps) {
+function UserProfile({ user, loggedInUserId }: UserProfileProps) {
   return (
     <article className="h-fit w-full space-y-5 rounded-2xl bg-card p-5 shadow-sm">
       <UserAvatar
