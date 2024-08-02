@@ -614,10 +614,12 @@ export default async function PropertyDetails({
 
                     <div className="bg-white border-l border-neutral-100 w-full flex-1 flex justify-center items-center">
                       {agent.image ? (
-                        <img
+                        <Image
+                          height={100}
+                          width={100}
                           src={agent.image}
                           alt="Agent"
-                          className="object-cover h-24 w-24 rounded-full"
+                          className="object-cover h-28 w-28 rounded-full border border-gray-100"
                         />
                       ) : (
                         <img
@@ -631,7 +633,7 @@ export default async function PropertyDetails({
 
                   {/* == */}
                   <div className="w-full border-b border-neutral-200"></div>
-                  <div className="flex items-center mb-12">
+                  <div className="flex items-center justify-center w-full mb-12">
                     <Button
                       href={`/agencies/${agent.id}`}
                       color="blue"

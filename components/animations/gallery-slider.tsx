@@ -68,37 +68,29 @@ export default function GallerySlider({
             <div className="relative overflow-hidden group">
               <motion.div
                 animate={{ x: `-${index * 100}%` }}
-                className="flex h-[300px] "
+                className="flex h-[300px] w-full"
               >
-                {coverPhotos.map((image) => {
-                  return (
+                {coverPhotos.map((image) => (
+                  <div key={image} className="flex-shrink-0 w-full h-full">
                     <Image
-                      key={image}
                       src={image}
-                      height={300}
-                      width={400}
+                      layout="fill"
                       className="object-cover w-full h-full transition duration-300 ease-in-out hover:scale-110 hover:opacity-50"
-                      sizes="(max-width: 1025px) 100vw, 300px"
                       alt="Property Image"
                     />
-                  );
-                })}
-                {galleryImgs.map((image) => {
-                  return (
+                  </div>
+                ))}
+                {galleryImgs.map((image) => (
+                  <div key={image} className="flex-shrink-0 w-full h-full">
                     <Image
-                      key={image}
                       src={image}
-                      height={300}
-                      width={400}
+                      layout="fill"
                       className="object-cover w-full h-full transition duration-300 ease-in-out hover:scale-110 hover:opacity-50"
-                      sizes="(max-width: 1025px) 100vw, 300px"
                       alt="Property Image"
                     />
-                  );
-                })}
+                  </div>
+                ))}
               </motion.div>
-              {/* <div className="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-indigo-700 bg-fixed opacity-0 transition duration-300 ease-in-out hover:opacity-50"></div> */}
-
               <AnimatePresence initial={false}>
                 {index > 0 && (
                   <motion.button

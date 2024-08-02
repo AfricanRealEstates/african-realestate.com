@@ -2,31 +2,25 @@
 
 import { auth } from "@/auth";
 import prisma from "@/lib/prisma";
-import { updateUserSchema, UpdateUserInput } from "@/lib/validation";
-import { revalidatePath } from "next/cache";
+import { getUserDataSelect } from "@/lib/types";
+import { profileFormValues, profileFormSchema } from "@/lib/validation";
 
-export async function updateProfile(values: UpdateUserInput) {
+export async function updateProfile(values: profileFormValues) {
     const session = await auth();
 
-    const userId = session?.user.id
+    const user = session?.user
 
-    if (!userId) {
-        throw Error('Unauthorized')
+    if (!user || !user.id) {
+        throw new Error('Unauthorized')
     }
-    const { agentName, agentEmail, officeLine, whatsappNumber, address, postalCode, bio } = updateUserSchema.parse(values)
 
-    await prisma.user.update({
-        where: { id: userId },
-        data: {
-            agentName,
-            agentEmail,
-            officeLine,
-            whatsappNumber,
-            address,
-            postalCode,
-            bio,
-        }
-    })
+    const validatedValues = profileFormSchema.parse(values);
 
-    revalidatePath("/dashboard/account")
+    const updatedProfile = await prisma.user.update({
+        where: { id: user.id },
+        data: validatedValues,
+        select: getUserDataSelect(user.id)
+    });
+
+    return updatedProfile;
 }

@@ -7,23 +7,54 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getSEOTags } from "@/lib/seo";
 import { HeartCrackIcon } from "lucide-react";
-import { redirect } from "next/navigation";
-import React from "react";
+import { notFound, redirect } from "next/navigation";
+import React, { cache } from "react";
+import { getUserDataSelect, UserData } from "@/lib/types";
+import UserAvatar from "@/components/crm/user-avatar";
+import prisma from "@/lib/prisma";
+import { formatDate } from "date-fns";
+import { formatNumber } from "@/lib/formatter";
+import EditProfileButton from "./EditProfileButton";
 
 export const metadata = getSEOTags({
   title: "Account - Dashboard | African Real Estate",
   canonicalUrlRelative: "/dashboard/account",
 });
 
+const getUser = cache(async (name: string, loggedInUserId: string) => {
+  const user = await prisma.user.findFirst({
+    where: {
+      name: {
+        equals: name,
+        mode: "insensitive",
+      },
+    },
+    select: getUserDataSelect(loggedInUserId),
+  });
+
+  if (!user) notFound();
+
+  return user;
+});
+
 export default async function DashboardAccount() {
   const session = await auth();
-  const user = session?.user;
+  const loggedInUser = session?.user;
 
-  if (!user) {
+  if (!loggedInUser || !loggedInUser.id || !loggedInUser.name) {
     redirect("/login");
   }
 
+  const user = await getUser(loggedInUser.name, loggedInUser.id);
+
   return (
+    <section className="max-w-7xl mx-auto px-8 w-full mt-9">
+      <main className="flex w-full min-w-0 gap-5">
+        <div className="w-full min-w-0 space-y-5">
+          <UserProfile user={user} loggedInUserId={user.id} />
+        </div>
+      </main>
+      {/*
     <section className="max-w-7xl mx-auto px-8 w-full mt-9">
       <div className="grid gap-1 mb-4">
         <h2 className="text-2xl md:text-3xl">Account</h2>
@@ -72,20 +103,54 @@ export default async function DashboardAccount() {
             />
           </TabsContent>
         </Tabs>
-      </section>
-
-      {/* <div className="flex w-52 flex-col space-y-2 mt-6">
-        <p>Delete account:</p>
-        <DeleteAccount
-          email={session.user.email!}
-          trigger={
-            <Button variant="destructive" size="sm">
-              <HeartCrackIcon size={14} />
-              <span>Delete Account</span>
-            </Button>
-          }
-        />
-      </div> */}
+      </section> 
     </section>
+    */}
+    </section>
+  );
+}
+
+interface UserProfileProps {
+  user: UserData;
+  loggedInUserId: string;
+}
+export function UserProfile({ user, loggedInUserId }: UserProfileProps) {
+  return (
+    <article className="h-fit w-full space-y-5 rounded-2xl bg-card p-5 shadow-sm">
+      <UserAvatar
+        avatarUrl={user.image}
+        size={250}
+        className="mx-auto size-full max-h-60 max-w-60 rounded-full"
+      />
+
+      <div className="flex flex-wrap gap-3 sm:flex-nowrap">
+        <div className="me-auto space-y-3">
+          <div>
+            <h1 className="text-3xl font-bold">{user.name}</h1>
+          </div>
+          <p className="">
+            Member since {formatDate(user.createdAt, "MMM d, yyyy")}
+          </p>
+          <div className="flex items-center gap-3">
+            <span>
+              Properties:{" "}
+              <span className="font-semibold">
+                {formatNumber(user._count.properties)}
+              </span>
+            </span>
+          </div>
+        </div>
+        {user.id === loggedInUserId && <EditProfileButton user={user} />}
+      </div>
+
+      {user.bio && (
+        <>
+          <hr />
+          <div className="overflow-hidden whitespace-pre-line break-words">
+            {user.bio}
+          </div>
+        </>
+      )}
+    </article>
   );
 }

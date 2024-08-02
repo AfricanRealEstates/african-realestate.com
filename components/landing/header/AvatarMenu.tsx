@@ -1,7 +1,21 @@
-import { LogOutIcon } from "lucide-react";
+"use client";
+import { LogOutIcon, UserIcon } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import React from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
+import UserAvatar from "@/components/crm/UserAvatar";
+import { auth } from "@/auth";
+import { useQueryClient } from "@tanstack/react-query";
+import { useSession } from "@/providers/client-provider";
 
 const avatar = [
   {
@@ -19,10 +33,43 @@ const avatar = [
 ];
 
 export default function AvatarMenu() {
+  const session = useSession();
+  const user = session?.user;
   const handleSignOut = async () => {
     await signOut({ callbackUrl: "/" });
   };
+
+  const queryClient = useQueryClient();
+
   return (
+    // <DropdownMenu>
+    //   <DropdownMenuTrigger asChild>
+    //     <button className={cn("flex-none rounded-full")}>
+    //       <UserAvatar avatarUrl={user?.image} size={40} />
+    //     </button>
+    //   </DropdownMenuTrigger>
+    //   <DropdownMenuContent>
+    //     <DropdownMenuLabel>Logged in as {user?.name}</DropdownMenuLabel>
+    //     <DropdownMenuSeparator />
+    //     <Link href={`/dashboard/account`}>
+    //       <DropdownMenuItem>
+    //         <UserIcon className="mr-2 size-4" /> Profile
+    //       </DropdownMenuItem>
+    //     </Link>
+    //     <DropdownMenuSeparator />
+    //     <DropdownMenuItem
+    //       onClick={async () => {
+    //         await signOut({
+    //           callbackUrl: "/login",
+    //         });
+    //         queryClient.clear();
+    //       }}
+    //     >
+    //       <LogOutIcon className="mr-2 size-4" />
+    //       Log out
+    //     </DropdownMenuItem>
+    //   </DropdownMenuContent>
+    // </DropdownMenu>
     <section className="border rounded-sm shadow-md bg-white absolute top-full text-gray-400">
       <div className="flex cursor-pointer p-2">
         <div className="flex flex-col items-start space-y-2">

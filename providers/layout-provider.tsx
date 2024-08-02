@@ -13,8 +13,8 @@ import { Raleway } from "next/font/google";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 import Header from "@/components/landing/header/Header";
+import { useSession } from "./client-provider";
 
 const nunitoSans = Raleway({
   subsets: ["latin"],
@@ -66,7 +66,7 @@ export default function LayoutProvider({ children }: Props) {
   const router = useRouter();
 
   const session = useSession();
-  const user = session.data?.user;
+  const user = session.user;
 
   const isHomePage = pathname === "/";
 

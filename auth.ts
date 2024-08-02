@@ -14,6 +14,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     adapter: PrismaAdapter(prisma) as Adapter,
     session: { strategy: "jwt" },
     callbacks: {
+
         authorized({ auth, request: { nextUrl } }) {
             // const isLoggedIn = !!auth?.user
             // const paths = ['/dashboard', "/admin"];

@@ -102,12 +102,9 @@ export default function PropertyCard({
                 </span>
               </div>
             )}
-            {/* Add tenure information if available */}
+
             {tenure && (
               <div className="ml-4 inline-flex items-center space-x-2 col-span-2">
-                {/* <span className="hidden sm:inline-block">
-                  <ExpandIcon className="size-5" />
-                </span> */}
                 <span className="w-full capitalize flex items-center text-neutral-500 font-semibold">
                   {tenure}
                   {tenure.toLowerCase() === "leasehold" ||
@@ -157,64 +154,6 @@ export default function PropertyCard({
       </div>
     );
   };
-
-  // const renderTienIch = () => {
-  //   return (
-  //     <div
-  //       className={`${josefin.className} inline-grid grid-cols-3 gap-2 px-4`}
-  //     >
-  //       {propertyType.toLowerCase() === "land" ? (
-  //         <>
-  //           {landSize && (
-  //             <div className="flex items-center space-x-2">
-  //               <span className="hidden sm:inline-block">
-  //                 <ExpandIcon className="size-5" />
-  //               </span>
-  //               <span className=" text-neutral-500 font-semibold">
-  //                 {landSize} {landUnits}
-  //               </span>
-  //             </div>
-  //           )}
-  //         </>
-  //       ) : (
-  //         <>
-  //           {bedrooms && bedrooms > 0 && (
-  //             <div className="flex items-center space-x-2">
-  //               <span className="hidden sm:inline-block">
-  //                 <Bed className="size-5" />
-  //               </span>
-  //               <span className=" text-neutral-500 font-semibold">
-  //                 {bedrooms} beds
-  //               </span>
-  //             </div>
-  //           )}
-
-  //           {bathrooms && bathrooms > 0 && (
-  //             <div className="flex items-center space-x-4">
-  //               <span className="hidden sm:inline-block">
-  //                 <Bath className="size-5" />
-  //               </span>
-  //               <span className=" text-neutral-500 font-semibold">
-  //                 {bathrooms} baths
-  //               </span>
-  //             </div>
-  //           )}
-
-  //           {plinthArea && (
-  //             <div className="flex items-center space-x-2">
-  //               <span className="hidden sm:inline-block">
-  //                 <ExpandIcon className="size-5" />
-  //               </span>
-  //               <span className=" text-neutral-500 font-semibold">
-  //                 {plinthArea} Sq. Ft
-  //               </span>
-  //             </div>
-  //           )}
-  //         </>
-  //       )}
-  //     </div>
-  //   );
-  // };
 
   const renderContent = () => {
     return (

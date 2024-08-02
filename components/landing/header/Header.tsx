@@ -77,7 +77,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { HomeIcon } from "lucide-react";
 import clsx from "clsx";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import Image from "next/image";
 import ProductMenu from "./ProductMenu";
 import CompanyMenu from "./CompanyMenu";
@@ -85,6 +85,7 @@ import { Button } from "@/components/utils/Button";
 import AvatarMenu from "./AvatarMenu";
 
 import { Inter, Nunito_Sans } from "next/font/google";
+import { useSession } from "@/providers/client-provider";
 const nunito = Nunito_Sans({
   subsets: ["latin"],
   weight: ["600"],
@@ -162,7 +163,7 @@ export default function Header() {
   const [showAvatarMenu, setShowAvatarMenu] = useState(false);
 
   const session = useSession();
-  const user = session.data?.user;
+  const user = session.user;
 
   const pathname = usePathname();
   const isHomePage = pathname === "/";

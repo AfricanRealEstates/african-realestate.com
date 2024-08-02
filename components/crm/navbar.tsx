@@ -7,8 +7,10 @@ import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "../ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Menu, Power } from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import UserAccountNav from "./user-account-nav";
+import UserButton from "./UserButton";
+import { useSession } from "@/providers/client-provider";
 const navLinks = [
   { label: "Dashboard", href: "/dashboard" },
   { label: "Transactions", href: "/dashboard/transactions" },
@@ -28,7 +30,7 @@ export default function DashboardNavbar() {
 function MobileNavbar() {
   const [isOpen, setIsOpen] = useState(false);
   const session = useSession();
-  const user = session.data?.user;
+  const user = session.user;
   return (
     <aside className="block border-separate bg-neutral-50 md:hidden">
       <nav className="container flex items-center justify-between px-8">
@@ -72,7 +74,7 @@ function MobileNavbar() {
 
 function DesktopNavbar() {
   const session = useSession();
-  const user = session.data?.user;
+  const user = session.user;
   return (
     <header className="hidden border-separate border-b border-neutral-50 bg-background md:flex">
       <nav className="max-w-7xl mx-auto w-full flex items-center justify-between px-8">
@@ -86,7 +88,8 @@ function DesktopNavbar() {
           </div>
         </div>
         <div className="flex items-center gap-x-4">
-          {user && <UserAccountNav user={user} />}
+          {/* {user && <UserAccountNav user={user} />} */}
+          {user && <UserButton />}
         </div>
       </nav>
     </header>

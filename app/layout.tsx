@@ -4,9 +4,11 @@ import ThemeProvider from "@/providers/theme-provider";
 import LayoutProvider from "@/providers/layout-provider";
 import { Analytics } from "@vercel/analytics/react";
 import { getSEOTags } from "@/lib/seo";
-import { SessionProvider } from "next-auth/react";
 import { Toaster } from "@/components/ui/sonner";
 import ModalProvider from "@/providers/modal-provider";
+import { auth } from "@/auth";
+import SessionProvider from "@/providers/client-provider";
+import { redirect } from "next/navigation";
 
 const nunitoSans = Nunito_Sans({
   subsets: ["latin"],
@@ -21,11 +23,19 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+  const user = session?.user;
+
+  if (!user) redirect("/login");
+  const value = {
+    user: session.user,
+    session,
+  };
   return (
     <html lang="en">
       <body className={`${nunitoSans.variable} antialiased`}>
         <ThemeProvider>
-          <SessionProvider>
+          <SessionProvider value={value}>
             <ModalProvider />
             <LayoutProvider>{children}</LayoutProvider>
             <Analytics />

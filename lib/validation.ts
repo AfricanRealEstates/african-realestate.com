@@ -16,7 +16,6 @@ const ImageSchema = z.union([
 export const profileFormSchema = z.object({
     name: z.string().min(1, "Full Name is required"),
     email: z.string().email("Invalid email address"),
-    profilePhoto: z.string().optional(),
     whatsappNumber: nonEmptyString.transform((arg, ctx) => {
         const phone = parsePhoneNumberFromString(arg, {
 
@@ -62,8 +61,10 @@ export const profileFormSchema = z.object({
     facebookLink: z.string().optional(),
     linkedinLink: z.string().optional(),
     instagramLink: z.string().optional(),
-    bio: z.string().min(2, "Bio is required"),
+    bio: z.string().min(2, "Bio is required").max(1000, "Must be at most 1000 characters"),
 });
+
+export type profileFormValues = z.infer<typeof profileFormSchema>
 
 // Phone number validation
 const phoneRegex = new RegExp(
