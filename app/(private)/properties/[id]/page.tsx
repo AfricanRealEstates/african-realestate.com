@@ -51,6 +51,8 @@ import { surroundingFeatures } from "@/constants";
 import SurroundingFeatures from "./_components/surrounding-features";
 import PropertyCard from "@/components/properties/new/PropertyCard";
 import { formatNumber } from "@/lib/formatter";
+import UserProfileTooltip from "./_components/UserProfileTooltip";
+import { redirect } from "next/navigation";
 
 const amenityIcons: { [key: string]: JSX.Element } = {
   mosque: <FaMosque className="size-4 text-neutral-600" />,
@@ -101,6 +103,10 @@ export default async function PropertyDetails({
   params: { id },
 }: PropertyDetailsProps) {
   const session = await auth();
+  const user = session?.user;
+
+  if (!user) return;
+
   const property: Property =
     ((await prisma.property.findUnique({
       where: {
@@ -615,10 +621,12 @@ export default async function PropertyDetails({
                           className="object-cover h-28 w-28 rounded-full border border-gray-100"
                         />
                       ) : (
-                        <img
+                        <Image
+                          height={100}
+                          width={100}
                           src="/assets/placeholder.jpg"
                           alt="Placeholder"
-                          className="object-cover h-24 w-24 rounded-full"
+                          className="object-cover h-28 w-28 rounded-full"
                         />
                       )}
                     </div>

@@ -46,15 +46,15 @@ export default function SurroundingFeatures({ property }: any) {
   return (
     <section className="h-[407px]">
       <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 sm:space-y-2 pb-1 px-0 sm:p-4 xl:p-4 !space-y-4">
-        <h2 className="text-2xl font-semibold">
+        <h2 className="text-[22px] font-semibold">
           Surrounding Features/Amenities
         </h2>
-        <h3 className="text-2xl font-medium text-center">Within</h3>
-        <h3 className="text-2xl font-semibold text-center">2KM Radius</h3>
+        <h3 className="text-[21px] font-semibold text-center">Within</h3>
+        <h3 className="text-[22px] font-semibold text-center">2KM Radius</h3>
         <div className="w-14 border-b border-neutral-200 mb-2"></div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 text-sm text-neutral-700 mt-10">
           {property.surroundingFeatures.slice(0, 6).map((feature: any) => (
-            <div key={feature} className="flex items-center space-x-3 mt-4">
+            <div key={feature} className="flex items-center space-x-3 mt-6">
               {featureIcons[feature]}
               <span className="capitalize">{feature}</span>
             </div>
