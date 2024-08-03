@@ -50,6 +50,7 @@ import {
 import { surroundingFeatures } from "@/constants";
 import SurroundingFeatures from "./_components/surrounding-features";
 import PropertyCard from "@/components/properties/new/PropertyCard";
+import { formatNumber } from "@/lib/formatter";
 
 const amenityIcons: { [key: string]: JSX.Element } = {
   mosque: <FaMosque className="size-4 text-neutral-600" />,
@@ -202,20 +203,19 @@ export default async function PropertyDetails({
     </div>
   );
 
-  // Function to convert different land units to hectares
-  const convertToHectares = (size: number, units: string): number => {
+  const convertToAcres = (size: number, units: string): number => {
     switch (units.toLowerCase()) {
       case "ha":
-        return size;
+        // Conversion factor: 1 hectare = 2.47105 acres
+        return size * 2.47105;
       case "acres":
-        // Conversion factor: 1 acre = 0.404686 hectares
-        return size * 0.404686;
+        return size;
       case "sqft":
-        // Conversion factor: 1 hectare = 107639.104 square feet
-        return size / 107639.104;
+        // Conversion factor: 1 acre = 43560 square feet
+        return size / 43560;
       case "sqm":
-        // Conversion factor: 1 hectare = 10000 square meters
-        return size / 10000;
+        // Conversion factor: 1 acre = 4046.86 square meters
+        return size / 4046.86;
       default:
         return size;
     }
@@ -223,17 +223,8 @@ export default async function PropertyDetails({
 
   let convertedLandSize = null;
   if (property.landSize && property.landUnits) {
-    convertedLandSize = convertToHectares(
-      property.landSize,
-      property.landUnits
-    );
+    convertedLandSize = convertToAcres(property.landSize, property.landUnits);
   }
-
-  // // Converted land size in hectares
-  // const convertedLandSize = convertToHectares(
-  //   property.landSize,
-  //   property.landUnits
-  // );
 
   const renderSection1 = () => {
     return (
@@ -291,7 +282,6 @@ export default async function PropertyDetails({
                 </span>
               </div>
             )}
-
             {property.bathrooms && property.bathrooms > 0 && (
               <div className="flex items-center space-x-3">
                 <Bath className="size-4 text-blue-600" />
@@ -304,9 +294,12 @@ export default async function PropertyDetails({
             {convertedLandSize && (
               <div className="flex items-center space-x-3">
                 <ExpandIcon className="size-4 text-blue-600" />
-                <span className=" ">
-                  {convertedLandSize?.toPrecision(2)}{" "}
-                  <span className="hidden sm:inline-block">acres</span>
+                <span className="">
+                  {convertedLandSize.toFixed(3)}{" "}
+                  <span className="hidden sm:inline-block capitalize">
+                    {" "}
+                    acres
+                  </span>
                 </span>
               </div>
             )}
@@ -326,7 +319,7 @@ export default async function PropertyDetails({
             <p className="text-sm font-medium text-gray-500">
               Plinth Area:
               <span className="ml-2 bg-gray-50 text-indigo-500 px-2 py-1 rounded-full">
-                {property.plinthArea} Sq.m
+                {formatNumber(property.plinthArea)} Sq.m
               </span>
             </p>
             {property.bedrooms && (
@@ -340,7 +333,7 @@ export default async function PropertyDetails({
             <p className="text-sm font-medium text-gray-500">
               Size of Land:
               <span className="ml-2 bg-gray-50 text-indigo-500 px-2 py-1 rounded-full">
-                {convertedLandSize?.toPrecision(2)} Acres
+                {convertedLandSize?.toPrecision(3)} Acres
               </span>
             </p>
           </>
@@ -353,7 +346,7 @@ export default async function PropertyDetails({
             <p className="text-sm font-medium text-gray-500">
               Plinth Area:
               <span className="ml-2 bg-gray-50 text-indigo-500 px-2 py-1 rounded-full">
-                {property.plinthArea} Sq.m
+                {formatNumber(property.plinthArea)} Sq.m
               </span>
             </p>
             {property.bathrooms && (
@@ -380,7 +373,7 @@ export default async function PropertyDetails({
             <p className="text-sm font-medium text-gray-500">
               Land Size:
               <span className="ml-2 capitalize bg-gray-50 text-indigo-500 px-2 py-1 rounded-full">
-                {property.landSize} {property.landUnits}
+                {formatNumber(property.landSize)} {property.landUnits}
               </span>
             </p>
             <p className="text-sm font-medium text-gray-500">
