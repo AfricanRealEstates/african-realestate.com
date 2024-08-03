@@ -11,6 +11,7 @@ import { FaFacebook, FaLinkedin, FaTiktok, FaYoutube } from "react-icons/fa";
 import NotFound from "@/app/not-found";
 import dayjs from "dayjs";
 import { capitalizeWords } from "@/lib/utils";
+import { formatDate } from "date-fns";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -37,9 +38,7 @@ export async function generateMetadata({
   });
 
   return {
-    title: `${capitalizeWords(
-      agent?.agentName!
-    )}'s Listings | African Real Estate`,
+    title: `${capitalizeWords(agent?.name!)}'s Listings | African Real Estate`,
   };
 }
 
@@ -95,7 +94,7 @@ export default async function SingleAgency({
         {agent?.name ? (
           <div className="space-y-3 text-center flex flex-col items-center">
             <h2 className="text-xl text-indigo-500 font-semibold">
-              {agent?.agentName}
+              {agent?.name}
             </h2>
             {/* <StartRating className="!text-base" /> */}
           </div>
@@ -107,7 +106,11 @@ export default async function SingleAgency({
 
         {/* ---- */}
         {agent?.bio ? (
-          <p className="text-neutral-500">{agent.bio}</p>
+          <p className="text-neutral-500">
+            {agent.bio.length > 250
+              ? `${agent.bio.substring(0, 250)}...`
+              : agent.bio}
+          </p>
         ) : (
           <p className="text-neutral-500">No bio yet</p>
         )}
@@ -137,7 +140,7 @@ export default async function SingleAgency({
         <div className="space-y-4">
           <div className="flex items-center space-x-4">
             <Mail className="h-6 w-6 text-neutral-400" />
-            <span className="text-neutral-600">{agent.agentEmail}</span>
+            <span className="text-neutral-600">{agent.email}</span>
           </div>
           <div className="flex items-center space-x-4">
             <svg
@@ -173,7 +176,7 @@ export default async function SingleAgency({
               />
             </svg>
             <span className="text-neutral-600">
-              Joined in {dayjs(agent.createdAt).format("DD MMM YYYY hh:mm A")}
+              Member since {formatDate(agent.createdAt, "MMM d, yyyy")}
             </span>
           </div>
         </div>
