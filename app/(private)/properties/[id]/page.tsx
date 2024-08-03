@@ -301,7 +301,7 @@ export default async function PropertyDetails({
               <div className="flex items-center space-x-3">
                 <ExpandIcon className="size-4 text-blue-600" />
                 <span className="">
-                  {convertedLandSize.toFixed(3)}{" "}
+                  {convertedLandSize.toPrecision(3)}{" "}
                   <span className="hidden sm:inline-block capitalize">
                     {" "}
                     acres
@@ -325,7 +325,7 @@ export default async function PropertyDetails({
             <p className="text-sm font-medium text-gray-500">
               Plinth Area:
               <span className="ml-2 bg-gray-50 text-indigo-500 px-2 py-1 rounded-full">
-                {formatNumber(property.plinthArea)} Sq.m
+                {formatNumber(property.plinthArea)} Sq
               </span>
             </p>
             {property.bedrooms && (
@@ -379,7 +379,7 @@ export default async function PropertyDetails({
             <p className="text-sm font-medium text-gray-500">
               Land Size:
               <span className="ml-2 capitalize bg-gray-50 text-indigo-500 px-2 py-1 rounded-full">
-                {formatNumber(property.landSize)} {property.landUnits}
+                {convertedLandSize?.toPrecision(3)} Acres
               </span>
             </p>
             <p className="text-sm font-medium text-gray-500">

@@ -19,7 +19,9 @@ export default function ImageCarousel({ property }: Props) {
   const [index, setIndex] = useState(0);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const uniqueImages = removeDuplicates(property.images);
+  // Combine coverPhotos and images with coverPhotos first
+  const combinedImages = [...property.coverPhotos, ...property.images];
+  const uniqueImages = removeDuplicates(combinedImages);
   const allImages = [...uniqueImages];
 
   useKeypress("ArrowRight", () => {
