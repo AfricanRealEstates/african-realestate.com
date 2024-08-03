@@ -1,9 +1,7 @@
 import React from "react";
 import prisma from "@/lib/prisma";
 import { Property } from "@prisma/client";
-import Image from "next/image";
-import Link from "next/link";
-import PropertyCard from "./property-card";
+import PropertyCard from "./new/PropertyCard";
 
 export default async function AllProperties({
   searchParams,
@@ -30,7 +28,7 @@ export default async function AllProperties({
   return (
     <section className="mx-auto mb-8 gap-8 grid w-full grid-cols-[repeat(auto-fill,minmax(335px,1fr))] justify-center">
       {properties.map((property) => {
-        return <PropertyCard key={property.id} property={property} />;
+        return <PropertyCard key={property.id} data={property} />;
       })}
     </section>
   );
