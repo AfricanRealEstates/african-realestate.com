@@ -143,7 +143,7 @@ export default function PropertyCard({
                   <ExpandIcon className="size-5" />
                 </span>
                 <span className="text-neutral-500 font-semibold">
-                  {formatNumber(plinthArea)} Sq. Ft
+                  {formatNumber(plinthArea)} Sq.m
                 </span>
               </div>
             )}

@@ -325,7 +325,7 @@ export default async function PropertyDetails({
             <p className="text-sm font-medium text-gray-500">
               Plinth Area:
               <span className="ml-2 bg-gray-50 text-indigo-500 px-2 py-1 rounded-full">
-                {formatNumber(property.plinthArea)} Sq
+                {formatNumber(property.plinthArea)} Sq.m
               </span>
             </p>
             {property.bedrooms && (
