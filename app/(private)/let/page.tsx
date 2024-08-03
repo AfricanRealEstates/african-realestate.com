@@ -6,7 +6,7 @@ import { Property } from "@prisma/client";
 import { Raleway } from "next/font/google";
 import React, { Suspense } from "react";
 import prisma from "@/lib/prisma";
-import PropertyCard from "@/components/properties/property-card";
+import PropertyCard from "@/components/properties/new/PropertyCard";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -61,7 +61,7 @@ export default async function Properties({
         ) : (
           <section className="mx-auto mb-8 gap-8 grid w-full grid-cols-[repeat(auto-fill,minmax(335px,1fr))] justify-center">
             {letProperties.map((property) => {
-              return <PropertyCard key={property.id} property={property} />;
+              return <PropertyCard key={property.id} data={property} />;
             })}
 
             {letProperties.length === 0 && (

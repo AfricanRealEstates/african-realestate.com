@@ -30,27 +30,42 @@ export default async function Dashboard({
     typeof searchParams.search === "string"
       ? searchParams.search.toLowerCase()
       : undefined;
+  const properties = await prisma.property.findMany({
+    where: {
+      userId: user.id,
+    },
+  });
 
   return (
     <div className="h-full bg-gray-50">
       <section className="border-b border-neutral-50 bg-card mt-4">
         <div className="max-w-7xl mx-auto w-full px-8 flex flex-wrap items-center justify-between gap-6 py-3">
           <p className="text-2xl font-bold">
-            Hello,{" "}
-            <strong className="text-indigo-400 mr-1">{user.name}!</strong>
+            Hello, <strong className="text-blue-400 mr-1">{user.name}!</strong>
             👋️
           </p>
         </div>
       </section>
       <section className="w-full lg:max-w-7xl mx-auto px-8 mt-8">
-        <article className="flex items-center justify-between mt-8">
+        {properties.length >= 1 && (
+          <>
+            <h2 className="break-normal text-lg font-medium sm:text-2xl">
+              🎉 Congratulations, you&apos;ve created a listing!
+            </h2>
+            <h3 className="text-xs text-muted-foreground sm:text-sm mt-4">
+              You can view your listings below.
+            </h3>
+          </>
+        )}
+
+        <article className="flex items-center justify-between mt-4">
           <div className="w-80 mt-1">
             <SearchInput search={search} />
           </div>
           <div className="mt-0 ml-16 flex-none">
             <button
               type="button"
-              className="block rounded-md bg-indigo-600 py-1.5 px-3 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="block rounded-md bg-blue-600 py-1.5 px-3 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               <Link
                 href="/agent/properties/create-property"
@@ -128,7 +143,7 @@ const PropertiesTable = async ({
               <thead className="bg-gray-50">
                 <tr>
                   <th className="py-3.5 pr-3 text-left text-sm font-semibold w-[62px] sm:w-auto text-gray-900 pl-4">
-                    Name
+                    Property Name
                   </th>
                   <th className="px-3 py-3.5 text-left text-sm font-semibold w-[130px] sm:w-auto text-gray-900">
                     Currency
@@ -148,7 +163,12 @@ const PropertiesTable = async ({
                 {properties.slice(0, 10).map((property) => (
                   <tr key={property.id}>
                     <td className="whitespace-nowrap py-4 pr-3 text-sm font-medium text-gray-900 pl-4">
-                      {property.title}
+                      <Link
+                        href={`/properties/${property.id}`}
+                        className="text-blue-500 hover:text-blue-600 transition-all hover:underline underline-offset-4"
+                      >
+                        {property.title}
+                      </Link>
                     </td>
                     <td className="whitespace-nowrap py-4 pr-3 text-sm font-medium text-gray-900 pl-4">
                       {property.currency}
@@ -161,8 +181,8 @@ const PropertiesTable = async ({
                     </td>
                     <td className="relative whitespace-nowrap py-4 pl-4 pr-4 text-right text-sm font-medium">
                       <Link
-                        href="/agent/properties"
-                        className="text-indigo-600 hover:text-indigo-900 inline-flex items-center"
+                        href={`agent/properties/edit-property/${property.id}`}
+                        className="text-blue-500 hover:text-blue-600 inline-flex items-center"
                       >
                         Edit
                         <ChevronRightIcon className="w-4 h-4" />

@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Bath, Bed, ExpandIcon, Eye, Heart, MapPinned } from "lucide-react";
 
 import { Josefin_Sans, Raleway } from "next/font/google";
+import { formatNumber } from "@/lib/utils";
 const josefin = Raleway({
   subsets: ["latin"],
   weight: ["600"],
@@ -87,30 +88,27 @@ export default function PropertyCard({
 
   const renderTienIch = () => {
     return (
-      <div
-        className={`${josefin.className} inline-grid grid-cols-3 gap-2 px-4`}
-      >
+      <div className={`${josefin.className} grid grid-cols-3 gap-2 px-4`}>
         {propertyType.toLowerCase() === "land" ? (
           <>
             {landSize && (
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 col-span-1">
                 <span className="hidden sm:inline-block">
                   <ExpandIcon className="size-5" />
                 </span>
-                <span className=" text-neutral-500 font-semibold">
-                  {landSize} {landUnits}
+                <span className="text-neutral-500 font-semibold">
+                  {formatNumber(landSize)} {landUnits}
                 </span>
               </div>
             )}
 
             {tenure && (
-              <div className="ml-4 inline-flex items-center space-x-2 col-span-2">
+              <div className="inline-flex items-center space-x-2 col-span-2">
                 <span className="w-full capitalize flex items-center text-neutral-500 font-semibold">
                   {tenure}
-                  {tenure.toLowerCase() === "leasehold" ||
-                  tenure.toLowerCase() === "sectionalTitle"
-                    ? ` - ${data.yearsLeft} yrs`
-                    : ""}
+                  {(tenure.toLowerCase() === "leasehold" ||
+                    tenure.toLowerCase() === "sectionalTitle") &&
+                    ` - ${data.yearsLeft} yrs`}
                 </span>
               </div>
             )}
@@ -118,34 +116,34 @@ export default function PropertyCard({
         ) : (
           <>
             {bedrooms && bedrooms > 0 && (
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 col-span-1">
                 <span className="hidden sm:inline-block">
                   <Bed className="size-5" />
                 </span>
-                <span className=" text-neutral-500 font-semibold">
+                <span className="text-neutral-500 font-semibold">
                   {bedrooms} beds
                 </span>
               </div>
             )}
 
             {bathrooms && bathrooms > 0 && (
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-4 col-span-1">
                 <span className="hidden sm:inline-block">
                   <Bath className="size-5" />
                 </span>
-                <span className=" text-neutral-500 font-semibold">
+                <span className="text-neutral-500 font-semibold">
                   {bathrooms} baths
                 </span>
               </div>
             )}
 
             {plinthArea && (
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 col-span-1">
                 <span className="hidden sm:inline-block">
                   <ExpandIcon className="size-5" />
                 </span>
-                <span className=" text-neutral-500 font-semibold">
-                  {plinthArea} Sq. Ft
+                <span className="text-neutral-500 font-semibold">
+                  {formatNumber(plinthArea)} Sq. Ft
                 </span>
               </div>
             )}

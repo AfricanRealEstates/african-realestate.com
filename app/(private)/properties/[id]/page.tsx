@@ -29,7 +29,6 @@ import { Metadata } from "next";
 import ImageCarousel from "./_components/image-carousel";
 import Link from "next/link";
 import NotFound from "@/app/not-found";
-import PropertyCard from "@/components/properties/property-card";
 import { auth } from "@/auth";
 import Avatar from "@/components/globals/avatar";
 import Badge from "./_components/badge";
@@ -50,6 +49,7 @@ import {
 } from "react-icons/fa";
 import { surroundingFeatures } from "@/constants";
 import SurroundingFeatures from "./_components/surrounding-features";
+import PropertyCard from "@/components/properties/new/PropertyCard";
 
 const amenityIcons: { [key: string]: JSX.Element } = {
   mosque: <FaMosque className="size-4 text-neutral-600" />,
@@ -536,9 +536,9 @@ export default async function PropertyDetails({
                     <div className="space-y-3 flex-1">
                       <div className="flex items-center space-x-4">
                         <div>
-                          {agent?.agentName ? (
+                          {agent?.name ? (
                             <p className="block text-lg text-indigo-500 font-medium">
-                              {agent.agentName}
+                              {agent.name}
                             </p>
                           ) : (
                             <p>No name yet</p>
@@ -696,7 +696,7 @@ export default async function PropertyDetails({
           {relatedProperties.length > 0 ? (
             <div className="mt-6 grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 sm:gap-y-10 lg:grid-cols-3">
               {relatedProperties.slice(0, 3).map((property) => {
-                return <PropertyCard key={property.id} property={property} />;
+                return <PropertyCard key={property.id} data={property} />;
               })}
             </div>
           ) : (
