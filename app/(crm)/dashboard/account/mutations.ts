@@ -1,9 +1,10 @@
-import { updateProfile } from "@/actions/updateProfile";
-import { PropertiesPage } from "@/lib/types";
+
 import { useUploadThing } from "@/lib/uploadthing";
-import { profileFormValues } from "@/lib/validation";
 import { InfiniteData, QueryFilters, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { profileFormValues } from "@/lib/validation";
+import { updateProfile } from "@/actions/updateProfile";
+import { PropertiesPage } from "@/lib/types";
 import { toast } from "sonner";
 
 export function useUpdateProfileMutation() {
@@ -35,24 +36,26 @@ export function useUpdateProfileMutation() {
 
                     return {
                         pageParams: oldData.pageParams,
-                        pages: oldData.pages.map((page) => ({
+                        pages: oldData.pages.map((page => ({
                             nextCursor: page.nextCursor,
-                            properties: page.properties.map((property) => {
+                            properties: page.properties.map(property => {
                                 if (property.user.id === updatedUser.id) {
                                     return {
                                         ...property,
                                         user: {
                                             ...updatedUser,
-                                            image: newAvatarUrl || updatedUser.image
+                                            avatar: newAvatarUrl || updatedUser.image
                                         }
                                     }
+
                                 }
                                 return property;
                             })
-                        }))
+                        })))
                     }
                 }
             );
+
             router.refresh();
 
             toast.success("Profile updated")
@@ -62,6 +65,5 @@ export function useUpdateProfileMutation() {
             toast.error("Failed to update profile. Please try again")
         }
     })
-
     return mutation;
 }
