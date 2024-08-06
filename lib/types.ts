@@ -47,7 +47,20 @@ export function getPropertyDataInclude(loggedInUserId: string) {
     return {
         user: {
             select: getUserDataSelect(loggedInUserId)
-        }
+        },
+        likes: {
+            where: {
+                userId: loggedInUserId,
+            },
+            select: {
+                userId: true,
+            },
+        },
+        _count: {
+            select: {
+                likes: true,
+            },
+        },
     } satisfies Prisma.PropertyInclude;
 }
 
@@ -60,3 +73,7 @@ export interface PropertiesPage {
     nextCursor: string | null;
 }
 
+export interface LikeInfo {
+    likes: number;
+    isLikedByUser: boolean;
+}

@@ -22,6 +22,7 @@ import { cache } from "@/lib/cache";
 import FeaturedCard from "@/components/properties/featured-card";
 import { Button } from "@/components/utils/Button";
 import PropertyCard from "@/components/properties/new/PropertyCard";
+import { PropertyData } from "@/lib/types";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -90,7 +91,12 @@ export default async function FeaturedProperties() {
 
           <article className="mx-auto mb-8 gap-8 grid w-full max-w-screen-xl grid-cols-[repeat(auto-fill,_minmax(335px,1fr))] justify-center">
             {properties.slice(0, 6).map((property) => {
-              return <PropertyCard key={property.id} data={property} />;
+              return (
+                <PropertyCard
+                  key={property.id}
+                  data={property as PropertyData}
+                />
+              );
             })}
           </article>
 

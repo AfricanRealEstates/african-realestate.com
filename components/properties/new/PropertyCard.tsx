@@ -1,3 +1,5 @@
+"use client";
+
 import GallerySlider from "@/components/animations/gallery-slider";
 import { Property } from "@prisma/client";
 import React from "react";
@@ -7,7 +9,11 @@ import Link from "next/link";
 import { Bath, Bed, ExpandIcon, Eye, Heart, MapPinned } from "lucide-react";
 
 import { Josefin_Sans, Raleway } from "next/font/google";
-import { formatNumber } from "@/lib/utils";
+import { calculatePercentageSavings, formatNumber } from "@/lib/utils";
+import LikeButton from "../LikeButton";
+import { PropertyData } from "@/lib/types";
+import { useSession } from "next-auth/react";
+
 const josefin = Raleway({
   subsets: ["latin"],
   weight: ["600"],
@@ -16,7 +22,7 @@ const josefin = Raleway({
 export interface PropertyCardProps {
   className?: string;
   ratioClass?: string;
-  data: Property;
+  data: PropertyData;
   size?: "default" | "small";
 }
 
@@ -32,6 +38,7 @@ export default function PropertyCard({
     plinthArea,
     currency,
     price,
+    leastPrice,
     bedrooms,
     bathrooms,
     title,
@@ -46,9 +53,12 @@ export default function PropertyCard({
     tenure,
   } = data;
 
+  const session = useSession();
+  const user = session.data?.user;
+
   const renderSliderGallery = () => {
     return (
-      <div className="relative w-full overflow-hidden ">
+      <div className="relative w-full overflow-hidden">
         <GallerySlider
           uniqueID={`ExperiencesCard_${id}`}
           ratioClass={ratioClass}
@@ -66,9 +76,14 @@ export default function PropertyCard({
             </li>
           </ul>
           <ul className="flex gap-1">
-            <li className="bg-[rgba(11,33,50,.4)] p-1 hover:bg-red-500 rounded flex items-center justify-center transition-all ease-linear cursor-pointer">
-              <Heart className="size-5 text-white" />
-            </li>
+            <LikeButton
+              propertyId={data.id}
+              initialState={{
+                likes: data._count?.likes || 0,
+                isLikedByUser:
+                  data.likes?.some((like) => like.userId === user?.id) || false,
+              }}
+            />
             <Link
               href={`/properties/${id}`}
               className="bg-[rgba(11,33,50,.4)] p-1 hover:bg-red-500 rounded flex items-center justify-center transition-all ease-linear cursor-pointer"
@@ -154,6 +169,7 @@ export default function PropertyCard({
   };
 
   const renderContent = () => {
+    const savings = calculatePercentageSavings(price, leastPrice);
     return (
       <div className={size === "default" ? "py-4 space-y-3" : "p-3 space-y-1"}>
         <div className="space-y-2 px-4">
@@ -165,16 +181,23 @@ export default function PropertyCard({
             </h2>
           </div>
 
-          <div
-            className={` ${josefin.className} leading-relaxed gap-4 text-[14px] flex items-center`}
-          >
-            {size === "default" && (
-              <MapPinned className="size-4 text-[#5c6368]" />
-            )}
-            <p className="inline-flex gap-1 capitalize text-[#5c6368]">
-              <span>{locality},</span>
-              <span className="">{county}</span>
-            </p>
+          <div className="flex items-center justify-between">
+            <div
+              className={` ${josefin.className} leading-relaxed gap-4 text-[14px] flex items-center`}
+            >
+              {size === "default" && (
+                <MapPinned className="size-4 text-[#5c6368]" />
+              )}
+              <p className="inline-flex gap-1 capitalize text-[#5c6368]">
+                <span>{locality},</span>
+                <span className="">{county}</span>
+              </p>
+            </div>
+            {savings && parseFloat(savings) > 0 ? (
+              <p className="text-xs font-medium text-rose-400">
+                {savings}% save
+              </p>
+            ) : null}
           </div>
         </div>
         {renderTienIch()}

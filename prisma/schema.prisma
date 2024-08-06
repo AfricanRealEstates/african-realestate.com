@@ -61,6 +61,7 @@ model User {
   queries          Query[]
   subscriptions    Subscription[]
   orders           Order[]
+  likes            Like[]
 
   @@map("users")
 }
@@ -157,6 +158,7 @@ model Property {
 
   queries Query[]
   orders  Order[]
+  likes   Like[]
 
   @@map("properties")
 }
@@ -215,6 +217,16 @@ model Post {
   updatedAt     DateTime @updatedAt
 
   @@map("posts")
+}
+
+model Like {
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, propertyId])
+  @@map("likes")
 }
 
 // plan   Plan

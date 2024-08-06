@@ -38,7 +38,7 @@ import OverviewInfo from "./_components/overview-info";
 import Image from "next/image";
 import { Button } from "@/components/utils/Button";
 import MessageWidget from "./_components/message-widget";
-import { capitalizeWords } from "@/lib/utils";
+import { calculatePercentageSavings, capitalizeWords } from "@/lib/utils";
 import {
   FaBuyNLarge,
   FaChurch,
@@ -53,6 +53,8 @@ import PropertyCard from "@/components/properties/new/PropertyCard";
 import { formatNumber } from "@/lib/formatter";
 import UserProfileTooltip from "./_components/UserProfileTooltip";
 import { redirect } from "next/navigation";
+import { PropertyData } from "@/lib/types";
+import LikeButton from "@/components/properties/LikeButton";
 
 const amenityIcons: { [key: string]: JSX.Element } = {
   mosque: <FaMosque className="size-4 text-neutral-600" />,
@@ -87,12 +89,11 @@ interface PropertyDetailsProps {
 export async function generateMetadata({
   params: { id },
 }: PropertyDetailsProps): Promise<Metadata> {
-  const property: Property =
-    ((await prisma.property.findUnique({
-      where: {
-        id: id,
-      },
-    })) as Property) || null;
+  const property = (await prisma.property.findUnique({
+    where: {
+      id: id,
+    },
+  })) as PropertyData;
 
   return {
     title: `${capitalizeWords(property.title)} | African Real Estate`,
@@ -107,18 +108,22 @@ export default async function PropertyDetails({
 
   if (!user) return;
 
-  const property: Property =
-    ((await prisma.property.findUnique({
-      where: {
-        id: id,
-      },
-    })) as Property) || null;
+  const property = (await prisma.property.findUnique({
+    where: {
+      id: id,
+    },
+  })) as PropertyData;
 
   console.log(property.surroundingFeatures);
 
   if (!property) {
     return <NotFound />;
   }
+
+  const savings = calculatePercentageSavings(
+    property.price,
+    property.leastPrice
+  );
 
   let priceRange = {
     // Define default price range of +/- 50000 from the property's price
@@ -238,7 +243,16 @@ export default async function PropertyDetails({
         {/* 1 */}
         <div className="flex justify-between items-center">
           <Badge name="Location Info" />
-          <LikeSaveBtns />
+          {/* <LikeSaveBtns /> */}
+          <LikeButton
+            propertyId={property.id}
+            initialState={{
+              likes: property._count?.likes || 0,
+              isLikedByUser:
+                property.likes?.some((like) => like.userId === user?.id) ||
+                false,
+            }}
+          />
         </div>
 
         {/* 3 */}
@@ -497,10 +511,17 @@ export default async function PropertyDetails({
             <article className="flex flex-col-reverse h-full">
               <div className="flex flex-col gap-4">
                 <div className="space-y-8 w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 sm:space-y-6 px-0 sm:p-4 xl:p-4">
-                  <p className="rounded-full font-semibold w-fit bg-neutral-50 px-2 py-1 text-indigo-500">
-                    {property.status === "let" ? "To " : "For "}
-                    <span className="capitalize">{property.status}</span>
-                  </p>
+                  <div className="flex items-center justify-between">
+                    <p className="rounded-full font-semibold w-fit bg-neutral-50 px-2 py-1 text-indigo-500">
+                      {property.status === "let" ? "To " : "For "}
+                      <span className="capitalize">{property.status}</span>
+                    </p>
+                    {savings && parseFloat(savings) > 0 ? (
+                      <p className="text-sm font-medium text-rose-400 bg-gray-50 px-2 py-1 rounded-full">
+                        {savings}% save
+                      </p>
+                    ) : null}
+                  </div>
                   <div className="flex items-center">
                     <h2 className="inline-flex text-xl font-medium gap-x-1.5 items-center text-gray-500">
                       {property.status === "let" ? (
@@ -697,7 +718,12 @@ export default async function PropertyDetails({
           {relatedProperties.length > 0 ? (
             <div className="mt-6 grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 sm:gap-y-10 lg:grid-cols-3">
               {relatedProperties.slice(0, 3).map((property) => {
-                return <PropertyCard key={property.id} data={property} />;
+                return (
+                  <PropertyCard
+                    key={property.id}
+                    data={property as PropertyData}
+                  />
+                );
               })}
             </div>
           ) : (

@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { ButtonSecondary } from "@/components/globals/button-secondary";
 import ButtonClose from "@/components/globals/button-close";
+import { formatDate } from "date-fns";
 
 const featureIcons: { [key: string]: JSX.Element } = {
   mosque: <FaMosque className="size-4 text-[#eb6753]" />,
@@ -46,13 +47,20 @@ export default function SurroundingFeatures({ property }: any) {
   return (
     <section className="h-[407px]">
       <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 sm:space-y-2 pb-1 px-0 sm:p-4 xl:p-4 !space-y-4">
+        <div className="my-2 gap-2 flex flex-col">
+          Date Added:{" "}
+          <p className="bg-gray-50 text-rose-500 font-medium w-fit px-2 rounded-full">
+            {formatDate(property.createdAt, "MMM d, yyyy")}
+          </p>
+        </div>
+
+        <div className="w-14 border-b border-neutral-200 mb-4"></div>
+
         <h2 className="text-[22px] font-semibold">
-          Surrounding Features/Amenities
+          Amenities Within 2KM Radius
         </h2>
-        <h3 className="text-[21px] font-semibold text-center">Within</h3>
-        <h3 className="text-[22px] font-semibold text-center">2KM Radius</h3>
-        <div className="w-14 border-b border-neutral-200 mb-2"></div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 text-sm text-neutral-700 mt-10">
+        <div className="w-14 border-b border-neutral-200 mb-4"></div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-1 text-sm text-neutral-700 mt-10 mb-1">
           {property.surroundingFeatures.slice(0, 6).map((feature: any) => (
             <div key={feature} className="flex items-center space-x-3 mt-6">
               {featureIcons[feature]}

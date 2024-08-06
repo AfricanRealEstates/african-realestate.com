@@ -1,6 +1,7 @@
 "use client";
 import { ButtonSecondary } from "@/components/globals/button-secondary";
 import PropertyCard from "@/components/properties/new/PropertyCard";
+import { PropertyData } from "@/lib/types";
 import { Tab } from "@headlessui/react";
 import { Property, User } from "@prisma/client";
 
@@ -70,7 +71,10 @@ const RenderSection1 = ({ properties, agent }: Props) => {
                     filteredProperties
                       .filter((property) => property.status === status)
                       .map((property) => (
-                        <PropertyCard key={property.id} data={property} />
+                        <PropertyCard
+                          key={property.id}
+                          data={property as PropertyData}
+                        />
                       ))
                   ) : (
                     <>
