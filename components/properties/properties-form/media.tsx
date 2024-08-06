@@ -7,10 +7,7 @@ import { uploadFilesToFirebase } from "@/lib/utils/upload-media";
 import { addProperty, editProperty } from "@/actions/properties";
 import { toast } from "sonner";
 import { Icons } from "@/components/globals/icons";
-import {
-  surroundingFeatures as features,
-  surroundingFeatures,
-} from "@/constants";
+import { surroundingFeatures } from "@/constants";
 
 export default function Media({
   currentStep,
@@ -34,11 +31,9 @@ export default function Media({
 
   useEffect(() => {
     if (isEdit && id) {
-      // Fetch the existing property data and set it to finalValues here if not already done
-      // This should ensure finalValues is populated correctly for the edit form
-    }
-
-    if (finalValues.media) {
+      setCoverPhotos(finalValues.media.coverPhotos || []);
+      setTempFiles(finalValues.media.images || []);
+    } else if (finalValues.media) {
       setCoverPhotos(finalValues.media.coverPhotos || []);
       setTempFiles(finalValues.media.images || []);
     }
@@ -102,7 +97,6 @@ export default function Media({
   };
 
   const handleCancel = () => setPreviewVisible(false);
-
   const handlePreview = async (file: any) => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
@@ -122,6 +116,32 @@ export default function Media({
       reader.onerror = (error) => reject(error);
     });
 
+  const handleCoverPhotoRemove = (file: any) => {
+    const updatedCoverPhotos = coverPhotos.filter(
+      (photo) => photo.url !== file.url
+    );
+    setCoverPhotos(updatedCoverPhotos);
+    setFinalValues({
+      ...finalValues,
+      media: {
+        ...finalValues.media,
+        coverPhotos: updatedCoverPhotos,
+      },
+    });
+  };
+
+  const handleOtherPhotoRemove = (image: string) => {
+    let tempMedia = finalValues.media;
+    tempMedia.images = tempMedia.images.filter((img: string) => img !== image);
+    setFinalValues({
+      ...finalValues,
+      media: {
+        newlyUploadedFiles: tempFiles,
+        images: tempMedia.images,
+      },
+    });
+  };
+
   return (
     <Form
       layout="vertical"
@@ -137,8 +157,13 @@ export default function Media({
       </h2>
       <Upload
         listType="picture-card"
-        fileList={coverPhotos}
+        fileList={coverPhotos.map((photo) => ({
+          ...photo,
+          uid: photo.uid || photo.url, // Ensure uid is present
+        }))}
         maxCount={1}
+        onPreview={handlePreview}
+        onRemove={handleCoverPhotoRemove}
         beforeUpload={(file: any) => {
           if (coverPhotos.length < 1) {
             setCoverPhotoLoading(true);
@@ -171,19 +196,7 @@ export default function Media({
             />
             <span
               className="text-red-500 underline text-sm cursor-pointer"
-              onClick={() => {
-                let tempMedia = finalValues.media;
-                tempMedia.images = tempMedia.images.filter(
-                  (img: string) => img !== image
-                );
-                setFinalValues({
-                  ...finalValues,
-                  media: {
-                    newlyUploadedFiles: tempFiles,
-                    images: tempMedia.images,
-                  },
-                });
-              }}
+              onClick={() => handleOtherPhotoRemove(image)}
             >
               Delete
             </span>
