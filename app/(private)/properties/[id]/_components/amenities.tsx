@@ -70,7 +70,7 @@ export default function Amenities({ amenities }: AmenitiesProps) {
 
   const renderSection3 = () => {
     return (
-      <div className="w-full flex flex-col sm:rounded-2xl space-y-6 sm:space-y-8 pb-1">
+      <div className="w-full flex flex-col sm:rounded-2xl space-y-6 sm:space-y-8 pb-1 leading-relaxed">
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 text-sm text-neutral-700 mt-4">
           {amenities
             .filter((amenity) =>

@@ -239,8 +239,8 @@ export default async function PropertyDetails({
         {/* 1 */}
         <div className="flex justify-between items-center">
           <Badge name="Location Info" />
-          {/* <LikeSaveBtns /> */}
-          <LikeButton
+          <LikeSaveBtns />
+          {/* <LikeButton
             propertyId={property.id}
             initialState={{
               likes: property._count?.likes || 0,
@@ -248,7 +248,7 @@ export default async function PropertyDetails({
                 property.likes?.some((like) => like.userId === user?.id) ||
                 false,
             }}
-          />
+          /> */}
         </div>
 
         {/* 3 */}
@@ -282,7 +282,7 @@ export default async function PropertyDetails({
 
         {/* 6 */}
         <div className="flex flex-col space-y-2">
-          <h2 className="text-2xl font-semibold mb-2">Salient Features</h2>
+          <h2 className="text-2xl font-semibold mb-3">Salient Features</h2>
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 text-sm text-neutral-700 mt-8">
             {property.bedrooms && property.bedrooms > 0 && (
               <div className="flex items-center space-x-3 ">

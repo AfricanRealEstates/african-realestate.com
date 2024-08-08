@@ -20,6 +20,7 @@ import {
 import { ButtonSecondary } from "@/components/globals/button-secondary";
 import ButtonClose from "@/components/globals/button-close";
 import { formatDate } from "date-fns";
+import { formatRelativeDate } from "@/lib/utils";
 
 const featureIcons: { [key: string]: JSX.Element } = {
   mosque: <FaMosque className="size-4 text-[#eb6753]" />,
@@ -45,32 +46,35 @@ export default function SurroundingFeatures({ property }: any) {
   const closeModal = () => setIsOpen(false);
 
   return (
-    <section className="h-[407px]">
-      <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 sm:space-y-2 pb-1 px-0 sm:p-4 xl:p-4 !space-y-4">
-        <div className="my-2 gap-2 flex flex-col">
-          Date Added:{" "}
-          <p className="bg-gray-50 text-rose-500 font-medium w-fit px-2 rounded-full">
-            {formatDate(property.createdAt, "MMM d, yyyy")}
+    <section className={`h-[407px] leading-relaxed`}>
+      <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 sm:space-y-2 pb-1 px-0 sm:p-4 xl:p-4">
+        <div className="my-0.5 gap-2 flex flex-col">
+          <span className="text-blue-800 bg-blue-100 w-fit px-2 py-0.5 text-sm rounded-full leading-relaxed">
+            Date Added:
+          </span>{" "}
+          <p className="bg-neutral-100 text-gray-600 font-medium w-fit px-2 py-1 rounded-full text-sm my-2">
+            {formatRelativeDate(property.createdAt)}
           </p>
         </div>
 
-        <div className="w-14 border-b border-neutral-200 mb-4"></div>
-
-        <h2 className="text-[22px] font-semibold">
-          Amenities Within 2KM Radius
-        </h2>
-        <div className="w-14 border-b border-neutral-200 mb-4"></div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-1 text-sm text-neutral-700 mt-10 mb-1">
-          {property.surroundingFeatures.slice(0, 6).map((feature: any) => (
-            <div key={feature} className="flex items-center space-x-3 mt-6">
-              {featureIcons[feature]}
-              <span className="capitalize">{feature}</span>
-            </div>
-          ))}
+        <div className="w-14 border-b border-neutral-100 my-3"></div>
+        <div className="space-y-6">
+          <h2 className="text-[22px] font-semibold mb-4">
+            Amenities Within 2KM Radius
+          </h2>
+          {/* <div className="w-14 border-b border-neutral-200 my-4 block"></div> */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-[25px] mt-1 mb-4 text-sm text-neutral-700">
+            {property.surroundingFeatures.slice(0, 6).map((feature: any) => (
+              <div key={feature} className="flex items-center gap-x-3">
+                {featureIcons[feature]}
+                <span className="capitalize">{feature}</span>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="w-14 border-b border-neutral-200 mt-2"></div>
         <div className="">
-          <ButtonSecondary onClick={openModal} className="mb-2">
+          <div className="w-14 border-b border-neutral-200 mb-2 mt-6 block"></div>
+          <ButtonSecondary onClick={openModal} className="mb-5 mt-4">
             View all
           </ButtonSecondary>
         </div>

@@ -17,16 +17,33 @@ export function capitalizeWords(sentence: string): string {
     .join(' ');
 }
 
+// export function formatRelativeDate(from: Date) {
+//   const currentDate = new Date();
+//   if (currentDate.getTime() - from.getTime() < 24 * 60 * 60 * 1000) {
+//     return formatDistanceToNowStrict(from, { addSuffix: true });
+//   } else {
+//     if (currentDate.getFullYear() === from.getFullYear()) {
+//       return formatDate(from, "MMM d");
+//     } else {
+//       return formatDate(from, "MMM d, yyyy");
+//     }
+//   }
+// }
+
 export function formatRelativeDate(from: Date) {
   const currentDate = new Date();
-  if (currentDate.getTime() - from.getTime() < 24 * 60 * 60 * 1000) {
+
+  const timeDifference = currentDate.getTime() - from.getTime();
+  const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
+
+  if (timeDifference < oneDayInMilliseconds) {
     return formatDistanceToNowStrict(from, { addSuffix: true });
+  } else if (timeDifference < 30 * oneDayInMilliseconds) { // If within a month
+    return formatDate(from, "MMMM yyyy"); // Month Year format
+  } else if (currentDate.getFullYear() === from.getFullYear()) {
+    return formatDate(from, "MMM d");
   } else {
-    if (currentDate.getFullYear() === from.getFullYear()) {
-      return formatDate(from, "MMM d");
-    } else {
-      return formatDate(from, "MMM d, yyyy");
-    }
+    return formatDate(from, "MMM d, yyyy");
   }
 }
 
