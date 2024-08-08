@@ -106,15 +106,11 @@ export default async function PropertyDetails({
   const session = await auth();
   const user = session?.user;
 
-  if (!user) return;
-
   const property = (await prisma.property.findUnique({
     where: {
       id: id,
     },
   })) as PropertyData;
-
-  console.log(property.surroundingFeatures);
 
   if (!property) {
     return <NotFound />;
