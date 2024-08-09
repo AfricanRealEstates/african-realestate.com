@@ -37,6 +37,20 @@ function CustomLink(props: any) {
   return <a target="_blank" rel="noopener noreferrer" {...props} />;
 }
 
+// function RoundedImage(props: any) {
+//   return (
+//     <div className="w-full my-4">
+//       <Image
+//         alt={props.alt}
+//         className="rounded-lg"
+//         fill
+//         objectFit="cover"
+//         {...props}
+//       />
+//     </div>
+//   );
+// }
+
 function RoundedImage(props: any) {
   return (
     <Image
