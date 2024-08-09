@@ -38,8 +38,6 @@ function CustomLink(props: any) {
 }
 
 function RoundedImage(props: any) {
-  let src = props.src.startsWith("/") ? props.src : `/${props.src}`;
-
   return (
     <Image
       alt={props.alt}
@@ -47,7 +45,6 @@ function RoundedImage(props: any) {
       height={300}
       className="object-cover w-full"
       {...props}
-      src={src}
     />
   );
 }
