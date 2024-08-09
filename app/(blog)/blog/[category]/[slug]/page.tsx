@@ -32,6 +32,7 @@ export function generateMetadata({
     summary: description,
     image,
   } = post.metadata;
+
   let ogImage = image
     ? image
     : `${baseUrl}/og?title=${encodeURIComponent(title)}`;
@@ -44,7 +45,7 @@ export function generateMetadata({
       description,
       type: "article",
       publishedTime,
-      url: `${baseUrl}/blog/${post?.metadata.category}/${post?.slug}`,
+      url: `${baseUrl}/blog/${post?.metadata.category}/${post?.slug}}`,
       images: [{ url: ogImage }],
     },
     twitter: {
@@ -59,9 +60,10 @@ export function generateMetadata({
 export default function Page({
   params,
 }: {
-  params: { slug: string; category: string };
+  params: { category: string; slug: string };
 }) {
   let post = getBlogPosts().find((post) => post.slug === params.slug);
+
   if (!post) {
     notFound();
   }
