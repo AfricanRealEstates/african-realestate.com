@@ -160,7 +160,8 @@ export default function LayoutProvider({ children }: Props) {
       {pathname.includes("/dashboard") ||
       pathname.includes("/register") ||
       pathname.includes("/login") ||
-      pathname.includes("/verify-token") ? (
+      pathname.includes("/verify-token") ||
+      pathname.includes("/blog") ? (
         <>{children}</>
       ) : (
         <>

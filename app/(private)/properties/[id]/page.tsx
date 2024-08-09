@@ -514,7 +514,7 @@ export default async function PropertyDetails({
                     </p>
                     {savings && parseFloat(savings) > 0 ? (
                       <p className="text-sm font-medium text-rose-400 bg-gray-50 px-2 py-1 rounded-full">
-                        {savings}% save
+                        Save {savings}%
                       </p>
                     ) : null}
                   </div>

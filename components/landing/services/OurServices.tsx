@@ -1,8 +1,8 @@
 import { ArrowRight } from "lucide-react";
-import { Josefin_Sans } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { Josefin_Sans } from "next/font/google";
 const josefin = Josefin_Sans({
   subsets: ["latin"],
   weight: ["600"],

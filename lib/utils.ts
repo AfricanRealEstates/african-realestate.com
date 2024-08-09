@@ -47,6 +47,43 @@ export function formatRelativeDate(from: Date) {
   }
 }
 
+export function formatBlogDate(date: string, includeRelative = false) {
+  let currentDate = new Date();
+  if (!date.includes("T")) {
+    date = `${date}T00:00:00`;
+  }
+
+  let targetDate = new Date(date);
+
+  let yearsAgo = currentDate.getFullYear() - targetDate.getFullYear();
+  let monthsAgo = currentDate.getMonth() - targetDate.getMonth();
+  let daysAgo = currentDate.getDate() - targetDate.getDate();
+
+  let formattedDate = "";
+
+  if (yearsAgo > 0) {
+    formattedDate = `${yearsAgo}y ago`;
+  } else if (monthsAgo > 0) {
+    formattedDate = `${monthsAgo}mo ago`;
+  } else if (daysAgo > 0) {
+    formattedDate = `${daysAgo}d ago`;
+  } else {
+    formattedDate = "Today";
+  }
+
+  let fullDate = targetDate.toLocaleString("en-us", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  if (!includeRelative) {
+    return fullDate;
+  }
+
+  return `${fullDate} (${formattedDate})`;
+}
+
 export function formatNumber(n: number): string {
   return Intl.NumberFormat('en-US', {
     notation: 'compact',
@@ -72,3 +109,21 @@ export function calculatePercentageSavings(basePrice: number, leastPrice: number
   // Return an empty string if the percentage savings is effectively zero
   return percentageSavings <= 0.0001 ? '' : percentageSavings.toFixed(2);
 }
+
+
+// Blog fetcher
+export const fetchUrl =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:3000/api"
+    : "https://modernsite1.vercel.app/api";
+
+type ResponseData = {
+  category: string;
+  title: string;
+  slug: string;
+  summary: string;
+}[];
+
+export const fetcher = (
+  ...args: Parameters<typeof fetch>
+): Promise<ResponseData> => fetch(...args).then((res) => res.json());

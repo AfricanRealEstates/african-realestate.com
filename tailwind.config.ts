@@ -20,6 +20,8 @@ const config = {
     },
     extend: {
       colors: {
+        'ken-primary': "#007FEC",
+        'ken-secondary': "#00D9E9",
         white: "#fff",
         "gray-200": "#f7f7f7",
         "gray-300": "#edeff3",

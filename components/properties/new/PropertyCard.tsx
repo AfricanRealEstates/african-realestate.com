@@ -195,7 +195,7 @@ export default function PropertyCard({
             </div>
             {savings && parseFloat(savings) > 0 ? (
               <p className="text-xs font-medium text-rose-400">
-                {savings}% save
+                Save {savings}%
               </p>
             ) : null}
           </div>

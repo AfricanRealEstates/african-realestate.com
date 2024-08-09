@@ -181,6 +181,11 @@ export default function Header() {
 
   useEffect(() => {
     window.addEventListener("scroll", handleStickyMenu);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      window.removeEventListener("scroll", handleStickyMenu);
+    };
   }, []);
   return (
     <header
