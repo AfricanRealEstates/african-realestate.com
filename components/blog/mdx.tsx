@@ -37,21 +37,9 @@ function CustomLink(props: any) {
   return <a target="_blank" rel="noopener noreferrer" {...props} />;
 }
 
-// function RoundedImage(props: any) {
-//   return (
-//     <div className="w-full my-4">
-//       <Image
-//         alt={props.alt}
-//         className="rounded-lg"
-//         fill
-//         objectFit="cover"
-//         {...props}
-//       />
-//     </div>
-//   );
-// }
-
 function RoundedImage(props: any) {
+  let src = props.src.startsWith("/") ? props.src : `/${props.src}`;
+
   return (
     <Image
       alt={props.alt}
@@ -59,6 +47,7 @@ function RoundedImage(props: any) {
       height={300}
       className="object-cover w-full"
       {...props}
+      src={src}
     />
   );
 }

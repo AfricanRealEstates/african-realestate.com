@@ -20,7 +20,7 @@ export default function PropertyAdvice() {
             href="/properties"
             className="inline-flex font-light items-center ml-2 text-ken-primary md:ml-2 hover:underline group"
           >
-            Check them out{" "}
+            View all
             <svg
               className="size-3 ml-1.5 text-blue-600 dark:text-blue-500  transition-transform duration-300  group-hover:translate-x-[2px]"
               aria-hidden="true"
