@@ -49,7 +49,7 @@ export default function SurroundingFeatures({ property }: any) {
     <section className={`h-[407px] leading-relaxed`}>
       <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 sm:space-y-2 pb-1 px-0 sm:p-4 xl:p-4">
         <div className="my-0.5 gap-2 flex flex-col">
-          <span className="text-blue-800 bg-blue-100 w-fit px-2 py-0.5 text-sm rounded-full leading-relaxed">
+          <span className="text-blue-800 bg-blue-100 w-fit px-2 py-0.5 text-[13px] rounded-full leading-relaxed">
             Date Added:
           </span>{" "}
           <p className="bg-neutral-100 text-gray-600 font-medium w-fit px-2 py-1 rounded-full text-sm my-2">

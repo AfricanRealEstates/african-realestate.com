@@ -54,7 +54,7 @@ export default function PropertyAdvice() {
               <Link
                 href={`/blog/${post.metadata.category}/${post.slug}`}
                 key={post.slug}
-                className="group space-y-2"
+                className="group space-y-2 flex flex-col"
               >
                 <Image
                   height={667}
