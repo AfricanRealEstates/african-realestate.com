@@ -37,30 +37,8 @@ function CustomLink(props: any) {
   return <a target="_blank" rel="noopener noreferrer" {...props} />;
 }
 
-// function RoundedImage(props: any) {
-//   return (
-//     <div className="w-full my-4">
-//       <Image
-//         alt={props.alt}
-//         className="rounded-lg"
-//         fill
-//         objectFit="cover"
-//         {...props}
-//       />
-//     </div>
-//   );
-// }
-
 function RoundedImage(props: any) {
-  return (
-    <Image
-      alt={props.alt}
-      width={300}
-      height={300}
-      className="object-cover w-full"
-      {...props}
-    />
-  );
+  return <Image alt={props.alt} className="rounded-lg" {...props} />;
 }
 
 function slugify(str: string) {
@@ -100,12 +78,8 @@ function Table({ data }: any) {
     <th key={index}>{header}</th>
   ));
 
-  let rows = data.rows.map((row: any, rowIndex: any) => (
-    <tr key={rowIndex}>
-      {row.map((cell: any, cellIndex: any) => (
-        <td key={cellIndex}>{cell}</td>
-      ))}
-    </tr>
+  let rows = data.rows.map((cell: any, cellIndex: any) => (
+    <td key={cellIndex}>{cell}</td>
   ));
 
   return (
@@ -125,7 +99,7 @@ let components = {
   h4: createHeading(4),
   h5: createHeading(5),
   h6: createHeading(6),
-  img: RoundedImage,
+  Image: RoundedImage,
   a: CustomLink,
   code: Code,
   blockquote: Blockquote,

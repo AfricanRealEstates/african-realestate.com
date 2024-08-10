@@ -8,6 +8,8 @@ import { formatBlogDate } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import React from "react";
 
+export const dynamic = "force-dynamic";
+
 export async function generateStaticParams() {
   let posts = getBlogPosts();
 
@@ -15,11 +17,10 @@ export async function generateStaticParams() {
     slug: post.slug,
   }));
 }
-
 export function generateMetadata({
   params,
 }: {
-  params: { slug: string; category: string };
+  params: { category: string; slug: string };
 }) {
   let post = getBlogPosts().find((post) => post.slug === params.slug);
   if (!post) {

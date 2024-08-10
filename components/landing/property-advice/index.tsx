@@ -17,7 +17,7 @@ export default function PropertyAdvice() {
         <p className={`text-xl text-gray-900 md:mb-4 ${josefin.className}`}>
           Property guides
           <Link
-            href="/properties"
+            href="/blog"
             className="inline-flex font-light items-center ml-2 text-ken-primary md:ml-2 hover:underline group"
           >
             View all
