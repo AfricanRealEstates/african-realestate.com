@@ -154,15 +154,11 @@ export default function Filters({ searchParams }: { searchParams: any }) {
                   disabled={propertyDetailsDisabled}
                 />
               </Form.Item>
-              <Form.Item label="Sale / Let" name="status">
-                <Select
-                  options={filteredPropertyStatuses}
-                  placeholder="Status"
-                />
-              </Form.Item>
-
               <Form.Item label="County" name="county">
                 <Input placeholder="County" />
+              </Form.Item>
+              <Form.Item label="Price" name="price">
+                <InputNumber placeholder="e.g. 20000000" className="w-full" />
               </Form.Item>
 
               <Form.Item label="Bedrooms" name="bedrooms">
