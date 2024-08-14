@@ -18,7 +18,7 @@ export interface BlogPost {
 }
 
 export interface RecommendedTopicsProps {
-  relatedCategoryPosts: any;
+  relatedCategoryPosts?: any;
 }
 
 export default function RecommendedTopics({
