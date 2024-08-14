@@ -5,6 +5,7 @@ import { baseUrl } from "@/app/sitemap";
 import { CustomMDX } from "@/components/blog/mdx";
 import { getBlogPosts } from "@/lib/blog";
 import { formatBlogDate } from "@/lib/utils";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import React from "react";
 
@@ -17,6 +18,7 @@ export async function generateStaticParams() {
     slug: post.slug,
   }));
 }
+
 export function generateMetadata({
   params,
 }: {
@@ -68,6 +70,12 @@ export default function Page({
   if (!post) {
     notFound();
   }
+
+  let relatedCategoryPosts = getBlogPosts().filter(
+    (post) =>
+      post.metadata.category === params.category && post.slug !== params.slug
+  );
+
   return (
     <>
       <script
@@ -131,7 +139,7 @@ export default function Page({
             </article>
 
             <aside className="hidden lg:block lg:w-60">
-              <RecommendedTopics />
+              <RecommendedTopics relatedCategoryPosts={relatedCategoryPosts} />
             </aside>
           </section>
         </div>
