@@ -102,8 +102,34 @@ export default function PropertyCard({
   };
 
   const renderTienIch = () => {
+    const convertToAcres = (size: number, units: string): number => {
+      switch (units.toLowerCase()) {
+        case "ha":
+          // Conversion factor: 1 hectare = 2.47105 acres
+          return size * 2.47105;
+        case "acres":
+          return size;
+        case "sqft":
+          // Conversion factor: 1 acre = 43560 square feet
+          return size / 43560;
+        case "sqm":
+          // Conversion factor: 1 acre = 4046.86 square meters
+          return size / 4046.86;
+        default:
+          return size;
+      }
+    };
+
+    let convertedLandSize = null;
+    if (landSize && landUnits) {
+      convertedLandSize = convertToAcres(landSize, landUnits);
+    }
     return (
-      <div className={`${josefin.className} grid grid-cols-3 gap-2 px-4`}>
+      <div
+        className={`${josefin.className} grid ${
+          propertyType.toLowerCase() === "land" ? "grid-cols-2" : "grid-cols-3"
+        } gap-2 px-4`}
+      >
         {propertyType.toLowerCase() === "land" ? (
           <>
             {landSize && (
@@ -112,14 +138,14 @@ export default function PropertyCard({
                   <ExpandIcon className="size-5" />
                 </span>
                 <span className="text-neutral-500 font-semibold">
-                  {formatNumber(landSize)} {landUnits}
+                  {convertedLandSize?.toPrecision(3)} Acres
                 </span>
               </div>
             )}
 
             {tenure && (
-              <div className="inline-flex items-center space-x-2 col-span-2">
-                <span className="w-full capitalize flex items-center text-neutral-500 font-semibold">
+              <div className="items-center flex col-span-1">
+                <span className="flex-grow text-neutral-500 font-semibold capitalize">
                   {tenure}
                   {(tenure.toLowerCase() === "leasehold" ||
                     tenure.toLowerCase() === "sectionalTitle") &&
