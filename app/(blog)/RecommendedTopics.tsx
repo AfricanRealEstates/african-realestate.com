@@ -18,11 +18,11 @@ export interface BlogPost {
 }
 
 export interface RecommendedTopicsProps {
-  relatedCategoryPosts?: any;
+  relatedCategoryPosts?: BlogPost[];
 }
 
 export default function RecommendedTopics({
-  relatedCategoryPosts,
+  relatedCategoryPosts = [],
 }: RecommendedTopicsProps) {
   return (
     <section className="sticky top-36">

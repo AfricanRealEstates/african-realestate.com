@@ -1,3 +1,4 @@
+import BlogShare from "@/app/(blog)/BlogShare";
 import PopularBlogs from "@/app/(blog)/PopularBlogs";
 import RecommendedTopics from "@/app/(blog)/RecommendedTopics";
 import ReportViews from "@/app/(blog)/ReportViews";
@@ -76,6 +77,8 @@ export default function Page({
       post.metadata.category === params.category && post.slug !== params.slug
   );
 
+  const url = `https://modernsite1.vercel.app` || `http:localhost:3000`;
+
   return (
     <>
       <script
@@ -136,6 +139,10 @@ export default function Page({
 
             <article className="prose w-full max-w-2xl mx-auto">
               <CustomMDX source={post.content} />
+              <BlogShare
+                url={`${url}/blog/${post.metadata.category}/${post.slug}`}
+                title={`Read ${post.metadata.title}`}
+              />
             </article>
 
             <aside className="hidden lg:block lg:w-60">
