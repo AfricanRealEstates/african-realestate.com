@@ -146,7 +146,7 @@ export default function Page({
             </article>
 
             <aside className="hidden lg:block lg:w-60">
-              <RecommendedTopics relatedCategoryPosts={relatedCategoryPosts} />
+              <RecommendedTopics />
             </aside>
           </section>
         </div>
