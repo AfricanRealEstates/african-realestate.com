@@ -8,6 +8,7 @@ import {
   LinkedinShare,
   EmailShare,
   RedditShare,
+  TwitterShare,
 } from "react-share-kit";
 interface BlogShareProps {
   url: string;
@@ -16,9 +17,9 @@ interface BlogShareProps {
 export default function BlogShare({ url, title }: BlogShareProps) {
   const titleToShare = `Check out this amazing post: ${title}`;
   return (
-    <div className="">
+    <div className="flex flex-col items-end">
       <h2 className="flex gap-3 items-center">
-        <span>Social share</span>
+        <span>Share to your socials</span>
         <Share2 />
       </h2>
       <div className="flex gap-6 border-t border-neutral-100 pt-4">
@@ -29,9 +30,10 @@ export default function BlogShare({ url, title }: BlogShareProps) {
           borderRadius={10}
         />
         <WhatsappShare url={url} size={40} borderRadius={10} />
+        <TwitterShare url={url} size={40} borderRadius={10} />
         <LinkedinShare url={url} size={40} borderRadius={10} />
-        <EmailShare url={url} size={40} borderRadius={10} />
-        <RedditShare url={url} size={40} borderRadius={10} />
+        {/* <EmailShare url={url} size={40} borderRadius={10} />
+        <RedditShare url={url} size={40} borderRadius={10} /> */}
       </div>
     </div>
   );
