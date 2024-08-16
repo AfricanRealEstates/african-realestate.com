@@ -21,6 +21,7 @@ import { ButtonSecondary } from "@/components/globals/button-secondary";
 import ButtonClose from "@/components/globals/button-close";
 import { formatDate } from "date-fns";
 import { formatRelativeDate } from "@/lib/utils";
+import FeedbackWidget from "./feedback-widget";
 
 const featureIcons: { [key: string]: JSX.Element } = {
   mosque: <FaMosque className="size-4 text-[#eb6753]" />,
@@ -48,14 +49,17 @@ export default function SurroundingFeatures({ property }: any) {
   return (
     <section className={`h-[407px] leading-relaxed`}>
       <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 sm:space-y-2 pb-1 px-0 sm:p-4 xl:p-4">
-        <div className="my-0.5 gap-2 flex flex-col">
-          <span className="text-blue-800 bg-blue-100 w-fit px-2 py-[1.5px] text-[12px] rounded-full">
-            Date Added:
-          </span>{" "}
-          <p className="bg-neutral-100 text-gray-600 font-medium w-fit px-2 py-1 rounded-full text-sm my-2">
-            {formatRelativeDate(property.createdAt)}
-          </p>
-        </div>
+        <section className="flex items-center justify-between">
+          <div className="my-0.5 gap-2 flex flex-col">
+            <span className="text-blue-800 bg-blue-100 w-fit px-2 py-[1.5px] text-[12px] rounded-full">
+              Date Added:
+            </span>{" "}
+            <p className="bg-neutral-100 text-gray-600 font-medium w-fit px-2 py-1 rounded-full text-sm my-2">
+              {formatRelativeDate(property.createdAt)}
+            </p>
+          </div>
+          <FeedbackWidget />
+        </section>
 
         <div className="w-14 border-b border-neutral-100 my-3"></div>
         <div className="space-y-6">
