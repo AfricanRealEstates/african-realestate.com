@@ -9,6 +9,7 @@ import {
   EmailShare,
   RedditShare,
   TwitterShare,
+  PinterestShare,
 } from "react-share-kit";
 interface BlogShareProps {
   url: string;
@@ -32,6 +33,7 @@ export default function BlogShare({ url, title }: BlogShareProps) {
         <WhatsappShare url={url} size={40} borderRadius={10} />
         <TwitterShare url={url} size={40} borderRadius={10} />
         <LinkedinShare url={url} size={40} borderRadius={10} />
+        <PinterestShare url={url} size={40} borderRadius={10} media="" />
         {/* <EmailShare url={url} size={40} borderRadius={10} />
         <RedditShare url={url} size={40} borderRadius={10} /> */}
       </div>
