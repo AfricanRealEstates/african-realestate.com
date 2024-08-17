@@ -76,27 +76,28 @@ export default function PropertyCard({
             </li>
           </ul>
           <ul className="flex gap-1">
-            <LikeButton
+            {/* <LikeButton
               propertyId={data.id}
               initialState={{
                 likes: data._count?.likes || 0,
                 isLikedByUser:
                   data.likes?.some((like) => like.userId === user?.id) || false,
               }}
-            />
+            /> */}
             <Link
-              href={`/properties/${id}`}
+              href={`/properties/${propertyDetails}/${id}`}
               className="bg-[rgba(11,33,50,.4)] p-1 hover:bg-red-500 rounded flex items-center justify-center transition-all ease-linear cursor-pointer"
             >
               <Eye className="size-5 text-white" />
             </Link>
           </ul>
         </div>
-        <div
+        <Link
+          href={`/properties/${propertyDetails}`}
           className={`${josefin.className} absolute left-4 bottom-4 font-semibold uppercase text-center inline-block px-1 py-0.5 rounded transition-all ease-in-out cursor-pointer bg-white hover:bg-[#ed2027] hover:text-white text-[#161e2d] text-xs leading-6 tracking-wider`}
         >
           {propertyDetails}
-        </div>
+        </Link>
       </div>
     );
   };
@@ -260,7 +261,7 @@ export default function PropertyCard({
       className={`group relative rounded-xl border border-[#e4e4e4] ${className}`}
     >
       {renderSliderGallery()}
-      <Link href={`/properties/${id}`} className="">
+      <Link href={`/properties/${propertyDetails}/${id}`} className="">
         {renderContent()}
       </Link>
     </div>

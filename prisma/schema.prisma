@@ -143,13 +143,6 @@ model Property {
   surroundingFeatures    String[]
   images                 String[]
   coverPhotos            String[]
-  // agentName              String // move to user
-  // email                  String
-  // officeLine             String
-  // whatsappNumber         String
-  // address                String
-  // postalCode             String
-  // showAgentContact       Boolean  @default(false) // move to user
   isAvailableForPurchase Boolean  @default(true)
   isActive               Boolean  @default(true)
 
