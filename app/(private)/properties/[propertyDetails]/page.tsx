@@ -4,10 +4,10 @@ import PropertyCard from "@/components/properties/new/PropertyCard";
 import prisma from "@/lib/prisma";
 import { PropertyData } from "@/lib/types";
 import { Property } from "@prisma/client";
-import { Loader2 } from "lucide-react";
 import { Metadata } from "next";
 import { Raleway } from "next/font/google";
 import { Suspense } from "react";
+
 const raleway = Raleway({
   subsets: ["latin"],
   display: "swap",
@@ -24,45 +24,43 @@ interface PropertyDetailsProps {
 export async function generateMetadata({
   params: { propertyDetails },
 }: PropertyDetailsProps): Promise<Metadata> {
-  // Split the propertyDetails string into an array of types
-  const propertyTypes = propertyDetails.split(",").map((type) => type.trim());
+  // Decode the propertyDetails parameter
+  const decodedPropertyDetails = decodeURIComponent(propertyDetails);
 
-  // Fetch all properties that match any of the property types
   const properties = (await prisma.property.findMany({
     where: {
-      propertyDetails,
-      isActive: true, // Ensure the properties are active
+      propertyDetails: decodedPropertyDetails, // Match exactly as decoded
+      isActive: true,
     },
   })) as PropertyData[];
 
   if (properties.length === 0) {
-    // Handle case where no properties are found
     return {
       title: "Properties Not Found | African Real Estate",
     };
   }
 
   return {
-    title: `All ${propertyDetails}'s Category Properties | African Real Estate`,
-    description: `Found ${properties.length} properties matching ${propertyDetails}.`,
-    // Add other metadata fields as needed
+    title: `All ${decodedPropertyDetails}'s Category Properties | African Real Estate`,
+    description: `Found ${properties.length} properties matching ${decodedPropertyDetails}.`,
   };
 }
 
-// Define the PropertyDetails component
 export default async function PropertyDetails({
   params: { propertyDetails },
   searchParams,
 }: PropertyDetailsProps) {
-  // Fetch the property data based on the propertyDetails parameter
+  // Decode the propertyDetails parameter
+  const decodedPropertyDetails = decodeURIComponent(propertyDetails);
+
+  // Fetch the property data based on the decoded propertyDetails parameter
   const properties = (await prisma.property.findMany({
     where: {
-      propertyDetails,
-      isActive: true, // Ensure the properties are active
+      propertyDetails: decodedPropertyDetails, // Match exactly as decoded
+      isActive: true,
     },
   })) as PropertyData[];
 
-  // Handle the case where the property is not found
   if (properties.length === 0) {
     return (
       <div className="bg-white py-12 md:py-0">
@@ -77,33 +75,29 @@ export default async function PropertyDetails({
 
   const searchProperties: Property[] = await prisma.property.findMany({
     where: {
-      // Convert searchParams entries to appropriate Prisma query format
       AND: Object.entries(searchParams).map(([key, value]) => {
-        // Check if value is numeric
         if (!isNaN(parseFloat(value as string))) {
-          // If numeric, convert value to float
           return { [key]: parseFloat(value as string) };
         }
-        // If not numeric, return as is
         return { [key]: value };
       }),
-      propertyDetails,
-      isActive: true, // Ensure the properties are active
-      //   // Add status filter
-      //   status: "sale", // Assuming "let" is the desired status
+      propertyDetails: decodedPropertyDetails, // Match exactly as decoded
+      isActive: true,
     },
     orderBy: {
       updatedAt: "desc",
     },
   });
 
-  // Render the property details
   return (
     <div
       className={`${raleway.className} w-[95%] lg:max-w-7xl mx-auto py-[90px] lg:py-[120px]`}
     >
-      <h2 className="text-3xl  text-gray-900 md:text-4xl my-4 mb-8">
-        All <span className="text-[#eb6753] font-bold">{propertyDetails} </span>
+      <h2 className="text-3xl text-gray-900 md:text-4xl my-4 mb-8">
+        All{" "}
+        <span className="text-[#eb6753] font-bold">
+          {decodedPropertyDetails}{" "}
+        </span>
         Right Now.
       </h2>
       <Filters searchParams={searchParams} />
@@ -115,18 +109,13 @@ export default async function PropertyDetails({
           </div>
         ) : (
           <section className="mx-auto mb-8 gap-8 grid w-full grid-cols-[repeat(auto-fill,minmax(335px,1fr))] justify-center">
-            {searchProperties.map((property) => {
-              return (
-                <PropertyCard
-                  key={property.id}
-                  data={property as PropertyData}
-                />
-              );
-            })}
+            {searchProperties.map((property) => (
+              <PropertyCard key={property.id} data={property as PropertyData} />
+            ))}
 
             {searchProperties.length === 0 && (
               <p className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-                No {propertyDetails} properties category so far!.
+                No {decodedPropertyDetails} properties category so far!.
               </p>
             )}
           </section>
