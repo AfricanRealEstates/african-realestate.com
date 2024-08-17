@@ -16,14 +16,16 @@ export default function PopularBlogs() {
 
   return (
     <aside className={`${raleway.className} sticky top-36`}>
-      <article className="p-6 mb-6 font-medium text-gray-500 bg-white border border-gray-200">
-        <h2 className="mb-2 font-bold text-gray-900 uppercase leading-relaxed">
-          Popular Posts
-        </h2>
-        <p className="text-sm text-gray-400">
-          Most popular posts, articles and guides about real estate
-        </p>
-      </article>
+      <Link href={`/blog/tips`} className="group">
+        <article className="p-6 mb-6 font-medium text-gray-500 bg-white border border-gray-200">
+          <h2 className="mb-2 font-bold text-gray-900 uppercase leading-relaxed group-hover:text-blue-500 transition-all">
+            Popular Posts
+          </h2>
+          <p className="text-sm text-gray-400">
+            Most popular posts, articles and guides about real estate
+          </p>
+        </article>
+      </Link>
       <article className="p-6 mb-6 font-medium text-gray-500 bg-white border border-gray-200">
         <h4 className="mb-4 font-semibold text-gray-900 uppercase">
           Most viewed articles

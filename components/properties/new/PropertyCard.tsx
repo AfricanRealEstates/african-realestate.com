@@ -64,7 +64,7 @@ export default function PropertyCard({
           ratioClass={ratioClass}
           galleryImgs={images}
           coverPhotos={coverPhotos}
-          href={`/properties/${id}`}
+          href={`/properties/${propertyDetails}/${id}`}
         />
         <div className="left-4 right-4 top-4 flex justify-between absolute items-start gap-2 flex-wrap">
           <ul className="flex gap-2">
@@ -76,14 +76,14 @@ export default function PropertyCard({
             </li>
           </ul>
           <ul className="flex gap-1">
-            {/* <LikeButton
+            <LikeButton
               propertyId={data.id}
               initialState={{
                 likes: data._count?.likes || 0,
                 isLikedByUser:
                   data.likes?.some((like) => like.userId === user?.id) || false,
               }}
-            /> */}
+            />
             <Link
               href={`/properties/${propertyDetails}/${id}`}
               className="bg-[rgba(11,33,50,.4)] p-1 hover:bg-red-500 rounded flex items-center justify-center transition-all ease-linear cursor-pointer"
