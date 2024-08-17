@@ -13,9 +13,11 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import React, { FormEvent, useState } from "react";
 import { toast } from "sonner";
+
 interface Props {
   name: string;
 }
+
 export default function FeedbackWidget() {
   const [rating, setRating] = useState(0);
   const [submitted, setSubmitted] = useState(false);
@@ -40,31 +42,49 @@ export default function FeedbackWidget() {
     toast.success("Thank you for Rating");
   };
 
+  const getRatingMessage = (rating: number) => {
+    switch (rating) {
+      case 1:
+        return "😡️ Awful property";
+      case 2:
+        return "🫡️ Ok property";
+      case 3:
+        return "🙂️ Good property";
+      case 4:
+        return "🤩️ Excellent property";
+      case 5:
+        return "🎉️ Awesome property";
+      default:
+        return "";
+    }
+  };
+
   return (
     <>
-      <Popover>
+      {/* <Popover>
         <PopoverTrigger asChild>
           <Button className="flex items-center gap-2 text-blue-800 rounded-lg bg-blue-100 hover:bg-blue-50 py-1 px-3 transition-all">
             <MessageCircleIcon className="size-4" />
             Feedback
           </Button>
         </PopoverTrigger>
-        <PopoverContent align="end" className="rounded-lg bg-card">
-          {submitted ? (
-            <div className="flex space-y-2 flex-col">
-              <h3 className="text-base/6 font-bold text-blue-600">
-                🎉️ Thank you for your feedback!
-              </h3>
-              <p className="ml-6 text-gray-500/90 text-sm">
-                It helps us improve our product and provide better services to
-                our customers.
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              <h3>✨️ Rate this property</h3>
-              <form onSubmit={submit}>
-                {/* <div className="space-y-2">
+        <PopoverContent align="end" className="rounded-lg bg-card"> */}
+      {submitted ? (
+        <div className="flex space-y-2 flex-col text-blue-800 rounded-lg bg-gray-50 p-2 h-full">
+          <h3 className="text-base/6 font-bold text-blue-600">Rating</h3>
+          {/* <p className="ml-6 text-gray-500/90 text-sm">
+            It helps us improve our product and provide better services to our
+            customers.
+          </p> */}
+          <p className="text-gray-500/90 text-sm font-semibold">
+            {getRatingMessage(rating)}
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          <h3 className="text-xs">✨️ Rate this property</h3>
+          <form onSubmit={submit} className="flex flex-col">
+            {/* <div className="space-y-2">
                 <Label htmlFor="name">Name</Label>
                 <Input id="name" placeholder="Enter your name" />
               </div>
@@ -77,30 +97,30 @@ export default function FeedbackWidget() {
                 />
               </div> */}
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    {[...Array(5)].map((_, index) => (
-                      <StarIcon
-                        key={index}
-                        className={`size-6 cursor-pointer ${
-                          rating > index ? "fill-blue-500" : "fill-white"
-                        }`}
-                        onClick={() => onSelectStar(index)}
-                      />
-                    ))}
-                  </div>
-                  <Button
-                    type="submit"
-                    className="text-blue-800 rounded-lg bg-blue-100 hover:bg-blue-50 py-1 px-3 transition-all"
-                  >
-                    Submit
-                  </Button>
-                </div>
-              </form>
+            <div className="flex flex-col items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                {[...Array(5)].map((_, index) => (
+                  <StarIcon
+                    key={index}
+                    className={`size-4 cursor-pointer ${
+                      rating > index ? "fill-blue-500" : "fill-white"
+                    }`}
+                    onClick={() => onSelectStar(index)}
+                  />
+                ))}
+              </div>
+              <button
+                type="submit"
+                className="w-full text-sm text-blue-800 rounded-lg bg-blue-100 hover:bg-blue-50 py-0.5 px-3 transition-all"
+              >
+                Submit
+              </button>
             </div>
-          )}
-        </PopoverContent>
-      </Popover>
+          </form>
+        </div>
+      )}
+      {/* </PopoverContent>
+      </Popover> */}
     </>
   );
 }

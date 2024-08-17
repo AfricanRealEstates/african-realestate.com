@@ -2,6 +2,7 @@
 import { HomeIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState, type SVGProps } from "react";
+import SearchField from "./SearchField";
 
 export const navItems = [
   {
@@ -103,6 +104,7 @@ export default function BlogHeader() {
               </span>
             </Link>
           </div>
+          <SearchField />
           <div className="flex items-center w-full gap-4 lg:w-auto">
             <ul className="flex py-2 lg:py-0 lg:self-center gap-x-4  w-full lg:w-auto">
               {navItems.map((item) => {
