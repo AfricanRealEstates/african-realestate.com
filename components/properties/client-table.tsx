@@ -43,7 +43,11 @@ export default function ClientTable({
       dataIndex: "title",
       key: "title",
       render(title: string, record: Property) {
-        return <Link href={`/properties/${record.id}`}>{title}</Link>;
+        return (
+          <Link href={`/properties/${record.propertyDetails}/${record.id}`}>
+            {title}
+          </Link>
+        );
       },
     },
     {
