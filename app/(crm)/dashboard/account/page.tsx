@@ -15,6 +15,7 @@ import prisma from "@/lib/prisma";
 import { formatDate } from "date-fns";
 import { formatNumber } from "@/lib/formatter";
 import EditProfileButton from "./EditProfileButton";
+import { getCurrentUser } from "@/lib/session";
 
 export const metadata = getSEOTags({
   title: "Account - Dashboard | African Real Estate",
@@ -39,7 +40,7 @@ const getUser = cache(async (name: string, loggedInUserId: string) => {
 
 export default async function DashboardAccount() {
   const session = await auth();
-  const loggedInUser = session?.user;
+  const loggedInUser = await getCurrentUser();
 
   if (!loggedInUser || !loggedInUser.id || !loggedInUser.name) {
     redirect("/login");

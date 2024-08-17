@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import DashboardNavbar from "@/components/crm/navbar";
+import { getCurrentUser } from "@/lib/session";
 import SessionProvider from "@/providers/client-provider";
 import { redirect } from "next/navigation";
 import React, { ReactNode } from "react";

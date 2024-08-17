@@ -1,11 +1,12 @@
 import { auth } from "@/auth";
 import BillingInfo from "@/components/crm/billing-info";
 import prisma from "@/lib/prisma";
+import { getCurrentUser } from "@/lib/session";
 import React from "react";
 
 export default async function DashboardBilling() {
-  const session = await auth();
-  const user = session?.user;
+  const user = await getCurrentUser();
+  // const user = session?.user;
   const userSubsciption: any = await prisma.subscription.findFirst({
     where: {
       id: user?.id,

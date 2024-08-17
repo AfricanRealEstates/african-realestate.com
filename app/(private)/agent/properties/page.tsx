@@ -5,6 +5,7 @@ import PageTitle from "@/components/globals/page-title";
 import LinkButton from "@/components/properties/link-button";
 import PropertiesTable from "@/components/properties/properties-table";
 import { getSEOTags } from "@/lib/seo";
+import { getCurrentUser } from "@/lib/session";
 import { redirect } from "next/navigation";
 import React, { Suspense } from "react";
 
@@ -19,7 +20,7 @@ export default async function Properties({
   searchParams: any;
 }) {
   const session = await auth();
-  const user = session?.user;
+  const user = await getCurrentUser();
   if (!user) redirect("/login");
   const key = JSON.stringify(searchParams);
   return (

@@ -8,6 +8,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import React, { Suspense } from "react";
 import Loading from "./loading";
+import { getCurrentUser } from "@/lib/session";
 
 export const metadata = getSEOTags({
   title: "Dashboard | African Real Estate",
@@ -19,8 +20,8 @@ export default async function Dashboard({
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const session = await auth();
-  const user = session?.user;
+  const user = await getCurrentUser();
+  // const user = session?.user;
 
   if (!user) {
     redirect("/login");

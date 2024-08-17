@@ -3,6 +3,7 @@ import BuyButton from "@/components/subscriptions/buy-button";
 import { subscriptionPlans } from "@/constants";
 import prisma from "@/lib/prisma";
 import { getSEOTags } from "@/lib/seo";
+import { getCurrentUser } from "@/lib/session";
 import { CircleCheckBig } from "lucide-react";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -14,7 +15,7 @@ export const metadata = getSEOTags({
 
 export default async function Subscriptions() {
   const session = await auth();
-  const user = session?.user;
+  const user = await getCurrentUser();
   if (!user) redirect("/login");
   const userSubscription: any = await prisma.subscription.findFirst({
     where: { userId: user?.id },

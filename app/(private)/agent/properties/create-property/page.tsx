@@ -9,6 +9,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
 import { Josefin_Sans } from "next/font/google";
+import { getCurrentUser } from "@/lib/session";
 const josefin = Josefin_Sans({
   subsets: ["latin"],
   weight: ["600"],
@@ -25,7 +26,7 @@ export default async function CreateProperty({
   searchParams: any;
 }) {
   const session = await auth();
-  const user = session?.user;
+  const user = await getCurrentUser();
   if (!user) redirect("/login");
 
   // if (user.role !== "AGENT") {
