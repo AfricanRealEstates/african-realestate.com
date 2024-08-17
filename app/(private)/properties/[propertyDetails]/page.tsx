@@ -104,7 +104,7 @@ export default async function PropertyDetails({
     >
       <h2 className="text-3xl  text-gray-900 md:text-4xl my-4 mb-8">
         All <span className="text-[#eb6753] font-bold">{propertyDetails} </span>
-        Category properties{" "}
+        Right Now.
       </h2>
       <Filters searchParams={searchParams} />
       <Suspense fallback={<Loader />} key={key}>
