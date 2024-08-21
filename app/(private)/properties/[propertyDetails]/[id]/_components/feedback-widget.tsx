@@ -1,8 +1,6 @@
 "use client";
 
-// components/feedback-widget.tsx
-
-import { getRatings, saveRating } from "@/actions/rating-action";
+import { getRatings, saveRating, getUserRating } from "@/actions/rating-action";
 import { useSession } from "next-auth/react";
 import React, { FormEvent, useState, useEffect, Suspense } from "react";
 import { toast } from "sonner";
@@ -15,7 +13,8 @@ export default function FeedbackWidget({ propertyId }: FeedbackWidgetProps) {
   const [ratings, setRatings] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [averageRating, setAverageRating] = useState<number>(0);
-  const [numberOfRatings, setNumberOfRatings] = useState<number>(0); // New state for number of ratings
+  const [numberOfRatings, setNumberOfRatings] = useState(0);
+  const [userHasRated, setUserHasRated] = useState(false);
   const { data: session } = useSession();
   const user = session?.user;
 
@@ -24,9 +23,17 @@ export default function FeedbackWidget({ propertyId }: FeedbackWidgetProps) {
       const { averageRating, ratingsCount } = await getRatings(propertyId);
       setAverageRating(averageRating);
       setNumberOfRatings(ratingsCount);
+
+      if (user) {
+        const userRating = await getUserRating(user.id!, propertyId);
+        if (userRating) {
+          setUserHasRated(true);
+          setRatings(+userRating.ratings);
+        }
+      }
     }
     fetchRatingData();
-  }, [propertyId, submitted]);
+  }, [propertyId, submitted, user]);
 
   // Handle star selection
   const onSelectStar = (index: number) => {
@@ -44,7 +51,7 @@ export default function FeedbackWidget({ propertyId }: FeedbackWidgetProps) {
 
     const ratingInfo = {
       ratings,
-      propertyId: propertyId,
+      propertyId,
       userId: user.id,
     };
 
@@ -54,10 +61,9 @@ export default function FeedbackWidget({ propertyId }: FeedbackWidgetProps) {
       if (response.message === "Rating saved successfully") {
         setSubmitted(true);
         toast.success("Thank you for your rating!");
-        // Fetch the updated average rating and number of ratings after submission
         const { averageRating, ratingsCount } = await getRatings(propertyId);
         setAverageRating(averageRating);
-        setNumberOfRatings(numberOfRatings); // Update number of ratings
+        setNumberOfRatings(ratingsCount);
       } else {
         toast.error(response.message);
       }
@@ -66,34 +72,26 @@ export default function FeedbackWidget({ propertyId }: FeedbackWidgetProps) {
     }
   };
 
-  // Display rating message based on average rating value
   const getRatingMessage = (rating: number) => {
-    if (rating >= 4.0 && rating <= 5.0) {
-      return "🤩️ Excellent property";
-    } else if (rating >= 3.0 && rating < 4.0) {
-      return "🙂️ Good property";
-    } else if (rating >= 2.0 && rating < 3.0) {
-      return "🫡️ Ok property";
-    } else if (rating >= 1.0 && rating < 2.0) {
-      return "😡️ Awful property";
-    } else {
-      return "";
-    }
+    if (rating >= 4.0 && rating <= 5.0) return "🤩️ Excellent property";
+    if (rating >= 3.0 && rating < 4.0) return "🙂️ Good property";
+    if (rating >= 2.0 && rating < 3.0) return "🫡️ Ok property";
+    if (rating >= 1.0 && rating < 2.0) return "😡️ Awful property";
+    return "";
   };
 
   return (
     <>
-      {submitted || averageRating > 0 ? (
+      {userHasRated && averageRating > 0 ? (
         <Suspense fallback={<p>Loading...</p>}>
           <div className="flex space-y-2 flex-col text-blue-800 rounded-lg bg-gray-50 p-2 h-full">
             <p className="text-blue-600 text-sm font-semibold">
               {getRatingMessage(averageRating)}
             </p>
-            <p className=" text-gray-500 flex items-center">
+            <p className="text-gray-500 flex items-center">
               ⭐️ <span className="text-sm mr-2">({numberOfRatings})</span>{" "}
               <span className="text-rose-500">{averageRating.toFixed(1)}</span>
             </p>
-            {/* Display number of ratings */}
           </div>
         </Suspense>
       ) : (

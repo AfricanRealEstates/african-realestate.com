@@ -55,6 +55,7 @@ import UserProfileTooltip from "./_components/UserProfileTooltip";
 import { redirect } from "next/navigation";
 import { PropertyData } from "@/lib/types";
 import LikeButton from "@/components/properties/LikeButton";
+import Chat from "@/app/(private)/messages/Chat";
 
 const amenityIcons: { [key: string]: JSX.Element } = {
   mosque: <FaMosque className="size-4 text-neutral-600" />,
@@ -696,7 +697,12 @@ export default async function PropertyDetails({
             </div>
           </section>
           <section className="hidden lg:flex lg:w-2/5 xl:w-1/3 mt-14 lg:mt-0 flex-col">
-            <div className="sticky top-28 flex-grow">{renderSidebar()}</div>
+            {/* <div className="sticky top-28 flex-grow"> */}
+            <div className=" flex-grow">
+              {renderSidebar()}
+
+              <Chat />
+            </div>
           </section>
         </main>
 

@@ -2,27 +2,6 @@
 
 import prisma from "@/lib/prisma";
 
-
-// export async function saveRating(ratingInfo: any) {
-//     try {
-//         const data = await prisma.rating.create({
-//             data: ratingInfo
-//         })
-//         console.log("Rating data*********")
-//         return {
-//             message: "Review Rating saved successfully",
-//             data
-//         }
-
-//     } catch (error) {
-//         return {
-//             message: "Failed to save rating",
-//             error
-//         }
-//     }
-// }
-
-
 export async function saveRating(ratingInfo: any) {
     try {
         // Check if the user is the author of the property
@@ -114,4 +93,21 @@ export async function getRatings(propertyId: string) {
             ratingsCount: 0,
         };
     }
+}
+
+export async function getUserRating(userId: string, propertyId: string) {
+    const userRating = await prisma.rating.findFirst({
+        where: {
+            userId,
+            propertyId,
+        },
+    });
+
+    // Convert Decimal to Number
+    return userRating
+        ? {
+            ...userRating,
+            ratings: Number(userRating.ratings), // Convert Decimal to Number
+        }
+        : null;
 }
