@@ -58,7 +58,7 @@ export default function SurroundingFeatures({ property }: any) {
               {formatRelativeDate(property.createdAt)}
             </p>
           </div>
-          <FeedbackWidget />
+          <FeedbackWidget propertyId={property.id} />
         </section>
 
         <div className="w-14 border-b border-neutral-100 my-3"></div>
