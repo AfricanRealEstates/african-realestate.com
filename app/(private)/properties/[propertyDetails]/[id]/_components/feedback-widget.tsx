@@ -91,7 +91,7 @@ export default function FeedbackWidget({ propertyId }: FeedbackWidgetProps) {
             </p>
             <p className=" text-gray-500 flex items-center">
               ⭐️ <span className="text-sm mr-2">({numberOfRatings})</span>{" "}
-              <span className="text-rose-600">{averageRating.toFixed(1)}</span>
+              <span className="text-rose-500">{averageRating.toFixed(1)}</span>
             </p>
             {/* Display number of ratings */}
           </div>

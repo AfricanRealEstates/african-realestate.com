@@ -62,6 +62,7 @@ model User {
   subscriptions    Subscription[]
   orders           Order[]
   likes            Like[]
+  ratings          Rating[]
 
   @@map("users")
 }
@@ -152,6 +153,7 @@ model Property {
   queries Query[]
   orders  Order[]
   likes   Like[]
+  ratings Rating[]
 
   @@map("properties")
 }
@@ -235,6 +237,15 @@ model Like {
 
   @@unique([userId, propertyId])
   @@map("likes")
+}
+
+model Rating {
+  id         Int      @id @default(autoincrement())
+  ratings    Decimal
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // plan   Plan
