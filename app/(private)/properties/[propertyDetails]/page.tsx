@@ -98,7 +98,7 @@ export default async function PropertyDetails({
         <span className="text-[#eb6753] font-bold">
           {decodedPropertyDetails}{" "}
         </span>
-        Right Now.
+        Available Right Now.
       </h2>
       <Filters searchParams={searchParams} />
       <Suspense fallback={<Loader />} key={key}>
