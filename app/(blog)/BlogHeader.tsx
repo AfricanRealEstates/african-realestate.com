@@ -92,7 +92,7 @@ export default function BlogHeader() {
         }`}
       >
         <nav
-          className={`w-full px-3 py-3 mx-auto lg:flex lg:justify-between max-w-7xl lg:px-3`}
+          className={`space-y-3 w-full px-3 py-3 mx-auto lg:flex lg:justify-between max-w-7xl lg:px-3`}
         >
           <div className="flex justify-between">
             <Link href="/" className={`flex items-center gap-2 no-underline`}>

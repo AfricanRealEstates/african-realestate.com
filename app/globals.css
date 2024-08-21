@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "~stream-chat-react/dist/css/v2/index.css";
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -66,18 +68,30 @@
   }
 }
 
-@layer base {
+/* @layer base {
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
   }
-}
+} */
 
 html,
 body {
   scroll-behavior: smooth !important;
+}
+
+/* React Calendar */
+.react-calendar {
+  width: 100% !important;
+  border: none !important;
+  font-family: "Inter", sans-serif;
+}
+
+.react-calendar__title--active {
+  background-color: #c3ebfa !important;
+  color: black !important;
 }
 
 /* It makes the HTML progress bar filling smooth when value change. */

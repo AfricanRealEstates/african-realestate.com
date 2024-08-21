@@ -22,6 +22,13 @@ const config = {
       colors: {
         'ken-primary': "#007FEC",
         'ken-secondary': "#00D9E9",
+        'ken-green': "#c3ebfa",
+        'ken-green-light': "#edf9fd",
+        'ken-purple': "#cfceff",
+        'ken-purple-light': "#f1f0ff",
+        'ken-yellow': "#fae27c",
+        'ken-yellow-light': "#fefce8",
+        'ken-red': "#ffb3c1",
         white: "#fff",
         "gray-200": "#f7f7f7",
         "gray-300": "#edeff3",
