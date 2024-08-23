@@ -119,6 +119,9 @@ export default function BasicInfo({
       layout="vertical"
       initialValues={finalValues.basicInfo || {}}
     >
+      <h2 className="text-lg font-medium my-4 text-blue-600">
+        Property Details
+      </h2>
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-x-4 gap-y-2">
         <Form.Item
           label="Status"

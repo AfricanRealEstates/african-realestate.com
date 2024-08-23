@@ -73,7 +73,7 @@
     "ky": "^1.4.0",
     "libphonenumber-js": "^1.10.61",
     "lodash.debounce": "^4.0.8",
-    "lucide-react": "^0.356.0",
+    "lucide-react": "^0.429.0",
     "markdown-draft-js": "^2.4.0",
     "motion": "^10.17.0",
     "nanoid": "^5.0.6",

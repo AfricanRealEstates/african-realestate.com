@@ -201,19 +201,6 @@ model Order {
   @@map("orders")
 }
 
-// model Post {
-//   id            String   @id @default(dbgenerated("concat('post_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
-//   title         String
-//   slug          String   @unique
-//   description   String?
-//   coverImageUrl String?
-//   published     Boolean  @default(false)
-//   createdAt     DateTime @default(now())
-//   updatedAt     DateTime @updatedAt
-
-//   @@map("posts")
-// }
-
 model Blog {
   id         Int      @id @default(autoincrement())
   slug       String   @unique

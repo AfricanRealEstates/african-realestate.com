@@ -64,6 +64,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     address: token.address || "",
                     postalCode: token.postalCode || "",
                     bio: token.bio || "",
+                    xLink: token.xLink || "",
+                    tiktokLink: token.tiktokLink || "",
+                    instagramLink: token.instagramLink || "",
+                    facebookLink: token.facebookLink || "",
+
                     randomKey: token.randomKey
 
 

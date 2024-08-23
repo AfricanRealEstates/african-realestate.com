@@ -15,6 +15,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { v4 as uuidv4 } from "uuid";
 import Resources from "./resources";
+import UserAccountNav from "@/app/(dashboard)/components/UserAccountNav";
 
 const nunitoSans = Nunito_Sans({
   subsets: ["latin"],

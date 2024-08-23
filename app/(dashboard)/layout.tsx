@@ -5,6 +5,8 @@ import Link from "next/link";
 import React from "react";
 import Menu from "./components/Menu";
 import Navbar from "./components/Navbar";
+import { getCurrentUser } from "@/lib/session";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: {
@@ -13,14 +15,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect("/login");
+  }
   return (
     <div className="h-screen flex">
-      <div className="w-[14%] md:w-[w-8%] lg:w-[16%] xl:w-[14%]  p-4">
+      <div className="w-[14%] md:w-[w-8%] lg:w-[16%] xl:w-[14%]  p-4 border-r border-gray-100">
         <Link
           href={`/`}
           className="flex items-center justify-center lg:justify-start gap-2"
@@ -33,9 +40,16 @@ export default function DashboardLayout({
         </Link>
         <Menu />
       </div>
-      <div className="w-[86%] md:w-[w-92%] lg:w-[84%] xl:w-[86%] bg-neutral-50 overflow-scroll">
+      <div className="w-[86%] md:w-[w-92%] lg:w-[84%] xl:w-[86%] overflow-scroll min-h-screen">
         <Navbar />
-        {children}
+        <div className="bg-gray-50 min-h-screen flex flex-col">
+          <main className="flex-1">{children}</main>
+
+          <p className="block text-center text-sm text-gray-600 bg-gray-50 my-8">
+            &copy; African Real Estate, {new Date().getFullYear()}. All Rights
+            Reserved.
+          </p>
+        </div>
       </div>
     </div>
   );

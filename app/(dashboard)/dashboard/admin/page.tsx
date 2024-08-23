@@ -5,8 +5,21 @@ import ActiveAgentChart from "../../components/ActiveAgentChart";
 import FinanceChart from "../../components/FinanceChart";
 import EventCalendar from "../../components/EventCalendar";
 import Announcements from "../../components/Announcements";
+import { getCurrentUser } from "@/lib/session";
+import { redirect } from "next/navigation";
 
-export default function Admin() {
+export default async function Admin() {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  // If the user is not an admin, return null to prevent the page from rendering
+  if (!user || user.role !== "ADMIN") {
+    return null;
+  }
+
   return (
     <div className="p-4 flex gap-4 flex-col md:flex-row">
       {/* LEFT */}

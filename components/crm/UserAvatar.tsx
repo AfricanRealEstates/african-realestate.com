@@ -12,13 +12,13 @@ export default function UserAvatar({
   className,
 }: UserAvatarProps) {
   return (
-    <Image
+    <img
       src={avatarUrl || "/assets/avatar-placeholder.png"}
       alt="User Avatar"
-      width={size ?? 48}
-      height={size ?? 48}
+      width={size ?? 32}
+      height={size ?? 32}
       className={cn(
-        "aspect-square h-fit flex-none rounded-full bg-secondary object-cover outline-none",
+        // "aspect-square h-fit flex-none rounded-full object-cover outline-none",
         className
       )}
     />

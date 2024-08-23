@@ -1,18 +1,24 @@
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import React from "react";
+import UserAccountNav from "./UserAccountNav";
+import { getCurrentUser } from "@/lib/session";
+import Breadcrumb from "./BreadcrumbDashboard";
 
-export default function Navbar() {
+export default async function Navbar() {
+  const user = await getCurrentUser();
+
   return (
     <div className="flex items-center justify-between p-4">
-      <div className="hidden md:flex items-center gap-2 text-xs rounded-full px-2 ring-[1.5px] ring-gray-300">
+      <Breadcrumb />
+      {/* <div className="hidden md:flex items-center gap-2 text-xs rounded-full px-2 ring-[1.5px] ring-gray-300">
         <Image src={"/assets/search.png"} alt="" width={14} height={14} />
         <input
           type="text"
           placeholder="Search..."
           className="focus:ring-0 w-[200px] p-2 bg-transparent outline-none ring-0 border-0 focus:outline-none"
         />
-      </div>
+      </div> */}
       <div className="flex items-center gap-6 justify-end w-full">
         <div className="cursor-pointer bg-white rounded-full size-7 flex items-center justify-center">
           <Image src="/assets/message.png" width={20} height={20} alt="" />
@@ -24,16 +30,12 @@ export default function Navbar() {
           </div>
         </div>
         <div className="flex flex-col">
-          <span className="text-xs leading-3 font-medium">Ken Mwangi</span>
-          <span className="text-[10px] text-gray-500 text-right">ADMIN</span>
+          <span className="text-xs leading-3 font-medium">{user?.name}</span>
+          <span className="text-[10px] text-rose-500 text-right">
+            {user?.role}
+          </span>
         </div>
-        <Image
-          src="/assets/avatar.png"
-          alt=""
-          width={36}
-          height={36}
-          className="rounded-full"
-        />
+        <UserAccountNav />
       </div>
     </div>
   );

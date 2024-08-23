@@ -16,6 +16,10 @@ declare module "next-auth/jwt" {
         address: string
         postalCode: string
         bio: string
+        xLink: string
+        tiktokLink: string,
+        instagramLink: string
+        facebookLink: string
         permissions: string[];
     }
 }
