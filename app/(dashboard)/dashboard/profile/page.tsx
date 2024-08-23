@@ -160,21 +160,21 @@ function UserProfile({ user, loggedInUserId }: UserProfileProps) {
       {user.bio ? (
         <>
           <hr />
-          <div className="line-clamp-3 overflow-hidden whitespace-pre-line break-words">
+          <div className="line-clamp-2 overflow-hidden whitespace-pre-line break-words mb-2 leading-relaxed tracking-wide text-gray-400">
             {user.bio}
           </div>
         </>
       ) : (
         <>
           <hr />
-          <p className="line-clamp-3 overflow-hidden whitespace-pre-line break-words">
+          <p className="line-clamp-2 overflow-hidden whitespace-pre-line break-words mb-2 leading-relaxed tracking-wide text-gray-400">
             No bio yet.
           </p>
         </>
       )}
 
       {user.role && (
-        <p className="mb-2">
+        <p className="mb-3">
           Role: <span className="text-rose-500 font-bold">{user.role}</span>
         </p>
       )}
