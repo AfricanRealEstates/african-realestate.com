@@ -27,7 +27,7 @@ const avatar = [
   },
   {
     name: "Profile Account",
-    href: "/dashboard/account",
+    href: "/dashboard/profile",
   },
 ];
 

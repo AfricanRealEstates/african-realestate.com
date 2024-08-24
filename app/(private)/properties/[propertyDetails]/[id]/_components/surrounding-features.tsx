@@ -22,6 +22,7 @@ import ButtonClose from "@/components/globals/button-close";
 import { formatDate } from "date-fns";
 import { formatRelativeDate } from "@/lib/utils";
 import FeedbackWidget from "./feedback-widget";
+import { useSession } from "next-auth/react";
 
 const featureIcons: { [key: string]: JSX.Element } = {
   mosque: <FaMosque className="size-4 text-[#eb6753]" />,
@@ -46,6 +47,9 @@ export default function SurroundingFeatures({ property }: any) {
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
 
+  const session = useSession();
+  const user = session.data?.user;
+
   return (
     <section className={`h-[407px] leading-relaxed`}>
       <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 sm:space-y-2 pb-1 px-0 sm:p-4 xl:p-4">
@@ -58,7 +62,10 @@ export default function SurroundingFeatures({ property }: any) {
               {formatRelativeDate(property.createdAt)}
             </p>
           </div>
-          <FeedbackWidget propertyId={property.id} />
+          <FeedbackWidget
+            propertyId={property.id}
+            propertyOwnerId={user?.id!}
+          />
         </section>
 
         <div className="w-14 border-b border-neutral-100 my-3"></div>
