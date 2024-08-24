@@ -73,11 +73,30 @@ export default function FeedbackWidget({ propertyId }: FeedbackWidgetProps) {
   };
 
   const getRatingMessage = (rating: number) => {
-    if (rating >= 4.0 && rating <= 5.0) return "🤩️ Excellent property";
-    if (rating >= 3.0 && rating < 4.0) return "🙂️ Good property";
-    if (rating >= 2.0 && rating < 3.0) return "🫡️ Ok property";
-    if (rating >= 1.0 && rating < 2.0) return "😡️ Awful property";
+    if (rating >= 4.5 && rating <= 5.0) return "💫️ Awesome property";
+    if (rating >= 4.0 && rating <= 4.5) return "🤩️ Excellent property";
+    if (rating >= 3.0 && rating < 4.0) return "🙂️ Perfect property";
+    if (rating >= 2.0 && rating < 3.0) return "🫡️ Good property";
+    if (rating >= 1.0 && rating < 2.0) return "🙂️ Okey property";
     return "";
+  };
+
+  const renderStars = (averageRating: number) => {
+    const fullStars = Math.floor(averageRating);
+    const hasHalfStar = averageRating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+    return (
+      <div className="flex items-center">
+        {[...Array(fullStars)].map((_, index) => (
+          <StarIcon key={index} className="fill-[#FFD700]" />
+        ))}
+        {hasHalfStar && <StarIcon half />}
+        {[...Array(emptyStars)].map((_, index) => (
+          <StarIcon key={index} className="fill-none" />
+        ))}
+      </div>
+    );
   };
 
   return (
@@ -89,8 +108,11 @@ export default function FeedbackWidget({ propertyId }: FeedbackWidgetProps) {
               {getRatingMessage(averageRating)}
             </p>
             <p className="text-gray-500 flex items-center">
-              ⭐️ <span className="text-sm mr-2">({numberOfRatings})</span>{" "}
-              <span className="text-rose-500">{averageRating.toFixed(1)}</span>
+              {renderStars(averageRating)}{" "}
+              <span className="text-sm mr-2"> ({numberOfRatings})</span>
+              <span className="text-rose-500">
+                {averageRating.toFixed(1)} / 5
+              </span>
             </p>
           </div>
         </Suspense>
@@ -124,8 +146,10 @@ export default function FeedbackWidget({ propertyId }: FeedbackWidgetProps) {
   );
 }
 
-function StarIcon(props: any) {
-  return (
+function StarIcon({ className, half = false, ...props }: any) {
+  const yellowColor = "#FFD700"; // Subtle gold-like yellow
+
+  return half ? (
     <svg
       {...props}
       xmlns="http://www.w3.org/2000/svg"
@@ -133,10 +157,36 @@ function StarIcon(props: any) {
       height="24"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="lightBlue"
+      stroke={yellowColor}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      className={className}
+    >
+      <defs>
+        <linearGradient id="half-gradient">
+          <stop offset="50%" stopColor={yellowColor} />
+          <stop offset="50%" stopColor="none" stopOpacity="1" />
+        </linearGradient>
+      </defs>
+      <polygon
+        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+        fill="url(#half-gradient)"
+      />
+    </svg>
+  ) : (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill={yellowColor}
+      stroke={yellowColor}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
     >
       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
     </svg>
