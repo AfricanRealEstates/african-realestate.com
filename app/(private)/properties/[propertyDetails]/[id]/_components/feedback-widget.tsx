@@ -105,7 +105,7 @@ export default function FeedbackWidget({
 
   return (
     <>
-      {userHasRated && averageRating > 0 ? (
+      {averageRating > 0 ? (
         <Suspense fallback={<p>Loading...</p>}>
           <div className="flex space-y-2 flex-col text-blue-800 rounded-lg bg-gray-50 p-2 h-full">
             <p className="text-blue-600 text-sm font-semibold">
@@ -122,13 +122,13 @@ export default function FeedbackWidget({
         </Suspense>
       ) : (
         <div className="flex flex-col">
-          {user?.id === propertyOwnerId ? (
-            <h3 className="capitalize text-xs mb-4 justify-start text-blue-800 bg-blue-100 w-fit px-2 py-[2px] text-[12px] rounded-full">
-              Property Not Rated
-            </h3>
-          ) : (
-            <h3 className="text-xs">✨️ Rate this property</h3>
-          )}
+          <h3 className="text-xs">✨️ No ratings yet. Be the first to rate!</h3>
+        </div>
+      )}
+
+      {!userHasRated && user?.id !== propertyOwnerId && averageRating <= 0 && (
+        <div className="flex flex-col">
+          <h3 className="text-xs">✨️ Rate this property</h3>
           <form onSubmit={onSubmit} className="flex flex-col">
             <div className="flex flex-col items-center justify-between gap-4">
               <div className="flex items-center gap-2">
