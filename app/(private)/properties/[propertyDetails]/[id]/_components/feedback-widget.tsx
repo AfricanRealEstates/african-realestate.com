@@ -7,13 +7,10 @@ import { toast } from "sonner";
 
 interface FeedbackWidgetProps {
   propertyId: string;
-  propertyOwnerId: string; // Property owner's ID
+  propertyOwnerId: string;
 }
 
-export default function FeedbackWidget({
-  propertyId,
-  propertyOwnerId,
-}: FeedbackWidgetProps) {
+export default function FeedbackWidget({ propertyId }: FeedbackWidgetProps) {
   const [ratings, setRatings] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [averageRating, setAverageRating] = useState<number>(0);
@@ -77,11 +74,11 @@ export default function FeedbackWidget({
   };
 
   const getRatingMessage = (rating: number) => {
-    if (rating > 4.5 && rating <= 5.0) return "💫️ Awesome Property";
-    if (rating >= 4.0 && rating <= 4.5) return "🤩️ Excellent Property";
-    if (rating >= 3.0 && rating < 4.0) return "🙂️ Perfect Property";
-    if (rating >= 2.0 && rating < 3.0) return "🫡️ Good Property";
-    if (rating >= 1.0 && rating < 2.0) return "🙂️ Okey Property";
+    if (rating >= 4.5 && rating <= 5.0) return "💫️ Awesome property";
+    if (rating >= 4.0 && rating <= 4.5) return "🤩️ Excellent property";
+    if (rating >= 3.0 && rating < 4.0) return "🙂️ Perfect property";
+    if (rating >= 2.0 && rating < 3.0) return "🫡️ Good property";
+    if (rating >= 1.0 && rating < 2.0) return "🙂️ Okey property";
     return "";
   };
 
@@ -105,7 +102,7 @@ export default function FeedbackWidget({
 
   return (
     <>
-      {averageRating > 0 ? (
+      {userHasRated && averageRating > 0 ? (
         <Suspense fallback={<p>Loading...</p>}>
           <div className="flex space-y-2 flex-col text-blue-800 rounded-lg bg-gray-50 p-2 h-full">
             <p className="text-blue-600 text-sm font-semibold">
@@ -121,13 +118,7 @@ export default function FeedbackWidget({
           </div>
         </Suspense>
       ) : (
-        <div className="flex flex-col">
-          <h3 className="text-xs">✨️ No ratings yet. Be the first to rate!</h3>
-        </div>
-      )}
-
-      {!userHasRated && user?.id !== propertyOwnerId && averageRating <= 0 && (
-        <div className="flex flex-col">
+        <div className="space-y-2">
           <h3 className="text-xs">✨️ Rate this property</h3>
           <form onSubmit={onSubmit} className="flex flex-col">
             <div className="flex flex-col items-center justify-between gap-4">
@@ -138,22 +129,16 @@ export default function FeedbackWidget({
                     className={`size-4 cursor-pointer ${
                       ratings > index ? "fill-blue-500" : "fill-white"
                     }`}
-                    onClick={
-                      user?.id !== propertyOwnerId
-                        ? () => onSelectStar(index)
-                        : undefined
-                    } // Disable click event for property owner
+                    onClick={() => onSelectStar(index)}
                   />
                 ))}
               </div>
-              {user?.id !== propertyOwnerId && ( // Conditionally render the submit button
-                <button
-                  type="submit"
-                  className="w-full text-sm text-blue-800 rounded-lg bg-blue-100 hover:bg-blue-50 py-0.5 px-3 transition-all"
-                >
-                  Submit
-                </button>
-              )}
+              <button
+                type="submit"
+                className="w-full text-sm text-blue-800 rounded-lg bg-blue-100 hover:bg-blue-50 py-0.5 px-3 transition-all"
+              >
+                Submit
+              </button>
             </div>
           </form>
         </div>
