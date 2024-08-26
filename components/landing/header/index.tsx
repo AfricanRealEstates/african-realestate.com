@@ -143,9 +143,16 @@ export default function Header() {
                   href="/"
                   className={`flex flex-shrink-0 items-center gap-2 `}
                 >
-                  <span className="bg-[#eb6753] text-white py-1 px-2 rounded-lg">
+                  <Image
+                    src="/assets/logo.png"
+                    width={40}
+                    height={40}
+                    alt="ARE"
+                    className="object-cover"
+                  />
+                  {/* <span className="bg-[#eb6753] text-white py-1 px-2 rounded-lg">
                     <HomeIcon />
-                  </span>
+                  </span> */}
                   <span
                     className={`${
                       stickyMenu || !isHomePage ? "text-gray-700" : "text-white"

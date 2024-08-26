@@ -1,4 +1,5 @@
 import { HomeIcon } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
@@ -116,9 +117,16 @@ export default function Footer() {
               href="/"
               className={`flex items-center gap-2 text-white no-underline`}
             >
-              <span className="bg-[#eb6753] text-white py-1 px-2 rounded-lg">
+              <Image
+                src="/assets/logo.png"
+                width={40}
+                height={40}
+                alt="ARE"
+                className="object-cover"
+              />
+              {/* <span className="bg-[#eb6753] text-white py-1 px-2 rounded-lg">
                 <HomeIcon />
-              </span>
+              </span> */}
               <span className={`lg:text-xl tracking-tight font-bold`}>
                 African Real Estate.
               </span>
