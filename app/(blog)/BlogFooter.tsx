@@ -3,6 +3,7 @@ import { HomeIcon } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import { Facebook, Instagram, navItems, TikTok, YouTube } from "./BlogHeader";
+import Image from "next/image";
 
 export default function BlogFooter() {
   return (
@@ -10,9 +11,16 @@ export default function BlogFooter() {
       <div className="md:px-12 lg:px-28">
         <div className="container m-auto space-y-6 text-gray-600 max-w-7xl flex flex-col items-center justify-center w-full">
           <Link href="/" className={`flex items-center gap-2 no-underline`}>
-            <span className="bg-[#eb6753] text-white py-1 px-2 rounded-lg">
+            <Image
+              src="/assets/logo.png"
+              width={40}
+              height={40}
+              alt="ARE"
+              className="object-cover"
+            />
+            {/* <span className="bg-[#eb6753] text-white py-1 px-2 rounded-lg">
               <HomeIcon />
-            </span>
+            </span> */}
             <span className={`lg:text-xl tracking-tight font-bold`}>
               African Real Estate.
             </span>
