@@ -10,7 +10,10 @@ interface FeedbackWidgetProps {
   propertyOwnerId: string;
 }
 
-export default function FeedbackWidget({ propertyId }: FeedbackWidgetProps) {
+export default function FeedbackWidget({
+  propertyId,
+  propertyOwnerId,
+}: FeedbackWidgetProps) {
   const [ratings, setRatings] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [averageRating, setAverageRating] = useState<number>(0);
@@ -74,49 +77,50 @@ export default function FeedbackWidget({ propertyId }: FeedbackWidgetProps) {
   };
 
   const getRatingMessage = (rating: number) => {
-    if (rating >= 4.5 && rating <= 5.0) return "💫️ Awesome property";
-    if (rating >= 4.0 && rating <= 4.5) return "🤩️ Excellent property";
-    if (rating >= 3.0 && rating < 4.0) return "🙂️ Perfect property";
-    if (rating >= 2.0 && rating < 3.0) return "🫡️ Good property";
-    if (rating >= 1.0 && rating < 2.0) return "🙂️ Okey property";
+    if (rating > 4.5 && rating <= 5.0) return "💫️ Awesome Property";
+    if (rating >= 4.0 && rating <= 4.5) return "🤩️ Excellent Property";
+    if (rating >= 3.0 && rating < 4.0) return "🙂️ Perfect Property";
+    if (rating >= 2.0 && rating < 3.0) return "🫡️ Good Property";
+    if (rating >= 1.0 && rating < 2.0) return "🙂️ Okay Property";
     return "";
-  };
-
-  const renderStars = (averageRating: number) => {
-    const fullStars = Math.floor(averageRating);
-    const hasHalfStar = averageRating % 1 >= 0.5;
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-
-    return (
-      <div className="flex items-center">
-        {[...Array(fullStars)].map((_, index) => (
-          <StarIcon key={index} className="fill-[#FFD700]" />
-        ))}
-        {hasHalfStar && <StarIcon half />}
-        {[...Array(emptyStars)].map((_, index) => (
-          <StarIcon key={index} className="fill-none" />
-        ))}
-      </div>
-    );
   };
 
   return (
     <>
-      {userHasRated && averageRating > 0 ? (
-        <Suspense fallback={<p>Loading...</p>}>
-          <div className="flex space-y-2 flex-col text-blue-800 rounded-lg bg-gray-50 p-2 h-full">
-            <p className="text-blue-600 text-sm font-semibold">
-              {getRatingMessage(averageRating)}
-            </p>
-            <p className="text-gray-500 flex items-center">
-              {renderStars(averageRating)}{" "}
-              <span className="text-sm mr-2"> ({numberOfRatings})</span>
-              <span className="text-rose-500">
-                {averageRating.toFixed(1)} / 5
-              </span>
-            </p>
-          </div>
-        </Suspense>
+      {user?.id === propertyOwnerId ? (
+        <div className="space-y-2">
+          {numberOfRatings > 0 ? (
+            <Suspense fallback={<p>Loading...</p>}>
+              <div className="flex space-y-2 flex-col text-blue-800 rounded-lg bg-gray-50 p-2 h-full">
+                <p className="text-blue-600 text-sm font-semibold">
+                  {getRatingMessage(averageRating)}
+                </p>
+                <div className="flex items-center">
+                  {[...Array(Math.floor(averageRating))].map((_, index) => (
+                    <StarIcon key={index} full />
+                  ))}
+                  {averageRating % 1 !== 0 && <StarIcon half />}
+                  {[...Array(5 - Math.ceil(averageRating))].map((_, index) => (
+                    <StarIcon key={index} />
+                  ))}
+                  <span className="text-sm ml-2">({numberOfRatings})</span>{" "}
+                  <span className="text-rose-500 ml-2">
+                    {averageRating.toFixed(1)}
+                  </span>
+                </div>
+              </div>
+            </Suspense>
+          ) : (
+            <div className="flex flex-col items-center">
+              <h3 className="text-xs">Property not rated yet</h3>
+              <div className="flex items-center gap-2">
+                {[...Array(5)].map((_, index) => (
+                  <StarIcon key={index} className="size-4 fill-gray-300" />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       ) : (
         <div className="space-y-2">
           <h3 className="text-xs">✨️ Rate this property</h3>
@@ -126,9 +130,8 @@ export default function FeedbackWidget({ propertyId }: FeedbackWidgetProps) {
                 {[...Array(5)].map((_, index) => (
                   <StarIcon
                     key={index}
-                    className={`size-4 cursor-pointer ${
-                      ratings > index ? "fill-blue-500" : "fill-white"
-                    }`}
+                    full={ratings > index}
+                    className="size-4 cursor-pointer"
                     onClick={() => onSelectStar(index)}
                   />
                 ))}
@@ -147,48 +150,32 @@ export default function FeedbackWidget({ propertyId }: FeedbackWidgetProps) {
   );
 }
 
-function StarIcon({ className, half = false, ...props }: any) {
-  const yellowColor = "#FFD700"; // Subtle gold-like yellow
-
-  return half ? (
+function StarIcon({
+  full = false,
+  half = false,
+  className = "",
+  onClick,
+}: any) {
+  return (
     <svg
-      {...props}
+      onClick={onClick}
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"
       viewBox="0 0 24 24"
-      fill="none"
-      stroke={yellowColor}
+      className={className}
+      fill={full ? "gold" : half ? "url(#halfGradient)" : "none"}
+      stroke="gold"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className={className}
     >
       <defs>
-        <linearGradient id="half-gradient">
-          <stop offset="50%" stopColor={yellowColor} />
-          <stop offset="50%" stopColor="none" stopOpacity="1" />
+        <linearGradient id="halfGradient">
+          <stop offset="50%" stopColor="gold" />
+          <stop offset="50%" stopColor="none" />
         </linearGradient>
       </defs>
-      <polygon
-        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
-        fill="url(#half-gradient)"
-      />
-    </svg>
-  ) : (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill={yellowColor}
-      stroke={yellowColor}
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
     </svg>
   );
