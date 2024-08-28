@@ -34,19 +34,29 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             const isOnUnprotectedPage = pathname === '/' || unprotectedPages.some((page) => pathname.startsWith(page));
             const isProtectedPage = !isOnUnprotectedPage
 
-            if (isOnAuthPage) {
-                // Redirect to /dashboard/settings, if logged in and is on an auth page
-                if (isLoggedIn) return NextResponse.redirect(new URL("/dashboard", nextUrl));
+            // Check if the user was created in the last 10 seconds
+            const createdAt = auth?.user?.createdAt;
+            const isNewUser = createdAt && new Date(createdAt).getTime() > Date.now() - 10000;
 
+            if (isLoggedIn && isNewUser && pathname !== "/welcome") {
+                // Redirect new users to welcome page
+                return NextResponse.redirect(new URL("/welcome", nextUrl));
+            }
+
+            if (isOnAuthPage) {
+                // Redirect to the previous page (or to /dashboard if no previous page) if the user is logged in
+                const redirectTo = nextUrl.searchParams.get("from") || "/";
+                if (isLoggedIn) return NextResponse.redirect(new URL(redirectTo, nextUrl));
             } else if (isProtectedPage) {
-                // Redirect to /login,if not logged in but is on a protected page
+                // Redirect to /login if not logged in but on a protected page
                 if (!isLoggedIn) {
-                    const from = encodeURIComponent(pathname + search); // The /login page shall use this from param as a callbackUrl upon successful sign in
-                    return NextResponse.redirect(new URL(`/login?from=${from}`, nextUrl))
+                    const from = encodeURIComponent(pathname + search); // Capture the current page URL
+                    return NextResponse.redirect(new URL(`/login?from=${from}`, nextUrl));
                 }
             }
-            // Don't redirect if on an unprotected page, or if logged in and is on a proteected page
-            return true
+            // Don't redirect if on an unprotected page or if logged in and on a protected page
+            return true;
+
         },
         session: ({ session, token }) => {
             return {
@@ -57,6 +67,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     name: token.name,
                     image: token.picture,
                     role: token.role,
+                    createdAt: token.createdAt,
                     agentName: token.agentName || "",
                     agentEmail: token.agentEmail || "",
                     officeLine: token.officeLine || "",
@@ -83,6 +94,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     id: u.id,
                     name: u.name,
                     role: u.role,
+                    createdAt: u.createdAt,
                     agentName: u.agentName,
                     agentEmail: u.agentEmail || "",
                     officeLine: u.officeLine || "",

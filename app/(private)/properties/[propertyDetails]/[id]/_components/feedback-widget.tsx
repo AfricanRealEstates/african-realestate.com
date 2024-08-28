@@ -90,26 +90,25 @@ export default function FeedbackWidget({
       {user?.id === propertyOwnerId ? (
         <div className="space-y-2">
           {numberOfRatings > 0 ? (
-            <Suspense fallback={<p>Loading...</p>}>
-              <div className="flex space-y-2 flex-col text-blue-800 rounded-lg bg-gray-50 p-2 h-full">
-                <p className="text-blue-600 text-sm font-semibold">
-                  {getRatingMessage(averageRating)}
-                </p>
-                <div className="flex items-center">
-                  {[...Array(Math.floor(averageRating))].map((_, index) => (
-                    <StarIcon key={index} full />
-                  ))}
-                  {averageRating % 1 !== 0 && <StarIcon half />}
-                  {[...Array(5 - Math.ceil(averageRating))].map((_, index) => (
-                    <StarIcon key={index} />
-                  ))}
-                  <span className="text-sm ml-2">({numberOfRatings})</span>{" "}
-                  <span className="text-rose-500 ml-2">
-                    {averageRating.toFixed(1)}
-                  </span>
-                </div>
+            // <Suspense fallback={<p>Loading...</p>}></Suspense>
+            <div className="flex space-y-2 flex-col text-blue-800 rounded-lg bg-gray-50 p-2 h-full">
+              <p className="text-blue-600 text-sm font-semibold">
+                {getRatingMessage(averageRating)}
+              </p>
+              <div className="flex items-center">
+                {[...Array(Math.floor(averageRating))].map((_, index) => (
+                  <StarIcon key={index} full />
+                ))}
+                {averageRating % 1 !== 0 && <StarIcon half />}
+                {[...Array(5 - Math.ceil(averageRating))].map((_, index) => (
+                  <StarIcon key={index} />
+                ))}
+                <span className="text-sm ml-2">({numberOfRatings})</span>{" "}
+                <span className="text-rose-500 ml-2">
+                  {averageRating.toFixed(1)}
+                </span>
               </div>
-            </Suspense>
+            </div>
           ) : (
             <div className="flex flex-col items-center">
               <h3 className="text-xs">Property not rated yet</h3>

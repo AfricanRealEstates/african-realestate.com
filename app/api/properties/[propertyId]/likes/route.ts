@@ -47,7 +47,7 @@ export async function GET(req: Request, { params: { propertyId } }: { params: { 
 
 export async function POST(
     req: Request,
-    { params: { propertyId } }: { params: { propertyId: string } },
+    { params: { propertyId } }: { params: { propertyId: string } }
 ) {
     try {
         const session = await auth();
@@ -56,6 +56,12 @@ export async function POST(
         if (!user || !user.id) {
             return Response.json({ error: "Unauthorized" }, { status: 401 });
         }
+
+        // Ensure the user has the AGENT role
+        await prisma.user.update({
+            where: { id: user.id },
+            data: { role: 'AGENT' },
+        });
 
         await prisma.like.upsert({
             where: {

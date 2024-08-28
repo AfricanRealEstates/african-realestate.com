@@ -29,8 +29,8 @@ export default function RecommendedTopics({
       <h3 id="sidebar-label" className="sr-only">
         Recommended Topics
       </h3>
-      <div className="p-6 mb-6 font-medium text-gray-500 bg-white border border-gray-100 rounded-lg">
-        <h4 className="mb-4 font-bold text-gray-800 uppercase leading-relaxed">
+      <div className="p-3 mb-2 font-medium text-gray-500 bg-white border border-gray-100 rounded-lg">
+        <h4 className="mb-1 font-bold text-gray-800 uppercase leading-relaxed">
           Recommended topics
         </h4>
         <div className="flex flex-wrap">
@@ -45,6 +45,9 @@ export default function RecommendedTopics({
           ))}
         </div>
       </div>
+      <h4 className="my-4 font-semibold text-gray-900 uppercase">
+        Related Articles
+      </h4>
       <div className="space-y-4">
         {" "}
         {/* Increase spacing between items */}

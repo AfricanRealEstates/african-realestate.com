@@ -6,12 +6,12 @@ import { Mail } from "lucide-react";
 import { Metadata } from "next";
 import { Raleway } from "next/font/google";
 import { redirect } from "next/navigation";
-import RenderSection1 from "../_components/Properties";
 import { FaFacebook, FaLinkedin, FaTiktok, FaYoutube } from "react-icons/fa";
 import NotFound from "@/app/not-found";
 import dayjs from "dayjs";
 import { capitalizeWords } from "@/lib/utils";
 import { formatDate } from "date-fns";
+import RenderSection1 from "../agencies/_components/Properties";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -71,13 +71,13 @@ export default async function SingleAgency({
   let properties: Property[];
 
   // Check if the logged-in user is an AGENCY
-  if (user.role === "AGENCY") {
+  if (user.role === "AGENT") {
     // Fetch properties for users with the AGENCY role
     properties = await prisma.property.findMany({
       where: {
         userId: agent.id,
         user: {
-          role: "AGENCY", // Ensure the property belongs to a user with the AGENCY role
+          role: "AGENT", // Ensure the property belongs to a user with the AGENCY role
         },
       },
       orderBy: {

@@ -41,6 +41,7 @@ export default {
                 email: user.email,
                 name: user.name,
                 role: user.role,
+                createdAt: user.createdAt,
                 agentName: user.agentName || "",
                 agentEmail: user.agentEmail || "",
                 officeLine: user.officeLine || "",
