@@ -1,5 +1,3 @@
-"use client";
-
 import GallerySlider from "@/components/animations/gallery-slider";
 import { Property } from "@prisma/client";
 import React from "react";
@@ -10,9 +8,11 @@ import { Bath, Bed, ExpandIcon, Eye, Heart, MapPinned } from "lucide-react";
 
 import { Josefin_Sans, Raleway } from "next/font/google";
 import { calculatePercentageSavings, formatNumber } from "@/lib/utils";
-import LikeButton from "../LikeButton";
+
 import { PropertyData } from "@/lib/types";
 import { useSession } from "next-auth/react";
+import Likes from "./Likes";
+import { auth } from "@/auth";
 
 const josefin = Raleway({
   subsets: ["latin"],
@@ -26,7 +26,7 @@ export interface PropertyCardProps {
   size?: "default" | "small";
 }
 
-export default function PropertyCard({
+export default async function PropertyCard({
   size = "default",
   className = "",
   data,
@@ -53,8 +53,8 @@ export default function PropertyCard({
     tenure,
   } = data;
 
-  const session = useSession();
-  const user = session.data?.user;
+  const session = await auth();
+  const user = session?.user;
 
   const renderSliderGallery = () => {
     return (
@@ -76,14 +76,15 @@ export default function PropertyCard({
             </li>
           </ul>
           <ul className="flex gap-1">
-            <LikeButton
+            <Likes propertyId={id} />
+            {/* <LikeButton
               propertyId={data.id}
               initialState={{
                 likes: data._count?.likes || 0,
                 isLikedByUser:
                   data.likes?.some((like) => like.userId === user?.id) || false,
               }}
-            />
+            /> */}
             <Link
               href={`/properties/${propertyDetails}/${id}`}
               className="bg-[rgba(11,33,50,.4)] p-1 hover:bg-red-500 rounded flex items-center justify-center transition-all ease-linear cursor-pointer"

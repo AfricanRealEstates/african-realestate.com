@@ -1,4 +1,11 @@
-import { Prisma } from "@prisma/client";
+import {
+    Prisma, Comment,
+    Follows,
+    Like,
+    Property,
+    SavedProperty,
+    User,
+} from "@prisma/client";
 
 export function getUserDataSelect(loggedInUserId: string) {
     return {
@@ -77,3 +84,28 @@ export interface LikeInfo {
     likes: number;
     isLikedByUser: boolean;
 }
+
+export type CommentWithExtras = Comment & { user: User };
+export type LikeWithExtras = Like & { user: User };
+
+export type PropertyWithExtras = Property & {
+    comments: CommentWithExtras[];
+    likes: LikeWithExtras[];
+    savedBy: SavedProperty[];
+    user: User;
+};
+
+export type UserWithFollows = User & {
+    following: Follows[];
+    followedBy: Follows[];
+};
+
+export type FollowerWithExtras = Follows & { follower: UserWithFollows };
+export type FollowingWithExtras = Follows & { following: UserWithFollows };
+
+export type UserWithExtras = User & {
+    properties: Property[];
+    saved: SavedProperty[];
+    followedBy: FollowerWithExtras[];
+    following: FollowingWithExtras[];
+};

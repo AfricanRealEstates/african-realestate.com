@@ -72,18 +72,20 @@ export default function AvatarMenu() {
     <section className="border rounded-sm shadow-md bg-white absolute top-full text-gray-400">
       <div className="flex cursor-pointer p-2">
         <div className="flex flex-col items-start space-y-2">
+          <div className="bg-gray-50 p-2 rounded-md">
+            <p className="text-sm  text-gray-500">{user?.name}</p>
+            <p className="text-sm  text-gray-400">{user?.email}</p>
+          </div>
           {avatar.map((link) => {
             const { name, href } = link;
             return (
               <Link
                 href={href}
                 key={name}
-                className="group flex items-center gap-4"
+                className="group flex items-center gap-2 w-full"
               >
-                <div className="space-y-2">
-                  <p className="w-40 p-2 rounded font-medium text-neutral-500 hover:text-blue-400 transition-colors hover:bg-gray-100 focus:ring-2 focus:ring-blue-500">
-                    {name}
-                  </p>
+                <div className="space-y-1 w-full p-1 rounded font-medium text-neutral-500 hover:text-blue-400 transition-colors hover:bg-gray-100 focus:ring-2 focus:ring-blue-500">
+                  <p className="">{name}</p>
                 </div>
               </Link>
             );

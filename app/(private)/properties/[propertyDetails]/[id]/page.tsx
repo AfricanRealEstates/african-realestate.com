@@ -38,7 +38,11 @@ import OverviewInfo from "./_components/overview-info";
 import Image from "next/image";
 import { Button } from "@/components/utils/Button";
 import MessageWidget from "./_components/message-widget";
-import { calculatePercentageSavings, capitalizeWords } from "@/lib/utils";
+import {
+  calculatePercentageSavings,
+  capitalizeWords,
+  getUserId,
+} from "@/lib/utils";
 import {
   FaBuyNLarge,
   FaChurch,
@@ -53,8 +57,8 @@ import PropertyCard from "@/components/properties/new/PropertyCard";
 import { formatNumber } from "@/lib/formatter";
 import UserProfileTooltip from "./_components/UserProfileTooltip";
 import { redirect } from "next/navigation";
-import { PropertyData } from "@/lib/types";
-import LikeButton from "@/components/properties/LikeButton";
+import { PropertyData, PropertyWithExtras } from "@/lib/types";
+import PropertyActions from "./_components/PropertyActions";
 
 const amenityIcons: { [key: string]: JSX.Element } = {
   mosque: <FaMosque className="size-4 text-neutral-600" />,
@@ -94,7 +98,7 @@ export async function generateMetadata({
     where: {
       id: id,
     },
-  })) as PropertyData;
+  })) as PropertyWithExtras;
 
   return {
     title: `${capitalizeWords(property.title)} | African Real Estate`,
@@ -105,13 +109,14 @@ export default async function PropertyDetails({
   params: { id },
 }: PropertyDetailsProps) {
   const session = await auth();
-  const user = session?.user;
+  // const user = session?.user;
+  const userId = await getUserId();
 
   const property = (await prisma.property.findUnique({
     where: {
       id: id,
     },
-  })) as PropertyData;
+  })) as PropertyWithExtras;
 
   if (!property) {
     return <NotFound />;
@@ -240,7 +245,8 @@ export default async function PropertyDetails({
         {/* 1 */}
         <div className="flex justify-between items-center">
           <Badge name="Location Info" />
-          <LikeSaveBtns />
+          {/* <LikeSaveBtns /> */}
+          <PropertyActions property={property} userId={userId} className="" />
           {/* <LikeButton
             propertyId={property.id}
             initialState={{

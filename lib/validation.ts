@@ -147,4 +147,20 @@ export type LoginUserInput = z.infer<typeof loginUserSchema>
 
 
 
+export const LikeSchema = z.object({
+    propertyId: z.string()
+})
 
+export const BookmarkSchema = z.object({
+    propertyId: z.string()
+})
+
+export const CommentSchema = z.object({
+    id: z.string(),
+    body: z.string(),
+    propertyId: z.string(),
+});
+
+export const CreateComment = CommentSchema.omit({ id: true });
+export const UpdateComment = CommentSchema;
+export const DeleteComment = CommentSchema.pick({ id: true });

@@ -25,16 +25,17 @@ enum UserRole {
 }
 
 model User {
-  id               String         @id @default(dbgenerated("concat('user_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
+  id               String          @id @default(dbgenerated("concat('user_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
   name             String?
-  email            String?        @unique
+  username         String?
+  email            String?         @unique
   emailVerified    DateTime?
   image            String?
-  role             UserRole       @default(USER)
+  role             UserRole        @default(USER)
   permissions      String[]
   password         String?
-  isVerified       Boolean        @default(false)
-  isActive         Boolean        @default(true)
+  isVerified       Boolean         @default(false)
+  isActive         Boolean         @default(true)
   token            Int?
   agentName        String? // moved from property
   agentEmail       String?
@@ -52,9 +53,9 @@ model User {
   youtubeLink      String?
   linkedinLink     String?
   instagramLink    String?
-  showAgentContact Boolean?       @default(false) // moved from property
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
+  showAgentContact Boolean?        @default(false) // moved from property
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
   accounts         Account[]
   sessions         Session[]
   properties       Property[]
@@ -63,6 +64,10 @@ model User {
   orders           Order[]
   likes            Like[]
   ratings          Rating[]
+  saved            SavedProperty[]
+  comments         Comment[]
+  followedBy       Follows[]       @relation("following")
+  following        Follows[]       @relation("follower")
 
   @@map("users")
 }
@@ -150,10 +155,12 @@ model Property {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  queries Query[]
-  orders  Order[]
-  likes   Like[]
-  ratings Rating[]
+  queries  Query[]
+  orders   Order[]
+  likes    Like[]
+  ratings  Rating[]
+  savedBy  SavedProperty[]
+  comments Comment[]
 
   @@map("properties")
 }
@@ -216,16 +223,6 @@ model Subscriber {
   is_subscribed Boolean @default(true)
 }
 
-model Like {
-  userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  propertyId String
-  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, propertyId])
-  @@map("likes")
-}
-
 model Rating {
   id         Int      @id @default(autoincrement())
   ratings    Decimal
@@ -240,3 +237,57 @@ model Rating {
 // startDate DateTime @default(now())
 // endDate   DateTime
 // isActive  Boolean  @default(true)
+
+model Like {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  propertyId String
+  userId     String   @map("user_id")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([propertyId, userId])
+  @@index([userId])
+}
+
+model SavedProperty {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  propertyId String
+  userId     String   @map("user_id")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([propertyId, userId])
+  @@index([userId])
+}
+
+model Comment {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  body       String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  propertyId String
+  userId     String   @map("user_id")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([propertyId])
+  @@index([userId])
+}
+
+model Follows {
+  follower    User   @relation("follower", fields: [followerId], references: [id])
+  followerId  String
+  following   User   @relation("following", fields: [followingId], references: [id])
+  followingId String
+
+  @@id([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+}

@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { formatDate, formatDistanceToNowStrict } from "date-fns";
+import { auth } from "@/auth";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -127,3 +128,13 @@ type ResponseData = {
 export const fetcher = (
   ...args: Parameters<typeof fetch>
 ): Promise<ResponseData> => fetch(...args).then((res) => res.json());
+
+export const getUserId = async () => {
+  const session = await auth();
+  const userId = session?.user.id;
+
+  if (!userId) {
+    throw new Error("You must be signed in to use this feature.");
+  }
+  return userId;
+}
