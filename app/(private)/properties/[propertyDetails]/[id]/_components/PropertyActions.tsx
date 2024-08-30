@@ -18,9 +18,9 @@ export default function PropertyActions({
 }: Props) {
   return (
     <div className={cn("relative flex items-start w-full gap-x-2", className)}>
-      <LikeButton property={property} userId={userId} />
-      <ShareButton propertyId={property.id} />
-      <BookmarkButton property={property} userId={userId} />
+      <LikeButton property={property} userId={userId!} />
+      <ShareButton propertyId={property.id} property={property} />
+      <BookmarkButton property={property} userId={userId!} />
     </div>
   );
 }

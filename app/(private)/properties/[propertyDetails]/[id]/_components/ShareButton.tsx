@@ -10,13 +10,13 @@ function ShareButton({
   property,
 }: {
   propertyId: string;
-  property?: PropertyWithExtras;
+  property: PropertyWithExtras;
 }) {
   return (
     <ActionIcon
       onClick={() => {
         navigator.clipboard.writeText(
-          `${window.location.origin}/properties/${property?.propertyDetails}/${propertyId}`
+          `${window.location.origin}/properties/${property.propertyDetails}/${propertyId}`
         );
         toast("Link copied to clipboard", {
           icon: <Link className={"h-5 w-5"} />,

@@ -11,21 +11,21 @@ import ActionIcon from "./ActionIcon";
 
 type Props = {
   property: PropertyWithExtras;
-  userId?: string;
+  userId: string;
 };
 
 function BookmarkButton({ property, userId }: Props) {
   const predicate = (bookmark: SavedProperty) =>
     bookmark.userId === userId && bookmark.propertyId === property.id;
+
   const [optimisticBookmarks, addOptimisticBookmark] = useOptimistic<
     SavedProperty[]
   >(
-    property.savedBy || [],
+    property.savedBy || [], // Ensure this is always an array
     // @ts-ignore
     (state: SavedProperty[], newBookmark: SavedProperty) =>
       state.find(predicate)
-        ? //   here we check if the bookmark already exists, if it does, we remove it, if it doesn't, we add it
-          state.filter((bookmark) => bookmark.userId !== userId)
+        ? state.filter((bookmark) => bookmark.userId !== userId)
         : [...state, newBookmark]
   );
 
@@ -33,7 +33,7 @@ function BookmarkButton({ property, userId }: Props) {
     <form
       action={async (formData: FormData) => {
         const propertyId = formData.get("propertyId");
-        addOptimisticBookmark({ propertyId, userId });
+        addOptimisticBookmark({ propertyId, userId } as SavedProperty);
         await bookmarkProperty(propertyId);
       }}
       className="ml-auto"

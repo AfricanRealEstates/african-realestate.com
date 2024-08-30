@@ -13,7 +13,7 @@ function LikeButton({
   userId,
 }: {
   property: PropertyWithExtras;
-  userId?: string;
+  userId: string;
 }) {
   const predicate = (like: Like) =>
     like.userId === userId && like.propertyId === property.id;
