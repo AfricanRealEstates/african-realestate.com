@@ -32,7 +32,6 @@ import NotFound from "@/app/not-found";
 import { auth } from "@/auth";
 import Avatar from "@/components/globals/avatar";
 import Badge from "./_components/badge";
-import LikeSaveBtns from "./_components/like-save-btns";
 import Amenities from "./_components/amenities";
 import OverviewInfo from "./_components/overview-info";
 import Image from "next/image";
