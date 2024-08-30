@@ -97,7 +97,7 @@ export async function generateMetadata({
     where: {
       id: id,
     },
-  })) as PropertyWithExtras;
+  })) as PropertyData;
 
   return {
     title: `${capitalizeWords(property.title)} | African Real Estate`,
@@ -108,8 +108,8 @@ export default async function PropertyDetails({
   params: { id },
 }: PropertyDetailsProps) {
   const session = await auth();
-  // const user = session?.user;
-  const userId = await getUserId();
+  const user = session?.user;
+  // const userId = await getUserId();
 
   const property = (await prisma.property.findUnique({
     where: {
@@ -245,7 +245,7 @@ export default async function PropertyDetails({
         <div className="flex justify-between items-center">
           <Badge name="Location Info" />
           {/* <LikeSaveBtns /> */}
-          <PropertyActions property={property} userId={userId} className="" />
+          <PropertyActions property={property} userId={user?.id} className="" />
           {/* <LikeButton
             propertyId={property.id}
             initialState={{
