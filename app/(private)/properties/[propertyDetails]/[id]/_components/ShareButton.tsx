@@ -1,6 +1,6 @@
 "use client";
 
-import { Link, Send } from "lucide-react";
+import { Link, Send, Share } from "lucide-react";
 import { toast } from "sonner";
 import ActionIcon from "./ActionIcon";
 import { PropertyWithExtras } from "@/lib/types";
@@ -18,12 +18,12 @@ function ShareButton({
         navigator.clipboard.writeText(
           `${window.location.origin}/properties/${property.propertyDetails}/${propertyId}`
         );
-        toast("Link copied to clipboard", {
+        toast.success("Link copied to clipboard. Share now!", {
           icon: <Link className={"h-5 w-5"} />,
         });
       }}
     >
-      <Send className={"h-6 w-6"} />
+      <Share className={"size-5 text-gray-400"} />
     </ActionIcon>
   );
 }

@@ -242,7 +242,7 @@ export default async function PropertyDetails({
     return (
       <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200  sm:space-y-4 pb-1 px-0 sm:p-4 xl:p-4 !space-y-4">
         {/* 1 */}
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center w-full">
           <Badge name="Location Info" />
           {/* <LikeSaveBtns /> */}
           <PropertyActions property={property} userId={user?.id} className="" />
