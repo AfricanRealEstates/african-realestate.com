@@ -56,6 +56,11 @@ export const profileFormSchema = z.object({
         });
         return z.NEVER;
     }),
+    agentName: z.string().optional(),
+    agentEmail: z.string().optional(),
+    agentLocation: z.string().optional(),
+    address: z.string().optional(),
+    postalCode: z.string().optional(),
     tiktokLink: z.string().optional(),
     xLink: z.string().optional(),
     facebookLink: z.string().optional(),

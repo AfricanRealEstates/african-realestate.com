@@ -48,6 +48,7 @@ declare module "next-auth" {
         createdAt: Date,
         agentName: string,
         agentEmail: string,
+        agentLocation: string,
         officeLine: string,
         whatsappNumber: string
         profilePhoto: string,

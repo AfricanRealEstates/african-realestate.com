@@ -29,6 +29,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import LoadingButton from "@/components/globals/LoadingButton";
+import { useSession } from "next-auth/react";
 
 interface EditProfileDialogProps {
   user: UserData;
@@ -46,6 +47,11 @@ export default function EditProfileDialog({
     defaultValues: {
       name: user.name || "",
       email: user.email || "",
+      agentName: user.agentName || "",
+      agentEmail: user.agentEmail || "",
+      agentLocation: user.agentLocation || "",
+      address: user.address || "",
+      postalCode: user.postalCode || "",
       whatsappNumber: user.whatsappNumber || "",
       phoneNumber: user.phoneNumber || "",
       tiktokLink: user.tiktokLink || "",
@@ -81,7 +87,7 @@ export default function EditProfileDialog({
   }
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl">
+      <DialogContent className="max-w-4xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Profile</DialogTitle>
         </DialogHeader>
@@ -98,7 +104,11 @@ export default function EditProfileDialog({
         </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-            <div className="grid grid-cols-2 gap-4">
+            <div
+              className={`grid ${
+                user.role !== "AGENCY" ? "grid-cols-2" : "grid-cols-3"
+              } gap-4`}
+            >
               <FormField
                 control={form.control}
                 name="name"
@@ -125,6 +135,37 @@ export default function EditProfileDialog({
                   </FormItem>
                 )}
               />
+              {user.role === "AGENCY" && (
+                <FormField
+                  control={form.control}
+                  name="agentName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Agency Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Agency name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              {user.role === "AGENCY" && (
+                <FormField
+                  control={form.control}
+                  name="agentEmail"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Agency Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Agency email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
               <FormField
                 control={form.control}
                 name="whatsappNumber"
@@ -151,11 +192,56 @@ export default function EditProfileDialog({
                   </FormItem>
                 )}
               />
+              {user.role === "AGENCY" && (
+                <FormField
+                  control={form.control}
+                  name="agentLocation"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Agency Location</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Agency location" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+              {user.role === "AGENCY" && (
+                <FormField
+                  control={form.control}
+                  name="address"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Address</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Address" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+              {user.role === "AGENCY" && (
+                <FormField
+                  control={form.control}
+                  name="postalCode"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Postal code</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Postal code" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
               <FormField
                 control={form.control}
                 name="bio"
                 render={({ field }) => (
-                  <FormItem className="col-span-2">
+                  <FormItem className="col-span-full">
                     <FormLabel>Bio</FormLabel>
                     <FormControl>
                       <Textarea

@@ -7,6 +7,7 @@ import { updateProfile } from "@/actions/updateProfile";
 import { PropertiesPage } from "@/lib/types";
 import { toast } from "sonner";
 
+
 export function useUpdateProfileMutation() {
     const router = useRouter();
     const queryClient = useQueryClient();
@@ -57,7 +58,6 @@ export function useUpdateProfileMutation() {
             );
 
             router.refresh();
-
             toast.success("Profile updated")
         },
         onError: (error) => {

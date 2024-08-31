@@ -62,7 +62,7 @@ export default async function DashboardProfile() {
       </div>
       <article className="col-span-full xl:col-auto">
         <UserProfile user={user} loggedInUserId={user.id} />
-        <SocialMediaConnect />
+        {loggedInUser.role !== "USER" && <SocialMediaConnect />}
       </article>
 
       <article className="col-span-2">

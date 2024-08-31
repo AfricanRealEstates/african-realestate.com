@@ -22,6 +22,7 @@ export function getUserDataSelect(loggedInUserId: string) {
         token: true,
         agentName: true,
         agentEmail: true,
+        agentLocation: true,
         officeLine: true,
         whatsappNumber: true,
         phoneNumber: true,

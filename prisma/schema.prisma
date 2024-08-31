@@ -39,6 +39,7 @@ model User {
   token            Int?
   agentName        String? // moved from property
   agentEmail       String?
+  agentLocation    String?
   officeLine       String?
   whatsappNumber   String?
   phoneNumber      String?

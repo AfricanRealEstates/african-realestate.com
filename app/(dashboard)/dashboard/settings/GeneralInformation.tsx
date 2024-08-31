@@ -96,7 +96,7 @@ export default async function GeneralInformation() {
               />
             </div>
           )}
-          {user.role === "AGENCY" && (
+          {/* {user.role === "AGENCY" && (
             <div className="col-span-6 sm:col-span-3">
               <label
                 htmlFor="officeLine"
@@ -112,7 +112,7 @@ export default async function GeneralInformation() {
                 disabled
               />
             </div>
-          )}
+          )} */}
           <div className="col-span-6 sm:col-span-3">
             <label
               htmlFor="whatsappNumber"
