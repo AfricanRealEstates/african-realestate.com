@@ -44,6 +44,7 @@ export default {
                 createdAt: user.createdAt,
                 agentName: user.agentName || "",
                 agentEmail: user.agentEmail || "",
+                agentLocation: user.agentLocation || "",
                 officeLine: user.officeLine || "",
                 whatsappNumber: user.whatsappNumber || "",
                 profilePhoto: user?.profilePhoto || "",
