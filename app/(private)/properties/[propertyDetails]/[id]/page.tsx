@@ -662,12 +662,19 @@ export default async function PropertyDetails({
                   <div className="w-full border-b border-neutral-200"></div>
                   <div className="flex items-center justify-center w-full mb-12">
                     <Button
-                      href={`/agencies/${agent.id}`}
+                      href={
+                        user?.role === "AGENT"
+                          ? `/agents/${agent.id}`
+                          : `/agencies/${agent.id}`
+                      }
                       color="blue"
                       className=""
                     >
-                      View all agent&apos;s properties
+                      {user?.role === "AGENT"
+                        ? "View all agent's properties"
+                        : "View all agency's properties"}
                     </Button>
+
                     {/* <Link
               href={`/agencies/${agent.id}`}
               className="font-medium border mb-8 lg:mb-0 bg-white border-neutral-200 text-neutral-700 text-center hover:bg-neutral-100 px-3 rounded-full text-lg"

@@ -48,12 +48,10 @@ export default async function SingleAgency({
   const session = await auth();
   const user = session?.user;
 
-  // Redirect to login if not authenticated
-  if (!user) {
-    redirect("/login");
-  }
+  // if (!user) {
+  //   redirect("/login");
+  // }
 
-  // Fetch the agent/user details
   const agent = await prisma.user.findUnique({
     where: {
       id: id,
@@ -67,40 +65,20 @@ export default async function SingleAgency({
     return <NotFound />;
   }
 
-  // Fetch specific properties based on user role
-  let properties: Property[];
+  // Fetch specific user properties
+  const properties: Property[] = await prisma.property.findMany({
+    where: {
+      userId: agent.id, // Filter properties by the user's ID
+    },
+    orderBy: {
+      updatedAt: "desc",
+    },
+    include: {
+      user: true, // Include user data if needed
+    },
+  });
 
-  // Check if the logged-in user is an AGENCY
-  if (user.role === "AGENCY") {
-    // Fetch properties for users with the AGENCY role
-    properties = await prisma.property.findMany({
-      where: {
-        userId: agent.id,
-        user: {
-          role: "AGENCY", // Ensure the property belongs to a user with the AGENCY role
-        },
-      },
-      orderBy: {
-        updatedAt: "desc",
-      },
-      include: {
-        user: true, // Include user data if needed
-      },
-    });
-  } else {
-    // Fetch properties for the agent regardless of the role
-    properties = await prisma.property.findMany({
-      where: {
-        userId: agent.id, // Fetch properties by agent's user ID
-      },
-      orderBy: {
-        updatedAt: "desc",
-      },
-      include: {
-        user: true, // Include user data if needed
-      },
-    });
-  }
+  console.log(properties);
 
   const renderSidebar = () => {
     return (
