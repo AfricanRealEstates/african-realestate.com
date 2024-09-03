@@ -263,21 +263,27 @@ export async function PropertiesTable({
                             className="w-[160px] z-50"
                           >
                             <DropdownMenuItem className="group flex w-full items-center justify-between text-left p-0 text-sm font-base text-neutral-500">
-                              <button className="w-full justify-start flex rounded-md p-2 transition-all duration-75 hover:bg-neutral-100">
+                              <Link
+                                href={`/agent/properties/edit-property/${property.id}`}
+                                className="w-full justify-start flex rounded-md p-2 transition-all duration-75 hover:bg-neutral-100"
+                              >
                                 <IconMenu
                                   text="Edit"
                                   icon={<SquarePen className="size-4" />}
                                 />
-                              </button>
+                              </Link>
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem className="group flex w-full items-center justify-between  text-left p-0 text-sm font-base text-neutral-500 ">
-                              <button className="w-full justify-start flex text-red-500 rounded-md p-2 transition-all duration-75 hover:bg-neutral-100">
+                              <Link
+                                href={`/agent/properties`}
+                                className="w-full justify-start flex text-red-500 rounded-md p-2 transition-all duration-75 hover:bg-neutral-100"
+                              >
                                 <IconMenu
                                   text="Delete"
                                   icon={<Trash2 className="size-4" />}
                                 />
-                              </button>
+                              </Link>
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
