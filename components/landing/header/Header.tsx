@@ -85,6 +85,8 @@ import { Button } from "@/components/utils/Button";
 import AvatarMenu from "./AvatarMenu";
 
 import { Inter, Nunito_Sans } from "next/font/google";
+import Modal from "@/components/modals/Modal";
+import AuthContent from "@/components/auth/AuthContent";
 const nunito = Nunito_Sans({
   subsets: ["latin"],
   weight: ["600"],
@@ -160,12 +162,17 @@ export default function Header() {
   const [showProductMenu, setShowProductMenu] = useState(false);
   const [showCompanyMenu, setShowCompanyMenu] = useState(false);
   const [showAvatarMenu, setShowAvatarMenu] = useState(false);
+  const [authModalVisible, setAuthModalVisible] = useState(false);
 
   const session = useSession();
   const user = session.data?.user;
 
   const pathname = usePathname();
   const isHomePage = pathname === "/";
+
+  const handleButtonClick = () => {
+    setAuthModalVisible(true);
+  };
 
   const handleSignOut = async () => {
     await signOut({ callbackUrl: "/" });
@@ -314,13 +321,18 @@ export default function Header() {
                 <Button
                   type="submit"
                   color="blue"
-                  href={`/agent/properties/create-property`}
+                  onClick={handleButtonClick}
+                  // href={`/agent/properties/create-property`}
                 >
                   Sell fast
                 </Button>
               </div>
             )}
           </div>
+
+          <Modal visible={authModalVisible} setVisible={setAuthModalVisible}>
+            <AuthContent />
+          </Modal>
         </nav>
 
         <Dialog

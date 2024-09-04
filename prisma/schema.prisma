@@ -57,6 +57,7 @@ model User {
   showAgentContact Boolean?        @default(false) // moved from property
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
+  isPremium        Boolean         @default(false)
   accounts         Account[]
   sessions         Session[]
   properties       Property[]
@@ -69,6 +70,8 @@ model User {
   comments         Comment[]
   followedBy       Follows[]       @relation("following")
   following        Follows[]       @relation("follower")
+  upvotes          Upvote[]
+  notifications    Notification[]
 
   @@map("users")
 }
@@ -114,7 +117,7 @@ model VerificationToken {
 
 model propertyDetail {
   id   String @id @default(dbgenerated("concat('propertyDetail_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
-  name String
+  name String @unique
 }
 
 model Property {
@@ -152,16 +155,19 @@ model Property {
   coverPhotos            String[]
   isAvailableForPurchase Boolean  @default(true)
   isActive               Boolean  @default(true)
+  // status                 Status   @default(ACTIVE)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  queries  Query[]
-  orders   Order[]
-  likes    Like[]
-  ratings  Rating[]
-  savedBy  SavedProperty[]
-  comments Comment[]
+  queries       Query[]
+  orders        Order[]
+  likes         Like[]
+  ratings       Rating[]
+  savedBy       SavedProperty[]
+  comments      Comment[]
+  upvotes       Upvote[]
+  notifications Notification[]
 
   @@map("properties")
 }
@@ -267,19 +273,30 @@ model SavedProperty {
   @@index([userId])
 }
 
-model Comment {
+model Upvote {
   id         String   @id @default(cuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  body       String
-  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-  propertyId String
-  userId     String   @map("user_id")
+}
+
+model Comment {
+  id             String   @id @default(cuid())
+  profilePicture String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  body           String
+  property       Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  propertyId     String
+  userId         String
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([propertyId])
-  @@index([userId])
+  // @@index([propertyId])
+  // @@index([userId])
 }
 
 model Follows {
@@ -291,4 +308,37 @@ model Follows {
   @@id([followerId, followingId])
   @@index([followerId])
   @@index([followingId])
+}
+
+model Notification {
+  id             String             @id @default(cuid())
+  userId         String
+  user           User               @relation(fields: [userId], references: [id])
+  body           String
+  profilePicture String
+  propertyId     String
+  commentId      String?
+  property       Property           @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  type           NotificationType
+  status         NotificationStatus @default(UNREAD)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+}
+
+enum Status {
+  PENDING
+  ACTIVE
+  REJECTED
+}
+
+enum NotificationStatus {
+  UNREAD
+  READ
+}
+
+enum NotificationType {
+  UPVOTE
+  COMMENT
+  ACTIVATED
+  REJECTED
 }

@@ -10,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
 import { Icons } from "../globals/icons";
+import Image from "next/image";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -62,23 +63,23 @@ export default function LoginForm() {
 
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <Link
+      <div className="sm:mx-auto sm:w-full sm:max-w-xl">
+        {/* <Link
           href="/"
           className={`flex items-center justify-center gap-2 no-underline`}
         >
           <span className="bg-[#eb6753] text-white py-1 px-2 rounded-lg">
             <HomeIcon />
           </span>
-        </Link>
-        <h2 className="mt-9 text-center text-xl font-bold leading-9 tracking-tight text-gray-900">
+        </Link> */}
+        <h2 className="mt-4 text-center text-xl font-bold leading-9 tracking-tight text-gray-900">
           Sign in to your account
         </h2>
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
-        <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-          <form className="space-y-6" onSubmit={handleSubmit(onSubmitHandler)}>
+        <div className="bg-white px-6 py-12 border border-gray-200 sm:rounded-lg sm:px-12">
+          <form className="space-y-3" onSubmit={handleSubmit(onSubmitHandler)}>
             {error && (
               <p className="text-center bg-rose-50 text-rose-500 py-4 mb-6 roundd">
                 {error}
@@ -235,7 +236,7 @@ export default function LoginForm() {
           </div>
         </div>
 
-        <p className="mt-10 text-center text-sm text-gray-500">
+        <p className="mt-4 text-center text-sm text-gray-500">
           Not a member?{" "}
           <Link
             href="/register"
