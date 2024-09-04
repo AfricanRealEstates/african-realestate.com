@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import prisma from "./prisma";
 import { getUserId } from "./utils";
 import { BookmarkSchema, LikeSchema } from "./validation";
+import { auth } from "@/auth";
 
 export async function likeProperty(value: FormDataEntryValue | null) {
     const userId = await getUserId();
@@ -145,5 +146,102 @@ export async function bookmarkProperty(value: FormDataEntryValue | null) {
         return {
             message: "Database Error: Failed to Bookmark Property.",
         };
+    }
+}
+
+
+export const upvoteProperty = async (propertyId: string) => {
+    try {
+        const authenticatedUser = await auth();
+
+        if (
+            !authenticatedUser ||
+            !authenticatedUser.user ||
+            !authenticatedUser.user.id
+        ) {
+            throw new Error("User ID is missing or invalid");
+        }
+
+        const userId = authenticatedUser.user.id;
+        const upvote = await prisma.upvote.findFirst({
+            where: {
+                propertyId,
+                userId
+            }
+        });
+
+        const profilePicture = authenticatedUser.user.image || "";
+
+        if (upvote) {
+            await prisma.upvote.delete({
+                where: {
+                    id: upvote.id
+                }
+            })
+        } else {
+            await prisma.upvote.create({
+                data: {
+                    propertyId,
+                    userId
+                }
+            });
+
+            const propertyOwner = await prisma.property.findUnique({
+                where: {
+                    id: propertyId
+                },
+                select: {
+                    userId: true
+                }
+            });
+
+            // Notify the property owner about the upvote
+
+            if (propertyOwner && propertyOwner.userId !== userId) {
+                await prisma.notification.create({
+                    data: {
+                        userId: propertyOwner.userId,
+                        body: `Upvoted your property`,
+                        profilePicture: profilePicture,
+                        propertyId: propertyId,
+                        type: "UPVOTE",
+                        status: "UNREAD"
+                    }
+                })
+            }
+        }
+        return true;
+    } catch (error) {
+        console.error("Error upvoting property", error);
+        throw error;
+    }
+}
+
+export const getUpvotedProperties = async () => {
+    try {
+        const authenticatedUser = await auth();
+
+        if (
+            !authenticatedUser ||
+            !authenticatedUser.user ||
+            !authenticatedUser.user.id
+        ) {
+            throw new Error("User ID is missing or invalid");
+        }
+
+        const userId = authenticatedUser.user.id;
+        const upvotedProperties = await prisma.upvote.findMany({
+            where: {
+                userId
+            },
+            include: {
+                property: true
+            }
+        });
+        return upvotedProperties.map((upvote) => upvote.property);
+
+    } catch (error) {
+        console.error("Error getting upvoted properties:", error);
+        return [];
     }
 }

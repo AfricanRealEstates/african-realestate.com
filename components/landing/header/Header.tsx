@@ -312,12 +312,15 @@ export default function Header() {
               </div>
             ) : (
               <div className="flex items-center gap-x-8">
-                <Link href="/login" className="text-sm font-semibold leading-6">
+                <button
+                  onClick={handleButtonClick}
+                  className="text-sm font-semibold leading-6"
+                >
                   <span className="group inline-flex items-center">
                     Log in{" "}
                     <ChevronRightIcon className="ml-1 size-3 transition-transform duration-300 group-hover:translate-x-1" />
                   </span>
-                </Link>
+                </button>
                 <Button
                   type="submit"
                   color="blue"

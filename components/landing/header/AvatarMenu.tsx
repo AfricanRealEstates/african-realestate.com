@@ -26,6 +26,10 @@ const avatar = [
     href: "/agent/properties",
   },
   {
+    name: "My Favorites",
+    href: "/my-favorites",
+  },
+  {
     name: "Profile Account",
     href: "/dashboard/profile",
   },
@@ -41,34 +45,6 @@ export default function AvatarMenu() {
   const queryClient = useQueryClient();
 
   return (
-    // <DropdownMenu>
-    //   <DropdownMenuTrigger asChild>
-    //     <button className={cn("flex-none rounded-full")}>
-    //       <UserAvatar avatarUrl={user?.image} size={40} />
-    //     </button>
-    //   </DropdownMenuTrigger>
-    //   <DropdownMenuContent>
-    //     <DropdownMenuLabel>Logged in as {user?.name}</DropdownMenuLabel>
-    //     <DropdownMenuSeparator />
-    //     <Link href={`/dashboard/account`}>
-    //       <DropdownMenuItem>
-    //         <UserIcon className="mr-2 size-4" /> Profile
-    //       </DropdownMenuItem>
-    //     </Link>
-    //     <DropdownMenuSeparator />
-    //     <DropdownMenuItem
-    //       onClick={async () => {
-    //         await signOut({
-    //           callbackUrl: "/login",
-    //         });
-    //         queryClient.clear();
-    //       }}
-    //     >
-    //       <LogOutIcon className="mr-2 size-4" />
-    //       Log out
-    //     </DropdownMenuItem>
-    //   </DropdownMenuContent>
-    // </DropdownMenu>
     <section className="border rounded-sm shadow-md bg-white absolute top-full text-gray-400">
       <div className="flex cursor-pointer p-2">
         <div className="flex flex-col items-start space-y-2">
