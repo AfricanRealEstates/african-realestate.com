@@ -30,6 +30,10 @@ export default async function DashboardPage({
     redirect("/login");
   }
 
+  if (user.role === "ADMIN") {
+    redirect("/dashboard/admin");
+  }
+
   // Search
   const search =
     typeof searchParams.search === "string" ? searchParams.search : undefined;
@@ -89,9 +93,9 @@ export default async function DashboardPage({
             </svg>
             <div className="inline-flex items-center gap-0.5">
               <Greeting name={user.name!} /> &nbsp;
-              {user.role === "ADMIN" && (
+              {/* {user.role === "ADMIN" && (
                 <span className="text-red-500 mr-0.5"> (ADMIN) 🤪️</span>
-              )}
+              )} */}
             </div>
           </div>
 

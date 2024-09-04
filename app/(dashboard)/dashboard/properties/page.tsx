@@ -10,7 +10,7 @@ import prisma from "@/lib/prisma";
 import SearchInput from "../../components/SearchInput";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { MoreVertical, Plus, SquarePen, Trash2 } from "lucide-react";
+import { Eye, MoreVertical, Plus, SquarePen, Trash2 } from "lucide-react";
 import IconMenu from "@/components/globals/icon-menu";
 import Loading from "./loading";
 import { auth } from "@/auth"; // Assuming you have a function to fetch the logged-in user
@@ -262,6 +262,18 @@ export async function PropertiesTable({
                             align="end"
                             className="w-[160px] z-50"
                           >
+                            <DropdownMenuItem className="group flex w-full items-center justify-between text-left p-0 text-sm font-base text-neutral-500">
+                              <Link
+                                href={`/properties/${property.propertyDetails}/${property.id}`}
+                                className="w-full justify-start flex rounded-md p-2 transition-all duration-75 hover:bg-neutral-100"
+                              >
+                                <IconMenu
+                                  text="View"
+                                  icon={<Eye className="size-4" />}
+                                />
+                              </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
                             <DropdownMenuItem className="group flex w-full items-center justify-between text-left p-0 text-sm font-base text-neutral-500">
                               <Link
                                 href={`/agent/properties/edit-property/${property.id}`}

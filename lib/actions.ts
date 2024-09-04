@@ -245,3 +245,115 @@ export const getUpvotedProperties = async () => {
         return [];
     }
 }
+export const getActiveProperties = async () => {
+    const properties = await prisma.property.findMany({
+        where: {
+            isActive: true
+        },
+        include: {
+            comments: {
+                include: {
+                    user: true
+                }
+            },
+            upvotes: {
+                include: {
+                    user: true
+                }
+            }
+        },
+        orderBy: {
+            upvotes: {
+                _count: 'desc'
+            }
+        }
+    })
+    return properties
+}
+
+export const getPendingProperties = async () => {
+    const properties = await prisma.property.findMany({
+        where: {
+            status: "PENDING",
+        },
+        // include: {
+        //     categories: true,
+        //     images: true,
+        // },
+    });
+
+    return properties;
+};
+
+
+export const getRejectedProperties = async () => {
+    const properties = await prisma.property.findMany({
+        where: {
+            status: "REJECTED",
+        },
+        // include: {
+        //     categories: true,
+        //     images: true,
+        // },
+    });
+
+    return properties;
+}
+
+export const getUsers = async () => {
+    const users = await prisma.user.findMany();
+    return users;
+}
+
+export const getTotalUpvotes = async () => {
+    const totalUpvotes = await prisma.upvote.count({
+        where: {
+            property: {
+                isActive: true
+            },
+        },
+    });
+    return totalUpvotes;
+};
+
+export const markAllNotificationsAsRead = async () => {
+    try {
+        const authenticatedUser = await auth();
+
+        if (
+            !authenticatedUser ||
+            !authenticatedUser.user ||
+            !authenticatedUser.user.id
+        ) {
+            throw new Error("User ID is missing or invalid");
+        }
+
+        const userId = authenticatedUser?.user.id;
+
+        await prisma.notification.updateMany({
+            where: {
+                userId,
+            },
+            data: {
+                status: "READ",
+            },
+        });
+    } catch (error) {
+        console.error("Error marking all notifications as read:", error);
+        throw error;
+    }
+};
+
+export const getAdminData = async () => {
+    const totalProperties = await prisma.property.count();
+    const totalUsers = await prisma.user.count();
+    const totalUpvotes = await prisma.upvote.count();
+    const totalComments = await prisma.comment.count();
+
+    return {
+        totalProperties,
+        totalUsers,
+        totalUpvotes,
+        totalComments,
+    };
+}
