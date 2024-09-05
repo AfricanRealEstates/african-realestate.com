@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-export default function LatestPosts() {
+export default function LatestPosts({ views }: { views: any }) {
   let latestPosts = getBlogPosts();
   return (
     <>
@@ -48,6 +48,14 @@ export default function LatestPosts() {
                 <h3 className="text-2xl font-semibold text-gray-800">
                   {post.metadata.title}
                 </h3>
+
+                {/* <span>
+                  {Intl.NumberFormat("en-US", {
+                    notation: "compact",
+                  }).format(views[post.slug])}{" "}
+                  {" views"}
+                </span> */}
+
                 <p className="my-6 text-gray-600 line-clamp-3">
                   {post.metadata.summary}
                 </p>

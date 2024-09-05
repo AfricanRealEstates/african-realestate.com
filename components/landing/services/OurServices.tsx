@@ -30,7 +30,7 @@ const services = [
 ];
 export default function OurServices() {
   return (
-    <section className="mx-auto w-[95%] max-w-7xl px-5 py-16 md:px-10 md:py-16 lg:py-16 border-b border-[#e4e4e4]">
+    <section className="mx-auto w-[95%] max-w-7xl px-5 py-12 md:px-10 border-b border-[#e4e4e4]">
       <article className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h2
@@ -59,7 +59,7 @@ export default function OurServices() {
           return (
             <article
               key={title}
-              className="group hover:cursor-pointer mt-6 lg:mt-11 flex flex-col gap-5 transition-all ease-in-out p-2 border border-neutral-50 hover:border-neutral-100"
+              className="group hover:cursor-pointer mt-6 lg:mt-11 flex flex-col gap-5 transition-all ease-in-out p-2 border rounded-md border-neutral-200 hover:border-neutral-100 hover:shadow-2xl hover:shadow-gray-600/10"
             >
               <div className="">
                 <Image
@@ -80,7 +80,35 @@ export default function OurServices() {
                   {description}
                 </p>
               </div>
-              <Link
+              <div className="flex items-center justify-between">
+                <span
+                  className={`${josefin.className} group-hover:text-blue-500 text-[#5c6368] font-semibold group-hover:underline underline-offset-8 transition-all ease-in-out`}
+                >
+                  Learn more
+                </span>
+
+                <Link
+                  href="/services"
+                  aria-label="got to services"
+                  className="relative ml-auto flex h-12 w-12 items-center justify-center before:absolute before:inset-0 before:rounded-full before:border before:border-gray-200/40 before:bg-gray-100 before:transition-transform before:duration-300 active:duration-75 active:before:scale-95 group-hover:before:scale-110 dark:before:border-gray-700 dark:before:bg-gray-800"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    className="relative text-gray-500 h-4 w-4 transition duration-300 group-hover:-rotate-45 group-hover:text-blue-600"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      strokeLinejoin="round"
+                      d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                    ></path>
+                  </svg>
+                </Link>
+              </div>
+              {/* <Link
                 href="/services"
                 className="mt-4 inline-flex items-center gap-2 group "
               >
@@ -92,7 +120,7 @@ export default function OurServices() {
                 <span>
                   <ArrowRight className="group-hover:text-blue-500 size-4 transition-transform duration-300 group-hover:translate-x-1" />
                 </span>
-              </Link>
+              </Link> */}
             </article>
           );
         })}

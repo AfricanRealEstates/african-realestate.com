@@ -9,6 +9,10 @@ import { fetcher, fetchUrl } from "@/lib/utils";
 import useSWR from "swr";
 import PopularBlogs from "../PopularBlogs";
 import RecommendedTopics from "../RecommendedTopics";
+import { Redis } from "@upstash/redis";
+
+const redis = Redis.fromEnv();
+export const revalidate = 0;
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -19,7 +23,20 @@ export const metadata: Metadata = {
   title: "Blog",
 };
 
-export default function Blog() {
+export default async function Blog() {
+  let allPosts = getBlogPosts();
+  const views = (
+    await redis.mget<number[]>(
+      ...allPosts.map((p) => ["pageviews", "posts", p.slug].join(":"))
+    )
+  ).reduce((acc, v, i) => {
+    acc[allPosts[i].slug] = v ?? 0;
+    return acc;
+  }, {} as Record<string, number>);
+
+  if (views.length < 1) {
+    return null;
+  }
   return (
     <main className={`pt-6 pb-8 bg-white lg:pb-16 ${raleway.className}`}>
       <div className="mb-12 space-y-4 text-center container m-auto px-6 text-gray-600 md:px-12 xl:px-6">
@@ -36,7 +53,7 @@ export default function Blog() {
           <PopularBlogs />
         </div>
         <div className="w-full max-w-[800px] mx-auto">
-          <LatestPosts />
+          <LatestPosts views={views} />
         </div>
         <aside className="hidden lg:block lg:w-60">
           <RecommendedTopics />

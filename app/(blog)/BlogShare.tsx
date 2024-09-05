@@ -19,10 +19,10 @@ export default function BlogShare({ url, title }: BlogShareProps) {
   const titleToShare = `Check out this amazing post: ${title}`;
   return (
     <div className="flex flex-col items-end">
-      <h2 className="flex gap-3 items-center">
+      {/* <h2 className="flex gap-3 items-center">
         <span>Share to your socials</span>
         <Share2 />
-      </h2>
+      </h2> */}
       <div className="flex gap-6 border-t border-neutral-100 pt-4">
         <FacebookShare
           url={url}

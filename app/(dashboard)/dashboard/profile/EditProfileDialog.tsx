@@ -129,12 +129,13 @@ export default function EditProfileDialog({
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="Your email" {...field} />
+                      <Input placeholder="Your email" {...field} disabled />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
               {user.role === "AGENCY" && (
                 <FormField
                   control={form.control}
@@ -151,7 +152,7 @@ export default function EditProfileDialog({
                 />
               )}
 
-              {user.role === "AGENCY" && (
+              {/* {user.role === "AGENCY" && (
                 <FormField
                   control={form.control}
                   name="agentEmail"
@@ -165,7 +166,7 @@ export default function EditProfileDialog({
                     </FormItem>
                   )}
                 />
-              )}
+              )} */}
               <FormField
                 control={form.control}
                 name="whatsappNumber"
@@ -207,7 +208,7 @@ export default function EditProfileDialog({
                   )}
                 />
               )}
-              {user.role === "AGENCY" && (
+              {/* {user.role === "AGENCY" && (
                 <FormField
                   control={form.control}
                   name="address"
@@ -235,8 +236,9 @@ export default function EditProfileDialog({
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> 
               )}
+                */}
               <FormField
                 control={form.control}
                 name="bio"

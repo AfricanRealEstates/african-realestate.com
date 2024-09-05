@@ -2,7 +2,11 @@ import { getBlogPosts } from "@/lib/blog";
 import React from "react";
 import CardCategory from "../../CardCategory";
 import Link from "next/link";
+import { Redis } from "@upstash/redis";
 import { notFound } from "next/navigation";
+
+const redis = Redis.fromEnv();
+export const revalidate = 0;
 
 export async function generateStaticParams() {
   let posts = getBlogPosts();
@@ -21,10 +25,23 @@ export function generateMetadata({ params }: { params: { category: string } }) {
   };
 }
 
-export default function Page({ params }: { params: { category: string } }) {
+export default async function Page({
+  params,
+}: {
+  params: { category: string };
+}) {
   let posts = getBlogPosts().filter(
     (post) => post.metadata.category === params.category
   );
+
+  const views = (
+    await redis.mget<number[]>(
+      ...posts.map((p) => ["pageviews", "posts", p.slug].join(":"))
+    )
+  ).reduce((acc, v, i) => {
+    acc[posts[i].slug] = v ?? 0;
+    return acc;
+  }, {} as Record<string, number>);
 
   const notfoundCategory = params.category as String;
 

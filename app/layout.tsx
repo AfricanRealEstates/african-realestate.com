@@ -7,8 +7,10 @@ import { getSEOTags } from "@/lib/seo";
 import { Toaster } from "@/components/ui/sonner";
 import ModalProvider from "@/providers/modal-provider";
 import { auth } from "@/auth";
-import { redirect } from "next/navigation";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 import SessionProvider from "@/providers/session-provider";
+import { cn } from "@/lib/utils";
 
 const nunitoSans = Nunito_Sans({
   subsets: ["latin"],
@@ -33,8 +35,8 @@ export default async function RootLayout({
   //   session,
   // };
   return (
-    <html lang="en">
-      <body className={`${nunitoSans.variable} antialiased`}>
+    <html lang="en" className={cn(GeistSans.variable, GeistMono.variable)}>
+      <body className={`antialiased`}>
         <ThemeProvider>
           <SessionProvider session={session}>
             <ModalProvider />

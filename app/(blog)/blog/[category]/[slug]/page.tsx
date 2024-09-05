@@ -9,8 +9,14 @@ import { formatBlogDate } from "@/lib/utils";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import React from "react";
+import { Redis } from "@upstash/redis";
+import { ReportView } from "./view";
+import { Eye } from "lucide-react";
 
 export const dynamic = "force-dynamic";
+
+const redis = Redis.fromEnv();
+export const revalidate = 0;
 
 export async function generateStaticParams() {
   let posts = getBlogPosts();
@@ -61,7 +67,7 @@ export function generateMetadata({
   };
 }
 
-export default function Page({
+export default async function Page({
   params,
 }: {
   params: { category: string; slug: string };
@@ -71,6 +77,10 @@ export default function Page({
   if (!post) {
     notFound();
   }
+
+  const views =
+    (await redis.get<number>(["pageviews", "posts", params.slug].join(":"))) ??
+    0;
 
   let relatedCategoryPosts = getBlogPosts().filter(
     (post) =>
@@ -139,10 +149,20 @@ export default function Page({
 
             <article className="prose w-full max-w-2xl mx-auto">
               <CustomMDX source={post.content} />
-              <BlogShare
-                url={`${url}/blog/${post.metadata.category}/${post.slug}`}
-                title={`Read ${post.metadata.title}`}
-              />
+              <div className="flex items-center justify-between">
+                <ReportView slug={post.slug} />
+                <h2 className="flex items-center gap-4">
+                  <Eye />
+                  {Intl.NumberFormat("en-US", { notation: "compact" }).format(
+                    views
+                  )}{" "}
+                  {" views"}
+                </h2>
+                <BlogShare
+                  url={`${url}/blog/${post.metadata.category}/${post.slug}`}
+                  title={`Read ${post.metadata.title}`}
+                />
+              </div>
             </article>
 
             <aside className="hidden lg:block lg:w-60">
