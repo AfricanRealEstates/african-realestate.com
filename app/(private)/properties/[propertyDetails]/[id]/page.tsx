@@ -522,7 +522,7 @@ export default async function PropertyDetails({
                       <span className="capitalize">{property.status}</span>
                     </p>
                     {savings && parseFloat(savings) > 0 ? (
-                      <p className="text-sm font-medium text-rose-400 bg-gray-50 px-2 py-1 rounded-full">
+                      <p className="text-xs font-medium text-rose-400 bg-gray-50 px-4 py-1 rounded-full">
                         Save {savings}%
                       </p>
                     ) : null}
@@ -535,7 +535,9 @@ export default async function PropertyDetails({
                         <span>Price:</span>
                       )}
                       <span className="bg-gray-50 text-indigo-500 px-2 rounded-full text-3xl font-semibold">
-                        <span className="">{property.currency} </span>
+                        <span className="">
+                          {property.currency === "USD" ? "$" : "Ksh. "}{" "}
+                        </span>
                         <span className=" tracking-tight">
                           {property.price.toLocaleString()}
                         </span>
@@ -548,7 +550,15 @@ export default async function PropertyDetails({
                           : "/ Per Month"}
                       </span>
                     )}
+                    <div className="flex gap-3 font-medium ml-auto bg-gray-50 text-rose-500 px-3 py-1 rounded-full">
+                      <span className="text-xs">Service</span>
+                      <span className="text-xs inline-flex ">
+                        {property.currency === "USD" ? "$" : "Ksh. "}
+                        {property.serviceCharge?.toLocaleString()}
+                      </span>
+                    </div>
                   </div>
+
                   <h2 id="information-heading" className="sr-only">
                     Property price
                   </h2>
