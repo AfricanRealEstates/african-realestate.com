@@ -550,9 +550,9 @@ export default async function PropertyDetails({
                           : "/ Per Month"}
                       </span>
                     )}
-                    <div className="flex gap-3 font-medium ml-auto bg-gray-50 text-rose-500 px-3 py-1 rounded-full">
+                    <div className="flex gap-3 font-medium ml-auto text-rose-400 bg-gray-50  px-3 py-1 rounded-full">
                       <span className="text-xs">Service</span>
-                      <span className="text-xs inline-flex ">
+                      <span className="text-xs inline-flex gap-0.5">
                         {property.currency === "USD" ? "$" : "Ksh. "}
                         {property.serviceCharge?.toLocaleString()}
                       </span>

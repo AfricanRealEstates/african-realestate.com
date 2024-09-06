@@ -20,13 +20,13 @@ export const fileRouter = {
         .onUploadComplete(async ({ metadata, file }) => {
             const oldAvatarUrl = metadata.user.image;
 
-            if (oldAvatarUrl) {
-                const key = oldAvatarUrl.split(
-                    `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`,
-                )[1];
+            // if (oldAvatarUrl) {
+            //     const key = oldAvatarUrl.split(
+            //         `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`,
+            //     )[1];
 
-                await new UTApi().deleteFiles(key);
-            }
+            //     await new UTApi().deleteFiles(key);
+            // }
 
             const newAvatarUrl = file.url.replace(
                 "/f/",

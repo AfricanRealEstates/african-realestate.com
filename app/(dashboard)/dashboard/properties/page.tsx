@@ -10,7 +10,7 @@ import prisma from "@/lib/prisma";
 import SearchInput from "../../components/SearchInput";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Eye, MoreVertical, Plus, SquarePen, Trash2 } from "lucide-react";
+import { Copy, Eye, MoreVertical, Plus, SquarePen, Trash2 } from "lucide-react";
 import IconMenu from "@/components/globals/icon-menu";
 import Loading from "./loading";
 import { auth } from "@/auth"; // Assuming you have a function to fetch the logged-in user
@@ -122,7 +122,7 @@ export async function PropertiesTable({
     return <p>You must be logged in to view properties.</p>;
   }
 
-  const perPage = 5;
+  const perPage = 10;
 
   // Fetch the properties based on the role of the user
   const whereClause = {
@@ -270,6 +270,19 @@ export async function PropertiesTable({
                                 <IconMenu
                                   text="View"
                                   icon={<Eye className="size-4" />}
+                                />
+                              </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+
+                            <DropdownMenuItem className="group flex w-full items-center justify-between text-left p-0 text-sm font-base text-neutral-500">
+                              <Link
+                                href={`/agent/properties/create-property/?cloneFrom=${property.id}`}
+                                className="w-full justify-start flex rounded-md p-2 transition-all duration-75 hover:bg-neutral-100"
+                              >
+                                <IconMenu
+                                  text="Duplicate"
+                                  icon={<Copy className="size-4" />}
                                 />
                               </Link>
                             </DropdownMenuItem>
