@@ -15,6 +15,7 @@ import { unifiedConditional } from "unified-conditional";
 const nextConfig = {
   pageExtensions: ["js", "jsx", "ts", "tsx", "mdx"],
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         hostname: "4muw4qkgpimyciou.public.blob.vercel-storage.com",
