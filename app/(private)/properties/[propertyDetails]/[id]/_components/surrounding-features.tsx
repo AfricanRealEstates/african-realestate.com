@@ -64,7 +64,7 @@ export default function SurroundingFeatures({ property }: any) {
           </div>
           <FeedbackWidget
             propertyId={property.id}
-            propertyOwnerId={user?.id!}
+            // propertyOwnerId={user?.id!}
           />
         </section>
 
