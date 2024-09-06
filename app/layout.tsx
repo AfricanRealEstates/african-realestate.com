@@ -1,4 +1,3 @@
-import { Nunito_Sans } from "next/font/google";
 import "./globals.css";
 import ThemeProvider from "@/providers/theme-provider";
 import LayoutProvider from "@/providers/layout-provider";
@@ -11,12 +10,6 @@ import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import SessionProvider from "@/providers/session-provider";
 import { cn } from "@/lib/utils";
-
-const nunitoSans = Nunito_Sans({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-nunitosans",
-});
 
 export const metadata = getSEOTags();
 

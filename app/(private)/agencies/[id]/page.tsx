@@ -12,6 +12,7 @@ import NotFound from "@/app/not-found";
 import dayjs from "dayjs";
 import { capitalizeWords } from "@/lib/utils";
 import { formatDate } from "date-fns";
+import { PropertyData } from "@/lib/types";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -66,7 +67,7 @@ export default async function SingleAgency({
   }
 
   // Fetch specific user properties
-  const properties: Property[] = await prisma.property.findMany({
+  const properties = await prisma.property.findMany({
     where: {
       userId: agent.id, // Filter properties by the user's ID
     },
@@ -82,7 +83,9 @@ export default async function SingleAgency({
 
   const renderSidebar = () => {
     return (
-      <div className=" w-full flex flex-col items-center text-center sm:rounded-2xl sm:border border-neutral-200 dark:border-neutral-700 space-y-6 sm:space-y-7 px-0 sm:p-6 xl:p-8">
+      <div
+        className={` ${raleway.variable} w-full flex flex-col items-center text-center sm:rounded-2xl sm:border border-neutral-200 dark:border-neutral-700 space-y-6 sm:space-y-7 px-0 sm:p-6 xl:p-8`}
+      >
         <Avatar
           hasChecked
           hasCheckedClass="w-6 h-6 -top-0.5 right-2"
@@ -106,7 +109,7 @@ export default async function SingleAgency({
 
         {/* ---- */}
         {agent?.bio ? (
-          <p className="text-neutral-500">
+          <p className={`text-neutral-500 text-left text-sm`}>
             {agent.bio.length > 250
               ? `${agent.bio.substring(0, 250)}...`
               : agent.bio}
@@ -193,7 +196,7 @@ export default async function SingleAgency({
           <div className="lg:sticky lg:top-24">{renderSidebar()}</div>
         </div>
         <div className="w-full lg:w-3/5 xl:w-2/3 space-y-8 lg:space-y-10 lg:pl-10 flex-shrink-0">
-          <RenderSection1 properties={properties} agent={agent} />
+          <RenderSection1 properties={properties} agent={agent!} />
         </div>
       </div>
     </div>

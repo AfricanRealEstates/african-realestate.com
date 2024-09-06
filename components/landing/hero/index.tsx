@@ -1,12 +1,12 @@
 import { Play, Search, SlidersHorizontal } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Inter, IBM_Plex_Mono, Nunito_Sans } from "next/font/google";
+import { Inter, IBM_Plex_Mono, Nunito_Sans, Raleway } from "next/font/google";
 import React from "react";
 import SearchForm from "./search-form";
 import SearchBar from "./search";
 
-const nunitoSans = Nunito_Sans({
+const nunitoSans = Raleway({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-nunitosans",

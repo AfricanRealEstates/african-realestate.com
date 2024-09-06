@@ -196,9 +196,7 @@ export default function Header() {
   }, []);
   return (
     <header
-      className={`${
-        nunito.className
-      } fixed transition-all duration-300 py-5 left-0 top-0 z-30 w-full bg-transparent backdrop-blur-sm ${
+      className={` fixed transition-all duration-300 py-5 left-0 top-0 z-30 w-full bg-transparent backdrop-blur-sm ${
         stickyMenu
           ? "bg-white !py-3 shadow-sm transition duration-100 text-gray-600"
           : isHomePage

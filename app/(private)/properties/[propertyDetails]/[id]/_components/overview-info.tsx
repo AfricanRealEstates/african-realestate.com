@@ -33,11 +33,11 @@ export default function OverviewInfo({ description }: { description: string }) {
       <h2 className="text-2xl font-semibold">Overview</h2>
       <div className="w-14 border-b border-neutral-200"></div>
 
-      <pre
+      <p
         className={`${raleway.className} max-w-4xl text-sm whitespace-pre-wrap leading-9 text-neutral-600`}
       >
         {displayedDescription}
-      </pre>
+      </p>
       {displayedDescription.length > 300 && (
         <ButtonSecondary
           onClick={toggleDescription}

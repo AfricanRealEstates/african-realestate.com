@@ -26,7 +26,7 @@ export interface PropertyCardProps {
   size?: "default" | "small";
 }
 
-export default async function PropertyCard({
+export default function PropertyCard({
   size = "default",
   className = "",
   data,
@@ -52,9 +52,6 @@ export default async function PropertyCard({
     propertyType,
     tenure,
   } = data;
-
-  const session = await auth();
-  const user = session?.user;
 
   const renderSliderGallery = () => {
     return (
@@ -236,7 +233,7 @@ export default async function PropertyCard({
           </div>
           <div className="flex items-center">
             <h2 className="flex items-center gap-x-0.5 text-lg leading-7 font-semibold">
-              <span>{currency}</span>
+              <span>{currency == "USD" ? "$" : "KES"}</span>
               {price.toLocaleString()}
 
               {status === "let" ? (
