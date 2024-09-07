@@ -35,6 +35,19 @@ export const addProperty = async (property: any) => {
       data: property,
     });
 
+    // Count the total properties of the user
+    const propertyCount = await prisma.property.count({
+      where: { userId },
+    });
+
+    // If the user has more than 3 properties, promote them to AGENCY role
+    if (propertyCount > 3 && user?.role !== "AGENCY" && user?.role !== "ADMIN") {
+      await prisma.user.update({
+        where: { id: userId },
+        data: { role: "AGENCY" },
+      });
+    }
+
     // Revalidate paths after adding property
     revalidatePath("/");
     revalidatePath("/buy");
@@ -51,6 +64,7 @@ export const addProperty = async (property: any) => {
     };
   }
 };
+
 export const editProperty = async (id: string, property: any) => {
   try {
     const session = await auth();

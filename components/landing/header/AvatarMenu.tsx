@@ -23,7 +23,7 @@ const avatar = [
   },
   {
     name: "My properties",
-    href: "/agent/properties",
+    href: "/dashboard/properties",
   },
   {
     name: "My Favorites",

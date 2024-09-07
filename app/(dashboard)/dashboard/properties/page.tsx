@@ -36,6 +36,9 @@ export default async function PropertiesPage({
     where: {
       userId: user.id,
     },
+    orderBy: {
+      createdAt: "desc", // Sort by most recent
+    },
   });
   const search =
     typeof searchParams.search === "string" ? searchParams.search : undefined;
