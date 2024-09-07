@@ -229,7 +229,7 @@ export default function PropertyCard({
         <div className="border-b border-neutral-100"></div>
         <div className="flex items-center justify-between flex-wrap gap-1.5 px-4 py-2">
           <div className="flex items-center gap-8">
-            <span>Price</span>
+            <span>{status === "let" ? "Rent" : "Price"}</span>
           </div>
           <div className="flex items-center">
             <h2 className="flex items-center gap-x-0.5 text-lg leading-7 font-semibold">
