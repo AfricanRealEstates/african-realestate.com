@@ -550,13 +550,15 @@ export default async function PropertyDetails({
                           : "/ Per Month"}
                       </span>
                     )}
-                    <div className="flex gap-3 font-medium ml-auto text-rose-400 bg-gray-50  px-3 py-1 rounded-full">
-                      <span className="text-xs">Service</span>
-                      <span className="text-xs inline-flex gap-0.5">
-                        {property.currency === "USD" ? "$" : "Ksh. "}
-                        {property.serviceCharge?.toLocaleString()}
-                      </span>
-                    </div>
+                    {property.serviceCharge && (
+                      <div className="flex gap-3 font-medium ml-auto text-rose-400 bg-gray-50  px-3 py-1 rounded-full">
+                        <span className="text-xs">Service</span>
+                        <span className="text-xs inline-flex gap-0.5">
+                          {property.currency === "USD" ? "$" : "Ksh. "}
+                          {property.serviceCharge?.toLocaleString()}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   <h2 id="information-heading" className="sr-only">
