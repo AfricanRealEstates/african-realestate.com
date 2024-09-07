@@ -214,7 +214,7 @@ export default function Header() {
               href="/"
               className="-m-1.5 p-1.5 flex flex-shrink-0 items-center gap-2"
             >
-              <Image
+              <img
                 alt="Logo"
                 src="/assets/logo.png"
                 height={40}

@@ -117,7 +117,7 @@ export default function Footer() {
               href="/"
               className={`flex items-center gap-2 text-white no-underline`}
             >
-              <Image
+              <img
                 src="/assets/logo.png"
                 width={40}
                 height={40}
