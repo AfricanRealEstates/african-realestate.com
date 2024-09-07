@@ -8,12 +8,12 @@ export default function LogoDashboard() {
       href="/"
       className="flex items-center h-20 gap-2 border-b cursor-pointer min-h-20"
     >
-      <Image
+      <img
         src="/assets/logo.png"
         alt="Logo"
         width={30}
         height={30}
-        priority
+        // priority
       />
       <h1 className="text-xl font-bold">African Real Estate</h1>
     </Link>

@@ -11,7 +11,7 @@ export default function BlogFooter() {
       <div className="md:px-12 lg:px-28">
         <div className="container m-auto space-y-6 text-gray-600 max-w-7xl flex flex-col items-center justify-center w-full">
           <Link href="/" className={`flex items-center gap-2 no-underline`}>
-            <Image
+            <img
               src="/assets/logo.png"
               width={40}
               height={40}

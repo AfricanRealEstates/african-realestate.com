@@ -8,7 +8,15 @@ const raleway = Raleway({
   variable: "--font-nunitosans",
 });
 
-export default function OverviewInfo({ description }: { description: string }) {
+export default function OverviewInfo({
+  description,
+  serviceCharge,
+  currency,
+}: {
+  description: string;
+  serviceCharge?: number | null;
+  currency?: string;
+}) {
   const [showFullDescription, setShowFullDescription] = useState(false);
 
   // Toggle the state to show or hide the full description
@@ -33,11 +41,20 @@ export default function OverviewInfo({ description }: { description: string }) {
       <h2 className="text-2xl font-semibold">Overview</h2>
       <div className="w-14 border-b border-neutral-200"></div>
 
-      <p
+      <div
         className={`${raleway.className} max-w-4xl text-sm whitespace-pre-wrap leading-9 text-neutral-600`}
       >
+        {serviceCharge && (
+          <p className="">
+            - The service charge of this property is:{" "}
+            <span className="font-bold text-indigo-500 ">
+              {currency === "USD" ? "$" : "Ksh."}{" "}
+              {serviceCharge?.toLocaleString()}
+            </span>
+          </p>
+        )}
         {displayedDescription}
-      </p>
+      </div>
       {displayedDescription.length > 300 && (
         <ButtonSecondary
           onClick={toggleDescription}

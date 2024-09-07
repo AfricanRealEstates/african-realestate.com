@@ -97,7 +97,7 @@ export default function BlogHeader() {
         >
           <div className="flex justify-between">
             <Link href="/" className={`flex items-center gap-2 no-underline`}>
-              <Image
+              <img
                 src="/assets/logo.png"
                 width={40}
                 height={40}

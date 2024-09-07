@@ -544,6 +544,7 @@ export default async function PropertyDetails({
                           </span>
                         </span>
                       </h2>
+
                       {property.status === "let" && (
                         <span className="font-medium">
                           {property.propertyType === "Vacational / Social"
@@ -552,7 +553,7 @@ export default async function PropertyDetails({
                         </span>
                       )}
                     </div>
-                    {property.serviceCharge && (
+                    {/* {property.serviceCharge && (
                       <div className="flex gap-3 font-medium ml-auto text-rose-400 bg-gray-50  px-3 py-1 rounded-full">
                         <span className="text-xs">Service</span>
                         <span className="text-xs inline-flex gap-0.5">
@@ -560,7 +561,7 @@ export default async function PropertyDetails({
                           {property.serviceCharge?.toLocaleString()}
                         </span>
                       </div>
-                    )}
+                    )} */}
                   </div>
 
                   <h2 id="information-heading" className="sr-only">
@@ -718,7 +719,11 @@ export default async function PropertyDetails({
           <section className="w-full lg:w-3/5 xl:w-2/3 space-y-8 lg:space-y-10 lg:pr-10 flex flex-col">
             {renderSection1()}
             <div className="flex-grow">
-              <OverviewInfo description={property.description} />
+              <OverviewInfo
+                description={property.description}
+                serviceCharge={property.serviceCharge}
+                currency={property.currency}
+              />
             </div>
           </section>
           <section className="hidden lg:flex lg:w-2/5 xl:w-1/3 mt-14 lg:mt-0 flex-col">
