@@ -528,28 +528,30 @@ export default async function PropertyDetails({
                     ) : null}
                   </div>
                   <div className="flex items-center">
-                    <h2 className="inline-flex text-xl font-medium gap-x-1.5 items-center text-gray-500">
-                      {property.status === "let" ? (
-                        <span>Rent:</span>
-                      ) : (
-                        <span>Price:</span>
+                    <div className="flex-1">
+                      <h2 className="inline-flex text-xl font-medium gap-x-1.5 items-center text-gray-500">
+                        {property.status === "let" ? (
+                          <span>Rent:</span>
+                        ) : (
+                          <span>Price:</span>
+                        )}
+                        <span className="bg-gray-50 text-indigo-500 px-2 rounded-full text-xl font-semibold">
+                          <span className="">
+                            {property.currency === "USD" ? "$" : "Ksh. "}{" "}
+                          </span>
+                          <span className=" tracking-tight">
+                            {property.price.toLocaleString()}
+                          </span>
+                        </span>
+                      </h2>
+                      {property.status === "let" && (
+                        <span className="font-medium">
+                          {property.propertyType === "Vacational / Social"
+                            ? "/ Per Day"
+                            : "/ Per Month"}
+                        </span>
                       )}
-                      <span className="bg-gray-50 text-indigo-500 px-2 rounded-full text-3xl font-semibold">
-                        <span className="">
-                          {property.currency === "USD" ? "$" : "Ksh. "}{" "}
-                        </span>
-                        <span className=" tracking-tight">
-                          {property.price.toLocaleString()}
-                        </span>
-                      </span>
-                    </h2>
-                    {property.status === "let" && (
-                      <span className="font-medium">
-                        {property.propertyType === "Vacational / Social"
-                          ? "/ Per Day"
-                          : "/ Per Month"}
-                      </span>
-                    )}
+                    </div>
                     {property.serviceCharge && (
                       <div className="flex gap-3 font-medium ml-auto text-rose-400 bg-gray-50  px-3 py-1 rounded-full">
                         <span className="text-xs">Service</span>
