@@ -154,6 +154,9 @@ export async function PropertiesTable({
     take: perPage,
     skip: (page - 1) * perPage,
     where: whereClause,
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   const currentSearchParams = new URLSearchParams();

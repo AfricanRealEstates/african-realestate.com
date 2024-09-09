@@ -164,6 +164,9 @@ async function UsersTable({
         contains: search,
       },
     },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   const currentSearchParams = new URLSearchParams();
