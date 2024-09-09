@@ -5,24 +5,53 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { AnimatePresence, motion, MotionConfig } from "framer-motion";
 import useKeypress from "react-use-keypress";
 import Image from "next/image";
+import heic2any from "heic2any";
 
 interface Props {
   property: { coverPhotos: string[]; images: string[] };
 }
 
-// Utility function to remove duplicate images
 const removeDuplicates = (images: string[]) => Array.from(new Set(images));
+
+const convertHeicToJpeg = async (url: string): Promise<string> => {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+
+    if (blob.type === "image/heic" || url.toLowerCase().endsWith(".heic")) {
+      const jpegBlob = await heic2any({
+        blob: blob,
+        toType: "image/jpeg",
+        quality: 0.8,
+      });
+      return URL.createObjectURL(jpegBlob as Blob);
+    }
+
+    return url;
+  } catch (error) {
+    console.error("Error converting HEIC to JPEG:", error);
+    return url;
+  }
+};
 
 export default function ImageCarousel({ property }: Props) {
   const ref = useRef<CarouselRef>(null);
   const thumbnailRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [convertedImages, setConvertedImages] = useState<string[]>([]);
 
-  // Combine coverPhotos and images with coverPhotos first
   const combinedImages = [...property.coverPhotos, ...property.images];
   const uniqueImages = removeDuplicates(combinedImages);
   const allImages = [...uniqueImages];
+
+  useEffect(() => {
+    const convertImages = async () => {
+      const converted = await Promise.all(uniqueImages.map(convertHeicToJpeg));
+      setConvertedImages(converted);
+    };
+    convertImages();
+  }, [uniqueImages]);
 
   useKeypress("ArrowRight", () => {
     if (index + 1 < allImages.length) {
@@ -60,13 +89,13 @@ export default function ImageCarousel({ property }: Props) {
     }
   };
 
-  const handleDoubleClick = () => {
-    setIsModalVisible(true);
-  };
+  // const handleDoubleClick = () => {
+  //   setIsModalVisible(true);
+  // };
 
-  const handleCloseModal = () => {
-    setIsModalVisible(false);
-  };
+  // const handleCloseModal = () => {
+  //   setIsModalVisible(false);
+  // };
 
   useEffect(() => {
     scrollThumbnailIntoView(index);
@@ -75,17 +104,14 @@ export default function ImageCarousel({ property }: Props) {
   return (
     <section className="lg:w-3/5 xl:w-2/3 space-y-8 lg:space-y-10 lg:pr-10">
       <MotionConfig transition={{ duration: 0.7, ease: [0.32, 0.72, 0, 1] }}>
-        <div
-          className="relative overflow-hidden h-full w-full"
-          onDoubleClick={handleDoubleClick}
-        >
+        <div className="relative overflow-hidden h-full w-full">
           <div className="relative h-full w-full">
             <motion.div
               animate={{ x: -index * 100 + "%" }}
               className="flex h-full w-full"
               transition={{ duration: 0.5 }}
             >
-              {allImages.map((image, i) => (
+              {convertedImages.map((image, i) => (
                 <div
                   key={i}
                   className="relative flex-shrink-0 w-full h-full"
@@ -95,8 +121,7 @@ export default function ImageCarousel({ property }: Props) {
                     src={image}
                     alt={`Property Image ${i}`}
                     layout="fill"
-                    objectFit="cover"
-                    className="rounded-xl"
+                    className="rounded-xl object-cover"
                   />
                 </div>
               ))}
