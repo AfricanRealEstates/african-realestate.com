@@ -23,6 +23,7 @@ import { formatDate } from "date-fns";
 import { formatRelativeDate } from "@/lib/utils";
 import FeedbackWidget from "./feedback-widget";
 import { useSession } from "next-auth/react";
+import { Property } from "@prisma/client";
 
 const featureIcons: { [key: string]: JSX.Element } = {
   mosque: <FaMosque className="size-4 text-[#eb6753]" />,
@@ -64,7 +65,7 @@ export default function SurroundingFeatures({ property }: any) {
           </div>
           <FeedbackWidget
             propertyId={property.id}
-            // propertyOwnerId={user?.id!}
+            propertyOwnerId={property.userId}
           />
         </section>
 

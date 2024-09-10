@@ -45,14 +45,6 @@ export default function ImageCarousel({ property }: Props) {
   const uniqueImages = removeDuplicates(combinedImages);
   const allImages = [...uniqueImages];
 
-  useEffect(() => {
-    const convertImages = async () => {
-      const converted = await Promise.all(uniqueImages.map(convertHeicToJpeg));
-      setConvertedImages(converted);
-    };
-    convertImages();
-  }, [uniqueImages]);
-
   useKeypress("ArrowRight", () => {
     if (index + 1 < allImages.length) {
       handleChangeIndex(index + 1);
@@ -111,7 +103,7 @@ export default function ImageCarousel({ property }: Props) {
               className="flex h-full w-full"
               transition={{ duration: 0.5 }}
             >
-              {convertedImages.map((image, i) => (
+              {allImages.map((image, i) => (
                 <div
                   key={i}
                   className="relative flex-shrink-0 w-full h-full"
