@@ -73,7 +73,7 @@ export default function PropertyCard({
             </li>
           </ul>
           <ul className="flex gap-1">
-            <Likes propertyId={id} />
+            {/* <Likes propertyId={id} /> */}
             {/* <LikeButton
               propertyId={data.id}
               initialState={{

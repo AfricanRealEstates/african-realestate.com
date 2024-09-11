@@ -195,12 +195,12 @@ export default async function AgentDetails({
             <div className="lg:sticky lg:top-24">{renderSidebar()}</div>
           </div>
           <div className="w-full lg:w-3/5 xl:w-2/3 space-y-8 lg:space-y-10 lg:pl-10 flex-shrink-0">
-            <RenderSection1 properties={properties} agent={agent!} />
-            {/* <ul>
+            {/* <RenderSection1 properties={properties} agent={agent!} /> */}
+            <ul>
               {agent.properties.map((property) => (
                 <li key={property.id}>{property.title}</li>
               ))}
-            </ul> */}
+            </ul>
           </div>
         </div>
       </div>
