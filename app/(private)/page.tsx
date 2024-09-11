@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import CityProperties from "@/components/landing/CityProperties";
 import CTA from "@/components/landing/cta";
 import Facts from "@/components/landing/facts";
 import FeaturedProperties from "@/components/landing/featured-properties";
@@ -37,6 +38,7 @@ export default async function Home() {
       <HowItWorks /> */}
       <Facts />
       {/* <PartnersCTA /> */}
+      <CityProperties />
       <PropertyAdvice />
       <Reviews />
       {/* <CTA /> */}
