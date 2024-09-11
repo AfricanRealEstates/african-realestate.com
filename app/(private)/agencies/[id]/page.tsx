@@ -8,6 +8,7 @@ import { Raleway } from "next/font/google";
 import { Mail } from "lucide-react";
 import { FaFacebook, FaLinkedin, FaTiktok, FaYoutube } from "react-icons/fa";
 import RenderSection1 from "../_components/Properties";
+import PropertyCard from "@/components/properties/new/PropertyCard";
 const raleway = Raleway({
   subsets: ["latin"],
   display: "swap",
@@ -196,11 +197,25 @@ export default async function AgentDetails({
           </div>
           <div className="w-full lg:w-3/5 xl:w-2/3 space-y-8 lg:space-y-10 lg:pl-10 flex-shrink-0">
             {/* <RenderSection1 properties={properties} agent={agent!} /> */}
-            <ul>
-              {agent.properties.map((property) => (
-                <li key={property.id}>{property.title}</li>
-              ))}
-            </ul>
+
+            <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 dark:border-neutral-700 space-y-6 sm:space-y-8 pb-10 px-0 sm:p-4 xl:p-8">
+              <div>
+                <h2 className="text-2xl text-indigo-500 font-semibold">{`${agent.name} listings`}</h2>
+                <span className="block mt-2 text-neutral-500 dark:text-neutral-400">
+                  {`${agent.name}'s listings are very rich, and 5-star reviews help them to be more branded.`}
+                </span>
+              </div>
+              <div className="w-full border-b border-neutral-100"></div>
+
+              <div className="mt-8 grid grid-cols-1 gap-6 md:gap-7 sm:grid-cols-2">
+                {agent.properties.map((property) => (
+                  <>
+                    <PropertyCard key={property.id} data={property as any} />
+                  </>
+                ))}
+              </div>
+            </div>
+            {/* <PropertyCard key={property.id} data={property as any} /> */}
           </div>
         </div>
       </div>
