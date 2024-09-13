@@ -13,7 +13,6 @@ import { PropertyData } from "@/lib/types";
 import { useSession } from "next-auth/react";
 import { auth } from "@/auth";
 import HeartButton from "./HeartButton";
-import { getCurrentUser } from "@/lib/session";
 
 const josefin = Raleway({
   subsets: ["latin"],
@@ -53,9 +52,6 @@ export default async function PropertyCard({
     propertyType,
     tenure,
   } = data;
-
-  const session = await auth();
-  const currentUser = await getCurrentUser();
 
   const renderSliderGallery = () => {
     return (
