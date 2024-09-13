@@ -22,6 +22,7 @@ declare module "next-auth/jwt" {
         instagramLink: string
         facebookLink: string
         permissions: string[];
+        favoriteIds: string[]
     }
 }
 
@@ -61,6 +62,7 @@ declare module "next-auth" {
         address: string
         postalCode: string
         bio: string
+        favoriteIds: string[]
 
     }
 }

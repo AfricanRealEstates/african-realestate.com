@@ -2,7 +2,6 @@
 import { PropertyWithExtras } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import React, { useState } from "react";
-import LikeButton from "./Like";
 import ShareButton from "./ShareButton";
 import BookmarkButton from "./BookmarkButton";
 import { motion } from "framer-motion";
@@ -14,6 +13,7 @@ import {
 } from "react-icons/pi";
 import Modal from "@/components/modals/Modal";
 import AuthContent from "@/components/auth/AuthContent";
+import LikeButton from "./Like";
 
 type Props = {
   property: any;
@@ -59,10 +59,10 @@ export default function PropertyActions({
         className
       )}
     >
-      {/* <LikeButton property={property} userId={userId!} /> */}
-      {/* <BookmarkButton property={property} userId={userId!} /> */}
+      <LikeButton property={property} userId={userId as string} />
+      <BookmarkButton property={property} userId={userId!} />
 
-      <motion.div
+      {/* <motion.div
         onClick={handleUpvoteClick}
         variants={variants}
         animate={hasUpvoted ? "upvoted" : "initial"}
@@ -83,7 +83,7 @@ export default function PropertyActions({
             {totalUpvotes}
           </div>
         )}
-      </motion.div>
+      </motion.div> */}
       <ShareButton propertyId={property.id} property={property} />
 
       <Modal visible={showLoginModal} setVisible={setShowLoginModal}>

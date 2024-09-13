@@ -5,6 +5,15 @@ import prisma from "./prisma";
 import { getUserId } from "./utils";
 import { BookmarkSchema, LikeSchema } from "./validation";
 import { auth } from "@/auth";
+import { Like, SavedProperty } from "@prisma/client";
+
+export async function getPropertyLikes(propertyId: string): Promise<Like[]> {
+    // Fetch the likes for the property from the database
+    return prisma.like.findMany({
+        where: { propertyId },
+    });
+}
+
 
 export async function likeProperty(value: FormDataEntryValue | null) {
     const userId = await getUserId();
@@ -147,6 +156,13 @@ export async function bookmarkProperty(value: FormDataEntryValue | null) {
             message: "Database Error: Failed to Bookmark Property.",
         };
     }
+}
+
+export async function getPropertyBookmarks(propertyId: string): Promise<SavedProperty[]> {
+    // Fetch the likes for the property from the database
+    return prisma.savedProperty.findMany({
+        where: { propertyId },
+    });
 }
 
 

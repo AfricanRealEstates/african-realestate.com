@@ -58,6 +58,7 @@ import UserProfileTooltip from "./_components/UserProfileTooltip";
 import { redirect } from "next/navigation";
 import { PropertyData, PropertyWithExtras } from "@/lib/types";
 import PropertyActions from "./_components/PropertyActions";
+import { getCurrentUser } from "@/lib/session";
 
 const amenityIcons: { [key: string]: JSX.Element } = {
   mosque: <FaMosque className="size-4 text-neutral-600" />,
@@ -108,7 +109,7 @@ export default async function PropertyDetails({
   params: { id },
 }: PropertyDetailsProps) {
   const session = await auth();
-  const user = session?.user;
+  const user = await getCurrentUser();
   // const userId = await getUserId();
 
   const property = (await prisma.property.findUnique({

@@ -79,6 +79,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     tiktokLink: token.tiktokLink || "",
                     instagramLink: token.instagramLink || "",
                     facebookLink: token.facebookLink || "",
+                    favoriteIds: token.favoriteIds || [],
 
                     randomKey: token.randomKey
 
@@ -109,6 +110,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     address: u.address || "",
                     postalCode: u.postalCode || "",
                     bio: u.bio || "",
+                    favoriteIds: token.favoriteIds || [],
                     randomKey: u.randomKey
                 }
             }

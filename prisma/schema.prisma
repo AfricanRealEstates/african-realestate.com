@@ -65,6 +65,7 @@ model User {
   subscriptions    Subscription[]
   orders           Order[]
   likes            Like[]
+  favoriteIds      String[]
   ratings          Rating[]
   saved            SavedProperty[]
   comments         Comment[]
@@ -251,7 +252,7 @@ model Like {
   updatedAt  DateTime @updatedAt
   property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   propertyId String
-  userId     String   @map("user_id")
+  userId     String
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -265,7 +266,7 @@ model SavedProperty {
   updatedAt  DateTime @updatedAt
   property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   propertyId String
-  userId     String   @map("user_id")
+  userId     String
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 

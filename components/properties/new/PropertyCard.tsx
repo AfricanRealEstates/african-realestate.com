@@ -11,8 +11,9 @@ import { calculatePercentageSavings, formatNumber } from "@/lib/utils";
 
 import { PropertyData } from "@/lib/types";
 import { useSession } from "next-auth/react";
-import Likes from "./Likes";
 import { auth } from "@/auth";
+import HeartButton from "./HeartButton";
+import { getCurrentUser } from "@/lib/session";
 
 const josefin = Raleway({
   subsets: ["latin"],
@@ -26,7 +27,7 @@ export interface PropertyCardProps {
   size?: "default" | "small";
 }
 
-export default function PropertyCard({
+export default async function PropertyCard({
   size = "default",
   className = "",
   data,
@@ -53,6 +54,9 @@ export default function PropertyCard({
     tenure,
   } = data;
 
+  const session = await auth();
+  const currentUser = await getCurrentUser();
+
   const renderSliderGallery = () => {
     return (
       <div className="relative w-full overflow-hidden">
@@ -73,6 +77,7 @@ export default function PropertyCard({
             </li>
           </ul>
           <ul className="flex gap-1">
+            {/* <HeartButton propertyId={id} currentUser={currentUser} /> */}
             {/* <Likes propertyId={id} /> */}
             {/* <LikeButton
               propertyId={data.id}
