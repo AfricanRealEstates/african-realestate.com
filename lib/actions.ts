@@ -83,6 +83,35 @@ export async function likeProperty(value: FormDataEntryValue | null) {
     }
 }
 
+export const getLikedProperties = async () => {
+    try {
+        const authenticatedUser = await auth();
+
+        if (
+            !authenticatedUser ||
+            !authenticatedUser.user ||
+            !authenticatedUser.user.id
+        ) {
+            throw new Error("User ID is missing or invalid");
+        }
+
+        const userId = authenticatedUser.user.id;
+        const likedProperties = await prisma.like.findMany({
+            where: {
+                userId
+            },
+            include: {
+                property: true
+            }
+        });
+        return likedProperties.map((upvote) => upvote.property);
+
+    } catch (error) {
+        console.error("Error getting upvoted properties:", error);
+        return [];
+    }
+}
+
 
 export async function bookmarkProperty(value: FormDataEntryValue | null) {
     const userId = await getUserId();
@@ -168,6 +197,7 @@ export async function getPropertyBookmarks(propertyId: string): Promise<SavedPro
         where: { propertyId },
     });
 }
+
 
 
 export const upvoteProperty = async (propertyId: string) => {

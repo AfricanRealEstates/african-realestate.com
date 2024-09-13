@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { getUpvotedProperties } from "@/lib/actions";
+import { getLikedProperties, getUpvotedProperties } from "@/lib/actions";
 import { getSEOTags } from "@/lib/seo";
 import { Property } from "@prisma/client";
 import Image from "next/image";
@@ -19,7 +19,7 @@ export default async function MyFavorites() {
     redirect("/");
   }
 
-  const products = await getUpvotedProperties();
+  const products = await getLikedProperties();
   return (
     <section className="mx-auto max-w-7xl px-4 pt-32 pb-8 sm:px-6 lg:px-8 md:pt-40">
       {products.length === 0 ? (
