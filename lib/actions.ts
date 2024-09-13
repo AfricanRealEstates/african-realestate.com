@@ -87,6 +87,10 @@ export async function likeProperty(value: FormDataEntryValue | null) {
 export async function bookmarkProperty(value: FormDataEntryValue | null) {
     const userId = await getUserId();
 
+    if (!userId) {
+        throw new Error("Sign in first to continue.");
+    }
+
     const validatedFields = BookmarkSchema.safeParse({ propertyId: value });
 
     if (!validatedFields.success) {
