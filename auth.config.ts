@@ -57,6 +57,7 @@ export default {
                 address: user.address || "",
                 postalCode: user.postalCode || "",
                 bio: user.bio || "",
+                favoriteIds: user.favoriteIds || [],
                 randomKey: "Hey auth"
             }
         }
