@@ -58,7 +58,6 @@ export async function saveRating(ratingInfo: any) {
 }
 
 
-
 export async function getRatings(propertyId: string) {
     try {
         const ratings = await prisma.rating.findMany({
@@ -67,6 +66,11 @@ export async function getRatings(propertyId: string) {
             },
             select: {
                 ratings: true,
+                user: {
+                    select: {
+                        name: true, // Include the user's name
+                    },
+                },
             },
         });
 
@@ -75,6 +79,7 @@ export async function getRatings(propertyId: string) {
             return {
                 averageRating: 0,
                 ratingsCount: 0,
+                ratingsList: [],
             };
         }
 
@@ -85,15 +90,19 @@ export async function getRatings(propertyId: string) {
         return {
             averageRating: parseFloat(averageRating.toFixed(1)), // Round to 1 decimal place if needed
             ratingsCount: ratings.length,
+            ratingsList: ratings, // List of individual ratings
         };
     } catch (error) {
         console.error("Failed to fetch ratings:", error);
         return {
             averageRating: 0,
             ratingsCount: 0,
+            ratingsList: [],
         };
     }
 }
+
+
 
 export async function getUserRating(userId: string, propertyId: string) {
     const userRating = await prisma.rating.findFirst({

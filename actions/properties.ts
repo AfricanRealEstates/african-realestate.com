@@ -134,3 +134,27 @@ export const deleteProperty = async (id: string) => {
     };
   }
 };
+
+export const getPropertiesByLocality = async (locality: string, skip = 0, take = 10) => {
+  try {
+    const properties = await prisma.property.findMany({
+      where: {
+        locality: {
+          contains: locality,
+          mode: "insensitive",
+        },
+      },
+      skip,  // Skips the number of records
+      take,  // Limits the number of records returned
+    });
+
+    return {
+      data: properties,
+      message: "Properties fetched successfully",
+    };
+  } catch (error: any) {
+    return {
+      error: error.message,
+    };
+  }
+};

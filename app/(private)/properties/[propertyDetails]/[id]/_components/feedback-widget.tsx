@@ -19,6 +19,7 @@ export default function FeedbackWidget({
   const [averageRating, setAverageRating] = useState<number>(0);
   const [numberOfRatings, setNumberOfRatings] = useState(0);
   const [userHasRated, setUserHasRated] = useState(false);
+  const [allRatings, setAllRatings] = useState<any[]>([]); // New state to hold all ratings
   const { data: session } = useSession();
   const user = session?.user;
 
@@ -26,7 +27,10 @@ export default function FeedbackWidget({
 
   useEffect(() => {
     async function fetchRatingData() {
-      const { averageRating, ratingsCount } = await getRatings(propertyId);
+      const { averageRating, ratingsCount, ratingsList } = await getRatings(
+        propertyId
+      );
+
       setAverageRating(averageRating);
       setNumberOfRatings(ratingsCount);
 
@@ -36,6 +40,11 @@ export default function FeedbackWidget({
           setUserHasRated(true);
           setRatings(+userRating.ratings);
         }
+      }
+
+      // If the user is the owner, fetch all ratings for the property
+      if (isOwner) {
+        setAllRatings(ratingsList); // Set all ratings to the state
       }
     }
     fetchRatingData();
@@ -123,12 +132,29 @@ export default function FeedbackWidget({
     <>
       {isOwner ? (
         <div className="flex flex-col gap-4 -mt-3">
-          <p className="text-blue-800 rounded-full bg-blue-100 px-1 py-1 text-xs">
-            Property not rated yet.
-          </p>
-          <div className="flex items-center">
-            {getStarComponents(0, true)} {/* Display disabled stars */}
-          </div>
+          {allRatings.length === 0 ? (
+            <p className="text-blue-800 rounded-full bg-blue-100 px-1 py-1 text-xs">
+              Property not rated yet.
+            </p>
+          ) : (
+            <div className="space-y-2">
+              <h3 className="text-xs font-semibold">Ratings by others:</h3>
+              <ul className="space-y-2">
+                {allRatings.map((rating, index) => (
+                  <li key={index} className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      {getStarComponents(rating.ratings, true)}
+                      <span className="ml-2 text-gray-600">
+                        {rating.ratings.toFixed(1)}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500">{rating.userId}</p>{" "}
+                    {/* You can customize this */}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       ) : userHasRated && averageRating > 0 ? (
         <Suspense fallback={<p>Loading...</p>}>
