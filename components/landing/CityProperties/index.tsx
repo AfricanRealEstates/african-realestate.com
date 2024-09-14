@@ -9,12 +9,12 @@ export default function CityProperties() {
           <p
             className={`text-[12px] uppercase text-blue-600 font-semibold leading-relaxed`}
           >
-            Explore City properties
+            Explore the Hottest Properties near You
           </p>
           <h2
             className={`text-center tracking-tight text-3xl font-bold sm:text-4xl my-1`}
           >
-            Some Properties near you
+            Our Most Popular Towns
           </h2>
         </div>
 
