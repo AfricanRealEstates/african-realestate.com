@@ -89,6 +89,8 @@ export default async function PropertyDetails({
     },
   });
 
+  console.log(searchProperties);
+
   return (
     <div
       className={`${raleway.className} w-[95%] lg:max-w-7xl mx-auto py-[90px] lg:py-[120px]`}

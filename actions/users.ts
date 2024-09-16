@@ -4,6 +4,8 @@ import { Resend } from 'resend';
 import bcrypt from "bcrypt"
 import prisma from "@/lib/prisma"
 import EmailTemplate from '@/components/email/email-template';
+import { revalidatePath } from 'next/cache';
+import { getCurrentUser } from '@/lib/session';
 
 export async function createUser(data: RegisterInputProps) {
   const resend = new Resend(process.env.RESEND_API_KEY);
@@ -97,48 +99,28 @@ export async function updateUserById(id: string) {
   }
 }
 
-// "use server";
-// import { currentUser } from "@clerk/nextjs";
-// import prisma from "@/lib/prisma";
 
-// export const getCurrentUser = async () => {
-//   try {
-//     // Check if user already exists with clerk userId property
-//     const clerkUser = await currentUser();
-//     let savedUser = null;
-//     savedUser = await prisma.user.findUnique({
-//       where: {
-//         clerkUserId: clerkUser?.id,
-//       },
-//     });
+export async function upgradeUserRole(role: 'AGENT' | 'AGENCY') {
+  try {
+    // Get the current user's session
+    const user = await getCurrentUser()
 
-//     if (savedUser) {
-//       return {
-//         data: savedUser,
-//       };
-//     }
+    if (!user) {
+      throw new Error('Not authenticated')
+    }
 
-//     // if user does not exists, create new user
+    // Update the user's role in the database
+    const updatedUser = await prisma.user.update({
+      where: { email: user.email! },
+      data: { role: role },
+    })
 
-//     let username = clerkUser?.username;
-//     if (!username) {
-//       username = `${clerkUser?.firstName} ${clerkUser?.lastName}`;
-//     }
-//     username = username.replace("null", "");
-//     const newUser: any = {
-//       clerkUserId: clerkUser?.id,
-//       username: username,
-//       email: clerkUser?.emailAddresses[0].emailAddress,
-//       profilePic: clerkUser?.imageUrl,
-//     };
-//     const user = await prisma.user.create({
-//       data: newUser,
-//     });
-//     return { data: user };
-//   } catch (error: any) {
-//     console.log(error);
-//     return {
-//       error: error.message,
-//     };
-//   }
-// };
+    // Revalidate the current path to reflect the changes
+    revalidatePath('/')
+
+    return { success: true, user: updatedUser }
+  } catch (error) {
+    console.error('Failed to upgrade user role:', error)
+    return { success: false, error: 'Failed to upgrade user role' }
+  }
+}

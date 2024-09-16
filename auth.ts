@@ -9,7 +9,7 @@ import authConfig from "@/auth.config"
 import { NextResponse } from 'next/server';
 
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+export const { handlers, signIn, signOut, auth, unstable_update: update } = NextAuth({
     trustHost: true,
     adapter: PrismaAdapter(prisma) as Adapter,
     session: { strategy: "jwt", maxAge: 1 * 60 * 60 },  // Set to 1 hours
