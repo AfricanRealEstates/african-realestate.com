@@ -62,40 +62,39 @@ export default async function GeneralInformation() {
               disabled
             />
           </div>
-          {user.role == "AGENCY" && (
-            <div className="col-span-6 sm:col-span-3">
-              <label
-                htmlFor="agentName"
-                className="block mb-2 text-sm font-medium text-gray-700"
-              >
-                Agent Name
-              </label>
-              <input
-                type="text"
-                name="agentName"
-                defaultValue={user.agentName || ""}
-                className="shadow-sm bg-gray-50 border border-gray-300 text-gray-700 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                disabled
-              />
-            </div>
-          )}
-          {user.role === "AGENCY" && (
-            <div className="col-span-6 sm:col-span-3">
-              <label
-                htmlFor="agentEmail"
-                className="block mb-2 text-sm font-medium text-gray-700"
-              >
-                Agent Email
-              </label>
-              <input
-                type="text"
-                name="agentEmail"
-                defaultValue={user.agentEmail || ""}
-                className="shadow-sm bg-gray-50 border border-gray-300 text-gray-700 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                disabled
-              />
-            </div>
-          )}
+
+          <div className="col-span-6 sm:col-span-3">
+            <label
+              htmlFor="agentName"
+              className="block mb-2 text-sm font-medium text-gray-700"
+            >
+              {user.role == "AGENCY" ? "Agency Name" : "Agent Name"}
+            </label>
+            <input
+              type="text"
+              name="agentName"
+              defaultValue={user.agentName || ""}
+              className="shadow-sm bg-gray-50 border border-gray-300 text-gray-700 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              disabled
+            />
+          </div>
+
+          <div className="col-span-6 sm:col-span-3">
+            <label
+              htmlFor="agentEmail"
+              className="block mb-2 text-sm font-medium text-gray-700"
+            >
+              {user.role == "AGENCY" ? "Agency Email" : "Agent Email"}
+            </label>
+            <input
+              type="text"
+              name="agentEmail"
+              defaultValue={user.agentEmail || ""}
+              className="shadow-sm bg-gray-50 border border-gray-300 text-gray-700 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              disabled
+            />
+          </div>
+
           {/* {user.role === "AGENCY" && (
             <div className="col-span-6 sm:col-span-3">
               <label
@@ -128,40 +127,6 @@ export default async function GeneralInformation() {
               disabled
             />
           </div>
-          {user.role === "AGENCY" && (
-            <div className="col-span-6 sm:col-span-3">
-              <label
-                htmlFor="address"
-                className="block mb-2 text-sm font-medium text-gray-700"
-              >
-                Address
-              </label>
-              <input
-                type="text"
-                name="address"
-                defaultValue={user.address || ""}
-                className="shadow-sm bg-gray-50 border border-gray-300 text-gray-700 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                disabled
-              />
-            </div>
-          )}
-          {user.role === "AGENCY" && (
-            <div className="col-span-6 sm:col-span-3">
-              <label
-                htmlFor="postalCode"
-                className="block mb-2 text-sm font-medium text-gray-700"
-              >
-                Postal Code
-              </label>
-              <input
-                type="text"
-                name="postalCode"
-                defaultValue={user.postalCode || ""}
-                className="shadow-sm bg-gray-50 border border-gray-300 text-gray-700 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                disabled
-              />
-            </div>
-          )}
 
           <div className="col-span-full">
             <label

@@ -161,8 +161,8 @@ export default async function PropertyDetails({
       AND: [
         {
           OR: [
-            { county: property.county }, // Related properties with the same location
             { propertyDetails: property.propertyDetails }, // Related properties with the same property details
+            { county: property.county }, // Related properties with the same location
             { status: property.status }, // Related properties with the same status
           ],
         },
