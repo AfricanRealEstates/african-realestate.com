@@ -95,37 +95,14 @@ export default async function FeaturedProperties() {
           </article> */}
 
           <article className="mx-auto mb-8 gap-8 grid w-full max-w-screen-xl grid-cols-[repeat(auto-fill,_minmax(335px,1fr))] justify-center">
-            {properties.map((property) => (
-              <div key={property.id}>
-                <h2>{property.title}</h2>
-                {property.images.map((imageUrl, idx) => (
-                  <div key={idx}>
-                    {isHeic(imageUrl) ? (
-                      <img
-                        src={imageUrl}
-                        alt={property.title}
-                        style={{ width: 350, height: 300 }}
-                      />
-                    ) : (
-                      <Image
-                        width={350}
-                        height={300}
-                        src={imageUrl}
-                        alt={property.title}
-                      />
-                    )}
-                  </div>
-                ))}
-              </div>
-            ))}
-            {/* {properties.slice(0, 6).map((property) => {
+            {properties.slice(0, 6).map((property) => {
               return (
                 <PropertyCard
                   key={property.id}
                   data={property as PropertyData}
                 />
               );
-            })} */}
+            })}
           </article>
 
           <Button color="blue" href={`/properties`}>
