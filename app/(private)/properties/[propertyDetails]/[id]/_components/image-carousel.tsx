@@ -13,37 +13,48 @@ interface Props {
 
 const removeDuplicates = (images: string[]) => Array.from(new Set(images));
 
-const convertHeicToJpeg = async (url: string): Promise<string> => {
-  try {
-    const response = await fetch(url);
-    const blob = await response.blob();
-
-    if (blob.type === "image/heic" || url.toLowerCase().endsWith(".heic")) {
-      const jpegBlob = await heic2any({
-        blob: blob,
-        toType: "image/jpeg",
-        quality: 0.8,
-      });
-      return URL.createObjectURL(jpegBlob as Blob);
-    }
-
-    return url;
-  } catch (error) {
-    console.error("Error converting HEIC to JPEG:", error);
-    return url;
-  }
-};
-
 export default function ImageCarousel({ property }: Props) {
   const ref = useRef<CarouselRef>(null);
   const thumbnailRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [convertedImages, setConvertedImages] = useState<string[]>([]);
+  const [allImages, setAllImages] = useState<string[]>([]);
 
-  const combinedImages = [...property.coverPhotos, ...property.images];
+  // Combine and remove duplicate images
+  const combinedImages = [
+    ...(property.coverPhotos || []),
+    ...(property.images || []),
+  ];
   const uniqueImages = removeDuplicates(combinedImages);
-  const allImages = [...uniqueImages];
+
+  // Function to convert HEIC images to JPEG
+  const convertHeicImages = async (images: string[]) => {
+    const convertedImages = await Promise.all(
+      images.map(async (image) => {
+        if (image.toLowerCase().endsWith(".heic")) {
+          try {
+            const response = await fetch(image);
+            const blob = await response.blob();
+            const convertedBlob = await heic2any({
+              blob,
+              toType: "image/jpeg",
+            });
+
+            // If result is an array of blobs, pick the first one
+            const resultBlob = Array.isArray(convertedBlob)
+              ? convertedBlob[0]
+              : convertedBlob;
+            return URL.createObjectURL(resultBlob as Blob);
+          } catch (error) {
+            console.error("Error converting HEIC image:", error);
+            return image; // If conversion fails, use the original image
+          }
+        } else {
+          return image; // Return non-HEIC images unchanged
+        }
+      })
+    );
+    setAllImages(convertedImages);
+  };
 
   useKeypress("ArrowRight", () => {
     if (index + 1 < allImages.length) {
@@ -81,13 +92,10 @@ export default function ImageCarousel({ property }: Props) {
     }
   };
 
-  // const handleDoubleClick = () => {
-  //   setIsModalVisible(true);
-  // };
-
-  // const handleCloseModal = () => {
-  //   setIsModalVisible(false);
-  // };
+  // Convert HEIC images on component mount
+  useEffect(() => {
+    convertHeicImages(uniqueImages);
+  }, [property]);
 
   useEffect(() => {
     scrollThumbnailIntoView(index);
