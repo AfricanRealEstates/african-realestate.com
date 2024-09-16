@@ -65,6 +65,8 @@ export default async function FeaturedProperties() {
     },
   });
 
+  console.log(properties);
+
   if (!properties) return <>No Featured properties</>;
   return (
     <div className={`border-b border-neutral-100  mb-4 text-[#4e4e4e]`}>
@@ -82,6 +84,8 @@ export default async function FeaturedProperties() {
               Recommended For You
             </h2>
           </div>
+
+          <div className="my-10 grid grid-cols-3"></div>
           {/* <div className="mx-auto mb-8 gap-8 grid w-full max-w-screen-xl grid-cols-[repeat(auto-fill,_minmax(335px,1fr))] justify-center"></div> */}
           {/* <article className="grid grid-cols-1 gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 w-full">
             {properties.slice(0, 4).map((property) => {
@@ -90,14 +94,22 @@ export default async function FeaturedProperties() {
           </article> */}
 
           <article className="mx-auto mb-8 gap-8 grid w-full max-w-screen-xl grid-cols-[repeat(auto-fill,_minmax(335px,1fr))] justify-center">
-            {properties.slice(0, 6).map((property) => {
+            {properties.map((property) => {
+              return (
+                <>
+                  <h2>{property.title}</h2>
+                  <img src={property.images[6]} alt={""} key={property.id} />
+                </>
+              );
+            })}
+            {/* {properties.slice(0, 6).map((property) => {
               return (
                 <PropertyCard
                   key={property.id}
                   data={property as PropertyData}
                 />
               );
-            })}
+            })} */}
           </article>
 
           <Button color="blue" href={`/properties`}>
