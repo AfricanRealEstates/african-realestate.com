@@ -1,4 +1,5 @@
 "use client";
+
 import { PropertyWithExtras } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import React, { useState } from "react";
@@ -14,6 +15,12 @@ import {
 import Modal from "@/components/modals/Modal";
 import AuthContent from "@/components/auth/AuthContent";
 import LikeButton from "./Like";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type Props = {
   property: any;
@@ -34,7 +41,7 @@ export default function PropertyActions({
   const [totalUpvotes, setTotalUpvotes] = useState(property.upvotes || 0);
 
   const variants = {
-    initital: { scale: 1 },
+    initial: { scale: 1 },
     upvoted: { scale: [1, 1.2, 1], transition: { duration: 0.3 } },
   };
 
@@ -53,42 +60,50 @@ export default function PropertyActions({
   };
 
   return (
-    <div
-      className={cn(
-        "text-sm flex items-center space-between gap-x-4",
-        className
-      )}
-    >
-      <LikeButton property={property} userId={userId as string} />
-      <BookmarkButton property={property} userId={userId!} />
-
-      {/* <motion.div
-        onClick={handleUpvoteClick}
-        variants={variants}
-        animate={hasUpvoted ? "upvoted" : "initial"}
-      >
-        {hasUpvoted ? (
-          <div
-            className="border px-1 rounded-md flex 
-              items-center bg-gradient-to-bl 
-              from-[#ff6154] to-[#ff4582] border-[#ff6154]
-              text-white"
-          >
-            <PiCaretUpFill className="text-lg" />
-            {totalUpvotes}
-          </div>
-        ) : (
-          <div className="border px-1 rounded-md flex items-center">
-            <PiCaretUpFill className="text-lg" />
-            {totalUpvotes}
-          </div>
+    <TooltipProvider>
+      <div
+        className={cn(
+          "text-sm flex items-center space-between gap-x-4",
+          className
         )}
-      </motion.div> */}
-      <ShareButton propertyId={property.id} property={property} />
+      >
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div>
+              <LikeButton property={property} userId={userId as string} />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Like this property</p>
+          </TooltipContent>
+        </Tooltip>
 
-      <Modal visible={showLoginModal} setVisible={setShowLoginModal}>
-        <AuthContent />
-      </Modal>
-    </div>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div>
+              <BookmarkButton property={property} userId={userId!} />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Bookmark this property</p>
+          </TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div>
+              <ShareButton propertyId={property.id} property={property} />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Share this property</p>
+          </TooltipContent>
+        </Tooltip>
+
+        <Modal visible={showLoginModal} setVisible={setShowLoginModal}>
+          <AuthContent />
+        </Modal>
+      </div>
+    </TooltipProvider>
   );
 }
