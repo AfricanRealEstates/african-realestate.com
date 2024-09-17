@@ -554,15 +554,6 @@ export default async function PropertyDetails({
                         </span>
                       )}
                     </div>
-                    {/* {property.serviceCharge && (
-                      <div className="flex gap-3 font-medium ml-auto text-rose-400 bg-gray-50  px-3 py-1 rounded-full">
-                        <span className="text-xs">Service</span>
-                        <span className="text-xs inline-flex gap-0.5">
-                          {property.currency === "USD" ? "$" : "Ksh. "}
-                          {property.serviceCharge?.toLocaleString()}
-                        </span>
-                      </div>
-                    )} */}
                   </div>
 
                   <h2 id="information-heading" className="sr-only">
@@ -577,12 +568,20 @@ export default async function PropertyDetails({
                     <div className="space-y-3 flex-1">
                       <div className="flex items-center space-x-4">
                         <div>
-                          {agent?.name ? (
+                          {agent.role === "AGENCY" ? (
+                            <>
+                              {/* <p className="block text-lg text-indigo-500 font-medium">
+                                
+                              </p> */}
+                              <p className="block text-lg text-indigo-500 font-medium">
+                                {agent.name} -{" "}
+                                {agent.agentName || "No agency name yet"}
+                              </p>
+                            </>
+                          ) : (
                             <p className="block text-lg text-indigo-500 font-medium">
                               {agent.name}
                             </p>
-                          ) : (
-                            <p>No name yet</p>
                           )}
                         </div>
                       </div>
@@ -690,31 +689,12 @@ export default async function PropertyDetails({
                         ? "View all agent's properties"
                         : "View all agency's properties"}
                     </Button>
-
-                    {/* <Link
-              href={`/agencies/${agent.id}`}
-              className="font-medium border mb-8 lg:mb-0 bg-white border-neutral-200 text-neutral-700 text-center hover:bg-neutral-100 px-3 rounded-full text-lg"
-            >
-              View All Agent&apos;s properties
-            </Link> */}
                   </div>
                 </div>
               </div>
             </article>
           </div>
         </section>
-
-        {/*
-        <section className="mt-10 pt-10 border-t border-gray-200">
-          <h3 className="text-lg lg:text-xl font-medium text-gray-950">
-            Overview
-          </h3>
-          <pre
-            className={`${raleway.className} max-w-4xl text-sm whitespace-pre-wrap leading-9 text-gray-600`}
-          >
-            {property.description}
-          </pre>
-        </section> */}
 
         <main className="relative z-10 mt-8 flex flex-col lg:flex-row h-full">
           <section className="w-full lg:w-3/5 xl:w-2/3 space-y-8 lg:space-y-10 lg:pr-10 flex flex-col">
@@ -728,13 +708,11 @@ export default async function PropertyDetails({
             </div>
           </section>
           <section className="hidden lg:flex lg:w-2/5 xl:w-1/3 mt-14 lg:mt-0 flex-col">
-            {/* <div className="sticky top-28 flex-grow"> */}
             <div className=" flex-grow">{renderSidebar()}</div>
           </section>
         </main>
 
         <MessageWidget />
-        {/* Related properties */}
         <section className="mx-auto mt-12 max-w-2xl sm:mt-12 lg:max-w-none">
           <div className="flex items-center justify-between space-x-4">
             <h2 className="text-lg lg:text-xl font-medium text-gray-950">
