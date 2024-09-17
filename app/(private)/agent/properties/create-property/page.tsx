@@ -29,7 +29,11 @@ export default async function CreateProperty({
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
-  if (user.role !== "AGENT") {
+  if (
+    user.role !== "AGENT" &&
+    user.role !== "AGENCY" &&
+    user.role !== "ADMIN"
+  ) {
     redirect("/onboarding");
   }
   const cloneFrom = searchParams?.cloneFrom || "";
