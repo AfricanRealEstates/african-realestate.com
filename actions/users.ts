@@ -117,6 +117,8 @@ export async function upgradeUserRole(role: 'AGENT' | 'AGENCY') {
 
     // Revalidate the current path to reflect the changes
     revalidatePath('/')
+    revalidatePath("/agent/properties");
+    revalidatePath("/agent/properties/create-property");
 
     return { success: true, user: updatedUser }
   } catch (error) {

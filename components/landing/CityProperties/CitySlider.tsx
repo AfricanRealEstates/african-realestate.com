@@ -22,46 +22,16 @@ const responsive = {
   },
 };
 
-export const cities = [
-  {
-    id: 6,
-    image: "/assets/nakasero.webp",
-    cityName: "Nakasero",
-    numberOfProperties: 2,
-  },
-  {
-    id: 1,
-    image: "/assets/house.jpg",
-    cityName: "Ruiru",
-    numberOfProperties: 120,
-  },
-  {
-    id: 2,
-    image: "/assets/house-1.jpg",
-    cityName: "Kitengela",
-    numberOfProperties: 80,
-  },
-  {
-    id: 3,
-    image: "/assets/Kilimani.webp",
-    cityName: "Kilimani",
-    numberOfProperties: 12,
-  },
-  {
-    id: 4,
-    image: "/assets/kitengela.webp",
-    cityName: "Kitengela",
-    numberOfProperties: 80,
-  },
-  {
-    id: 5,
-    image: "/assets/westland.webp",
-    cityName: "Westlands",
-    numberOfProperties: 24,
-  },
-];
+interface CitySliderProps {
+  cities: Array<{
+    id: number;
+    cityName: string;
+    image: string;
+    numberOfProperties: number;
+  }>;
+}
 
-export default function CitySlider() {
+export default function CitySlider({ cities }: CitySliderProps) {
   return (
     <Carousel
       arrows={true}
@@ -71,14 +41,11 @@ export default function CitySlider() {
       responsive={responsive}
       className="z-20"
     >
-      {cities.map((city) => {
-        return (
-          <div key={city.id}>
-            {/* CitySlider card */}
-            <CityCard city={city} />
-          </div>
-        );
-      })}
+      {cities.map((city) => (
+        <div key={city.id}>
+          <CityCard city={city} />
+        </div>
+      ))}
     </Carousel>
   );
 }
