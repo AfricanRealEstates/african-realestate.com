@@ -1,145 +1,205 @@
+// "use client";
+
+// import { School, Search } from "lucide-react";
+// import { usePathname, useRouter } from "next/navigation";
+// import React, {
+//   useCallback,
+//   useEffect,
+//   useRef,
+//   useState,
+//   useTransition,
+// } from "react";
+// import debounce from "lodash.debounce";
+// import { Property } from "@prisma/client";
+// import { useOnClickOutside } from "@/hooks/use-click-outside";
+// import { searchProperties } from "@/actions/searchActions";
+
+// export default function SearchBar() {
+//   const [searchQuery, setSearchQuery] = useState("");
+//   const [queryResults, setQueryResults] = useState<Property[]>([]);
+//   const [isPending, startTransition] = useTransition();
+//   const router = useRouter();
+//   const pathname = usePathname();
+//   const searchRef = useRef<HTMLDivElement>(null);
+
+//   useOnClickOutside(searchRef, () => {
+//     setSearchQuery("");
+//     setQueryResults([]);
+//   });
+
+//   const debouncedSearch = useCallback(
+//     debounce((query: string) => {
+//       startTransition(async () => {
+//         if (query.trim()) {
+//           const results = await searchProperties(query);
+//           setQueryResults(results);
+//         } else {
+//           setQueryResults([]);
+//         }
+//       });
+//     }, 300),
+//     []
+//   );
+
+//   useEffect(() => {
+//     debouncedSearch(searchQuery);
+//   }, [searchQuery, debouncedSearch]);
+
+//   useEffect(() => {
+//     setSearchQuery("");
+//     setQueryResults([]);
+//   }, [pathname]);
+
+//   const handleSearch = (e: React.FormEvent) => {
+//     e.preventDefault();
+//     if (searchQuery.trim()) {
+//       router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+//     }
+//   };
+
+//   return (
+//     <div ref={searchRef} className="relative w-[90%] max-w-5xl mx-auto">
+//       <form onSubmit={handleSearch} className="flex items-center">
+//         <input
+//           type="text"
+//           value={searchQuery}
+//           onChange={(e) => setSearchQuery(e.target.value)}
+//           className="w-full px-4 py-2 rounded-l-lg border-l border-t border-b focus:outline-none focus:ring-2 focus:ring-blue-500"
+//           placeholder="Search properties (e.g., '3 bedroom in Ruiru')"
+//         />
+//         <button
+//           type="submit"
+//           className="bg-blue-500 text-white px-4 py-2 rounded-r-lg border-r border-t border-b border-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+//         >
+//           <Search className="h-5 w-5" />
+//         </button>
+//         {/* {isPending && (
+//           <div className="absolute right-14 top-1/2 transform -translate-y-1/2">
+//             <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-blue-500"></div>
+//           </div>
+//         )} */}
+//       </form>
+//       {searchQuery.length > 0 && (
+//         <div className="absolute bg-white w-full mt-1 shadow-lg rounded-md z-10">
+//           {queryResults.length === 0 ? (
+//             <div className="p-2 text-gray-500">
+//               No results found. Try another keywords.
+//             </div>
+//           ) : (
+//             <div>
+//               <div className="p-2 text-sm font-semibold text-gray-700">
+//                 {queryResults.length} properties matched
+//               </div>
+//             </div>
+//           )}
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+
 "use client";
-import { School, Search, SlidersHorizontal } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useDebouncedCallback } from "use-debounce";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import axios from "axios";
-import debounce from "lodash.debounce";
-import { Property } from "@prisma/client";
-import { useOnClickOutside } from "@/hooks/use-click-outside";
+
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
+import { debounce } from "lodash";
+
+async function searchProperties(query: string) {
+  const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+  if (!response.ok) throw new Error("Failed to fetch");
+  return response.json();
+}
+
 export default function SearchBar() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [results, setResults] = useState<{ count: number } | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
-  const pathname = usePathname();
-  const commandRef = useRef<HTMLDivElement>(null);
 
-  useOnClickOutside(commandRef, () => {
-    setSearchQuery("");
-  });
-
-  const request = debounce(async () => {
-    refetch();
-  }, 300);
-
-  const debounceRequest = useCallback(() => {
-    request();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const {
-    data: queryResults,
-    refetch,
-    isFetched,
-    isFetching,
-  } = useQuery({
-    queryFn: async () => {
-      if (!searchQuery) return [];
-
-      const { data } = await axios.get(`/api/search?q=${searchQuery}`);
-      return data as Property[];
-    },
-    queryKey: ["search-query"],
-    enabled: false,
-  });
+  const debouncedSearch = useCallback(
+    debounce(async (query: string) => {
+      if (query.trim()) {
+        setIsLoading(true);
+        try {
+          const data = await searchProperties(query);
+          setResults(data);
+        } catch (error) {
+          console.error("Search error:", error);
+          setResults(null);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setResults(null);
+      }
+    }, 300),
+    []
+  );
 
   useEffect(() => {
-    setSearchQuery("");
-  }, [pathname]);
+    debouncedSearch(searchTerm);
+    return () => debouncedSearch.cancel();
+  }, [searchTerm, debouncedSearch]);
 
-  // const handleSearch = (e: React.FormEvent) => {
-  //   e.preventDefault();
-
-  //   if (typeof searchQuery !== "string") {
-  //     return;
-  //   }
-
-  //   const encodedSearchQuery = encodeURI(searchQuery);
-  //   router.push(`/search?q=${encodedSearchQuery}`);
-
-  //   console.log("current query", encodedSearchQuery);
-  // };
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      setIsSubmitting(true);
+      try {
+        await router.push(`/search?q=${encodeURIComponent(searchTerm)}`);
+      } finally {
+        setIsSubmitting(false);
+      }
+    }
+  };
 
   return (
-    <>
-      <Command className="relative rounded-lg border max-w-lg z-20 overflow-visible">
-        <CommandInput
-          isLoading={isFetching}
-          value={searchQuery}
-          onValueChange={(text) => {
-            setSearchQuery(text);
-            debounceRequest();
-          }}
-          className="outline-none border-none focus:border-none focus:outline-none ring-0"
-          placeholder="Search properties"
-        />
-
-        {searchQuery.length > 0 ? (
-          <CommandList className="absolute bg-white top-full inset-x-0 shadow rounded-b-md">
-            {isFetched && (
-              <CommandEmpty>
-                No results found. Try another keywords.
-              </CommandEmpty>
-            )}
-            {(queryResults?.length ?? 0) > 0 ? (
-              <>
-                {queryResults && queryResults?.length > 0 && (
-                  <CommandGroup heading="Properties">
-                    {queryResults.map((query) => (
-                      <CommandItem
-                        onSelect={(e) => {
-                          router.push(`/properties/${query.id}`);
-                          router.refresh();
-                        }}
-                        key={query.id}
-                        value={query.title}
-                      >
-                        <School className="mr-2 size-4" />
-                        <a href={`/properties/${query.id}`}>{query.title}</a>
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                )}
-              </>
-            ) : null}
-          </CommandList>
-        ) : null}
-      </Command>
-    </>
-    // <form
-    //   onSubmit={handleSearch}
-    //   className="bg-white rounded-xl p-5 relative w-full flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between"
-    // >
-    //   <input
-    //     type="search"
-    //     value={searchQuery || ""}
-    //     onChange={(text) => {
-    //       setInput("")
-    //     }}
-    //     // onChange={(event) => setSearchQuery(event.target.value)}
-    //     placeholder=" Enter an address, neighborhood, city, or ZIP code for Buy"
-    //     className="placeholder:text-[#666] flex-1 ring-[1px] border-0 focus:outline-[#f7f7f7] outline-none ring-[#f6f6f6] py-4 px-5 md:py-3 md:px-6 inline-flex items-center justify-center gap-x-4 w-full"
-    //   />
-    //   <span className="lg:ml-auto px-6 flex gap-4 items-center text-[#4a4a4a]">
-    //     <SlidersHorizontal className="h-4 w-4" />
-    //     Advanced Search
-    //   </span>
-    //   <button className="p-4 flex lg:items-center gap-x-4 rounded-full bg-[#276ef1]">
-    //     {/* bg-[#eb6753] */}
-    //     <Search className="text-white" />
-    //     <span className="lg:hidden ml-4 text-white font-semibold">
-    //       Search Property
-    //     </span>
-    //   </button>
-    // </form>
+    <form
+      onSubmit={handleSearch}
+      className="flex w-full max-w-sm items-center space-x-2 relative"
+    >
+      <Input
+        type="text"
+        placeholder="Search properties..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="bg-white"
+        aria-label="Search properties"
+      />
+      <Button
+        type="submit"
+        disabled={isSubmitting}
+        className="min-w-[80px] bg-blue-400 text-white"
+      >
+        {isSubmitting ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            <span className="sr-only">Searching...</span>
+          </>
+        ) : (
+          "Search"
+        )}
+      </Button>
+      {isLoading && (
+        <div
+          className="absolute top-full left-0 right-0 bg-white p-2 shadow-md rounded-b-md"
+          aria-live="polite"
+        >
+          Loading...
+        </div>
+      )}
+      {results && !isLoading && (
+        <div
+          className="absolute top-full left-0 right-0 bg-white p-2 shadow-md rounded-b-md"
+          aria-live="polite"
+        >
+          {results.count} properties match
+        </div>
+      )}
+    </form>
   );
 }

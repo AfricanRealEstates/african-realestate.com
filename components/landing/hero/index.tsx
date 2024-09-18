@@ -1,9 +1,6 @@
-import { Play, Search, SlidersHorizontal } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
-import { Inter, IBM_Plex_Mono, Nunito_Sans, Raleway } from "next/font/google";
+import { IBM_Plex_Mono, Raleway } from "next/font/google";
 import React from "react";
-import SearchForm from "./search-form";
 import SearchBar from "./search";
 
 const nunitoSans = Raleway({
@@ -52,24 +49,8 @@ export default function Hero() {
             </p>
           </div>
           <div className="max-w-3xl mt-12 flex items-center justify-center w-full">
-            {/* <SearchForm /> */}
             <SearchBar />
           </div>
-          {/* <div className="max-w-3xl mt-8 space-y-6 text-lg leading-[1.4] text-gray-200">
-            <p>
-              <span className="text-gray-50 font-semibold">
-                African Real Estate&trade;{" "}
-              </span>
-              is Africa&apos;s Leading Real Estate company offering the best and
-              efficient real estate solutions{" "}
-            </p>
-            <p>
-              Welcome to{" "}
-              <span className="text-gray-50 font-semibold">
-                African Real Estate
-              </span>
-            </p>
-          </div> */}
         </div>
       </article>
     </section>

@@ -1,28 +1,42 @@
-import prisma from "@/lib/prisma"
-import { getCurrentUser } from "@/lib/session";
-import { NextRequest } from "next/server";
+// pages/api/search.ts
+import { NextApiRequest, NextApiResponse } from "next";
+import prisma from "@/lib/prisma";
 
-export async function GET(req: Request) {
-    const url = new URL(req.url)
-    const q = url.searchParams.get('q')
+export default async function handler(
+    req: NextApiRequest,
+    res: NextApiResponse
+) {
+    if (req.method === "GET") {
+        try {
+            const { q } = req.query;
 
-    if (!q) return new Response('Invalid query', { status: 400 })
+            if (typeof q !== "string") {
+                return res.status(400).json({ message: "Invalid query" });
+            }
 
-    const results = await prisma.property.findMany({
-        take: 10
-    })
+            const properties = await prisma.property.findMany({
+                where: {
+                    OR: [
+                        { title: { contains: q, mode: "insensitive" } },
+                        { description: { contains: q, mode: "insensitive" } },
+                        { county: { contains: q, mode: "insensitive" } },
+                        { nearbyTown: { contains: q, mode: "insensitive" } },
+                        { user: { name: { contains: q, mode: "insensitive" } } },
+                    ],
+                },
+                include: {
+                    user: true,
+                },
+                take: 5, // Limit to 5 results for the autocomplete
+            });
 
-    return new Response(JSON.stringify(results))
+            return res.status(200).json(properties);
+        } catch (error) {
+            console.error("Search error:", error);
+            return res.status(500).json({ message: "Internal server error" });
+        }
+    }
+
+    res.setHeader("Allow", ["GET"]);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
 }
-
-// export async function GET(req: NextRequest) {
-//     try {
-//         const user = await getCurrentUser();
-//         if (!user) {
-//             return Response.json({ error: "Unauthorized" }, { status: 401 })
-//         }
-//     } catch (error) {
-//         console.error(error);
-//         return Response.json({ error: "Internal server error" }, { status: 500 })
-//     }
-// }
