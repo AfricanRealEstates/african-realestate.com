@@ -173,7 +173,7 @@ export default function SearchBar() {
       <Button
         type="submit"
         disabled={isSubmitting}
-        className="min-w-[80px] bg-blue-400 text-white"
+        className="min-w-[80px] bg-blue-400 text-white hover:bg-blue-500 transition-all"
       >
         {isSubmitting ? (
           <>
