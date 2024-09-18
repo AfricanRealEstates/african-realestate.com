@@ -7,7 +7,7 @@ import { toast } from "sonner";
 
 interface FeedbackWidgetProps {
   propertyId: string;
-  propertyOwnerId: string; // To identify the owner
+  propertyOwnerId: string;
 }
 
 export default function FeedbackWidget({
@@ -98,6 +98,7 @@ export default function FeedbackWidget({
 
       if (response.message === "Rating saved successfully") {
         setSubmitted(true);
+        setUserHasRated(true);
         toast.success("Thank you for your rating!");
         const { averageRating, ratingsCount } = await getRatings(propertyId);
         setAverageRating(averageRating);
@@ -123,14 +124,33 @@ export default function FeedbackWidget({
     <>
       {isOwner ? (
         <div className="flex flex-col gap-4 -mt-3">
-          <p className="text-blue-800 rounded-full bg-blue-100 px-1 py-1 text-xs">
-            Property not rated yet.
-          </p>
-          <div className="flex items-center">
-            {getStarComponents(0, true)} {/* Display disabled stars */}
-          </div>
+          {numberOfRatings > 0 ? (
+            <Suspense fallback={<p>Loading...</p>}>
+              <div className="flex space-y-2 flex-col text-blue-800 rounded-lg bg-gray-50 p-2 h-full">
+                <p className="text-blue-600 text-sm font-semibold">
+                  {getRatingMessage(averageRating)}
+                </p>
+                <p className="text-gray-500 flex items-center">
+                  {getStarComponents(averageRating, true)}
+                  <span className="text-sm ml-2">({numberOfRatings})</span>
+                  <span className="text-rose-500 ml-1">
+                    {averageRating.toFixed(1)}
+                  </span>
+                </p>
+              </div>
+            </Suspense>
+          ) : (
+            <>
+              <p className="text-blue-800 rounded-full bg-blue-100 px-1 py-1 text-xs">
+                Property not rated yet.
+              </p>
+              <div className="flex items-center">
+                {getStarComponents(0, true)}
+              </div>
+            </>
+          )}
         </div>
-      ) : userHasRated && averageRating > 0 ? (
+      ) : userHasRated || numberOfRatings > 0 ? (
         <Suspense fallback={<p>Loading...</p>}>
           <div className="flex space-y-2 flex-col text-blue-800 rounded-lg bg-gray-50 p-2 h-full">
             <p className="text-blue-600 text-sm font-semibold">

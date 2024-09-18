@@ -156,30 +156,29 @@ export default async function PropertyDetails({
   const relatedProperties = await prisma.property.findMany({
     where: {
       NOT: {
-        id: id, // Exclude the fetched property
+        id: id, // Exclude the current property
       },
       AND: [
+        { status: property.status }, // Match the status (sale or let)
         {
           OR: [
-            { propertyDetails: property.propertyDetails }, // Related properties with the same property details
-            { county: property.county }, // Related properties with the same location
-            { status: property.status }, // Related properties with the same status
+            { propertyDetails: property.propertyDetails }, // First priority: same property details
+            { county: property.county }, // Second priority: same county
           ],
         },
-        {
-          price: priceRange || property.county, // Use adjusted price range
-        },
       ],
+      price: {
+        gte: property.price * 0.8, // Price range: 80% to 120% of the current property's price
+        lte: property.price * 1.2,
+      },
     },
+    orderBy: [
+      { propertyDetails: "asc" }, // Prioritize matching propertyDetails
+      { county: "asc" }, // Then prioritize matching county
+      { price: "asc" }, // Then sort by price
+    ],
+    take: 3, // Limit to 3 related properties
   });
-
-  // if (!relatedProperties || relatedProperties.length === 0) {
-  //   return (
-  //     <>
-  //       <p>No related property</p>
-  //     </>
-  //   );
-  // }
 
   const agent = await prisma.user.findUnique({
     where: {
@@ -245,20 +244,9 @@ export default async function PropertyDetails({
         {/* 1 */}
         <div className="flex justify-between items-center w-full">
           <Badge name="Location Info" />
-          {/* <LikeSaveBtns /> */}
           <PropertyActions property={property} userId={user?.id} className="" />
-          {/* <LikeButton
-            propertyId={property.id}
-            initialState={{
-              likes: property._count?.likes || 0,
-              isLikedByUser:
-                property.likes?.some((like) => like.userId === user?.id) ||
-                false,
-            }}
-          /> */}
         </div>
 
-        {/* 3 */}
         <div className="flex items-center space-x-4 mb-8">
           <span className="flex items-center bg-neutral-100 rounded-full px-2">
             <MapPin className="size-4" />
@@ -267,27 +255,7 @@ export default async function PropertyDetails({
             </span>
           </span>
         </div>
-
-        {/* 4 */}
-        {/* <div className="flex items-center">
-          <Avatar
-            hasChecked
-            sizeClass="h-10 w-10"
-            radius="rounded-full"
-            imgUrl={agent.image}
-          />
-          <span className="ml-2.5 text-neutral-500 dark:text-neutral-400">
-            Agent{" "}
-            <span className="text-neutral-900 text-sm font-medium">
-              {agent.agentName}
-            </span>
-          </span>
-        </div> */}
-
-        {/* 5 */}
         <div className="w-full border-b border-neutral-100 my-6" />
-
-        {/* 6 */}
         <div className="flex flex-col space-y-2">
           <h2 className="text-2xl font-semibold mb-3">Salient Features</h2>
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 text-sm text-neutral-700 mt-8">
@@ -728,14 +696,12 @@ export default async function PropertyDetails({
           </div>
           {relatedProperties.length > 0 ? (
             <div className="mt-6 grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 sm:gap-y-10 lg:grid-cols-3">
-              {relatedProperties.slice(0, 3).map((property) => {
-                return (
-                  <PropertyCard
-                    key={property.id}
-                    data={property as PropertyData}
-                  />
-                );
-              })}
+              {relatedProperties.map((property) => (
+                <PropertyCard
+                  key={property.id}
+                  data={property as PropertyData}
+                />
+              ))}
             </div>
           ) : (
             <Link
