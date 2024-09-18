@@ -46,7 +46,7 @@ export default function Onboarding() {
 
   if (user?.role !== "USER") {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-full">
         <Card className="w-[350px]">
           <CardContent className="pt-6">
             <p className="text-center text-muted-foreground">

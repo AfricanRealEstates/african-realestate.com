@@ -14,14 +14,14 @@ export const addProperty = async (property: any) => {
       throw new Error("Unauthorized");
     }
 
-    // Check if the user is not an ADMIN
+    // Check the user's current role
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: { role: true },
     });
 
-    // If the user is not an AGENT and not an ADMIN, update their role to AGENT
-    if (user?.role !== "AGENT" && user?.role !== "ADMIN") {
+    // Only update the role to AGENT if the user is currently a USER, not an AGENCY or ADMIN
+    if (user?.role === "USER") {
       await prisma.user.update({
         where: { id: userId },
         data: { role: "AGENT" },
@@ -65,6 +65,7 @@ export const addProperty = async (property: any) => {
   }
 };
 
+
 export const editProperty = async (id: string, property: any) => {
   try {
     const session = await auth();
@@ -74,14 +75,14 @@ export const editProperty = async (id: string, property: any) => {
       throw new Error("Unauthorized");
     }
 
-    // Check if the user is not an ADMIN
+    // Check the user's current role
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: { role: true },
     });
 
-    // If the user is not an AGENT and not an ADMIN, update their role to AGENT
-    if (user?.role !== "AGENT" && user?.role !== "ADMIN") {
+    // Only update the role to AGENT if the user is currently a USER, not an AGENCY or ADMIN
+    if (user?.role === "USER") {
       await prisma.user.update({
         where: { id: userId },
         data: { role: "AGENT" },
