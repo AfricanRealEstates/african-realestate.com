@@ -18,6 +18,7 @@ export async function GET(request: NextRequest) {
                     { county: { contains: q, mode: "insensitive" } },
                     { nearbyTown: { contains: q, mode: "insensitive" } },
                     { user: { name: { contains: q, mode: "insensitive" } } },
+                    { user: { agentName: { contains: q, mode: "insensitive" } } },
                 ],
             },
             include: {
