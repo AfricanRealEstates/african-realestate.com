@@ -1,8 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import prisma from "@/lib/prisma";
-import { Property } from "@prisma/client";
-import QueryModal from "@/components/globals/query-modal";
-import { Raleway, IBM_Plex_Mono } from "next/font/google";
+import { Raleway } from "next/font/google";
 import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/20/solid";
 import {
   Banknote,
@@ -17,45 +15,34 @@ import {
   Hospital,
   LandPlot,
   MapPin,
-  School,
   School2,
   ShoppingBag,
   ShoppingBasket,
   ShoppingCart,
   Siren,
-  User,
 } from "lucide-react";
 import { Metadata } from "next";
 import ImageCarousel from "./_components/image-carousel";
 import Link from "next/link";
 import NotFound from "@/app/not-found";
 import { auth } from "@/auth";
-import Avatar from "@/components/globals/avatar";
 import Badge from "./_components/badge";
 import Amenities from "./_components/amenities";
 import OverviewInfo from "./_components/overview-info";
 import Image from "next/image";
 import { Button } from "@/components/utils/Button";
 import MessageWidget from "./_components/message-widget";
-import {
-  calculatePercentageSavings,
-  capitalizeWords,
-  getUserId,
-} from "@/lib/utils";
+import { calculatePercentageSavings, capitalizeWords } from "@/lib/utils";
 import {
   FaBuyNLarge,
   FaChurch,
   FaGolfBall,
   FaMosque,
   FaPlaceOfWorship,
-  FaPlay,
 } from "react-icons/fa";
-import { surroundingFeatures } from "@/constants";
 import SurroundingFeatures from "./_components/surrounding-features";
 import PropertyCard from "@/components/properties/new/PropertyCard";
 import { formatNumber } from "@/lib/formatter";
-import UserProfileTooltip from "./_components/UserProfileTooltip";
-import { redirect } from "next/navigation";
 import { PropertyData, PropertyWithExtras } from "@/lib/types";
 import PropertyActions from "./_components/PropertyActions";
 import { getCurrentUser } from "@/lib/session";
@@ -78,12 +65,6 @@ const amenityIcons: { [key: string]: JSX.Element } = {
 // no cache
 export const dynamic = "force-dynamic";
 
-const raleway = Raleway({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-nunitosans",
-});
-
 interface PropertyDetailsProps {
   params: {
     id: string;
@@ -92,16 +73,51 @@ interface PropertyDetailsProps {
 }
 
 export async function generateMetadata({
-  params: { id, propertyDetails },
+  params: { id },
 }: PropertyDetailsProps): Promise<Metadata> {
-  let property = (await prisma.property.findUnique({
+  const property = await prisma.property.findUnique({
     where: {
       id: id,
     },
-  })) as PropertyData;
+  });
+
+  if (!property) {
+    return {
+      title: "Property Not Found",
+    };
+  }
+
+  const title = `${capitalizeWords(property.title)} | African Real Estate`;
+  const description = property.description.substring(0, 160); // Truncate to 160 characters for meta description
+  const imageUrl = property.coverPhotos[0] || "/assets/Kilimani.webp";
 
   return {
-    title: `${capitalizeWords(property.title)} | African Real Estate`,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: property.title,
+        },
+      ],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [imageUrl],
+    },
+    other: {
+      "og:price:amount": property.price.toString(),
+      "og:price:currency": property.currency,
+      "og:availability": property.status === "sale" ? "for sale" : "to let",
+    },
   };
 }
 
