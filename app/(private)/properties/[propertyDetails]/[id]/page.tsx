@@ -89,7 +89,24 @@ export async function generateMetadata({
 
   const title = `${capitalizeWords(property.title)} | African Real Estate`;
   const description = property.description.substring(0, 160); // Truncate to 160 characters for meta description
-  const imageUrl = property.coverPhotos[0] || "/assets/Kilimani.webp";
+  const imageUrl = property.coverPhotos[0]
+    ? `https://modernsite1.vercel.app${property.coverPhotos[0]}`
+    : "https://modernsite1.vercel.app/assets/Kilimani.webp";
+
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "RealEstateListing",
+    name: property.title,
+    description: description,
+    image: imageUrl,
+    price: `${property.currency} ${property.price.toLocaleString()}`,
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: property.locality,
+      addressRegion: property.county,
+      addressCountry: property.country || "Kenya", // Assuming the properties are in Kenya
+    },
+  };
 
   return {
     title,
@@ -106,17 +123,28 @@ export async function generateMetadata({
         },
       ],
       type: "website",
+      url: `https://modernsite1.vercel.app/properties/${property.propertyDetails}/${property.id}`, // Add the full URL
     },
     twitter: {
       card: "summary_large_image",
-      title,
-      description,
+      site: "@AfricanRealEsta", // Add your Twitter handle
+      creator: "@AfricanRealEsta", // Add the content creator's Twitter handle
+      title: title,
+      description: description,
       images: [imageUrl],
     },
     other: {
       "og:price:amount": property.price.toString(),
       "og:price:currency": property.currency,
       "og:availability": property.status === "sale" ? "for sale" : "to let",
+      // Add Twitter-specific metadata
+      "twitter:label1": "Price",
+      "twitter:data1": `${
+        property.currency
+      } ${property.price.toLocaleString()}`,
+      "twitter:label2": "Location",
+      "twitter:data2": `${property.locality}, ${property.county}`,
+      structuredData: JSON.stringify(structuredData),
     },
   };
 }
