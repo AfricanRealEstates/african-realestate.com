@@ -92,6 +92,7 @@ export async function generateMetadata({
   const imageUrl = property.coverPhotos[0]
     ? `https://modernsite1.vercel.app${property.coverPhotos[0]}`
     : "https://modernsite1.vercel.app/assets/Kilimani.webp";
+  const fullUrl = `https://modernsite1.vercel.app/properties/${property.propertyDetails}/${property.id}`;
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -104,7 +105,7 @@ export async function generateMetadata({
       "@type": "PostalAddress",
       addressLocality: property.locality,
       addressRegion: property.county,
-      addressCountry: property.country || "Kenya", // Assuming the properties are in Kenya
+      addressCountry: property.country || "Kenya",
     },
   };
 
@@ -123,27 +124,44 @@ export async function generateMetadata({
         },
       ],
       type: "website",
-      url: `https://modernsite1.vercel.app/properties/${property.propertyDetails}/${property.id}`, // Add the full URL
+      url: fullUrl,
     },
     twitter: {
       card: "summary_large_image",
-      site: "@AfricanRealEsta", // Add your Twitter handle
-      creator: "@AfricanRealEsta", // Add the content creator's Twitter handle
+      site: "@AfricanRealEsta",
+      creator: "@AfricanRealEsta",
       title: title,
       description: description,
       images: [imageUrl],
     },
     other: {
+      // OpenGraph
       "og:price:amount": property.price.toString(),
       "og:price:currency": property.currency,
       "og:availability": property.status === "sale" ? "for sale" : "to let",
-      // Add Twitter-specific metadata
+
+      // Twitter
       "twitter:label1": "Price",
       "twitter:data1": `${
         property.currency
       } ${property.price.toLocaleString()}`,
       "twitter:label2": "Location",
       "twitter:data2": `${property.locality}, ${property.county}`,
+
+      // LinkedIn
+      "linkedin:owner": "African Real Estate",
+      "linkedin:title": title,
+      "linkedin:description": description,
+      "linkedin:image": imageUrl,
+
+      // TikTok
+      "tiktok:app_id": "YOUR_TIKTOK_APP_ID", // Replace with your TikTok App ID
+      "tiktok:app_name": "African Real Estate",
+      "tiktok:title": title,
+      "tiktok:description": description,
+      "tiktok:image": imageUrl,
+
+      // Structured Data
       structuredData: JSON.stringify(structuredData),
     },
   };
