@@ -73,6 +73,7 @@ model User {
   following        Follows[]       @relation("follower")
   upvotes          Upvote[]
   notifications    Notification[]
+  viewedProperties PropertyView[]
 
   @@map("users")
 }
@@ -169,8 +170,26 @@ model Property {
   comments      Comment[]
   upvotes       Upvote[]
   notifications Notification[]
+  views         PropertyView[]
 
   @@map("properties")
+}
+
+model PropertyView {
+  id         String   @id @default(cuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id])
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+  deviceType String
+  browser    String
+  os         String
+  country    String?
+  city       String?
+  viewedAt   DateTime @default(now())
+
+  @@index([propertyId])
+  @@index([userId])
 }
 
 model Query {

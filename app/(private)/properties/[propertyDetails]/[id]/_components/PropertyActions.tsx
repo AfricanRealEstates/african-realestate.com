@@ -21,6 +21,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import PropertyViewsStats from "./PropertyViewsStats";
 
 type Props = {
   property: any;

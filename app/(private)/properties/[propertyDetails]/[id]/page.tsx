@@ -46,6 +46,8 @@ import { formatNumber } from "@/lib/formatter";
 import { PropertyData, PropertyWithExtras } from "@/lib/types";
 import PropertyActions from "./_components/PropertyActions";
 import { getCurrentUser } from "@/lib/session";
+import { recordPropertyView } from "@/actions/recordPropertyView";
+import PropertyViewsStats from "./_components/PropertyViewsStats";
 
 const amenityIcons: { [key: string]: JSX.Element } = {
   mosque: <FaMosque className="size-4 text-neutral-600" />,
@@ -182,6 +184,11 @@ export default async function PropertyDetails({
     return <NotFound />;
   }
 
+  // Only record view if the user is not the property owner
+  if (user?.id !== property.userId) {
+    await recordPropertyView(property.id);
+  }
+
   const savings = calculatePercentageSavings(
     property.price,
     property.leastPrice
@@ -304,6 +311,7 @@ export default async function PropertyDetails({
         {/* 1 */}
         <div className="flex justify-between items-center w-full">
           <Badge name="Location Info" />
+          {/* <PropertyViewsStats propertyId={property.id} /> */}
           <PropertyActions property={property} userId={user?.id} className="" />
         </div>
 
