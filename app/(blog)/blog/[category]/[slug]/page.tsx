@@ -12,6 +12,9 @@ import React from "react";
 import { Redis } from "@upstash/redis";
 import { ReportView } from "./view";
 import { Eye } from "lucide-react";
+import { LikeButton } from "../../../LikeButton";
+import { getCurrentUser } from "@/lib/session";
+import prisma from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
@@ -87,6 +90,16 @@ export default async function Page({
       post.metadata.category === params.category && post.slug !== params.slug
   );
 
+  const user = await getCurrentUser();
+  const dbPost = await prisma.blogPost.findUnique({
+    where: { slug: params.slug },
+    include: { likedBy: true },
+  });
+
+  const likes = dbPost?.likes ?? 0;
+  const hasLiked =
+    dbPost?.likedBy.some((likedUser) => likedUser.id === user?.id) ?? false;
+
   const url = `https://modernsite1.vercel.app` || `http:localhost:3000`;
 
   return (
@@ -158,6 +171,11 @@ export default async function Page({
                   )}{" "}
                   {" views"}
                 </h2>
+                {/* <LikeButton
+                  slug={post.slug}
+                  initialLikes={likes}
+                  initialLiked={hasLiked}
+                /> */}
                 <BlogShare
                   url={`${url}/blog/${post.metadata.category}/${post.slug}`}
                   title={`Read ${post.metadata.title}`}

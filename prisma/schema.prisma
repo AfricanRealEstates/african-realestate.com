@@ -74,6 +74,7 @@ model User {
   upvotes          Upvote[]
   notifications    Notification[]
   viewedProperties PropertyView[]
+  likedPosts       BlogPost[]      @relation("UserLikedPosts")
 
   @@map("users")
 }
@@ -242,6 +243,13 @@ model Blog {
   category   String
   view_count Int      @default(1)
   updatedAt  DateTime @default(now())
+}
+
+model BlogPost {
+  id      String @id @default(cuid())
+  slug    String @unique
+  likes   Int    @default(0)
+  likedBy User[] @relation("UserLikedPosts")
 }
 
 model Subscriber {
