@@ -89,9 +89,7 @@ export async function generateMetadata({
 
   const title = `${capitalizeWords(property.title)} | African Real Estate`;
   const description = property.description.substring(0, 160); // Truncate to 160 characters for meta description
-  const imageUrl = property.coverPhotos[0]
-    ? `https://modernsite1.vercel.app${property.coverPhotos[0]}`
-    : "https://modernsite1.vercel.app/assets/Kilimani.webp";
+  const imageUrl = property.coverPhotos[0] || "/assets/Kilimani.webp";
   const fullUrl = `https://modernsite1.vercel.app/properties/${property.propertyDetails}/${property.id}`;
 
   const structuredData = {
