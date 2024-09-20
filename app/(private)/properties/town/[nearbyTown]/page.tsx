@@ -5,9 +5,12 @@ import PropertyCard from "@/components/properties/new/PropertyCard";
 import { PropertyData } from "@/lib/types";
 import { Metadata } from "next";
 import { baseUrl } from "@/app/sitemap";
+import { Suspense } from "react";
+import SortingOptions from "@/app/search/SortingOptions";
 
 type Props = {
   params: { nearbyTown: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -47,10 +50,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-async function getPropertiesByNearbyTown(nearbyTown: string) {
+async function getPropertiesByNearbyTown(
+  nearbyTown: string,
+  sort: string,
+  order: string,
+  status: string
+) {
+  const orderBy: { [key: string]: "asc" | "desc" } = {
+    [sort]: order as "asc" | "desc",
+  };
+  const statusFilter = status ? { status } : {};
+
   const properties = await prisma.property.findMany({
-    where: { nearbyTown },
-    orderBy: { createdAt: "desc" },
+    where: { nearbyTown, ...statusFilter },
+    orderBy,
     take: 20,
   });
 
@@ -63,11 +76,14 @@ async function getPropertiesByNearbyTown(nearbyTown: string) {
 
 export default async function NearbyTownPropertiesPage({
   params,
-}: {
-  params: { nearbyTown: string };
-}) {
+  searchParams,
+}: Props) {
   const town = decodeURIComponent(params.nearbyTown);
-  const properties = await getPropertiesByNearbyTown(town);
+  const sort = (searchParams.sort as string) || "createdAt";
+  const order = (searchParams.order as string) || "desc";
+  const status = (searchParams.status as string) || "";
+
+  const properties = await getPropertiesByNearbyTown(town, sort, order, status);
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -104,19 +120,32 @@ export default async function NearbyTownPropertiesPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       <div className={`w-[95%] lg:max-w-7xl mx-auto py-[100px] lg:py-[160px]`}>
-        <h1 className="text-3xl font-bold mb-8">
-          Properties near{" "}
-          <span className="text-rose-500 capitalize">{town}</span>
-        </h1>
-        <p className="mb-8 inline-flex items-center justify-center rounded px-[15px] text-sm leading-none h-[35px] bg-green-50 text-green-500 focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
-          Explore our selection of{" "}
-          <span className="font-semibold text-green-600 mx-1">
-            {properties.length}
-          </span>{" "}
-          properties available in{" "}
-          <span className="font-semibold text-green-600 mx-1">{town}</span>{" "}
-          right now.
-        </p>
+        <article className="flex items-end justify-between mb-4">
+          <div>
+            <h1 className="text-3xl font-bold mb-4">
+              Properties near{" "}
+              <span className="text-rose-500 capitalize">{town}</span>
+            </h1>
+            <p className="mb-8 inline-flex items-center justify-center rounded px-[15px] text-sm leading-none h-[35px] bg-green-50 text-green-500 focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
+              Explore our selection of{" "}
+              <span className="font-semibold text-green-600 mx-1">
+                {properties.length}
+              </span>{" "}
+              properties available in{" "}
+              <span className="font-semibold text-green-600 mx-1">{town}</span>{" "}
+              right now.
+            </p>
+          </div>
+          <div className="mb-4">
+            <Suspense fallback={<div>Loading sorting options...</div>}>
+              <SortingOptions
+                currentSort={sort}
+                currentOrder={order}
+                currentStatus={status}
+              />
+            </Suspense>
+          </div>
+        </article>
         <section className="mx-auto mb-8 gap-8 grid w-full grid-cols-[repeat(auto-fill,minmax(335px,1fr))] justify-center">
           {properties.map((property) => (
             <PropertyCard key={property.id} data={property as PropertyData} />
