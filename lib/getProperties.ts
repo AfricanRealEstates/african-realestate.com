@@ -36,40 +36,33 @@
 
 import prisma from "./prisma";
 
-export async function getProperties(searchParams: { [key: string]: string | string[] | undefined }, status: 'sale' | 'let') {
-    const where: any = {
-        status: status // Add this line to filter by status
-    };
+export async function getProperties(
+    searchParams: { [key: string]: string | string[] | undefined },
+    status: string
+) {
+    const {
+        sort = "createdAt",
+        order = "desc",
+        propertyType,
+        propertyDetails,
+        county,
+        locality,
+        minPrice,
+        maxPrice,
+    } = searchParams;
 
-    // Add other filters based on searchParams
-    if (searchParams.propertyType) {
-        where.propertyType = searchParams.propertyType;
-    }
-    if (searchParams.propertyDetails) {
-        where.propertyDetails = searchParams.propertyDetails;
-    }
-    if (searchParams.county) {
-        where.county = searchParams.county;
-    }
-    if (searchParams.locality) {
-        where.locality = searchParams.locality;
-    }
-    if (searchParams.minPrice) {
-        where.price = {
-            ...where.price,
-            gte: parseInt(searchParams.minPrice as string),
-        };
-    }
-    if (searchParams.maxPrice) {
-        where.price = {
-            ...where.price,
-            lte: parseInt(searchParams.maxPrice as string),
-        };
-    }
+    const where: any = { status };
+
+    if (propertyType) where.propertyType = propertyType;
+    if (propertyDetails) where.propertyDetails = propertyDetails;
+    if (county) where.county = county;
+    if (locality) where.locality = locality;
+    if (minPrice) where.price = { ...where.price, gte: parseInt(minPrice as string) };
+    if (maxPrice) where.price = { ...where.price, lte: parseInt(maxPrice as string) };
 
     const properties = await prisma.property.findMany({
         where,
-        // Add any other options like orderBy, select, etc.
+        orderBy: { [sort as string]: order },
     });
 
     return properties;

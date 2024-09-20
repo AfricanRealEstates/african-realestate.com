@@ -16,7 +16,7 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const town = decodeURIComponent(params.nearbyTown);
   const title = `Properties in ${town} | African Real Estate`;
-  const description = `Discover properties for sale in ${town}. Find your dream home or investment opportunity in this vibrant African city.`;
+  const description = `Discover properties for sale and rent in ${town}. Find your dream home or investment opportunity in this vibrant African city.`;
   const url = `${baseUrl}/properties/town/${encodeURIComponent(town)}`;
 
   return {
@@ -59,10 +59,13 @@ async function getPropertiesByNearbyTown(
   const orderBy: { [key: string]: "asc" | "desc" } = {
     [sort]: order as "asc" | "desc",
   };
-  const statusFilter = status ? { status } : {};
+  const whereClause: any = { nearbyTown };
+  if (status) {
+    whereClause.status = status;
+  }
 
   const properties = await prisma.property.findMany({
-    where: { nearbyTown, ...statusFilter },
+    where: whereClause,
     orderBy,
     take: 20,
   });
@@ -101,7 +104,7 @@ export default async function NearbyTownPropertiesPage({
           "@type": "Offer",
           price: property.price,
           priceCurrency: property.currency,
-          availability: property.status === "sale" ? "sale" : "let",
+          availability: property.status === "sale" ? "For Sale" : "For Rent",
         },
         address: {
           "@type": "PostalAddress",
@@ -120,13 +123,13 @@ export default async function NearbyTownPropertiesPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       <div className={`w-[95%] lg:max-w-7xl mx-auto py-[100px] lg:py-[160px]`}>
-        <article className="flex items-end justify-between mb-4">
+        <article className="flex flex-col md:flex-row md:items-end md:justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold mb-4">
               Properties near{" "}
               <span className="text-rose-500 capitalize">{town}</span>
             </h1>
-            <p className="mb-8 inline-flex items-center justify-center rounded px-[15px] text-sm leading-none h-[35px] bg-green-50 text-green-500 focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
+            <p className="mb-4 md:mb-0 inline-flex items-center justify-center rounded px-[15px] text-sm leading-none h-[35px] bg-green-50 text-green-500 focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
               Explore our selection of{" "}
               <span className="font-semibold text-green-600 mx-1">
                 {properties.length}
@@ -136,12 +139,14 @@ export default async function NearbyTownPropertiesPage({
               right now.
             </p>
           </div>
-          <div className="mb-4">
+          <div className="mt-4 md:mt-0">
             <Suspense fallback={<div>Loading sorting options...</div>}>
               <SortingOptions
                 currentSort={sort}
                 currentOrder={order}
                 currentStatus={status}
+                isActive={properties.length > 0}
+                showStatusFilter={true}
               />
             </Suspense>
           </div>

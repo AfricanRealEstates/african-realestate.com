@@ -6,6 +6,7 @@ import PropertyFilter from "@/components/properties/PropertyFilter";
 import PropertyCard from "@/components/properties/new/PropertyCard";
 import Loader from "@/components/globals/loader";
 import { PropertyData } from "@/lib/types";
+import SortingOptions from "@/app/search/SortingOptions";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -14,23 +15,48 @@ const raleway = Raleway({
 });
 
 export const metadata = getSEOTags({
-  title: "Let Properties | African Real Estate",
-  canonicalUrlRelative: "/let",
+  title: "Properties | African Real Estate",
+  canonicalUrlRelative: "/properties",
 });
 
-export default async function Let({
+export default async function PropertyPage({
+  params,
   searchParams,
 }: {
+  params: { type: "buy" | "let" };
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const properties = await getProperties(searchParams, "let");
+  const sort = (searchParams.sort as string) || "createdAt";
+  const order = (searchParams.order as string) || "desc";
+  const status = params.type === "buy" ? "sale" : "let";
+
+  const properties = await getProperties(searchParams, status);
+
+  const isFiltered = Object.keys(searchParams).some((key) =>
+    [
+      "propertyType",
+      "propertyDetails",
+      "county",
+      "locality",
+      "minPrice",
+      "maxPrice",
+    ].includes(key)
+  );
 
   return (
     <div
       className={`${raleway.className} w-[95%] lg:max-w-7xl mx-auto py-[90px] lg:py-[120px]`}
     >
       <div className="my-5">
-        <PropertyFilter pageType="let" />
+        <PropertyFilter pageType={params.type} />
+      </div>
+      <div className="my-5">
+        <SortingOptions
+          currentSort={sort}
+          currentOrder={order}
+          currentStatus={status}
+          isActive={isFiltered || properties.length > 0}
+        />
       </div>
       <Suspense fallback={<Loader />}>
         {properties.length === 0 ? (

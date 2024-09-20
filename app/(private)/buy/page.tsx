@@ -6,6 +6,7 @@ import PropertyFilter from "@/components/properties/PropertyFilter";
 import PropertyCard from "@/components/properties/new/PropertyCard";
 import Loader from "@/components/globals/loader";
 import { PropertyData } from "@/lib/types";
+import SortingOptions from "@/app/search/SortingOptions";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -18,20 +19,46 @@ export const metadata = getSEOTags({
   canonicalUrlRelative: "/buy",
 });
 
-export default async function Buy({
+export default async function BuyPage({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const properties = await getProperties(searchParams, "sale");
+  const sort = (searchParams.sort as string) || "createdAt";
+  const order = (searchParams.order as string) || "desc";
+  const status = "sale";
+
+  const properties = await getProperties(searchParams, status);
+
+  const isFiltered = Object.keys(searchParams).some((key) =>
+    [
+      "propertyType",
+      "propertyDetails",
+      "county",
+      "locality",
+      "minPrice",
+      "maxPrice",
+    ].includes(key)
+  );
 
   return (
     <div
       className={`${raleway.className} w-[95%] lg:max-w-7xl mx-auto py-[90px] lg:py-[120px]`}
     >
-      <div className="my-5">
-        <PropertyFilter pageType="buy" />
-      </div>
+      <h1 className="text-3xl font-bold mb-8">Properties for Sale</h1>
+      <article className="flex items-center justify-between">
+        <div className="my-5">
+          <PropertyFilter pageType="buy" />
+        </div>
+        <div className="my-5">
+          <SortingOptions
+            currentSort={sort}
+            currentOrder={order}
+            currentStatus={status}
+            isActive={isFiltered || properties.length > 0}
+          />
+        </div>
+      </article>
       <Suspense fallback={<Loader />}>
         {properties.length === 0 ? (
           <div className="flex h-full items-center justify-center mt-8">

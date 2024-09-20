@@ -76,6 +76,7 @@ export default async function SearchPage({
           currentSort={sortBy}
           currentOrder={sortOrder}
           currentStatus={status}
+          isActive={searchResults.length > 0}
         />
       </div>
       {searchResults.length > 0 ? (
