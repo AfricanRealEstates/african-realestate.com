@@ -47,17 +47,19 @@ export default async function PropertyPage({
     <div
       className={`${raleway.className} w-[95%] lg:max-w-7xl mx-auto py-[90px] lg:py-[120px]`}
     >
-      <div className="my-5">
-        <PropertyFilter pageType={params.type} />
-      </div>
-      <div className="my-5">
-        <SortingOptions
-          currentSort={sort}
-          currentOrder={order}
-          currentStatus={status}
-          isActive={isFiltered || properties.length > 0}
-        />
-      </div>
+      <article className="flex justify-between">
+        <div className="my-5">
+          <PropertyFilter pageType={params.type} />
+        </div>
+        <div className="my-5">
+          <SortingOptions
+            currentSort={sort}
+            currentOrder={order}
+            currentStatus={status}
+            isActive={isFiltered || properties.length > 0}
+          />
+        </div>
+      </article>
       <Suspense fallback={<Loader />}>
         {properties.length === 0 ? (
           <div className="flex h-full items-center justify-center mt-8">
