@@ -1,12 +1,14 @@
-import Filters from "@/components/globals/filters";
+import { Suspense } from "react";
+import { Raleway } from "next/font/google";
+import { Metadata } from "next";
+import { Property } from "@prisma/client";
+import SortingOptions from "@/app/search/SortingOptions";
 import Loader from "@/components/globals/loader";
 import PropertyCard from "@/components/properties/new/PropertyCard";
 import prisma from "@/lib/prisma";
 import { PropertyData } from "@/lib/types";
-import { Property } from "@prisma/client";
-import { Metadata } from "next";
-import { Raleway } from "next/font/google";
-import { Suspense } from "react";
+import { Badge } from "@/components/ui/badge";
+import { X } from "lucide-react";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -18,18 +20,22 @@ interface PropertyDetailsProps {
   params: {
     propertyDetails: string;
   };
-  searchParams: string;
+  searchParams: {
+    sort?: string;
+    order?: string;
+    status?: string;
+    [key: string]: string | undefined;
+  };
 }
 
 export async function generateMetadata({
   params: { propertyDetails },
 }: PropertyDetailsProps): Promise<Metadata> {
-  // Decode the propertyDetails parameter
   const decodedPropertyDetails = decodeURIComponent(propertyDetails);
 
   const properties = (await prisma.property.findMany({
     where: {
-      propertyDetails: decodedPropertyDetails, // Match exactly as decoded
+      propertyDetails: decodedPropertyDetails,
       isActive: true,
     },
   })) as PropertyData[];
@@ -46,65 +52,86 @@ export async function generateMetadata({
   };
 }
 
+const ActiveFilters = ({
+  searchParams,
+}: {
+  searchParams: PropertyDetailsProps["searchParams"];
+}) => {
+  const filters = Object.entries(searchParams).filter(
+    ([key, value]) => value && !["sort", "order"].includes(key)
+  );
+
+  if (filters.length === 0) return null;
+
+  return (
+    <div className="flex flex-wrap gap-2 mb-4">
+      {filters.map(([key, value]) => (
+        <Badge key={key} variant="secondary" className="text-sm">
+          {key}: {value}
+          <X className="h-4 w-4 ml-2 cursor-pointer" />
+        </Badge>
+      ))}
+    </div>
+  );
+};
+
 export default async function PropertyDetails({
   params: { propertyDetails },
   searchParams,
 }: PropertyDetailsProps) {
-  // Decode the propertyDetails parameter
   const decodedPropertyDetails = decodeURIComponent(propertyDetails);
 
-  // Fetch the property data based on the decoded propertyDetails parameter
-  const properties = (await prisma.property.findMany({
-    where: {
-      propertyDetails: decodedPropertyDetails, // Match exactly as decoded
-      isActive: true,
-    },
-  })) as PropertyData[];
-
-  if (properties.length === 0) {
-    return (
-      <div className="bg-white py-12 md:py-0">
-        <div className="mx-auto max-w-7xl px-4 pt-32 pb-8 sm:px-6 lg:px-8">
-          <h1 className="text-2xl font-semibold">No Properties Found</h1>
-        </div>
-      </div>
-    );
-  }
-
-  const key = JSON.stringify(searchParams);
+  const sort = searchParams.sort || "updatedAt";
+  const order = searchParams.order || "desc";
+  const status = searchParams.status || "";
 
   const searchProperties: Property[] = await prisma.property.findMany({
     where: {
       AND: Object.entries(searchParams).map(([key, value]) => {
+        if (key === "sort" || key === "order" || key === "status") return {};
         if (!isNaN(parseFloat(value as string))) {
           return { [key]: parseFloat(value as string) };
         }
         return { [key]: value };
       }),
-      propertyDetails: decodedPropertyDetails, // Match exactly as decoded
+      propertyDetails: decodedPropertyDetails,
       isActive: true,
+      ...(status && { status }),
     },
     orderBy: {
-      updatedAt: "desc",
+      [sort]: order,
     },
   });
 
-  console.log(searchProperties);
+  const key = JSON.stringify(searchParams);
 
   return (
     <div
       className={`${raleway.className} w-[95%] lg:max-w-7xl mx-auto py-[90px] lg:py-[120px]`}
     >
-      <h2 className="text-3xl text-gray-900 md:text-4xl my-4 mb-8">
-        All{" "}
-        <span className="text-[#eb6753] font-bold">
-          {decodedPropertyDetails}{" "}
-        </span>
-        Available Right Now.
-      </h2>
-      <Filters searchParams={searchParams} />
+      <article className="flex justify-between my-8">
+        <div>
+          <h2 className="text-3xl text-gray-900 md:text-4xl my-4 mb-8">
+            All{" "}
+            <span className="text-[#eb6753] font-bold">
+              {decodedPropertyDetails}{" "}
+            </span>
+            Available Right Now.
+          </h2>
+        </div>
+        <div>
+          <ActiveFilters searchParams={searchParams} />
+          <SortingOptions
+            currentSort={sort}
+            currentOrder={order}
+            currentStatus={status}
+            isActive={true}
+            showStatusFilter={true}
+          />
+        </div>
+      </article>
       <Suspense fallback={<Loader />} key={key}>
-        {searchParams.length === 0 ? (
+        {searchProperties.length === 0 ? (
           <div className="flex h-full items-center justify-center mt-8">
             No properties matched your search query. Please try again with a
             different term.
@@ -114,12 +141,6 @@ export default async function PropertyDetails({
             {searchProperties.map((property) => (
               <PropertyCard key={property.id} data={property as PropertyData} />
             ))}
-
-            {searchProperties.length === 0 && (
-              <p className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-                No {decodedPropertyDetails} properties category so far!.
-              </p>
-            )}
           </section>
         )}
       </Suspense>
