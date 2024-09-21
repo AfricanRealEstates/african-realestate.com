@@ -13,6 +13,7 @@ export async function searchProperties(query: string) {
                 { description: { contains: query, mode: "insensitive" } },
                 { county: { contains: query, mode: "insensitive" } },
                 { nearbyTown: { contains: query, mode: "insensitive" } },
+                { locality: { contains: query, mode: "insensitive" } },
                 { user: { name: { contains: query, mode: "insensitive" } } },
             ],
         },
