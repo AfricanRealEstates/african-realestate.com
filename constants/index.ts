@@ -395,7 +395,7 @@ export const appliances = [
   { value: "heating", label: "Heating" },
   { value: "dstv", label: "DSTV / Cables" },
   { value: "air", label: "Air Condition" },
-  { value: "furnitures", label: "Furnitures" },
+  { value: "furnished", label: "Furnished" },
   { value: "pet", label: "Pet Friendly" },
   { value: "energy", label: "Energy Efficient" },
   { value: "gates", label: "Gated Residence" },
