@@ -167,6 +167,17 @@ export async function generateMetadata({
   };
 }
 
+const formatName = (name: string | null): string => {
+  if (!name) return "N/A";
+
+  const names = name.trim().split(/\s+/);
+  if (names.length === 1) return name;
+
+  const firstName = names[0];
+  const lastName = names.slice(1).join(" ");
+  return `${firstName[0]}. ${lastName}`;
+};
+
 export default async function PropertyDetails({
   params: { id },
 }: PropertyDetailsProps) {
@@ -606,17 +617,14 @@ export default async function PropertyDetails({
                         <div>
                           {agent.role === "AGENCY" ? (
                             <>
-                              {/* <p className="block text-lg text-indigo-500 font-medium">
-                                
-                              </p> */}
                               <p className="block text-lg text-indigo-500 font-medium">
-                                {agent.name} -{" "}
+                                {formatName(agent?.name)} -{" "}
                                 {agent.agentName || "No agency name yet"}
                               </p>
                             </>
                           ) : (
                             <p className="block text-lg text-indigo-500 font-medium">
-                              {agent.name}
+                              {formatName(agent.name)}
                             </p>
                           )}
                         </div>
