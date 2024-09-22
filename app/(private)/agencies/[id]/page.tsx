@@ -9,6 +9,7 @@ import { Mail } from "lucide-react";
 import { FaFacebook, FaLinkedin, FaTiktok, FaYoutube } from "react-icons/fa";
 import PropertyCard from "@/components/properties/new/PropertyCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Link from "next/link";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -83,7 +84,13 @@ export default async function AgentDetails({
         {agent?.name ? (
           <div className="space-y-3 text-center flex flex-col items-center">
             <h2 className="text-xl text-indigo-500 font-semibold">
-              {agent?.name}
+              {agent.role === "AGENCY" ? (
+                <>
+                  {agent?.name} - {agent.agentName}
+                </>
+              ) : (
+                <>{agent?.name}</>
+              )}
             </h2>
           </div>
         ) : (
@@ -106,18 +113,50 @@ export default async function AgentDetails({
         <div className="border-b border-neutral-50  w-full"></div>
 
         <div className="!space-x-3 flex items-center justify-center">
-          <p className="w-9 h-9 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 text-xl">
-            <FaFacebook />
-          </p>
-          <p className="w-9 h-9 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 text-xl">
-            <FaTiktok />
-          </p>
-          <p className="w-9 h-9 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 text-xl">
-            <FaYoutube />
-          </p>
-          <p className="w-9 h-9 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 text-xl">
-            <FaLinkedin />
-          </p>
+          {agent.facebookLink && (
+            <Link
+              href={agent.facebookLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <p className="w-9 h-9 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 text-xl hover:bg-blue-600 hover:text-white transition-colors">
+                <FaFacebook />
+              </p>
+            </Link>
+          )}
+          {agent.tiktokLink && (
+            <Link
+              href={agent.tiktokLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <p className="w-9 h-9 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 text-xl hover:bg-black hover:text-white transition-colors">
+                <FaTiktok />
+              </p>
+            </Link>
+          )}
+          {agent.youtubeLink && (
+            <Link
+              href={agent.youtubeLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <p className="w-9 h-9 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 text-xl hover:bg-red-600 hover:text-white transition-colors">
+                <FaYoutube />
+              </p>
+            </Link>
+          )}
+          {agent.linkedinLink && (
+            <Link
+              href={agent.linkedinLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <p className="w-9 h-9 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 text-xl hover:bg-blue-700 hover:text-white transition-colors">
+                <FaLinkedin />
+              </p>
+            </Link>
+          )}
         </div>
 
         <div className="border-b border-neutral-50 w-full"></div>
@@ -125,7 +164,12 @@ export default async function AgentDetails({
         <div className="space-y-4">
           <div className="flex items-center space-x-4">
             <Mail className="h-6 w-6 text-neutral-400" />
-            <span className="text-neutral-600">{agent.email}</span>
+            <Link
+              href={`mailto:${agent.email}`}
+              className="text-neutral-600 hover:text-indigo-500 transition-colors"
+            >
+              Talk to {agent.role}
+            </Link>
           </div>
           <div className="flex items-center space-x-4">
             <svg
@@ -181,11 +225,17 @@ export default async function AgentDetails({
           <div className="w-full lg:w-3/5 xl:w-2/3 space-y-8 lg:space-y-10 lg:pl-10 flex-shrink-0">
             <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 dark:border-neutral-700 space-y-6 sm:space-y-8 pb-10 px-0 sm:p-4 xl:p-8">
               <div>
-                <h2 className="text-2xl text-indigo-500 font-semibold">{`${agent.name} listings`}</h2>
+                <h2 className="text-2xl text-indigo-500 font-semibold">
+                  {agent.role === "AGENCY" ? agent.agentName : agent.name}{" "}
+                  listings
+                </h2>
                 <span className="block mt-2 text-neutral-500 dark:text-neutral-400">
-                  {`${agent.name}'s listings are very rich, and 5-star reviews help them to be more branded.`}
+                  {agent.role === "AGENCY" ? agent.agentName : agent.name}
+                  &apos;s listings are very rich, and 5-star reviews help them
+                  to be more branded.
                 </span>
               </div>
+
               <div className="w-full border-b border-neutral-100"></div>
 
               <Tabs defaultValue="sale" className="w-full">
