@@ -18,9 +18,6 @@ export const metadata = getSEOTags({
 });
 
 export default async function Home() {
-  const session = await auth();
-  const user = session?.user;
-
   return (
     <div className="">
       {renderSchemaTags()}
