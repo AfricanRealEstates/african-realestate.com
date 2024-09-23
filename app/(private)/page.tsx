@@ -29,7 +29,7 @@ export const metadata = getSEOTags({
       "Explore over 75,000 premium properties across Kenya. From luxurious mansions to modern apartments, find your perfect home with African Real Estate.",
     images: [
       {
-        url: "https://africanrealestate.com/og-image.jpg",
+        url: "https://africanrealestate.com/opengraph-image.jpg",
         width: 1200,
         height: 630,
         alt: "African Real Estate - Premium Properties in Kenya",
