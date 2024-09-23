@@ -4,6 +4,7 @@ import Link from "next/link";
 import React from "react";
 import { Josefin_Sans } from "next/font/google";
 import { formatBlogDate } from "@/lib/utils";
+import { ArrowRight, CalendarDays, Eye } from "lucide-react";
 const josefin = Josefin_Sans({
   subsets: ["latin"],
   weight: ["600"],
@@ -61,9 +62,33 @@ export default function PropertyAdvice() {
                   width={1000}
                   alt={post.metadata.title}
                   src={post.metadata.cover}
-                  className="h-60 w-full rounded-3xl object-cover object-top transition-all duration-500 group-hover:rounded-xl"
+                  className="h-60 w-full rounded-lg object-cover object-top transition-all duration-500 group-hover:rounded-xl"
                 />
-                <h3
+                <div className="py-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <CalendarDays className="text-rose-400" />
+                      <span className="text-sm text-gray-700">
+                        {formatBlogDate(post.metadata.publishedAt)}
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Eye className="text-rose-400" />
+                      <span className="text-sm text-gray-700">(4)</span>
+                    </div>
+                  </div>
+                  <h1 className="mt-6 font-bold hover:underline cursor-pointer mb-2 text-lg text-gray-700">
+                    {post.metadata.title}
+                  </h1>
+                  <p className="text-gray-500 text-base line-clamp-2">
+                    {post.metadata.summary}
+                  </p>
+                  <div className="mt-4 flex items-center space-x-2 hover:text-rose-400 cursor-pointer">
+                    <span className="font-semibold">Read more</span>
+                    <ArrowRight className="size-4" />
+                  </div>
+                </div>
+                {/* <h3
                   className={`text-xl font-semibold text-gray-800 line-clamp-2 tracking-wide group-hover:text-ken-primary transition-all ${josefin.className}`}
                 >
                   {post.metadata.title}
@@ -75,7 +100,7 @@ export default function PropertyAdvice() {
                 </div>
                 <p className="text-gray-600 text-[15px]/6 line-clamp-2">
                   {post.metadata.summary}
-                </p>
+                </p> */}
               </Link>
             ))}
         </div>
@@ -83,3 +108,19 @@ export default function PropertyAdvice() {
     </section>
   );
 }
+
+// const BlogCard = ({ post }: any) => {
+//   return (
+//     <section className="bg-white round-md overflow-hidden">
+//       <div>
+//         <Image
+//           height={667}
+//           width={1000}
+//           alt={post.metadata.title}
+//           src={post.metadata.cover}
+//           className="h-60 w-full rounded-3xl object-cover object-top transition-all duration-500 group-hover:rounded-xl"
+//         />
+//       </div>
+//     </section>
+//   );
+// };
