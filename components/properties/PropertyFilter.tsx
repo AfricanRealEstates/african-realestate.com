@@ -69,11 +69,14 @@ export default function PropertyFilter({
   const watchMaxPrice = watch("maxPrice");
 
   useEffect(() => {
-    const subscription = watch((value) => {
-      setActiveFilters(value);
+    const filters: FilterValues = {};
+    searchParams.forEach((value, key) => {
+      if (key in filterSchema.shape) {
+        filters[key as keyof FilterValues] = value;
+      }
     });
-    return () => subscription.unsubscribe();
-  }, [watch]);
+    setActiveFilters(filters);
+  }, [searchParams]);
 
   const onSubmit = (data: FilterValues) => {
     const params = new URLSearchParams(searchParams);
@@ -84,6 +87,7 @@ export default function PropertyFilter({
         params.delete(key);
       }
     });
+    setActiveFilters(data);
     router.push(`/${pageType}?${params.toString()}`);
     setIsOpen(false);
   };
@@ -98,6 +102,7 @@ export default function PropertyFilter({
     const newFilters = { ...activeFilters };
     delete newFilters[key];
     setActiveFilters(newFilters);
+    setValue(key, undefined);
     const params = new URLSearchParams(searchParams);
     params.delete(key);
     router.push(`/${pageType}?${params.toString()}`);
