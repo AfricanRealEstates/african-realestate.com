@@ -20,7 +20,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 
-const MAX_OTHER_PHOTOS = 25;
+const MAX_OTHER_PHOTOS = 29;
 const INITIAL_PHOTO_DISPLAY = 8;
 
 export default function Media({
