@@ -51,19 +51,22 @@ export default function PropertyFilter({
   const [selectedPropertyType, setSelectedPropertyType] = useState("");
   const [activeFilters, setActiveFilters] = useState<FilterValues>({});
 
-  const { control, handleSubmit, watch, reset } = useForm<FilterValues>({
-    resolver: zodResolver(filterSchema),
-    defaultValues: {
-      propertyType: searchParams.get("propertyType") || "",
-      propertyDetails: searchParams.get("propertyDetails") || "",
-      county: searchParams.get("county") || "",
-      locality: searchParams.get("locality") || "",
-      minPrice: searchParams.get("minPrice") || "",
-      maxPrice: searchParams.get("maxPrice") || "",
-    },
-  });
+  const { control, handleSubmit, watch, reset, setValue } =
+    useForm<FilterValues>({
+      resolver: zodResolver(filterSchema),
+      defaultValues: {
+        propertyType: searchParams.get("propertyType") || "",
+        propertyDetails: searchParams.get("propertyDetails") || "",
+        county: searchParams.get("county") || "",
+        locality: searchParams.get("locality") || "",
+        minPrice: searchParams.get("minPrice") || "",
+        maxPrice: searchParams.get("maxPrice") || "",
+      },
+    });
 
   const watchPropertyType = watch("propertyType");
+  const watchMinPrice = watch("minPrice");
+  const watchMaxPrice = watch("maxPrice");
 
   useEffect(() => {
     const subscription = watch((value) => {
@@ -98,6 +101,19 @@ export default function PropertyFilter({
     const params = new URLSearchParams(searchParams);
     params.delete(key);
     router.push(`/${pageType}?${params.toString()}`);
+  };
+
+  const formatPrice = (price: string) => {
+    const numericPrice = parseFloat(price.replace(/,/g, ""));
+    if (isNaN(numericPrice)) return "";
+    return new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(
+      numericPrice
+    );
+  };
+
+  const handlePriceChange = (type: "minPrice" | "maxPrice", value: string) => {
+    const numericValue = value.replace(/,/g, "");
+    setValue(type, numericValue);
   };
 
   return (
@@ -223,11 +239,17 @@ export default function PropertyFilter({
                 render={({ field }) => (
                   <Input
                     {...field}
-                    type="number"
+                    type="text"
                     placeholder="Enter minimum price"
+                    onChange={(e) =>
+                      handlePriceChange("minPrice", e.target.value)
+                    }
                   />
                 )}
               />
+              <span className="text-sm text-gray-500 mt-1 block">
+                {formatPrice(watchMinPrice || "")}
+              </span>
             </div>
             <div>
               <Label htmlFor="maxPrice">Maximum Price</Label>
@@ -237,11 +259,17 @@ export default function PropertyFilter({
                 render={({ field }) => (
                   <Input
                     {...field}
-                    type="number"
+                    type="text"
                     placeholder="Enter maximum price"
+                    onChange={(e) =>
+                      handlePriceChange("maxPrice", e.target.value)
+                    }
                   />
                 )}
               />
+              <span className="text-sm text-gray-500 mt-1 block">
+                {formatPrice(watchMaxPrice || "")}
+              </span>
             </div>
             <Button
               type="submit"
