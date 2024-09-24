@@ -115,26 +115,51 @@ export const editProperty = async (id: string, property: any) => {
 };
 
 
-export const deleteProperty = async (id: string) => {
+export async function deleteProperty(id: string) {
   try {
-    await prisma.property.delete({
-      where: {
-        id: id,
-      },
+    const session = await auth();
+    const userId = session?.user.id;
+
+    if (!userId) {
+      return { error: "Unauthorized" };
+    }
+
+    // Check if the property belongs to the user
+    const property = await prisma.property.findUnique({
+      where: { id },
+      select: { userId: true },
     });
-    revalidatePath("/")
-    revalidatePath("/buy")
-    revalidatePath("/sell")
+
+    if (!property || property.userId !== userId) {
+      return { error: "Unauthorized to delete this property" };
+    }
+
+    // Delete related records first
+    await prisma.propertyView.deleteMany({ where: { propertyId: id } });
+    await prisma.notification.deleteMany({ where: { propertyId: id } });
+    await prisma.upvote.deleteMany({ where: { propertyId: id } });
+    await prisma.comment.deleteMany({ where: { propertyId: id } });
+    await prisma.savedProperty.deleteMany({ where: { propertyId: id } });
+    await prisma.rating.deleteMany({ where: { propertyId: id } });
+    await prisma.like.deleteMany({ where: { propertyId: id } });
+    await prisma.order.deleteMany({ where: { propertyId: id } });
+    await prisma.query.deleteMany({ where: { propertyId: id } });
+
+    // Finally, delete the property
+    await prisma.property.delete({ where: { id } });
+
+    revalidatePath("/");
+    revalidatePath("/buy");
+    revalidatePath("/sell");
     revalidatePath("/agent/properties");
-    return {
-      message: "Property deleted successfully",
-    };
+
+    return { message: "Property deleted successfully" };
   } catch (error: any) {
-    return {
-      error: error.message,
-    };
+    console.error("Error deleting property:", error);
+    return { error: error.message };
   }
-};
+}
+
 
 export const getPropertiesByLocality = async (locality: string, skip = 0, take = 10) => {
   try {

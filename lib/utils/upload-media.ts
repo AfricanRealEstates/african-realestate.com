@@ -1,5 +1,5 @@
 import firebaseApp from "../firebase";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, getStorage, ref, uploadBytes, deleteObject } from "firebase/storage";
 import heic2any from "heic2any";
 
 const convertHEICToJPG = async (file: File): Promise<File> => {
@@ -24,8 +24,6 @@ const convertHEICToJPG = async (file: File): Promise<File> => {
   // If not HEIC/HEIF, return the original file
   return file;
 };
-
-
 
 export const uploadFilesToFirebase = async (files: File[]) => {
   try {
@@ -72,5 +70,15 @@ export const uploadSingleFileToFirebase = async (file: File) => {
     return downloadURL;
   } catch (error: any) {
     throw new Error(error);
+  }
+};
+
+export const deleteFileFromFirebase = async (fileUrl: string) => {
+  try {
+    const storage = getStorage(firebaseApp);
+    const fileRef = ref(storage, fileUrl);
+    await deleteObject(fileRef);
+  } catch (error: any) {
+    throw new Error(`Failed to delete file: ${error.message}`);
   }
 };

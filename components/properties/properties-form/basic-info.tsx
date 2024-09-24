@@ -21,6 +21,7 @@ import {
   vacationalAppliances,
   landAppliances,
 } from "@/constants";
+import ImprovedCountrySelect from "../ImprovedCountrySelect";
 
 export default function BasicInfo({
   currentStep,
@@ -366,7 +367,8 @@ export default function BasicInfo({
         Location Details
       </h2>
       <section className="grid grid-cols-1 lg:grid-cols-4 gap-x-4 gap-y-3">
-        <Form.Item
+        <ImprovedCountrySelect />
+        {/* <Form.Item
           name="country"
           label="Country"
           rules={[
@@ -382,7 +384,7 @@ export default function BasicInfo({
             className="w-full"
             placeholder="Select Country"
           />
-        </Form.Item>
+        </Form.Item> */}
 
         <Form.Item
           name="county"

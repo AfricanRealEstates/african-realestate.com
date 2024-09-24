@@ -1,13 +1,27 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import { PropertiesFormStepProps } from "./index";
 import { Button, Form, Input, Modal, Upload, Spin, Checkbox } from "antd";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { uploadFilesToFirebase } from "@/lib/utils/upload-media";
+import {
+  uploadFilesToFirebase,
+  uploadSingleFileToFirebase,
+} from "@/lib/utils/upload-media";
 import { addProperty, editProperty } from "@/actions/properties";
 import { toast } from "sonner";
 import { Icons } from "@/components/globals/icons";
 import { surroundingFeatures } from "@/constants";
+import {
+  Plus,
+  Upload as UploadIcon,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
+
+const MAX_OTHER_PHOTOS = 25;
+const INITIAL_PHOTO_DISPLAY = 8;
 
 export default function Media({
   currentStep,
@@ -18,24 +32,27 @@ export default function Media({
   setLoading,
   isEdit = false,
 }: PropertiesFormStepProps) {
-  const [tempFiles, setTempFiles] = useState<any[]>([]);
-  const [coverPhotos, setCoverPhotos] = useState<any[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [coverPhoto, setCoverPhoto] = useState<string | null>(null);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
   const [coverPhotoLoading, setCoverPhotoLoading] = useState(false);
   const [otherPhotosLoading, setOtherPhotosLoading] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [showAllPhotos, setShowAllPhotos] = useState(false);
 
   const { id }: any = useParams();
   const router = useRouter();
 
   useEffect(() => {
     if (isEdit && id) {
-      setCoverPhotos(finalValues.media.coverPhotos || []);
-      setTempFiles(finalValues.media.images || []);
+      setCoverPhoto(finalValues.media.coverPhotos?.[0] || null);
+      setImageUrls(finalValues.media.images?.slice(0, MAX_OTHER_PHOTOS) || []);
     } else if (finalValues.media) {
-      setCoverPhotos(finalValues.media.coverPhotos || []);
-      setTempFiles(finalValues.media.images || []);
+      setCoverPhoto(finalValues.media.coverPhotos?.[0] || null);
+      setImageUrls(finalValues.media.images?.slice(0, MAX_OTHER_PHOTOS) || []);
     }
   }, [isEdit, id, finalValues]);
 
@@ -43,37 +60,19 @@ export default function Media({
     try {
       setLoading(true);
 
-      const tempFinalValues = {
-        ...finalValues,
-        amenities: values,
-        media: {
-          newlyUploadFiles: tempFiles,
-          coverPhotos: coverPhotos,
-          images: finalValues.media.images,
-        },
-        surroundingFeatures: values.surroundingFeatures || [],
-        videoLink: values.videoLink || "",
-      };
-
-      const tempMedia = tempFinalValues.media;
-      const newImagesURLs = await uploadFilesToFirebase(
-        tempMedia.newlyUploadFiles
+      const newImagesURLs = await uploadFilesToFirebase(uploadedFiles);
+      const allImageUrls = [...new Set([...imageUrls, ...newImagesURLs])].slice(
+        0,
+        MAX_OTHER_PHOTOS
       );
-      tempMedia.images = [...new Set([...tempMedia.images, ...newImagesURLs])]; // Prevent duplicates
-
-      const newCoverPhotosURLs = await uploadFilesToFirebase(
-        tempMedia.coverPhotos
-      );
-      tempMedia.coverPhotos = [...new Set(newCoverPhotosURLs)].slice(0, 3); // Prevent duplicates and limit
-
-      tempFinalValues.media = tempMedia;
 
       const savedValues = {
-        ...tempFinalValues.basicInfo,
-        images: tempFinalValues.media.images,
-        coverPhotos: tempFinalValues.media.coverPhotos,
-        surroundingFeatures: tempFinalValues.surroundingFeatures,
-        videoLink: tempFinalValues.videoLink,
+        ...finalValues.basicInfo,
+        ...values,
+        images: allImageUrls,
+        coverPhotos: coverPhoto ? [coverPhoto] : [],
+        surroundingFeatures: values.surroundingFeatures || [],
+        videoLink: values.videoLink || "",
       };
 
       let res = null;
@@ -93,6 +92,7 @@ export default function Media({
       console.error(error.message);
     } finally {
       setLoading(false);
+      setHasUnsavedChanges(false);
     }
   };
 
@@ -108,39 +108,113 @@ export default function Media({
     );
   };
 
-  const getBase64 = (file: any) =>
-    new Promise<string>((resolve, reject) => {
+  const getBase64 = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => resolve(reader.result as string);
       reader.onerror = (error) => reject(error);
     });
 
-  const handleCoverPhotoRemove = (file: any) => {
-    const updatedCoverPhotos = coverPhotos.filter(
-      (photo) => photo.url !== file.url
-    );
-    setCoverPhotos(updatedCoverPhotos);
+  const handleCoverPhotoRemove = (event: React.MouseEvent) => {
+    event.preventDefault();
+    setCoverPhoto(null);
     setFinalValues({
       ...finalValues,
       media: {
         ...finalValues.media,
-        coverPhotos: updatedCoverPhotos,
+        coverPhotos: [],
       },
     });
+    setHasUnsavedChanges(true);
   };
 
-  const handleOtherPhotoRemove = (image: string) => {
-    let tempMedia = finalValues.media;
-    tempMedia.images = tempMedia.images.filter((img: string) => img !== image);
-    setFinalValues({
-      ...finalValues,
-      media: {
-        newlyUploadedFiles: tempFiles,
-        images: tempMedia.images,
-      },
-    });
+  const handleOtherPhotoRemove = (event: React.MouseEvent, image: string) => {
+    event.preventDefault();
+    setImageUrls((prev) => prev.filter((img) => img !== image));
+    setUploadedFiles((prev) => prev.filter((file) => file.name !== image));
+    setHasUnsavedChanges(true);
   };
+
+  const handleCoverPhotoUpload = async (file: File) => {
+    try {
+      setCoverPhotoLoading(true);
+      const url = await uploadSingleFileToFirebase(file);
+
+      setImageUrls((prevUrls) => prevUrls.filter((img) => img !== url));
+
+      setCoverPhoto(url);
+      setFinalValues({
+        ...finalValues,
+        media: {
+          ...finalValues.media,
+          coverPhotos: [url],
+        },
+      });
+      setHasUnsavedChanges(true);
+    } catch (error) {
+      toast.error("Failed to upload cover photo");
+    } finally {
+      setCoverPhotoLoading(false);
+    }
+  };
+
+  const handleOtherPhotoUpload = async (file: File) => {
+    try {
+      if (imageUrls.length >= MAX_OTHER_PHOTOS) {
+        toast.info(`Maximum ${MAX_OTHER_PHOTOS} other photos allowed`);
+        return;
+      }
+      setOtherPhotosLoading(true);
+      const url = await uploadSingleFileToFirebase(file);
+      if (!imageUrls.includes(url) && coverPhoto !== url) {
+        setImageUrls((prev) => [...prev, url].slice(0, MAX_OTHER_PHOTOS));
+        setUploadedFiles((prev) => [...prev, file].slice(0, MAX_OTHER_PHOTOS));
+        setHasUnsavedChanges(true);
+      } else if (coverPhoto === url) {
+        toast.info("This image is already set as the cover photo");
+      } else {
+        toast.info("This image has already been uploaded");
+      }
+    } catch (error) {
+      toast.error("Failed to upload photo");
+    } finally {
+      setOtherPhotosLoading(false);
+    }
+  };
+
+  const renderImagePreview = (
+    image: string,
+    index: number,
+    isCoverPhoto: boolean = false
+  ) => (
+    <div
+      key={index}
+      className="relative w-32 h-32 mb-4 border border-gray-300 rounded-lg overflow-hidden"
+    >
+      <Image
+        src={image}
+        alt={isCoverPhoto ? "Cover Photo" : `Property Photo ${index + 1}`}
+        layout="fill"
+        objectFit="cover"
+      />
+      <button
+        onClick={(event) =>
+          isCoverPhoto
+            ? handleCoverPhotoRemove(event)
+            : handleOtherPhotoRemove(event, image)
+        }
+        className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
+      >
+        <Icons.trash className="w-4 h-4" />
+      </button>
+      {isCoverPhoto && (
+        <div className="absolute bottom-2 left-2 bg-blue-500 text-white px-2 py-1 rounded-md text-sm">
+          Cover Photo
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <Form
@@ -153,70 +227,90 @@ export default function Media({
       }}
     >
       <h2 className="text-lg font-medium my-4 text-blue-600">
-        Cover Photo (1 only)
+        Property Photos
       </h2>
-      <Upload
-        listType="picture-card"
-        fileList={coverPhotos.map((photo) => ({
-          ...photo,
-          uid: photo.uid || photo.url, // Ensure uid is present
-        }))}
-        maxCount={1}
-        onPreview={handlePreview}
-        onRemove={handleCoverPhotoRemove}
-        beforeUpload={(file: any) => {
-          if (coverPhotos.length < 1) {
-            setCoverPhotoLoading(true);
-            setCoverPhotos((prev) => [...prev, file]);
-            setCoverPhotoLoading(false);
-          } else {
-            toast.error("You can only upload 1 cover photo");
-          }
-          return false;
-        }}
-      >
-        {coverPhotoLoading ? <Spin /> : "Upload Cover Photo"}
-      </Upload>
 
-      <h2 className="text-lg font-medium my-4 text-blue-600">
-        Other Photos (max. 29 photos)
-      </h2>
-      <section className="flex flex-wrap gap-5 mb-5">
-        {finalValues.media.images.map((image: string) => (
-          <div
-            key={image}
-            className="flex flex-col gap-1 border border-dashed border-gray-400 p-2 rounded justify-center items-center"
+      <div className="mb-8 p-4 bg-gray-50 rounded-lg">
+        <h3 className="text-md font-medium mb-2">Cover Photo</h3>
+        <div className="flex items-center gap-4">
+          {coverPhoto && renderImagePreview(coverPhoto, -1, true)}
+          <Upload
+            listType="picture-card"
+            maxCount={1}
+            onPreview={handlePreview}
+            beforeUpload={(file) => {
+              handleCoverPhotoUpload(file);
+              return false;
+            }}
+            className="w-32 h-32"
           >
-            <Image
-              height={70}
-              width={70}
-              src={image}
-              alt=""
-              className="object-cover"
-            />
-            <span
-              className="text-red-500 underline text-sm cursor-pointer"
-              onClick={() => handleOtherPhotoRemove(image)}
-            >
-              Delete
-            </span>
-          </div>
-        ))}
-      </section>
+            {coverPhotoLoading ? (
+              <Spin />
+            ) : (
+              <div className="flex items-center flex-col">
+                {coverPhoto ? (
+                  <UploadIcon className="w-5 h-5 mb-1" />
+                ) : (
+                  <Plus className="w-5 h-5 mb-1" />
+                )}
+                <div>{coverPhoto ? "Change" : "Add"} Cover Photo</div>
+              </div>
+            )}
+          </Upload>
+        </div>
+      </div>
 
-      <Upload
-        listType="picture-card"
-        multiple
-        onPreview={handlePreview}
-        beforeUpload={(file: any) => {
-          setOtherPhotosLoading(true);
-          setTempFiles((prev) => [...new Set([...prev, file])]); // Prevent duplicates
-          setOtherPhotosLoading(false);
-          return false;
-        }}
-      >
-        {otherPhotosLoading ? <Spin /> : "Upload Property Photos"}
-      </Upload>
+      <div className="mb-8 p-4 bg-gray-50 rounded-lg">
+        <h3 className="text-md font-medium mb-2">
+          Other Photos (Max {MAX_OTHER_PHOTOS})
+        </h3>
+        <div
+          className={`flex flex-wrap gap-4 overflow-y-auto ${
+            showAllPhotos ? "max-h-[600px]" : "max-h-[300px]"
+          }`}
+        >
+          {imageUrls.map((image, index) => renderImagePreview(image, index))}
+          {imageUrls.length < MAX_OTHER_PHOTOS && (
+            <Upload
+              listType="picture-card"
+              multiple
+              onPreview={handlePreview}
+              beforeUpload={(file) => {
+                handleOtherPhotoUpload(file);
+                return false;
+              }}
+              className="w-32 h-32"
+            >
+              {otherPhotosLoading ? (
+                <Spin />
+              ) : (
+                <div className="flex flex-col items-center">
+                  <Plus className="w-5 h-5 mb-1" />
+                  <div>Add Photos</div>
+                </div>
+              )}
+            </Upload>
+          )}
+        </div>
+        <p className="text-sm text-gray-500 mt-2">
+          {imageUrls.length} / {MAX_OTHER_PHOTOS} photos uploaded
+        </p>
+        {imageUrls.length > INITIAL_PHOTO_DISPLAY && (
+          <Button
+            onClick={() => setShowAllPhotos(!showAllPhotos)}
+            className="mt-4"
+            icon={
+              showAllPhotos ? (
+                <ChevronUp className="w-4 h-4" />
+              ) : (
+                <ChevronDown className="w-4 h-4" />
+              )
+            }
+          >
+            {showAllPhotos ? "Show Less" : "Show More"}
+          </Button>
+        )}
+      </div>
 
       <Modal
         open={previewVisible}
@@ -224,7 +318,7 @@ export default function Media({
         footer={null}
         onCancel={handleCancel}
       >
-        <img alt="Cover Photo" style={{ width: "100%" }} src={previewImage} />
+        <img alt="Preview" style={{ width: "100%" }} src={previewImage} />
       </Modal>
 
       <h2 className="text-lg font-medium my-8 text-blue-600">
@@ -284,7 +378,9 @@ export default function Media({
         </Button>
         <button
           type="submit"
-          className="inline-block cursor-pointer items-center rounded-md bg-blue-300 hover:bg-blue-400 transition-colors px-5 py-2.5 text-center font-semibold text-white"
+          className={`inline-block cursor-pointer items-center rounded-md ${
+            hasUnsavedChanges ? "bg-blue-500" : "bg-blue-300"
+          } hover:bg-blue-400 transition-colors px-5 py-2.5 text-center font-semibold text-white`}
         >
           {loading ? (
             <>
@@ -301,7 +397,13 @@ export default function Media({
               )}
             </>
           ) : (
-            <>{isEdit ? "Save Edited Property" : "Save Property"}</>
+            <>
+              {isEdit
+                ? hasUnsavedChanges
+                  ? "Save Changes"
+                  : "Save Edited Property"
+                : "Save Property"}
+            </>
           )}
         </button>
       </div>
