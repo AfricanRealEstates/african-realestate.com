@@ -82,7 +82,7 @@ export default async function PropertiesTable({
     })
   );
 
-  const properties: Property[] = await prisma.property.findMany({
+  const properties = await prisma.property.findMany({
     orderBy: {
       updatedAt: "desc",
     },
