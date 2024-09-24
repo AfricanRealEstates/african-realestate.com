@@ -6,13 +6,11 @@ export async function GET(request: NextRequest) {
         const { searchParams } = new URL(request.url);
         const q = searchParams.get('q');
         const status = searchParams.get('status');
-        const minBedrooms = searchParams.get('minBedrooms');
-        const maxBedrooms = searchParams.get('maxBedrooms');
-        const minBathrooms = searchParams.get('minBathrooms');
-        const maxBathrooms = searchParams.get('maxBathrooms');
         const minPrice = searchParams.get('minPrice');
         const maxPrice = searchParams.get('maxPrice');
         const propertyType = searchParams.get('propertyType');
+        const propertyDetails = searchParams.get('propertyDetails');
+        const location = searchParams.get('location');
 
         const where: any = {};
 
@@ -28,16 +26,21 @@ export async function GET(request: NextRequest) {
         }
 
         if (status) {
-            where.status = { in: status.split(',') };
+            where.status = status;
         }
 
-        if (minBedrooms) where.bedrooms = { gte: parseInt(minBedrooms) };
-        if (maxBedrooms) where.bedrooms = { ...where.bedrooms, lte: parseInt(maxBedrooms) };
-        if (minBathrooms) where.bathrooms = { gte: parseInt(minBathrooms) };
-        if (maxBathrooms) where.bathrooms = { ...where.bathrooms, lte: parseInt(maxBathrooms) };
         if (minPrice) where.price = { gte: parseFloat(minPrice) };
         if (maxPrice) where.price = { ...where.price, lte: parseFloat(maxPrice) };
-        if (propertyType) where.propertyType = { in: propertyType.split(',') };
+        if (propertyType) where.propertyType = propertyType;
+        if (propertyDetails) where.propertyDetails = propertyDetails;
+
+        if (location) {
+            where.OR = [
+                { locality: { contains: location, mode: "insensitive" } },
+                { nearbyTown: { contains: location, mode: "insensitive" } },
+                { county: { contains: location, mode: "insensitive" } },
+            ];
+        }
 
         const properties = await prisma.property.findMany({
             where,

@@ -19,30 +19,27 @@ export async function generateMetadata({
 }
 
 interface AdvancedSearchParams {
-  minBedrooms?: number;
-  maxBedrooms?: number;
-  minBathrooms?: number;
-  maxBathrooms?: number;
   minPrice?: number;
   maxPrice?: number;
-  propertyType?: string[];
+  propertyType?: string;
+  propertyDetails?: string;
+  status?: string;
+  location?: string;
 }
 
 async function getSearchResults(
   query: string,
   sortBy: string,
   sortOrder: "asc" | "desc",
-  status: string,
   advancedParams: AdvancedSearchParams
 ) {
   const {
-    minBedrooms,
-    maxBedrooms,
-    minBathrooms,
-    maxBathrooms,
     minPrice,
     maxPrice,
     propertyType,
+    propertyDetails,
+    status,
+    location,
   } = advancedParams;
 
   const properties = await prisma.property.findMany({
@@ -57,14 +54,18 @@ async function getSearchResults(
       isActive: true,
       isAvailableForPurchase: true,
       ...(status ? { status: status } : {}),
-      ...(minBedrooms ? { bedrooms: { gte: minBedrooms } } : {}),
-      ...(maxBedrooms ? { bedrooms: { lte: maxBedrooms } } : {}),
-      ...(minBathrooms ? { bathrooms: { gte: minBathrooms } } : {}),
-      ...(maxBathrooms ? { bathrooms: { lte: maxBathrooms } } : {}),
       ...(minPrice ? { price: { gte: minPrice } } : {}),
       ...(maxPrice ? { price: { lte: maxPrice } } : {}),
-      ...(propertyType && propertyType.length > 0
-        ? { propertyType: { in: propertyType } }
+      ...(propertyType ? { propertyType: propertyType } : {}),
+      ...(propertyDetails ? { propertyDetails: propertyDetails } : {}),
+      ...(location
+        ? {
+            OR: [
+              { locality: { contains: location, mode: "insensitive" } },
+              { nearbyTown: { contains: location, mode: "insensitive" } },
+              { county: { contains: location, mode: "insensitive" } },
+            ],
+          }
         : {}),
     },
     include: {
@@ -86,49 +87,34 @@ export default async function SearchPage({
     sort: string;
     order: "asc" | "desc";
     status: string;
-    minBedrooms?: string;
-    maxBedrooms?: string;
-    minBathrooms?: string;
-    maxBathrooms?: string;
     minPrice?: string;
     maxPrice?: string;
     propertyType?: string;
+    propertyDetails?: string;
+    location?: string;
   };
 }) {
   const query = searchParams.q || "";
   const sortBy = searchParams.sort || "createdAt";
   const sortOrder = searchParams.order || "desc";
-  const status = searchParams.status || "";
 
   const advancedParams: AdvancedSearchParams = {
-    minBedrooms: searchParams.minBedrooms
-      ? parseInt(searchParams.minBedrooms)
-      : undefined,
-    maxBedrooms: searchParams.maxBedrooms
-      ? parseInt(searchParams.maxBedrooms)
-      : undefined,
-    minBathrooms: searchParams.minBathrooms
-      ? parseInt(searchParams.minBathrooms)
-      : undefined,
-    maxBathrooms: searchParams.maxBathrooms
-      ? parseInt(searchParams.maxBathrooms)
-      : undefined,
     minPrice: searchParams.minPrice
       ? parseInt(searchParams.minPrice)
       : undefined,
     maxPrice: searchParams.maxPrice
       ? parseInt(searchParams.maxPrice)
       : undefined,
-    propertyType: searchParams.propertyType
-      ? searchParams.propertyType.split(",")
-      : undefined,
+    propertyType: searchParams.propertyType,
+    propertyDetails: searchParams.propertyDetails,
+    status: searchParams.status,
+    location: searchParams.location,
   };
 
   const searchResults = await getSearchResults(
     query,
     sortBy,
     sortOrder,
-    status,
     advancedParams
   );
 
@@ -166,7 +152,7 @@ export default async function SearchPage({
           <SortingOptions
             currentSort={sortBy}
             currentOrder={sortOrder}
-            currentStatus={status}
+            currentStatus={advancedParams.status || ""}
             isActive={searchResults.length > 0}
           />
         </div>

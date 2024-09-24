@@ -15,8 +15,15 @@ import {
   SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { properyTypes } from "@/constants";
 
 async function searchProperties(
   query: string,
@@ -25,11 +32,7 @@ async function searchProperties(
   const params = new URLSearchParams(query ? { q: query } : {});
   Object.entries(advancedParams).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
-      if (Array.isArray(value)) {
-        params.append(key, value.join(","));
-      } else {
-        params.append(key, value.toString());
-      }
+      params.append(key, value.toString());
     }
   });
   try {
@@ -46,14 +49,12 @@ async function searchProperties(
 }
 
 interface AdvancedSearchParams {
-  status?: string[];
-  minBedrooms?: number;
-  maxBedrooms?: number;
-  minBathrooms?: number;
-  maxBathrooms?: number;
+  status?: string;
   minPrice?: number;
   maxPrice?: number;
-  propertyType?: string[];
+  propertyType?: string;
+  propertyDetails?: string;
+  location?: string;
 }
 
 function AdvancedSearch({
@@ -64,6 +65,9 @@ function AdvancedSearch({
   initialParams: AdvancedSearchParams;
 }) {
   const [params, setParams] = useState<AdvancedSearchParams>(initialParams);
+  const [selectedPropertyType, setSelectedPropertyType] = useState<
+    string | undefined
+  >(initialParams.propertyType);
 
   const handleChange = (key: keyof AdvancedSearchParams, value: any) => {
     setParams((prev) => ({ ...prev, [key]: value }));
@@ -73,11 +77,16 @@ function AdvancedSearch({
     onSearch(params);
   };
 
+  const getPropertyDetails = (propertyType: string) => {
+    const selectedType = properyTypes.find(
+      (type) => type.value === propertyType
+    );
+    return selectedType ? selectedType.subOptions : [];
+  };
+
   return (
     <Sheet>
       <SheetTrigger asChild>
-        {/* <Button variant="outline" size="icon">
-        </Button> */}
         <SlidersHorizontal className="h-4 w-4" />
       </SheetTrigger>
       <SheetContent>
@@ -89,98 +98,33 @@ function AdvancedSearch({
         </SheetHeader>
         <div className="grid gap-4 py-4">
           <div className="space-y-2">
+            <Label>Location</Label>
+            <Input
+              type="text"
+              placeholder="City, County, or Nearby Town"
+              value={params.location || ""}
+              onChange={(e) => handleChange("location", e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
             <Label>Status</Label>
-            <div className="flex space-x-4">
-              <Checkbox
-                id="sale"
-                checked={params.status?.includes("sale")}
-                onCheckedChange={(checked) => {
-                  const newStatus = params.status || [];
-                  if (checked) {
-                    handleChange("status", [...newStatus, "sale"]);
-                  } else {
-                    handleChange(
-                      "status",
-                      newStatus.filter((s) => s !== "sale")
-                    );
-                  }
-                }}
-              />
-              <Label htmlFor="sale">For Sale</Label>
-              <Checkbox
-                id="let"
-                checked={params.status?.includes("let")}
-                onCheckedChange={(checked) => {
-                  const newStatus = params.status || [];
-                  if (checked) {
-                    handleChange("status", [...newStatus, "let"]);
-                  } else {
-                    handleChange(
-                      "status",
-                      newStatus.filter((s) => s !== "let")
-                    );
-                  }
-                }}
-              />
-              <Label htmlFor="let">For Let</Label>
-            </div>
+            <Select
+              value={params.status}
+              onValueChange={(value) => handleChange("status", value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="sale">For Sale</SelectItem>
+                <SelectItem value="let">To Let</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div className="space-y-2">
-            <Label>Bedrooms</Label>
-            <div className="flex space-x-2">
-              <Input
-                type="number"
-                placeholder="Min"
-                value={params.minBedrooms || ""}
-                onChange={(e) =>
-                  handleChange(
-                    "minBedrooms",
-                    e.target.value ? parseInt(e.target.value) : undefined
-                  )
-                }
-              />
-              <Input
-                type="number"
-                placeholder="Max"
-                value={params.maxBedrooms || ""}
-                onChange={(e) =>
-                  handleChange(
-                    "maxBedrooms",
-                    e.target.value ? parseInt(e.target.value) : undefined
-                  )
-                }
-              />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label>Bathrooms</Label>
-            <div className="flex space-x-2">
-              <Input
-                type="number"
-                placeholder="Min"
-                value={params.minBathrooms || ""}
-                onChange={(e) =>
-                  handleChange(
-                    "minBathrooms",
-                    e.target.value ? parseInt(e.target.value) : undefined
-                  )
-                }
-              />
-              <Input
-                type="number"
-                placeholder="Max"
-                value={params.maxBathrooms || ""}
-                onChange={(e) =>
-                  handleChange(
-                    "maxBathrooms",
-                    e.target.value ? parseInt(e.target.value) : undefined
-                  )
-                }
-              />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label>Price Range</Label>
+            <Label>
+              {params.status === "let" ? "Rent Range" : "Price Range"}
+            </Label>
             <div className="flex space-x-2">
               <Input
                 type="number"
@@ -206,6 +150,50 @@ function AdvancedSearch({
               />
             </div>
           </div>
+          <div className="space-y-2">
+            <Label>Property Type</Label>
+            <Select
+              value={selectedPropertyType}
+              onValueChange={(value) => {
+                setSelectedPropertyType(value);
+                handleChange("propertyType", value);
+                handleChange("propertyDetails", undefined);
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select property type" />
+              </SelectTrigger>
+              <SelectContent>
+                {properyTypes.map((type) => (
+                  <SelectItem key={type.value} value={type.value}>
+                    {type.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          {selectedPropertyType && (
+            <div className="space-y-2">
+              <Label>Property Details</Label>
+              <Select
+                value={params.propertyDetails}
+                onValueChange={(value) =>
+                  handleChange("propertyDetails", value)
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select property details" />
+                </SelectTrigger>
+                <SelectContent>
+                  {getPropertyDetails(selectedPropertyType).map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           <SheetClose asChild>
             <Button
               onClick={handleApplyFilters}
@@ -266,10 +254,7 @@ export default function SearchBar() {
         const params = new URLSearchParams(searchTerm ? { q: searchTerm } : {});
         Object.entries(advancedParams).forEach(([key, value]) => {
           if (value !== undefined && value !== null) {
-            params.append(
-              key,
-              Array.isArray(value) ? value.join(",") : value.toString()
-            );
+            params.append(key, value.toString());
           }
         });
         await router.push(`/search?${params.toString()}`);
@@ -291,10 +276,7 @@ export default function SearchBar() {
     const searchParams = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
-        searchParams.append(
-          key,
-          Array.isArray(value) ? value.join(",") : value.toString()
-        );
+        searchParams.append(key, value.toString());
       }
     });
     router.push(`/search?${searchParams.toString()}`);
@@ -337,23 +319,6 @@ export default function SearchBar() {
                 initialParams={advancedParams}
               />
             </button>
-            {/* <Sheet>
-              <SheetTrigger asChild>
-                <button
-                  type="button"
-                  className="text-gray-400 hover:text-gray-600"
-                  aria-label="Advanced search"
-                >
-                  <SlidersHorizontal className="h-4 w-4" />
-                </button>
-              </SheetTrigger>
-              <SheetContent>
-                <AdvancedSearch
-                  onSearch={handleAdvancedSearch}
-                  initialParams={advancedParams}
-                />
-              </SheetContent>
-            </Sheet> */}
           </div>
         </div>
       </div>
