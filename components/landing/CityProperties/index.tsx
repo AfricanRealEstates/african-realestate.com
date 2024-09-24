@@ -14,7 +14,7 @@ async function getPropertiesByNearbyTown() {
         id: "desc", // Order by town with the most properties
       },
     },
-    take: 10, // Limit to top 7 towns
+    take: 20, // Limit to top 20 towns
   });
 
   const properties = await Promise.all(
