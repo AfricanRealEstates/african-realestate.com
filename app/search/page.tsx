@@ -9,12 +9,108 @@ import { Badge } from "@/components/ui/badge";
 export async function generateMetadata({
   searchParams,
 }: {
-  searchParams: { q?: string };
+  searchParams: {
+    q?: string;
+    status?: string;
+    propertyType?: string;
+    propertyDetails?: string;
+    location?: string;
+    minPrice?: string;
+    maxPrice?: string;
+  };
 }): Promise<Metadata> {
-  const query = searchParams.q || "properties";
+  const query = searchParams.q || "";
+  const status = searchParams.status || "";
+  const propertyType = searchParams.propertyType || "";
+  const propertyDetails = searchParams.propertyDetails || "";
+  const location = searchParams.location || "";
+  const minPrice = searchParams.minPrice || "";
+  const maxPrice = searchParams.maxPrice || "";
+
+  let title = "Property Search";
+  let description = "Find your perfect property in Africa.";
+
+  if (query) {
+    title = `${query} - Property Search Results`;
+    description += ` Showing results for "${query}".`;
+  }
+
+  if (status) {
+    title += ` | ${status === "sale" ? "For Sale" : "For Rent"}`;
+    description += ` Properties ${
+      status === "sale" ? "for sale" : "for rent"
+    }.`;
+  }
+
+  if (propertyType) {
+    title += ` | ${propertyType}`;
+    description += ` ${propertyType} properties available.`;
+  }
+
+  if (location) {
+    title += ` in ${location}`;
+    description += ` Located in ${location}.`;
+  }
+
+  if (minPrice || maxPrice) {
+    const priceRange =
+      minPrice && maxPrice
+        ? `${minPrice} - ${maxPrice}`
+        : minPrice
+        ? `from ${minPrice}`
+        : `up to ${maxPrice}`;
+    description += ` Price range: ${priceRange}.`;
+  }
+
+  // Fetch the first property to use its image in OpenGraph metadata
+  const firstProperty = await prisma.property.findFirst({
+    where: {
+      OR: [
+        { title: { contains: query, mode: "insensitive" } },
+        { description: { contains: query, mode: "insensitive" } },
+        { county: { contains: query, mode: "insensitive" } },
+        { nearbyTown: { contains: query, mode: "insensitive" } },
+        { user: { name: { contains: query, mode: "insensitive" } } },
+      ],
+      isActive: true,
+      isAvailableForPurchase: true,
+      ...(status ? { status: status } : {}),
+      ...(propertyType ? { propertyType: propertyType } : {}),
+      ...(propertyDetails ? { propertyDetails: propertyDetails } : {}),
+      ...(location
+        ? {
+            OR: [
+              { locality: { contains: location, mode: "insensitive" } },
+              { nearbyTown: { contains: location, mode: "insensitive" } },
+              { county: { contains: location, mode: "insensitive" } },
+            ],
+          }
+        : {}),
+    },
+    select: {
+      coverPhotos: true,
+      title: true,
+    },
+  });
+
   return {
-    title: `Search Results for "${query}" | African Real Estate`,
-    description: `Find your perfect property in Africa. Showing results for "${query}".`,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: firstProperty?.coverPhotos[0]
+        ? [{ url: firstProperty.coverPhotos[0], alt: firstProperty.title }]
+        : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: firstProperty?.coverPhotos[0]
+        ? [firstProperty.coverPhotos[0]]
+        : [],
+    },
   };
 }
 

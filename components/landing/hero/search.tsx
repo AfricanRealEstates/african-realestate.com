@@ -68,6 +68,12 @@ function AdvancedSearch({
   const [selectedPropertyType, setSelectedPropertyType] = useState<
     string | undefined
   >(initialParams.propertyType);
+  const [minPriceInput, setMinPriceInput] = useState(
+    initialParams.minPrice?.toString() || ""
+  );
+  const [maxPriceInput, setMaxPriceInput] = useState(
+    initialParams.maxPrice?.toString() || ""
+  );
 
   const handleChange = (key: keyof AdvancedSearchParams, value: any) => {
     setParams((prev) => ({ ...prev, [key]: value }));
@@ -82,6 +88,25 @@ function AdvancedSearch({
       (type) => type.value === propertyType
     );
     return selectedType ? selectedType.subOptions : [];
+  };
+
+  const formatPrice = (price: string) => {
+    const numericPrice = parseFloat(price.replace(/,/g, ""));
+    if (isNaN(numericPrice)) return "";
+    return new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(
+      numericPrice
+    );
+  };
+
+  const handlePriceChange = (type: "minPrice" | "maxPrice", value: string) => {
+    const numericValue = parseFloat(value.replace(/,/g, ""));
+    if (type === "minPrice") {
+      setMinPriceInput(value);
+      handleChange("minPrice", isNaN(numericValue) ? undefined : numericValue);
+    } else {
+      setMaxPriceInput(value);
+      handleChange("maxPrice", isNaN(numericValue) ? undefined : numericValue);
+    }
   };
 
   return (
@@ -126,28 +151,32 @@ function AdvancedSearch({
               {params.status === "let" ? "Rent Range" : "Price Range"}
             </Label>
             <div className="flex space-x-2">
-              <Input
-                type="number"
-                placeholder="Min"
-                value={params.minPrice || ""}
-                onChange={(e) =>
-                  handleChange(
-                    "minPrice",
-                    e.target.value ? parseInt(e.target.value) : undefined
-                  )
-                }
-              />
-              <Input
-                type="number"
-                placeholder="Max"
-                value={params.maxPrice || ""}
-                onChange={(e) =>
-                  handleChange(
-                    "maxPrice",
-                    e.target.value ? parseInt(e.target.value) : undefined
-                  )
-                }
-              />
+              <div className="flex-1">
+                <Input
+                  type="text"
+                  placeholder="Min"
+                  value={minPriceInput}
+                  onChange={(e) =>
+                    handlePriceChange("minPrice", e.target.value)
+                  }
+                />
+                <span className="text-sm text-gray-500 mt-1 block">
+                  {formatPrice(minPriceInput)}
+                </span>
+              </div>
+              <div className="flex-1">
+                <Input
+                  type="text"
+                  placeholder="Max"
+                  value={maxPriceInput}
+                  onChange={(e) =>
+                    handlePriceChange("maxPrice", e.target.value)
+                  }
+                />
+                <span className="text-sm text-gray-500 mt-1 block">
+                  {formatPrice(maxPriceInput)}
+                </span>
+              </div>
             </div>
           </div>
           <div className="space-y-2">
