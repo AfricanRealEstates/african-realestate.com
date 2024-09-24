@@ -59,10 +59,8 @@ export default function BasicInfo({
       : [];
     setPropertyDetailsOptions(subOptions);
 
-    // Enable/Disable propertyDetails based on propertyType
     setPropertyDetailsDisabled(propertyType === "" || subOptions.length === 0);
 
-    // Change appliances options based on property type
     if (propertyType === "Commercial") {
       setAppliancesOptions(commercialAppliances);
     } else if (propertyType === "Industrial") {
@@ -111,6 +109,16 @@ export default function BasicInfo({
         ? "Discounted Rent"
         : "Discounted Price";
     }
+  };
+
+  const formatPrice = (value: number | string | undefined): string => {
+    if (value === undefined || value === "") return "";
+    const numericValue =
+      typeof value === "string" ? parseFloat(value.replace(/,/g, "")) : value;
+    if (isNaN(numericValue)) return "";
+    return new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(
+      numericValue
+    );
   };
 
   return (
@@ -483,7 +491,12 @@ export default function BasicInfo({
           ]}
           className=""
         >
-          <InputNumber className="w-full" type="number" placeholder="Price" />
+          <InputNumber
+            className="w-full"
+            formatter={(value) => formatPrice(value)}
+            parser={(value) => value!.replace(/\$\s?|(,*)/g, "")}
+            placeholder="Price"
+          />
         </Form.Item>
 
         <Form.Item
@@ -509,7 +522,8 @@ export default function BasicInfo({
         >
           <InputNumber
             className="w-full"
-            type="number"
+            formatter={(value) => formatPrice(value)}
+            parser={(value) => value!.replace(/\$\s?|(,*)/g, "")}
             placeholder="Least price"
           />
         </Form.Item>
@@ -521,7 +535,8 @@ export default function BasicInfo({
         >
           <InputNumber
             className="w-full"
-            type="number"
+            formatter={(value) => formatPrice(value)}
+            parser={(value) => value!.replace(/\$\s?|(,*)/g, "")}
             placeholder="Service charge"
           />
         </Form.Item>
