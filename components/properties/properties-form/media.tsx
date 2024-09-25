@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { PropertiesFormStepProps } from "./index";
-import { Button, Form, Input, Modal, Upload, Spin, Checkbox } from "antd";
+import { Button, Form, Input, Modal, Upload, Progress, Checkbox } from "antd";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import {
@@ -18,10 +18,16 @@ import {
   Upload as UploadIcon,
   ChevronDown,
   ChevronUp,
+  X,
 } from "lucide-react";
 
 const MAX_OTHER_PHOTOS = 29;
-const INITIAL_PHOTO_DISPLAY = 8;
+const INITIAL_PHOTO_DISPLAY = 10;
+
+interface UploadingFile {
+  file: File;
+  progress: number;
+}
 
 export default function Media({
   currentStep,
@@ -39,9 +45,12 @@ export default function Media({
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
   const [coverPhotoLoading, setCoverPhotoLoading] = useState(false);
-  const [otherPhotosLoading, setOtherPhotosLoading] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [showAllPhotos, setShowAllPhotos] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
+  const [uploadQueue, setUploadQueue] = useState<File[]>([]);
+  const [imageHashes, setImageHashes] = useState<Set<string>>(new Set());
 
   const { id }: any = useParams();
   const router = useRouter();
@@ -116,6 +125,34 @@ export default function Media({
       reader.onerror = (error) => reject(error);
     });
 
+  const calculateImageHash = async (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const buffer = event.target?.result as ArrayBuffer;
+        const uint8Array = new Uint8Array(buffer);
+        let hash = 0;
+        for (let i = 0; i < uint8Array.length; i++) {
+          const byte = uint8Array[i];
+          hash = (hash << 5) - hash + byte;
+          hash = hash & hash; // Convert to 32-bit integer
+        }
+        resolve(hash.toString(16));
+      };
+      reader.onerror = (error) => reject(error);
+      reader.readAsArrayBuffer(file);
+    });
+  };
+
+  const isImageDuplicate = async (file: File): Promise<boolean> => {
+    const hash = await calculateImageHash(file);
+    if (imageHashes.has(hash)) {
+      return true;
+    }
+    setImageHashes((prev) => new Set(prev).add(hash));
+    return false;
+  };
+
   const handleCoverPhotoRemove = (event: React.MouseEvent) => {
     event.preventDefault();
     setCoverPhoto(null);
@@ -136,37 +173,44 @@ export default function Media({
     setHasUnsavedChanges(true);
   };
 
-  const handleCoverPhotoUpload = async (file: File) => {
+  const uploadFile = useCallback(async (file: File) => {
+    setIsUploading(true);
+    setUploadingFiles((prev) => [...prev, { file, progress: 0 }]);
+
     try {
-      setCoverPhotoLoading(true);
-      const url = await uploadSingleFileToFirebase(file);
-
-      setImageUrls((prevUrls) => prevUrls.filter((img) => img !== url));
-
-      setCoverPhoto(url);
-      setFinalValues({
-        ...finalValues,
-        media: {
-          ...finalValues.media,
-          coverPhotos: [url],
-        },
+      const url = await uploadSingleFileToFirebase(file, (progress) => {
+        setUploadingFiles((prev) =>
+          prev.map((f) => (f.file === file ? { ...f, progress } : f))
+        );
       });
-      setHasUnsavedChanges(true);
-    } catch (error) {
-      toast.error("Failed to upload cover photo");
-    } finally {
-      setCoverPhotoLoading(false);
-    }
-  };
 
-  const handleOtherPhotoUpload = async (file: File) => {
-    try {
-      if (imageUrls.length >= MAX_OTHER_PHOTOS) {
-        toast.info(`Maximum ${MAX_OTHER_PHOTOS} other photos allowed`);
-        return;
-      }
-      setOtherPhotosLoading(true);
-      const url = await uploadSingleFileToFirebase(file);
+      setUploadingFiles((prev) => prev.filter((f) => f.file !== file));
+      return url;
+    } catch (error) {
+      console.error("Failed to upload file:", error);
+      toast.error(`Failed to upload ${file.name}`);
+      setUploadingFiles((prev) => prev.filter((f) => f.file !== file));
+      return null;
+    } finally {
+      setIsUploading(false);
+    }
+  }, []);
+
+  const processUploadQueue = useCallback(async () => {
+    if (uploadQueue.length === 0) return;
+
+    const file = uploadQueue[0];
+    const isDuplicate = await isImageDuplicate(file);
+
+    if (isDuplicate) {
+      toast.info(`Duplicate image detected: ${file.name}. Skipping upload.`);
+      setUploadQueue((prev) => prev.slice(1));
+      return;
+    }
+
+    const url = await uploadFile(file);
+
+    if (url) {
       if (!imageUrls.includes(url) && coverPhoto !== url) {
         setImageUrls((prev) => [...prev, url].slice(0, MAX_OTHER_PHOTOS));
         setUploadedFiles((prev) => [...prev, file].slice(0, MAX_OTHER_PHOTOS));
@@ -176,11 +220,54 @@ export default function Media({
       } else {
         toast.info("This image has already been uploaded");
       }
-    } catch (error) {
-      toast.error("Failed to upload photo");
-    } finally {
-      setOtherPhotosLoading(false);
     }
+
+    setUploadQueue((prev) => prev.slice(1));
+  }, [uploadQueue, uploadFile, imageUrls, coverPhoto, isImageDuplicate]);
+
+  useEffect(() => {
+    processUploadQueue();
+  }, [uploadQueue, processUploadQueue]);
+
+  const handleCoverPhotoUpload = async (file: File) => {
+    const isDuplicate = await isImageDuplicate(file);
+    if (isDuplicate) {
+      toast.info(
+        `Duplicate image detected. Please choose a different cover photo.`
+      );
+      return;
+    }
+
+    setCoverPhotoLoading(true);
+    const url = await uploadFile(file);
+    if (url) {
+      setImageUrls((prevUrls) => prevUrls.filter((img) => img !== url));
+      setCoverPhoto(url);
+      setFinalValues({
+        ...finalValues,
+        media: {
+          ...finalValues.media,
+          coverPhotos: [url],
+        },
+      });
+      setHasUnsavedChanges(true);
+    }
+    setCoverPhotoLoading(false);
+  };
+
+  const handleOtherPhotoUpload = async (file: File) => {
+    if (imageUrls.length >= MAX_OTHER_PHOTOS) {
+      toast.info(`Maximum ${MAX_OTHER_PHOTOS} other photos allowed`);
+      return;
+    }
+
+    const isDuplicate = await isImageDuplicate(file);
+    if (isDuplicate) {
+      toast.info(`Duplicate image detected: ${file.name}. Skipping upload.`);
+      return;
+    }
+
+    setUploadQueue((prev) => [...prev, file]);
   };
 
   const renderImagePreview = (
@@ -206,7 +293,7 @@ export default function Media({
         }
         className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
       >
-        <Icons.trash className="w-4 h-4" />
+        <X className="w-4 h-4" />
       </button>
       {isCoverPhoto && (
         <div className="absolute bottom-2 left-2 bg-blue-500 text-white px-2 py-1 rounded-md text-sm">
@@ -215,6 +302,28 @@ export default function Media({
       )}
     </div>
   );
+
+  const renderUploadingFile = (file: UploadingFile) => (
+    <div
+      key={file.file.name}
+      className="relative w-32 h-32 mb-4 border border-gray-300 rounded-lg overflow-hidden bg-gray-100"
+    >
+      <div className="absolute inset-0 flex items-center justify-center">
+        <Progress
+          type="circle"
+          percent={Math.round(file.progress)}
+          width={60}
+          format={(percent) => `${percent}%`}
+        />
+      </div>
+      <div className="absolute bottom-2 left-2 right-2 text-xs text-center text-gray-600 truncate">
+        {file.file.name}
+      </div>
+    </div>
+  );
+
+  const isSubmitDisabled =
+    isUploading || loading || !hasUnsavedChanges || uploadingFiles.length > 0;
 
   return (
     <Form
@@ -245,7 +354,7 @@ export default function Media({
             className="w-32 h-32"
           >
             {coverPhotoLoading ? (
-              <Spin />
+              <Progress type="circle" percent={99} width={60} />
             ) : (
               <div className="flex items-center flex-col">
                 {coverPhoto ? (
@@ -270,7 +379,8 @@ export default function Media({
           }`}
         >
           {imageUrls.map((image, index) => renderImagePreview(image, index))}
-          {imageUrls.length < MAX_OTHER_PHOTOS && (
+          {uploadingFiles.map(renderUploadingFile)}
+          {imageUrls.length + uploadingFiles.length < MAX_OTHER_PHOTOS && (
             <Upload
               listType="picture-card"
               multiple
@@ -281,19 +391,16 @@ export default function Media({
               }}
               className="w-32 h-32"
             >
-              {otherPhotosLoading ? (
-                <Spin />
-              ) : (
-                <div className="flex flex-col items-center">
-                  <Plus className="w-5 h-5 mb-1" />
-                  <div>Add Photos</div>
-                </div>
-              )}
+              <div className="flex flex-col items-center">
+                <Plus className="w-5 h-5 mb-1" />
+                <div>Add Photos</div>
+              </div>
             </Upload>
           )}
         </div>
         <p className="text-sm text-gray-500 mt-2">
           {imageUrls.length} / {MAX_OTHER_PHOTOS} photos uploaded
+          {uploadingFiles.length > 0 && ` (${uploadingFiles.length} uploading)`}
         </p>
         {imageUrls.length > INITIAL_PHOTO_DISPLAY && (
           <Button
@@ -378,9 +485,10 @@ export default function Media({
         </Button>
         <button
           type="submit"
+          disabled={isSubmitDisabled}
           className={`inline-block cursor-pointer items-center rounded-md ${
-            hasUnsavedChanges ? "bg-blue-500" : "bg-blue-300"
-          } hover:bg-blue-400 transition-colors px-5 py-2.5 text-center font-semibold text-white`}
+            isSubmitDisabled ? "bg-blue-300" : "bg-blue-500 hover:bg-blue-400"
+          } transition-colors px-5 py-2.5 text-center font-semibold text-white`}
         >
           {loading ? (
             <>

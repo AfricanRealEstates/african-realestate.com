@@ -1,5 +1,5 @@
 import firebaseApp from "../firebase";
-import { getDownloadURL, getStorage, ref, uploadBytes, deleteObject } from "firebase/storage";
+import { getDownloadURL, getStorage, ref, uploadBytes, deleteObject, uploadBytesResumable } from "firebase/storage";
 import heic2any from "heic2any";
 
 const convertHEICToJPG = async (file: File): Promise<File> => {
@@ -56,7 +56,10 @@ export const uploadFilesToFirebase = async (files: File[]) => {
   }
 };
 
-export const uploadSingleFileToFirebase = async (file: File) => {
+export const uploadSingleFileToFirebase = async (
+  file: File,
+  onProgress?: (progress: number) => void
+) => {
   try {
     const storage = getStorage(firebaseApp);
 
@@ -64,10 +67,28 @@ export const uploadSingleFileToFirebase = async (file: File) => {
     const convertedFile = await convertHEICToJPG(file);
 
     const storageRef = ref(storage, `/images/${convertedFile.name}`);
-    const snapshot = await uploadBytes(storageRef, convertedFile);
-    const downloadURL = await getDownloadURL(snapshot.ref);
 
-    return downloadURL;
+    // Use uploadBytesResumable instead of uploadBytes to track progress
+    const uploadTask = uploadBytesResumable(storageRef, convertedFile);
+
+    return new Promise<string>((resolve, reject) => {
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          if (onProgress) {
+            onProgress(progress);
+          }
+        },
+        (error) => {
+          reject(error);
+        },
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          resolve(downloadURL);
+        }
+      );
+    });
   } catch (error: any) {
     throw new Error(error);
   }
