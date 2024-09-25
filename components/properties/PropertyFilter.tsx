@@ -30,6 +30,7 @@ import { X } from "lucide-react";
 import { properyTypes } from "../../constants/index";
 
 const filterSchema = z.object({
+  status: z.string().optional(),
   propertyType: z.string().optional(),
   propertyDetails: z.string().optional(),
   county: z.string().optional(),
@@ -43,7 +44,7 @@ type FilterValues = z.infer<typeof filterSchema>;
 export default function PropertyFilter({
   pageType = "buy",
 }: {
-  pageType?: "buy" | "let";
+  pageType?: "buy" | "let" | "search";
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -55,6 +56,7 @@ export default function PropertyFilter({
     useForm<FilterValues>({
       resolver: zodResolver(filterSchema),
       defaultValues: {
+        status: searchParams.get("status") || undefined,
         propertyType: searchParams.get("propertyType") || "",
         propertyDetails: searchParams.get("propertyDetails") || "",
         county: searchParams.get("county") || "",
@@ -123,7 +125,7 @@ export default function PropertyFilter({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 mt-2">
         {Object.entries(activeFilters).map(([key, value]) => {
           if (value) {
             return (
@@ -161,6 +163,27 @@ export default function PropertyFilter({
             </SheetDescription>
           </SheetHeader>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-4">
+            <div>
+              <Label htmlFor="status">Status</Label>
+              <Controller
+                name="status"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value || ""}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="sale">For Sale</SelectItem>
+                      <SelectItem value="let">To Let</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
             <div>
               <Label htmlFor="propertyType">Property Type</Label>
               <Controller
@@ -252,7 +275,7 @@ export default function PropertyFilter({
                   />
                 )}
               />
-              <span className="text-sm text-gray-500 mt-1 block">
+              <span className="text-xs text-green-600 bg-green-50 focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
                 {formatPrice(watchMinPrice || "")}
               </span>
             </div>
@@ -272,7 +295,7 @@ export default function PropertyFilter({
                   />
                 )}
               />
-              <span className="text-sm text-gray-500 mt-1 block">
+              <span className="text-xs text-green-600 bg-green-50 focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
                 {formatPrice(watchMaxPrice || "")}
               </span>
             </div>

@@ -160,7 +160,7 @@ function AdvancedSearch({
                     handlePriceChange("minPrice", e.target.value)
                   }
                 />
-                <span className="text-sm text-gray-500 mt-1 block">
+                <span className="text-xs text-green-600 bg-green-50 focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
                   {formatPrice(minPriceInput)}
                 </span>
               </div>
@@ -173,9 +173,12 @@ function AdvancedSearch({
                     handlePriceChange("maxPrice", e.target.value)
                   }
                 />
-                <span className="text-sm text-gray-500 mt-1 block">
+
+                <span className="text-xs text-green-600 bg-green-50 focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
                   {formatPrice(maxPriceInput)}
                 </span>
+
+                {/* <span className="text-sm text-gray-500 mt-1 block"></span> */}
               </div>
             </div>
           </div>
@@ -316,84 +319,86 @@ export default function SearchBar() {
       onSubmit={handleSearch}
       className="flex w-full max-w-3xl mx-auto items-center space-x-2 relative ml-10"
     >
-      <div className="relative w-full max-w-md">
-        <div className="relative">
-          <Input
-            type="text"
-            placeholder="Search properties..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="bg-white pr-20 pl-10"
-            aria-label="Search properties"
-          />
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-1">
-            {searchTerm && (
+      <div className="relative w-full">
+        <div className="flex">
+          <div className="relative flex-grow">
+            <Input
+              type="text"
+              placeholder="Search properties..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="bg-white pr-20 pl-10 w-full"
+              aria-label="Search properties"
+            />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-1">
+              {searchTerm && (
+                <button
+                  type="button"
+                  onClick={handleClear}
+                  className="text-gray-400 hover:text-gray-600"
+                  aria-label="Clear search"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
               <button
                 type="button"
-                onClick={handleClear}
                 className="text-gray-400 hover:text-gray-600"
-                aria-label="Clear search"
+                aria-label="Advanced search"
               >
-                <X className="h-4 w-4" />
+                <AdvancedSearch
+                  onSearch={handleAdvancedSearch}
+                  initialParams={advancedParams}
+                />
               </button>
-            )}
-            <button
-              type="button"
-              className="text-gray-400 hover:text-gray-600"
-              aria-label="Advanced search"
-            >
-              <AdvancedSearch
-                onSearch={handleAdvancedSearch}
-                initialParams={advancedParams}
-              />
-            </button>
+            </div>
           </div>
+          <Button
+            type="submit"
+            disabled={
+              isSubmitting ||
+              (searchTerm.trim().length < 3 &&
+                Object.keys(advancedParams).length === 0)
+            }
+            className="min-w-[80px] bg-blue-400 text-white hover:bg-blue-500 transition-all ml-2"
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <span className="sr-only">Searching...</span>
+              </>
+            ) : (
+              "Search"
+            )}
+          </Button>
         </div>
-      </div>
-      <Button
-        type="submit"
-        disabled={
-          isSubmitting ||
-          (searchTerm.trim().length < 3 &&
-            Object.keys(advancedParams).length === 0)
-        }
-        className="min-w-[80px] bg-blue-400 text-white hover:bg-blue-500 transition-all"
-      >
-        {isSubmitting ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            <span className="sr-only">Searching...</span>
-          </>
-        ) : (
-          "Search"
+        {isLoading && (
+          <div
+            className="absolute left-0 right-0 bg-white p-2 shadow-md rounded-b-md mt-2"
+            aria-live="polite"
+          >
+            Loading...
+          </div>
         )}
-      </Button>
-      {isLoading && (
-        <div
-          className="absolute top-full left-0 right-0 bg-white p-2 shadow-md rounded-b-md"
-          aria-live="polite"
-        >
-          Loading...
-        </div>
-      )}
-      {error && (
-        <div
-          className="absolute top-full left-0 right-0 bg-red-100 text-red-800 p-2 shadow-md rounded-b-md"
-          aria-live="assertive"
-        >
-          {error}
-        </div>
-      )}
-      {results && !isLoading && (
-        <div
-          className="absolute top-full left-0 right-0 bg-white p-2 shadow-md rounded-b-md mt-2"
-          aria-live="polite"
-        >
-          {results.count}{" "}
-          {results.count === 1 ? "property matches" : "properties match"}
-        </div>
-      )}
+        {error && (
+          <div
+            className="absolute left-0 right-0 bg-red-100 text-red-800 p-2 shadow-md rounded-b-md mt-2"
+            aria-live="assertive"
+          >
+            {error}
+          </div>
+        )}
+        {results && !isLoading && (
+          <div
+            className="absolute left-0 right-0 bg-white p-2 shadow-md rounded-b-md mt-2"
+            aria-live="polite"
+          >
+            {results.count}{" "}
+            {results.count === 1 ? "property matches" : "properties match"}
+          </div>
+        )}
+      </div>
     </form>
   );
 }

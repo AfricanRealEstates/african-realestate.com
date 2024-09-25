@@ -5,6 +5,7 @@ import PropertyCard from "@/components/properties/new/PropertyCard";
 import { PropertyData } from "@/lib/types";
 import SortingOptions from "./SortingOptions";
 import { Badge } from "@/components/ui/badge";
+import PropertyFilter from "@/components/properties/PropertyFilter";
 
 export async function generateMetadata({
   searchParams,
@@ -233,7 +234,7 @@ export default async function SearchPage({
             matched result
             {searchResults.length !== 1 ? "s" : ""}
           </p>
-          <p className="text-lg text-gray-600 mb-4"></p>
+          {/* <p className="text-lg text-gray-600 mb-4"></p>
           {activeFilters.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-4">
               {activeFilters.map(([key, value]) => (
@@ -242,9 +243,10 @@ export default async function SearchPage({
                 </Badge>
               ))}
             </div>
-          )}
+          )} */}
+          <PropertyFilter />
         </div>
-        <div className="flex-end">
+        <div className="flex items-center gap-3 flex-end">
           <SortingOptions
             currentSort={sortBy}
             currentOrder={sortOrder}
