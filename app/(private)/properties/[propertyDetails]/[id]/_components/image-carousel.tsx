@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useRef, useState, useEffect } from "react";
 import { CarouselRef } from "antd/es/carousel";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
@@ -57,7 +58,7 @@ export default function ImageCarousel({ property }: Props) {
   };
 
   useKeypress("ArrowRight", () => {
-    if (index + 1 < allImages.length) {
+    if (index + 1 < allImages.length + 1) {
       handleChangeIndex(index + 1);
     }
   });
@@ -125,6 +126,20 @@ export default function ImageCarousel({ property }: Props) {
                   />
                 </div>
               ))}
+              <div
+                className="relative flex-shrink-0 w-full h-full bg-gradient-to-r from-blue-500 to-indigo-600"
+                style={{ flexBasis: "100%" }}
+              >
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-8">
+                  <h2 className="text-4xl font-bold mb-4 text-center">
+                    Ready to Make This Your Home?
+                  </h2>
+                  <p className="text-2xl mb-8 text-center">
+                    Call us now to schedule a viewing!
+                  </p>
+                  <div className="text-3xl font-bold">Phone: 0732 945534</div>
+                </div>
+              </div>
             </motion.div>
 
             <AnimatePresence initial={false}>
@@ -143,7 +158,7 @@ export default function ImageCarousel({ property }: Props) {
             </AnimatePresence>
 
             <AnimatePresence initial={false}>
-              {index + 1 < allImages.length && (
+              {index + 1 < allImages.length + 1 && (
                 <motion.button
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 0.7 }}
@@ -161,7 +176,7 @@ export default function ImageCarousel({ property }: Props) {
           <div className="absolute bottom-0 inset-x-0 h-20 bg-gradient-to-t from-black opacity-50 rounded-b-lg"></div>
 
           <div className="h-8 min-w-fit rounded-sm px-2 absolute top-3 right-3 flex cursor-pointer items-center justify-center gap-2 bg-white font-medium leading-6">
-            {index + 1}/{allImages.length} Photos
+            {index + 1}/{allImages.length + 1} Photos
           </div>
 
           <section
@@ -183,6 +198,16 @@ export default function ImageCarousel({ property }: Props) {
                   />
                 </div>
               ))}
+              <div className="relative w-16 h-16">
+                <div
+                  className={`w-full h-full rounded-full ring-2 ring-gray-100 cursor-pointer bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold ${
+                    index === allImages.length ? "border-4 border-blue-500" : ""
+                  }`}
+                  onClick={() => handleThumbnailClick(allImages.length)}
+                >
+                  Call Us
+                </div>
+              </div>
             </div>
           </section>
         </div>
