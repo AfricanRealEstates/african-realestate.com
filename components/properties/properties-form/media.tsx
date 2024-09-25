@@ -50,7 +50,6 @@ export default function Media({
   const [isUploading, setIsUploading] = useState(false);
   const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
   const [uploadQueue, setUploadQueue] = useState<File[]>([]);
-  const [imageHashes, setImageHashes] = useState<Set<string>>(new Set());
 
   const { id }: any = useParams();
   const router = useRouter();
@@ -125,34 +124,6 @@ export default function Media({
       reader.onerror = (error) => reject(error);
     });
 
-  const calculateImageHash = async (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const buffer = event.target?.result as ArrayBuffer;
-        const uint8Array = new Uint8Array(buffer);
-        let hash = 0;
-        for (let i = 0; i < uint8Array.length; i++) {
-          const byte = uint8Array[i];
-          hash = (hash << 5) - hash + byte;
-          hash = hash & hash; // Convert to 32-bit integer
-        }
-        resolve(hash.toString(16));
-      };
-      reader.onerror = (error) => reject(error);
-      reader.readAsArrayBuffer(file);
-    });
-  };
-
-  const isImageDuplicate = async (file: File): Promise<boolean> => {
-    const hash = await calculateImageHash(file);
-    if (imageHashes.has(hash)) {
-      return true;
-    }
-    setImageHashes((prev) => new Set(prev).add(hash));
-    return false;
-  };
-
   const handleCoverPhotoRemove = (event: React.MouseEvent) => {
     event.preventDefault();
     setCoverPhoto(null);
@@ -200,14 +171,6 @@ export default function Media({
     if (uploadQueue.length === 0) return;
 
     const file = uploadQueue[0];
-    const isDuplicate = await isImageDuplicate(file);
-
-    if (isDuplicate) {
-      toast.info(`Duplicate image detected: ${file.name}. Skipping upload.`);
-      setUploadQueue((prev) => prev.slice(1));
-      return;
-    }
-
     const url = await uploadFile(file);
 
     if (url) {
@@ -223,21 +186,13 @@ export default function Media({
     }
 
     setUploadQueue((prev) => prev.slice(1));
-  }, [uploadQueue, uploadFile, imageUrls, coverPhoto, isImageDuplicate]);
+  }, [uploadQueue, uploadFile, imageUrls, coverPhoto]);
 
   useEffect(() => {
     processUploadQueue();
   }, [uploadQueue, processUploadQueue]);
 
   const handleCoverPhotoUpload = async (file: File) => {
-    const isDuplicate = await isImageDuplicate(file);
-    if (isDuplicate) {
-      toast.info(
-        `Duplicate image detected. Please choose a different cover photo.`
-      );
-      return;
-    }
-
     setCoverPhotoLoading(true);
     const url = await uploadFile(file);
     if (url) {
@@ -255,18 +210,11 @@ export default function Media({
     setCoverPhotoLoading(false);
   };
 
-  const handleOtherPhotoUpload = async (file: File) => {
+  const handleOtherPhotoUpload = (file: File) => {
     if (imageUrls.length >= MAX_OTHER_PHOTOS) {
       toast.info(`Maximum ${MAX_OTHER_PHOTOS} other photos allowed`);
       return;
     }
-
-    const isDuplicate = await isImageDuplicate(file);
-    if (isDuplicate) {
-      toast.info(`Duplicate image detected: ${file.name}. Skipping upload.`);
-      return;
-    }
-
     setUploadQueue((prev) => [...prev, file]);
   };
 
