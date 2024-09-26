@@ -33,22 +33,22 @@ export default function Hero() {
       </picture>
       <div className="absolute inset-0 bg-black/60 -z-10"></div>
 
-      <article className="w-full mb-12 mt-32 border-white/[0.01] lg:border-x md:mt-28 lg:my-28 lg:py-2 lg:border-y  z-30 py-12 md:py-0">
+      <article className="w-full mb-12 mt-32 border-white/[0.01] lg:border-x md:mt-28 lg:my-28 lg:py-2 lg:border-y z-30 py-12 md:py-0">
         <div className="flex items-center justify-center flex-col mx-auto max-w-7xl w-full px-4 lg:px-6 border-white/[0.03] lg:border-x">
-          <div className="flex items-center flex-col space-y-8 mt-24">
+          <div className="flex flex-col items-center space-y-8 mt-24">
             <p className="text-sm tracking-wide font-semibold uppercase text-white">
               The best way to
             </p>
             <h2
-              className={` ${ibmPlex.className} text-center text-2xl sm:text-5xl lg:text-6xl tracking-tight text-white`}
+              className={`${ibmPlex.className} text-center text-2xl sm:text-5xl lg:text-6xl tracking-tight text-white`}
             >
               Find your Dream Home
             </h2>
-            <p className=" text-white">
+            <p className="text-white text-center">
               We&apos;ve more than 75,000 properties listed for you.
             </p>
           </div>
-          <div className="max-w-3xl mt-12 flex items-center justify-center w-full">
+          <div className="w-full max-w-3xl mt-12">
             <SearchBar />
           </div>
         </div>

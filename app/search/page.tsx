@@ -28,7 +28,7 @@ export async function generateMetadata({
   const minPrice = searchParams.minPrice || "";
   const maxPrice = searchParams.maxPrice || "";
 
-  let title = "Property Search";
+  let title = "Property Search | African Real Estate";
   let description = "Find your perfect property in Africa.";
 
   if (query) {

@@ -15,8 +15,8 @@ const raleway = Raleway({
 });
 
 export const metadata = getSEOTags({
-  title: "Properties | African Real Estate",
-  canonicalUrlRelative: "/properties",
+  title: "To Let Properties | African Real Estate",
+  canonicalUrlRelative: "/let",
 });
 
 export default async function PropertyPage({

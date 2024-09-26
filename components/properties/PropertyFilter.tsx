@@ -56,7 +56,12 @@ export default function PropertyFilter({
     useForm<FilterValues>({
       resolver: zodResolver(filterSchema),
       defaultValues: {
-        status: searchParams.get("status") || undefined,
+        status:
+          pageType === "buy"
+            ? "sale"
+            : pageType === "let"
+            ? "let"
+            : searchParams.get("status") || undefined,
         propertyType: searchParams.get("propertyType") || "",
         propertyDetails: searchParams.get("propertyDetails") || "",
         county: searchParams.get("county") || "",
@@ -95,12 +100,18 @@ export default function PropertyFilter({
   };
 
   const clearFilters = () => {
-    reset();
+    reset({
+      status:
+        pageType === "buy" ? "sale" : pageType === "let" ? "let" : undefined,
+    });
     setActiveFilters({});
     router.push(`/${pageType}`);
   };
 
   const removeFilter = (key: keyof FilterValues) => {
+    if (key === "status" && (pageType === "buy" || pageType === "let")) {
+      return; // Prevent removing status filter for buy and let pages
+    }
     const newFilters = { ...activeFilters };
     delete newFilters[key];
     setActiveFilters(newFilters);
@@ -127,7 +138,7 @@ export default function PropertyFilter({
     <div className="space-y-4">
       <div className="flex flex-wrap gap-2 mt-2">
         {Object.entries(activeFilters).map(([key, value]) => {
-          if (value) {
+          if (value && (key !== "status" || pageType === "search")) {
             return (
               <Badge key={key} variant="secondary" className="text-sm">
                 {key}: {value}
@@ -172,6 +183,7 @@ export default function PropertyFilter({
                   <Select
                     onValueChange={field.onChange}
                     value={field.value || ""}
+                    disabled={pageType === "buy" || pageType === "let"}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select status" />

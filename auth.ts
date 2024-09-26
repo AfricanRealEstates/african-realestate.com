@@ -8,24 +8,12 @@ import bcrypt from "bcryptjs";
 import authConfig from "@/auth.config"
 import { NextResponse } from 'next/server';
 
-
 export const { handlers, signIn, signOut, auth, unstable_update: update } = NextAuth({
     trustHost: true,
     adapter: PrismaAdapter(prisma) as Adapter,
-    session: { strategy: "jwt", maxAge: 1 * 60 * 60 },  // Set to 1 hours
+    session: { strategy: "jwt", maxAge: 1 * 60 * 60 },  // Set to 1 hour
     callbacks: {
-
         authorized({ auth, request: { nextUrl } }) {
-            // const isLoggedIn = !!auth?.user
-            // const paths = ['/dashboard', "/admin"];
-            // const isProtected = paths.some((path) => nextUrl.pathname.startsWith(path))
-
-            // if (isProtected && !isLoggedIn) {
-            //     const redirectUrl = new URL('/api/auth/signin', nextUrl.origin);
-            //     redirectUrl.searchParams.append('callbackUrl', nextUrl.href)
-            //     return Response.redirect(redirectUrl)
-            // }
-
             const { pathname, search } = nextUrl;
             const isLoggedIn = !!auth?.user
             const isOnAuthPage = pathname.startsWith('/login') || pathname.startsWith('/register')
@@ -45,19 +33,19 @@ export const { handlers, signIn, signOut, auth, unstable_update: update } = Next
 
             if (isOnAuthPage) {
                 // Redirect to the previous page (or to /dashboard if no previous page) if the user is logged in
-                const redirectTo = nextUrl.searchParams.get("from") || "/";
-                if (isLoggedIn) return NextResponse.redirect(new URL(redirectTo, nextUrl));
+                const callbackUrl = nextUrl.searchParams.get("callbackUrl") || "/";
+                if (isLoggedIn) return NextResponse.redirect(new URL(callbackUrl, nextUrl));
             } else if (isProtectedPage) {
                 // Redirect to /login if not logged in but on a protected page
                 if (!isLoggedIn) {
-                    const from = encodeURIComponent(pathname + search); // Capture the current page URL
-                    return NextResponse.redirect(new URL(`/login?from=${from}`, nextUrl));
+                    const callbackUrl = encodeURIComponent(pathname + search);
+                    return NextResponse.redirect(new URL(`/login?callbackUrl=${callbackUrl}`, nextUrl));
                 }
             }
             // Don't redirect if on an unprotected page or if logged in and on a protected page
             return true;
-
         },
+
         session: ({ session, token }) => {
             return {
                 ...session,
@@ -80,10 +68,7 @@ export const { handlers, signIn, signOut, auth, unstable_update: update } = Next
                     instagramLink: token.instagramLink || "",
                     facebookLink: token.facebookLink || "",
                     favoriteIds: token.favoriteIds || [],
-
                     randomKey: token.randomKey
-
-
                 }
             }
         },
@@ -122,4 +107,3 @@ export const { handlers, signIn, signOut, auth, unstable_update: update } = Next
     },
     ...authConfig,
 })
-

@@ -69,7 +69,7 @@ export default async function PropertyCard({
               Featured
             </li>
             <li className="text-white bg-[rgba(11,33,50,.4)] font-semibold text-[12px] leading-5 uppercase text-center inline-block px-2 rounded transition-all cursor-pointer">
-              For {status}
+              {status === "let" ? "To" : "For"} {status}
             </li>
           </ul>
           <ul className="flex gap-1">

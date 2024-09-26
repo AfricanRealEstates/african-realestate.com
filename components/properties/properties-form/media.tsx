@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 
 const MAX_OTHER_PHOTOS = 29;
+const TOTAL_PHOTOS = MAX_OTHER_PHOTOS + 1; // +1 for the cover photo
 const INITIAL_PHOTO_DISPLAY = 10;
 
 interface UploadingFile {
@@ -63,6 +64,10 @@ export default function Media({
       setImageUrls(finalValues.media.images?.slice(0, MAX_OTHER_PHOTOS) || []);
     }
   }, [isEdit, id, finalValues]);
+
+  const getTotalPhotos = () => {
+    return (coverPhoto ? 1 : 0) + imageUrls.length + uploadingFiles.length;
+  };
 
   const onSubmit = async (values: any) => {
     try {
@@ -211,8 +216,10 @@ export default function Media({
   };
 
   const handleOtherPhotoUpload = (file: File) => {
-    if (imageUrls.length >= MAX_OTHER_PHOTOS) {
-      toast.info(`Maximum ${MAX_OTHER_PHOTOS} other photos allowed`);
+    if (getTotalPhotos() >= TOTAL_PHOTOS) {
+      toast.info(
+        `Maximum ${TOTAL_PHOTOS} photos allowed (including cover photo)`
+      );
       return;
     }
     setUploadQueue((prev) => [...prev, file]);
@@ -328,7 +335,7 @@ export default function Media({
         >
           {imageUrls.map((image, index) => renderImagePreview(image, index))}
           {uploadingFiles.map(renderUploadingFile)}
-          {imageUrls.length + uploadingFiles.length < MAX_OTHER_PHOTOS && (
+          {getTotalPhotos() < TOTAL_PHOTOS && (
             <Upload
               listType="picture-card"
               multiple
@@ -347,10 +354,10 @@ export default function Media({
           )}
         </div>
         <p className="text-sm text-gray-500 mt-2">
-          {imageUrls.length} / {MAX_OTHER_PHOTOS} photos uploaded
+          {getTotalPhotos()} / {TOTAL_PHOTOS} photos uploaded
           {uploadingFiles.length > 0 && ` (${uploadingFiles.length} uploading)`}
         </p>
-        {imageUrls.length > INITIAL_PHOTO_DISPLAY && (
+        {getTotalPhotos() > INITIAL_PHOTO_DISPLAY && (
           <Button
             onClick={() => setShowAllPhotos(!showAllPhotos)}
             className="mt-4"

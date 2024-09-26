@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Button } from "@/components/utils/Button";
-import { HomeIcon, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -10,7 +10,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
 import { Icons } from "../globals/icons";
-import Image from "next/image";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -19,7 +18,7 @@ export default function LoginForm() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
 
   const methods = useForm<LoginUserInput>({
     resolver: zodResolver(loginUserSchema),
@@ -39,7 +38,7 @@ export default function LoginForm() {
         redirect: false,
         email: values.email,
         password: values.password,
-        redirectTo: callbackUrl,
+        callbackUrl,
       });
 
       setIsLoading(false);
@@ -64,14 +63,6 @@ export default function LoginForm() {
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-xl">
-        {/* <Link
-          href="/"
-          className={`flex items-center justify-center gap-2 no-underline`}
-        >
-          <span className="bg-[#eb6753] text-white py-1 px-2 rounded-lg">
-            <HomeIcon />
-          </span>
-        </Link> */}
         <h2 className="mt-4 text-center text-xl font-bold leading-9 tracking-tight text-gray-900">
           Sign in to your account
         </h2>
@@ -81,7 +72,7 @@ export default function LoginForm() {
         <div className="bg-white px-6 py-12 border border-gray-200 sm:rounded-lg sm:px-12">
           <form className="space-y-3" onSubmit={handleSubmit(onSubmitHandler)}>
             {error && (
-              <p className="text-center bg-rose-50 text-rose-500 py-4 mb-6 roundd">
+              <p className="text-center bg-rose-50 text-rose-500 py-4 mb-6 rounded">
                 {error}
               </p>
             )}
@@ -129,32 +120,6 @@ export default function LoginForm() {
               )}
             </div>
 
-            {/* <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                />
-                <label
-                  htmlFor="remember-me"
-                  className="ml-3 block text-sm leading-6 text-gray-900"
-                >
-                  Remember me
-                </label>
-              </div>
-
-              <div className="text-sm leading-6">
-                <a
-                  href="#"
-                  className="font-semibold text-indigo-600 hover:text-indigo-500"
-                >
-                  Forgot password?
-                </a>
-              </div>
-            </div> */}
-
             <div>
               <Button
                 color="blue"
@@ -196,7 +161,7 @@ export default function LoginForm() {
                 disabled={isLoading || isGoogleLoading}
                 onClick={() => {
                   setIsGoogleLoading(true);
-                  signIn("google", { callbackUrl: callbackUrl });
+                  signIn("google", { callbackUrl });
                 }}
               >
                 {isGoogleLoading ? (

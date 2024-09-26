@@ -160,7 +160,7 @@ function AdvancedSearch({
                     handlePriceChange("minPrice", e.target.value)
                   }
                 />
-                <span className="text-xs text-green-600 bg-green-50 focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
+                <span className="text-xs text-green-600  focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
                   {formatPrice(minPriceInput)}
                 </span>
               </div>
@@ -174,7 +174,7 @@ function AdvancedSearch({
                   }
                 />
 
-                <span className="text-xs text-green-600 bg-green-50 focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
+                <span className="text-xs text-green-600  focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
                   {formatPrice(maxPriceInput)}
                 </span>
 
@@ -317,11 +317,11 @@ export default function SearchBar() {
   return (
     <form
       onSubmit={handleSearch}
-      className="flex w-full max-w-3xl mx-auto items-center space-x-2 relative ml-10"
+      className="flex w-full max-w-[560px] mx-auto items-center justify-center space-x-2 relative ml-10"
     >
       <div className="relative w-full">
         <div className="flex">
-          <div className="relative flex-grow">
+          <div className="relative flex-grow ml-20">
             <Input
               type="text"
               placeholder="Search properties..."
@@ -375,7 +375,7 @@ export default function SearchBar() {
         </div>
         {isLoading && (
           <div
-            className="absolute left-0 right-0 bg-white p-2 shadow-md rounded-b-md mt-2"
+            className="absolute left-0 right-0 bg-white p-2 shadow-md rounded-b-md mt-2 ml-20"
             aria-live="polite"
           >
             Loading...
@@ -391,7 +391,7 @@ export default function SearchBar() {
         )}
         {results && !isLoading && (
           <div
-            className="absolute left-0 right-0 bg-white p-2 shadow-md rounded-b-md mt-2"
+            className="absolute left-0 right-0 bg-white p-2 shadow-md rounded-b-md mt-2 ml-20"
             aria-live="polite"
           >
             {results.count}{" "}

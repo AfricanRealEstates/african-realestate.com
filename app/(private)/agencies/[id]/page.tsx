@@ -6,7 +6,13 @@ import { formatDate } from "date-fns";
 import Avatar from "@/components/globals/avatar";
 import { Raleway } from "next/font/google";
 import { Mail } from "lucide-react";
-import { FaFacebook, FaLinkedin, FaTiktok, FaYoutube } from "react-icons/fa";
+import {
+  FaFacebook,
+  FaInstagram,
+  FaLinkedin,
+  FaTiktok,
+  FaYoutube,
+} from "react-icons/fa";
 import PropertyCard from "@/components/properties/new/PropertyCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
@@ -143,6 +149,17 @@ export default async function AgentDetails({
             >
               <p className="w-9 h-9 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 text-xl hover:bg-red-600 hover:text-white transition-colors">
                 <FaYoutube />
+              </p>
+            </Link>
+          )}
+          {agent.instagramLink && (
+            <Link
+              href={agent.instagramLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <p className="w-9 h-9 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 text-xl hover:bg-red-600 hover:text-white transition-colors">
+                <FaInstagram />
               </p>
             </Link>
           )}
