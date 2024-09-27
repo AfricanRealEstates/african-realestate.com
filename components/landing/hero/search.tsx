@@ -160,7 +160,7 @@ function AdvancedSearch({
                     handlePriceChange("minPrice", e.target.value)
                   }
                 />
-                <span className="text-xs text-green-600  focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
+                <span className="ml-4 text-xs text-green-600  focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
                   {formatPrice(minPriceInput)}
                 </span>
               </div>
@@ -174,7 +174,7 @@ function AdvancedSearch({
                   }
                 />
 
-                <span className="text-xs text-green-600  focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
+                <span className="ml-4 text-xs text-green-600  focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
                   {formatPrice(maxPriceInput)}
                 </span>
 
