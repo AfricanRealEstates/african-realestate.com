@@ -67,7 +67,6 @@ async function getPropertiesByNearbyTown(
   const properties = await prisma.property.findMany({
     where: whereClause,
     orderBy,
-    take: 20,
   });
 
   if (properties.length === 0) {
