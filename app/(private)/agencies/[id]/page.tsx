@@ -261,7 +261,7 @@ export default async function AgentDetails({
                     For Sale ({saleProperties.length})
                   </TabsTrigger>
                   <TabsTrigger value="let">
-                    For Let ({letProperties.length})
+                    To Let ({letProperties.length})
                   </TabsTrigger>
                 </TabsList>
                 <TabsContent value="sale">

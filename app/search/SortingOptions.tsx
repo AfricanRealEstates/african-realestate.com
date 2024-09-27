@@ -29,7 +29,7 @@ const sortOptions = [
 
 const statusOptions = [
   { label: "For Sale", value: "sale" },
-  { label: "For Let", value: "let" },
+  { label: "To Let", value: "let" },
 ];
 
 interface SortingOptionsProps {
