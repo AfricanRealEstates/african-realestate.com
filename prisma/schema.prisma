@@ -134,7 +134,7 @@ model Property {
   propertyDetails        String
   description            String
   price                  Float
-  leastPrice             Float
+  leastPrice             Float?
   currency               String
   country                String
   county                 String

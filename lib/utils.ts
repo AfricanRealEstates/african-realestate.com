@@ -95,10 +95,16 @@ export function formatNumber(n: number): string {
 /**
  * Calculates the percentage savings.
  * @param {number} basePrice - The original price of the item.
- * @param {number} leastPrice - The discounted or least price of the item.
- * @returns {string} - A string representing the percentage savings rounded to two decimal places or an empty string if savings are zero.
+ * @param {number | null} leastPrice - The discounted or least price of the item, or null if not available.
+ * @returns {string} - A string representing the percentage savings rounded to two decimal places, 
+ *                     an empty string if savings are zero, or null if leastPrice is null.
  */
-export function calculatePercentageSavings(basePrice: number, leastPrice: number): string {
+export function calculatePercentageSavings(basePrice: number, leastPrice: number | null): string | null {
+  // If leastPrice is null, return null to indicate savings can't be calculated
+  if (leastPrice === null) {
+    return null;
+  }
+
   // Ensure basePrice is greater than zero to avoid division by zero
   if (basePrice <= 0) {
     throw new Error("Base price must be greater than zero.");
@@ -110,7 +116,6 @@ export function calculatePercentageSavings(basePrice: number, leastPrice: number
   // Return an empty string if the percentage savings is effectively zero
   return percentageSavings <= 0.0001 ? '' : percentageSavings.toFixed(2);
 }
-
 
 // Blog fetcher
 export const fetchUrl =

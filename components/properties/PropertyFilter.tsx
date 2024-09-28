@@ -89,7 +89,12 @@ export default function PropertyFilter({
     const params = new URLSearchParams(searchParams);
     Object.entries(data).forEach(([key, value]) => {
       if (value) {
-        params.set(key, value.toString());
+        // Convert county and locality to lowercase for case-insensitive search
+        if (key === "county" || key === "locality") {
+          params.set(key, value.toLowerCase());
+        } else {
+          params.set(key, value.toString());
+        }
       } else {
         params.delete(key);
       }

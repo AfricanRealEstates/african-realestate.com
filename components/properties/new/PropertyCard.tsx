@@ -196,6 +196,16 @@ export default async function PropertyCard({
 
   const renderContent = () => {
     const savings = calculatePercentageSavings(price, leastPrice);
+
+    const capitalizeWords = (str: string) => {
+      return str
+        .toLowerCase()
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+    };
+
+    const capitalizedTitle = capitalizeWords(title);
     return (
       <div className={size === "default" ? "py-4 space-y-3" : "p-3 space-y-1"}>
         <div className="space-y-2 px-4">
@@ -203,7 +213,7 @@ export default async function PropertyCard({
             <h2
               className={`${josefin.className} leading-relaxed font-semibold capitalize text-[17px] transition duration-300 ease-in-out hover:text-[#ed2027]`}
             >
-              <span className="line-clamp-1">{title}</span>
+              <span className="line-clamp-1">{capitalizedTitle}</span>
             </h2>
           </div>
 

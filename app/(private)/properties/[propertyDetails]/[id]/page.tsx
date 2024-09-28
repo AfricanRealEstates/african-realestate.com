@@ -200,10 +200,10 @@ export default async function PropertyDetails({
     await recordPropertyView(property.id);
   }
 
-  const savings = calculatePercentageSavings(
-    property.price,
-    property.leastPrice
-  );
+  const savings =
+    property.leastPrice !== null
+      ? calculatePercentageSavings(property.price, property.leastPrice)
+      : null;
 
   let priceRange = {
     // Define default price range of +/- 50000 from the property's price
