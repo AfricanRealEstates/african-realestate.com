@@ -7,14 +7,19 @@ import { AnimatePresence, motion, MotionConfig } from "framer-motion";
 import useKeypress from "react-use-keypress";
 import Image from "next/image";
 import heic2any from "heic2any";
+import { Phone } from "lucide-react";
 
 interface Props {
-  property: { coverPhotos: string[]; images: string[] };
+  property: {
+    coverPhotos: string[];
+    images: string[];
+  };
+  whatsappNumber: string | null;
 }
 
 const removeDuplicates = (images: string[]) => Array.from(new Set(images));
 
-export default function ImageCarousel({ property }: Props) {
+export default function ImageCarousel({ property, whatsappNumber }: Props) {
   const ref = useRef<CarouselRef>(null);
   const thumbnailRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
@@ -127,17 +132,41 @@ export default function ImageCarousel({ property }: Props) {
                 </div>
               ))}
               <div
-                className="relative flex-shrink-0 w-full h-full bg-gradient-to-r from-blue-500 to-indigo-600"
+                className="relative flex-shrink-0 w-full h-full"
                 style={{ flexBasis: "100%" }}
               >
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-8">
+                <Image
+                  src="/assets/house-1.jpg"
+                  alt="House Background"
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-xl"
+                />
+                <div className="absolute inset-0 bg-black bg-opacity-70 flex flex-col items-center justify-center text-white p-8">
                   <h2 className="text-4xl font-bold mb-4 text-center">
-                    Ready to Make This Your Home?
+                    Ready to Make This Your Property?
                   </h2>
                   <p className="text-2xl mb-8 text-center">
-                    Call us now to schedule a viewing!
+                    Contact Agent now to schedule a viewing!
                   </p>
-                  <div className="text-3xl font-bold">Phone: 0732 945534</div>
+                  <button
+                    className="flex items-center justify-center px-8 py-4 text-3xl font-bold bg-gradient-to-r from-teal-400 to-blue-500 hover:from-teal-500 hover:to-blue-600 text-white rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-teal-300 focus:ring-opacity-50"
+                    onClick={() => {
+                      if (whatsappNumber) {
+                        window.location.href = `tel:${whatsappNumber}`;
+                      }
+                    }}
+                  >
+                    <Phone className="w-8 h-8 mr-4" />
+                    {whatsappNumber ? (
+                      <>
+                        {whatsappNumber.substring(0, 5)}
+                        <span className="text-white opacity-70">*****</span>
+                      </>
+                    ) : (
+                      "Call Now"
+                    )}
+                  </button>
                 </div>
               </div>
             </motion.div>

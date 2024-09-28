@@ -559,7 +559,10 @@ export default async function PropertyDetails({
         </div>
 
         <section className="flex flex-col lg:flex-row mt-8 w-full">
-          <ImageCarousel property={property} />
+          <ImageCarousel
+            property={property}
+            whatsappNumber={agent.whatsappNumber}
+          />
           <div className="flex-grow lg:mt-0 h-full">
             <article className="flex flex-col-reverse h-full">
               <div className="flex flex-col gap-4">
