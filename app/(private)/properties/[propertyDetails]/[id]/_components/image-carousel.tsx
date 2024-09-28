@@ -160,7 +160,7 @@ export default function ImageCarousel({ property, whatsappNumber }: Props) {
                     <Phone className="w-8 h-8 mr-4" />
                     {whatsappNumber ? (
                       <>
-                        {whatsappNumber.substring(0, 5)}
+                        {whatsappNumber.substring(0, 7)}
                         <span className="text-white opacity-70">*****</span>
                       </>
                     ) : (
