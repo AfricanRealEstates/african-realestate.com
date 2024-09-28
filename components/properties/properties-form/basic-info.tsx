@@ -99,16 +99,16 @@ export default function BasicInfo({
           ? "Asking Rent/Day"
           : "Asking Price/Day"
         : status === "let"
-        ? "Discounted Rent/Day"
-        : "Discounted Price/Day";
+        ? "Discounted Rent/Day (optional)"
+        : "Discounted Price/Day (optional)";
     } else {
       return field === "price"
         ? status === "let"
           ? "Asking Rent"
           : "Asking Price"
         : status === "let"
-        ? "Discounted Rent"
-        : "Discounted Price";
+        ? "Discounted Rent (optional)"
+        : "Discounted Price (optional)";
     }
   };
 
@@ -505,10 +505,6 @@ export default function BasicInfo({
           name="leastPrice"
           label={getLabel(propertyType, "leastPrice")}
           rules={[
-            {
-              required: true,
-              message: "Least price is required",
-            },
             ({ getFieldValue }) => ({
               validator(_, value) {
                 if (!value || value <= getFieldValue("price")) {
@@ -526,7 +522,7 @@ export default function BasicInfo({
             className="w-full"
             formatter={(value) => formatPrice(value)}
             parser={(value) => value!.replace(/\$\s?|(,*)/g, "")}
-            placeholder="Least price"
+            placeholder="Least price (optional)"
           />
         </Form.Item>
 
