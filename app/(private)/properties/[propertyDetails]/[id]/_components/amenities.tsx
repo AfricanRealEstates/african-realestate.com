@@ -57,7 +57,7 @@ export default function Amenities({ amenities }: AmenitiesProps) {
     heating: <Heater className="size-4 text-blue-600" />,
     dstv: <Tv className="size-4 text-blue-600" />,
     air: <AirVentIcon className="size-4 text-blue-600" />,
-    furnitures: <Sofa className="size-4 text-blue-600" />,
+    furnished: <Sofa className="size-4 text-blue-600" />,
     pet: <Cat className="size-4 text-blue-600" />,
     energy: <Thermometer className="size-4 text-blue-600" />,
     gates: <Fence className="size-4 text-blue-600" />,
