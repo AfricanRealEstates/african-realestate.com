@@ -1,7 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { useSession } from "next-auth/react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,24 +14,24 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { InfoIcon } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import { Icons } from "@/components/globals/icons";
 import { upgradeUserRole } from "@/actions/users";
-import { useSession } from "next-auth/react";
-import { toast } from "sonner";
+import { Building } from "lucide-react";
 
 export default function Onboarding() {
+  const [step, setStep] = useState(1);
   const [selectedRole, setSelectedRole] = useState<"AGENT" | "AGENCY" | "">("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { data: session } = useSession();
   const user = session?.user;
+
+  useEffect(() => {
+    if (user && user.role !== "USER") {
+      router.push("/agent/properties/create-property");
+    }
+  }, [user, router]);
 
   const handleUpgrade = async () => {
     if (selectedRole) {
@@ -44,83 +47,217 @@ export default function Onboarding() {
     }
   };
 
-  if (user?.role !== "USER") {
+  if (!user || isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-full">
-        <Card className="w-[350px]">
+      <div className="flex items-center justify-center min-h-screen bg-white">
+        <Card className="w-[350px] shadow-lg">
           <CardContent className="pt-6">
-            <p className="text-center text-muted-foreground">
-              You are already upgraded!
-            </p>
+            <div className="text-center">
+              <Icons.spinner className="inline-block h-8 w-8 animate-spin" />
+              <p className="mt-2 text-muted-foreground">Loading...</p>
+            </div>
           </CardContent>
         </Card>
       </div>
     );
   }
 
-  return (
-    <div className="flex items-center justify-center min-h-full w-[95%] lg:max-w-7xl mx-auto py-32 lg:py-64">
-      <Card className="w-[450px]">
-        <CardHeader>
-          {/* Onboarding welcome and personalized message */}
-          <div className="space-y-4">
-            <h2 className="text-2xl font-semibold">
-              Hello, {user?.name || "User"}!
-            </h2>
-            <p>Welcome to African Real Estate!</p>
+  if (user.role !== "USER") {
+    return null; // This will prevent any flash of content before redirect
+  }
 
-            <div className="bg-muted p-4 rounded-lg text-sm text-muted-foreground mt-4">
-              <p>
-                <strong>Note:</strong> Choose who you are carefully as it will
-                determine your experience on our platform.
-              </p>
-            </div>
-          </div>
+  const steps = [
+    {
+      title: "Welcome",
+      description: "Let's get you started on African Real Estate",
+    },
+    {
+      title: "Choose Your Role",
+      description: "Select the role that best describes you",
+    },
+    {
+      title: "Confirm",
+      description: "Review and confirm your selection",
+    },
+  ];
+
+  const getProgressColor = () => {
+    if (step === 1) return "bg-red-500";
+    if (step === 2) return "bg-yellow-500";
+    return "bg-green-500";
+  };
+
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-white">
+      <Card className="w-[500px] shadow-lg">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold text-center">
+            {steps[step - 1].title}
+          </CardTitle>
+          <CardDescription className="text-center">
+            {steps[step - 1].description}
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <RadioGroup
-            onValueChange={(value) =>
-              setSelectedRole(value as "AGENT" | "AGENCY")
-            }
-            className="space-y-4"
-          >
-            <TooltipProvider>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="AGENT" id="agent" />
-                <Label htmlFor="agent">Agent</Label>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <InfoIcon className="h-4 w-4 text-muted-foreground hover:cursor-help" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Choose this if you&apos;re an individual agent</p>
-                  </TooltipContent>
-                </Tooltip>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="AGENCY" id="agency" />
-                <Label htmlFor="agency">Agency</Label>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <InfoIcon className="h-4 w-4 text-muted-foreground hover:cursor-help" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>
+          <div className="mb-8">
+            <div className="flex justify-between mb-2">
+              {steps.map((s, index) => (
+                <div
+                  key={index}
+                  className={`w-1/3 text-xs font-medium ${
+                    step > index ? "text-blue-600" : "text-gray-400"
+                  }`}
+                >
+                  Step {index + 1}
+                </div>
+              ))}
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2.5">
+              <motion.div
+                className={`h-2.5 rounded-full ${getProgressColor()}`}
+                initial={{ width: "0%" }}
+                animate={{
+                  width: `${((step - 1) / (steps.length - 1)) * 100}%`,
+                }}
+                transition={{ duration: 0.5 }}
+              />
+            </div>
+          </div>
+
+          {step === 1 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <h2 className="text-2xl font-semibold mb-4">
+                Hello, {user?.name || "User"}!
+              </h2>
+              <p className="mb-6 text-gray-400">
+                Welcome to African Real Estate! We&apos;re excited to have you
+                on board. Let&apos;s set up your account to match your needs.
+              </p>
+              <Button
+                onClick={() => setStep(2)}
+                className="w-full bg-blue-500 hover:bg-blue-600 text-white"
+              >
+                Get Started
+              </Button>
+            </motion.div>
+          )}
+
+          {step === 2 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <RadioGroup
+                onValueChange={(value) =>
+                  setSelectedRole(value as "AGENT" | "AGENCY")
+                }
+                className="space-y-4"
+              >
+                <div
+                  className={`flex items-center space-x-2 p-4 border rounded-lg transition-colors ${
+                    selectedRole === "AGENT"
+                      ? "bg-green-100 border-green-500"
+                      : "hover:bg-gray-50"
+                  }`}
+                >
+                  <RadioGroupItem value="AGENT" id="agent" />
+                  <Label
+                    htmlFor="agent"
+                    className="flex-grow cursor-pointer space-y-1"
+                  >
+                    <div className="font-semibold text-emerald-500">Agent</div>
+                    <div className="text-sm text-gray-400">
+                      Choose this if you&apos;re an individual agent looking to
+                      list and manage properties.
+                    </div>
+                  </Label>
+                  <Icons.user className="h-6 w-6 text-blue-500" />
+                </div>
+                <div
+                  className={`flex items-center space-x-2 p-4 border rounded-lg transition-colors ${
+                    selectedRole === "AGENCY"
+                      ? "bg-green-100 border-green-500"
+                      : "hover:bg-gray-50"
+                  }`}
+                >
+                  <RadioGroupItem value="AGENCY" id="agency" />
+                  <Label
+                    htmlFor="agency"
+                    className="flex-grow cursor-pointer space-y-1"
+                  >
+                    <div className="font-semibold text-emerald-500">Agency</div>
+                    <div className="text-sm text-gray-400">
                       Choose this if you represent a company or have multiple
-                      properties
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
+                      properties under your company.
+                    </div>
+                  </Label>
+                  <Building className="h-6 w-6 text-blue-500" />
+                </div>
+              </RadioGroup>
+              <div className="mt-6 flex justify-between">
+                <Button variant="outline" onClick={() => setStep(1)}>
+                  Back
+                </Button>
+                <Button
+                  onClick={() => setStep(3)}
+                  disabled={!selectedRole}
+                  className="bg-blue-500 hover:bg-blue-600 text-white"
+                >
+                  Next
+                </Button>
               </div>
-            </TooltipProvider>
-          </RadioGroup>
-          <Button
-            onClick={handleUpgrade}
-            className="w-full mt-6"
-            disabled={!selectedRole || isLoading}
-          >
-            {isLoading ? "Upgrading..." : "Upgrade"}
-          </Button>
+            </motion.div>
+          )}
+
+          {step === 3 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <h3 className="text-lg font-semibold mb-4">
+                Confirm Your Selection
+              </h3>
+              <p className="mb-6">
+                You&apos;ve selected to join as an{" "}
+                <strong className="text-emerald-500 bg-emerald-50">
+                  {selectedRole}
+                </strong>
+                . Is this correct?
+              </p>
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
+                <p className="text-sm text-gray-800">
+                  <strong>Note:</strong> Your role determines your experience on
+                  our platform. You can change this later, but some features may
+                  be affected.
+                </p>
+              </div>
+              <div className="flex justify-between">
+                <Button variant="outline" onClick={() => setStep(2)}>
+                  Back
+                </Button>
+                <Button
+                  onClick={handleUpgrade}
+                  disabled={isLoading}
+                  className="bg-blue-500 hover:bg-blue-600 text-white"
+                >
+                  {isLoading ? (
+                    <>
+                      <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                      Upgrading...
+                    </>
+                  ) : (
+                    "Confirm & Upgrade"
+                  )}
+                </Button>
+              </div>
+            </motion.div>
+          )}
         </CardContent>
       </Card>
     </div>
