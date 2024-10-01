@@ -244,7 +244,7 @@ export default async function SearchPage({
               ))}
             </div>
           )} */}
-          <PropertyFilter />
+          <PropertyFilter pageType="search" />
         </div>
         <div className="flex items-center gap-3 flex-end">
           <SortingOptions

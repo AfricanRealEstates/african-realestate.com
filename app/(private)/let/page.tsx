@@ -49,7 +49,7 @@ export default async function PropertyPage({
     >
       <article className="flex justify-between">
         <div className="my-5">
-          <PropertyFilter pageType={params.type} />
+          <PropertyFilter pageType="let" />
         </div>
         <div className="my-5">
           <SortingOptions
