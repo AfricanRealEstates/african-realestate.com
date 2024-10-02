@@ -72,10 +72,19 @@ export default function Media({
       setCoverPhoto(finalValues.media.coverPhotos?.[0] || null);
       setImageUrls(finalValues.media.images?.slice(0, MAX_OTHER_PHOTOS) || []);
     }
+
+    // Set hasUnsavedChanges to true if there are any initial values
+    if (
+      finalValues.media &&
+      (finalValues.media.coverPhotos?.length ||
+        finalValues.media.images?.length)
+    ) {
+      setHasUnsavedChanges(true);
+    }
   }, [isEdit, id, finalValues]);
 
   const getTotalPhotos = () => {
-    return (coverPhoto ? 1 : 0) + imageUrls.length + uploadingFiles.length;
+    return (coverPhoto ? 1 : 0) + imageUrls.length;
   };
 
   const onSubmit = async (values: any) => {
@@ -179,6 +188,12 @@ export default function Media({
         );
       });
 
+      if (url) {
+        setImageUrls((prev) => [...prev, url].slice(0, MAX_OTHER_PHOTOS));
+        setUploadedFiles((prev) => [...prev, file].slice(0, MAX_OTHER_PHOTOS));
+        setHasUnsavedChanges(true);
+      }
+
       setUploadingFiles((prev) => prev.filter((f) => f.file !== file));
       return url;
     } catch (error) {
@@ -195,22 +210,10 @@ export default function Media({
     if (uploadQueue.length === 0) return;
 
     const file = uploadQueue[0];
-    const url = await uploadFile(file);
-
-    if (url) {
-      if (!imageUrls.includes(url) && coverPhoto !== url) {
-        setImageUrls((prev) => [...prev, url].slice(0, MAX_OTHER_PHOTOS));
-        setUploadedFiles((prev) => [...prev, file].slice(0, MAX_OTHER_PHOTOS));
-        setHasUnsavedChanges(true);
-      } else if (coverPhoto === url) {
-        toast.info("This image is already set as the cover photo");
-      } else {
-        toast.info("This image has already been uploaded");
-      }
-    }
+    await uploadFile(file);
 
     setUploadQueue((prev) => prev.slice(1));
-  }, [uploadQueue, uploadFile, imageUrls, coverPhoto]);
+  }, [uploadQueue, uploadFile]);
 
   useEffect(() => {
     processUploadQueue();
