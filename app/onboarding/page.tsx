@@ -23,8 +23,9 @@ export default function Onboarding() {
   const [step, setStep] = useState(1);
   const [selectedRole, setSelectedRole] = useState<"AGENT" | "AGENCY" | "">("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isSessionUpdating, setIsSessionUpdating] = useState(false);
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
   const user = session?.user;
 
   useEffect(() => {
@@ -39,22 +40,33 @@ export default function Onboarding() {
       const result = await upgradeUserRole(selectedRole);
       setIsLoading(false);
       if (result.success) {
+        setIsSessionUpdating(true);
+        await update({
+          ...session,
+          user: {
+            ...session?.user,
+            role: selectedRole,
+          },
+        });
+        setIsSessionUpdating(false);
         toast.success(`Your role has been upgraded to ${selectedRole}`);
-        router.push("/dashboard/profile");
+        setStep(4); // Move to the final step
       } else {
         toast.error("An error occurred while upgrading your role");
       }
     }
   };
 
-  if (!user || isLoading) {
+  if (!user || isLoading || isSessionUpdating) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-white">
         <Card className="w-[350px] shadow-lg">
           <CardContent className="pt-6">
             <div className="text-center">
               <Icons.spinner className="inline-block h-8 w-8 animate-spin" />
-              <p className="mt-2 text-muted-foreground">Loading...</p>
+              <p className="mt-2 text-muted-foreground">
+                {isSessionUpdating ? "Updating your session..." : "Loading..."}
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -78,6 +90,10 @@ export default function Onboarding() {
     {
       title: "Confirm",
       description: "Review and confirm your selection",
+    },
+    {
+      title: "Success",
+      description: "Your role has been updated",
     },
   ];
 
@@ -104,7 +120,7 @@ export default function Onboarding() {
               {steps.map((s, index) => (
                 <div
                   key={index}
-                  className={`w-1/3 text-xs font-medium ${
+                  className={`w-1/4 text-xs font-medium ${
                     step > index ? "text-blue-600" : "text-gray-400"
                   }`}
                 >
@@ -256,6 +272,32 @@ export default function Onboarding() {
                   )}
                 </Button>
               </div>
+            </motion.div>
+          )}
+
+          {step === 4 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <h3 className="text-lg font-semibold mb-4">
+                Role Updated Successfully
+              </h3>
+              <p className="mb-6">
+                Your role has been updated to{" "}
+                <strong className="text-emerald-500 bg-emerald-50">
+                  {selectedRole}
+                </strong>
+                . You can now access all the features associated with your new
+                role.
+              </p>
+              <Button
+                onClick={() => router.push("/dashboard/profile")}
+                className="w-full bg-blue-500 hover:bg-blue-600 text-white"
+              >
+                Go to Dashboard
+              </Button>
             </motion.div>
           )}
         </CardContent>
