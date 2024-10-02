@@ -8,6 +8,7 @@ import {
   Bath,
   Bed,
   Car,
+  CircleParking,
   ExpandIcon,
   Eye,
   Heart,
@@ -172,7 +173,7 @@ export default async function PropertyCard({
                 bedrooms > 0 && (
                   <div className="flex items-center space-x-2 col-span-1">
                     <span className="hidden sm:inline-block">
-                      <Car className="size-5" />
+                      <CircleParking className="size-5" />
                     </span>
                     <span className="text-neutral-500 font-semibold">
                       {bedrooms} parkings
