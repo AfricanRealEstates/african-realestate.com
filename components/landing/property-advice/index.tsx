@@ -77,7 +77,7 @@ export default function PropertyAdvice() {
                       <span className="text-sm text-gray-700">(4)</span>
                     </div>
                   </div>
-                  <h1 className="mt-6 font-bold hover:underline cursor-pointer mb-2 text-lg text-gray-700">
+                  <h1 className="mt-6 font-bold hover:underline cursor-pointer mb-2 text-lg text-gray-700 line-clamp-2">
                     {post.metadata.title}
                   </h1>
                   <p className="text-gray-500 text-base line-clamp-2">

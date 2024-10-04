@@ -38,7 +38,20 @@ function CustomLink(props: any) {
 }
 
 function RoundedImage(props: any) {
-  return <Image alt={props.alt} className="rounded-lg" {...props} />;
+  return (
+    <div
+      className="relative overflow-hidden rounded-lg"
+      style={{ width: "300px", height: "300px" }}
+    >
+      <Image
+        alt={props.alt || ""}
+        src={props.src}
+        width={300} // Explicit width
+        height={300} // Explicit height
+        className="object-cover"
+      />
+    </div>
+  );
 }
 
 function slugify(str: string) {
