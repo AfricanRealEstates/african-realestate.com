@@ -84,6 +84,10 @@ export const properyTypes = [
     value: "Vacational / Social",
     subOptions: [
       {
+        label: "Airbnbs",
+        value: "Airbnbs",
+      },
+      {
         label: "Cabins",
         value: "Cabins",
       },
