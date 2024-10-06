@@ -65,6 +65,9 @@ export default async function PropertyCard({
   const isCommercialOrIndustrial =
     propertyType === "Commercial" || propertyType === "Industrial";
 
+  const linkHref = status === "let" ? "/let" : "/buy";
+  const linkText = `${status === "let" ? "To" : "For"} ${status}`;
+
   const renderSliderGallery = () => {
     return (
       <div className="relative w-full overflow-hidden">
@@ -80,9 +83,14 @@ export default async function PropertyCard({
             <li className="text-white bg-[#198754] font-semibold text-[12px] leading-5 uppercase text-center inline-block px-2 rounded transition-all cursor-pointer">
               Featured
             </li>
-            <li className="text-white bg-[rgba(11,33,50,.4)] font-semibold text-[12px] leading-5 uppercase text-center inline-block px-2 rounded transition-all cursor-pointer">
+            {/* <li className="text-white bg-[rgba(11,33,50,.4)] font-semibold text-[12px] leading-5 uppercase text-center inline-block px-2 rounded transition-all cursor-pointer">
               {status === "let" ? "To" : "For"} {status}
-            </li>
+            </li> */}
+            <Link href={linkHref}>
+              <li className="text-white bg-[rgba(11,33,50,.4)] font-semibold text-[12px] leading-5 uppercase text-center inline-block px-2 rounded transition-all cursor-pointer hover:bg-[rgba(11,33,50,.6)]">
+                {linkText}
+              </li>
+            </Link>
           </ul>
           <ul className="flex gap-1">
             {/* <HeartButton propertyId={id} currentUser={currentUser} /> */}

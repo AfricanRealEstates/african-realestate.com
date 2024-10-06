@@ -21,7 +21,7 @@ export function generateMetadata({ params }: { params: { category: string } }) {
 
   return {
     title: category.toLocaleUpperCase(),
-    description: `All articles reagarding ${category}`,
+    description: `All articles regarding ${category}`,
   };
 }
 
@@ -34,23 +34,25 @@ export default async function Page({
     (post) => post.metadata.category === params.category
   );
 
-  const views = (
-    await redis.mget<number[]>(
-      ...posts.map((p) => ["pageviews", "posts", p.slug].join(":"))
-    )
-  ).reduce((acc, v, i) => {
-    acc[posts[i].slug] = v ?? 0;
-    return acc;
-  }, {} as Record<string, number>);
+  let views: Record<string, number> = {};
 
-  const notfoundCategory = params.category as String;
+  if (posts.length > 0) {
+    views = (
+      await redis.mget<number[]>(
+        ...posts.map((p) => ["pageviews", "posts", p.slug].join(":"))
+      )
+    ).reduce((acc, v, i) => {
+      acc[posts[i].slug] = v ?? 0;
+      return acc;
+    }, {} as Record<string, number>);
+  }
 
   if (!posts.length) {
     return (
       <section className="py-12">
         <div className="xl:container max-w-5xl m-auto px-6 text-gray-600 md:px-12 xl:px-16">
           <div className="lg:bg-gray-50 dark:lg:bg-darker lg:p-16 rounded-[4rem] space-y-6 md:flex flex-col md:gap-6 justify-center md:space-y-0 lg:items-center">
-            <h2 className="text-3xl  text-gray-900 md:text-4xl">
+            <h2 className="text-3xl text-gray-900 md:text-4xl">
               No articles found on{" "}
               <span className="text-ken-primary capitalize">
                 {params.category}{" "}
@@ -58,8 +60,8 @@ export default async function Page({
               category
             </h2>
             <p className="my-8 text-gray-600">
-              Try searching for a different category or explore some of other
-              blogs with have about real estate.
+              Try searching for a different category or explore some of our
+              other blogs about real estate.
             </p>
 
             <Link
@@ -75,6 +77,7 @@ export default async function Page({
       </section>
     );
   }
+
   return (
     <section className="py-12">
       <div className="xl:container m-auto px-6 text-gray-600 md:px-12 xl:px-6">
