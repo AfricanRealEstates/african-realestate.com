@@ -22,6 +22,7 @@ import { PropertyData } from "@/lib/types";
 import { useSession } from "next-auth/react";
 import { auth } from "@/auth";
 import HeartButton from "./HeartButton";
+import LikeCounter from "./LikesCounter";
 
 const josefin = Raleway({
   subsets: ["latin"],
@@ -93,22 +94,14 @@ export default async function PropertyCard({
             </Link>
           </ul>
           <ul className="flex gap-1">
-            {/* <HeartButton propertyId={id} currentUser={currentUser} /> */}
-            {/* <Likes propertyId={id} /> */}
-            {/* <LikeButton
-              propertyId={data.id}
-              initialState={{
-                likes: data._count?.likes || 0,
-                isLikedByUser:
-                  data.likes?.some((like) => like.userId === user?.id) || false,
-              }}
-            /> */}
             <Link
               href={`/properties/${propertyDetails}/${id}`}
               className="bg-[rgba(11,33,50,.4)] p-1 hover:bg-red-500 rounded flex items-center justify-center transition-all ease-linear cursor-pointer"
             >
               <Eye className="size-5 text-white" />
             </Link>
+
+            <LikeCounter propertyId={id} />
           </ul>
         </div>
         <Link
