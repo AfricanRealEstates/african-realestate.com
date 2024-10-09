@@ -3,16 +3,15 @@ import { POSTS } from "./(blog)/constants";
 
 export const baseUrl = 'https://modernsite1.vercel.app'
 
-
 export default async function sitemap() {
-    let blogs = getBlogPosts().map((post) => ({
+    let blogs = (await getBlogPosts()).map((post) => ({
         url: `${baseUrl}/blog/${post.metadata.category}/${post.slug}`,
-        lastModified: post.metadata.publishedAt,
+        lastModified: new Date(post.metadata.publishedAt).toISOString(),
     }));
 
     let routes = POSTS.map((route) => ({
         url: `${baseUrl}${route.href}`,
-        lastModified: new Date().toISOString().split("T")[0],
+        lastModified: new Date().toISOString(),
     }));
 
     return [...blogs, ...routes];
