@@ -1,20 +1,18 @@
-import BlogShare from "@/app/(blog)/BlogShare";
 import PopularBlogs from "@/app/(blog)/PopularBlogs";
 import RecommendedTopics from "@/app/(blog)/RecommendedTopics";
 import ReportViews from "@/app/(blog)/ReportViews";
 import { baseUrl } from "@/app/sitemap";
 import { CustomMDX } from "@/components/blog/mdx";
-import { getBlogPosts } from "@/lib/blog";
-import { formatBlogDate } from "@/lib/utils";
-import Link from "next/link";
+import { getBlogPosts, formatDate, BlogPost } from "@/lib/blog";
 import { notFound } from "next/navigation";
 import React from "react";
 import { Redis } from "@upstash/redis";
 import { ReportView } from "./view";
 import { Eye } from "lucide-react";
-import { LikeButton } from "../../../LikeButton";
 import { getCurrentUser } from "@/lib/session";
 import prisma from "@/lib/prisma";
+import { Metadata } from "next";
+import BlogShare from "./SocialShare";
 
 export const dynamic = "force-dynamic";
 
@@ -22,50 +20,64 @@ const redis = Redis.fromEnv();
 export const revalidate = 0;
 
 export async function generateStaticParams() {
-  let posts = getBlogPosts();
+  const posts = await getBlogPosts();
 
   return posts.map((post) => ({
+    category: post.metadata.category,
     slug: post.slug,
   }));
 }
 
-export function generateMetadata({
+export async function generateMetadata({
   params,
 }: {
   params: { category: string; slug: string };
-}) {
-  let post = getBlogPosts().find((post) => post.slug === params.slug);
+}): Promise<Metadata> {
+  const posts = await getBlogPosts();
+  const post = posts.find((post) => post.slug === params.slug);
   if (!post) {
-    return;
+    return {};
   }
 
-  let {
+  const {
     title,
     publishedAt: publishedTime,
     summary: description,
     image,
+    author,
+    category,
   } = post.metadata;
 
-  let ogImage = image
-    ? image
+  const ogImage = image
+    ? `${baseUrl}${image}`
     : `${baseUrl}/og?title=${encodeURIComponent(title)}`;
+
+  const url = `${baseUrl}/blog/${category}/${post.slug}`;
 
   return {
     title,
     description,
+    authors: [{ name: author }],
     openGraph: {
       title,
       description,
       type: "article",
       publishedTime,
-      url: `${baseUrl}/blog/${post?.metadata.category}/${post?.slug}}`,
-      images: [{ url: ogImage }],
+      url,
+      images: [{ url: ogImage, alt: title }],
+      siteName: "African Real Estate Blog",
+      locale: "en_US",
+      authors: [author],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
       images: [ogImage],
+      creator: "@AfricanRealEstate",
+    },
+    alternates: {
+      canonical: url,
     },
   };
 }
@@ -75,19 +87,15 @@ export default async function Page({
 }: {
   params: { category: string; slug: string };
 }) {
-  let post = getBlogPosts().find((post) => post.slug === params.slug);
+  const posts = await getBlogPosts();
+  const post = posts.find((post) => post.slug === params.slug);
 
   if (!post) {
     notFound();
   }
 
-  const views =
-    (await redis.get<number>(["pageviews", "posts", params.slug].join(":"))) ??
-    0;
-
-  let relatedCategoryPosts = getBlogPosts().filter(
-    (post) =>
-      post.metadata.category === params.category && post.slug !== params.slug
+  const relatedCategoryPosts = posts.filter(
+    (p) => p.metadata.category === params.category && p.slug !== params.slug
   );
 
   const user = await getCurrentUser();
@@ -100,7 +108,7 @@ export default async function Page({
   const hasLiked =
     dbPost?.likedBy.some((likedUser) => likedUser.id === user?.id) ?? false;
 
-  const url = `https://modernsite1.vercel.app` || `http:localhost:3000`;
+  const url = `${baseUrl}/blog/${post.metadata.category}/${post.slug}`;
 
   return (
     <>
@@ -117,11 +125,25 @@ export default async function Page({
             description: post.metadata.summary,
             image: post.metadata.image
               ? `${baseUrl}${post.metadata.image}`
-              : `/og?title=${encodeURIComponent(post.metadata.title)}`,
-            url: `${baseUrl}/blog/${post.metadata.category}/${post.slug}`,
+              : `${baseUrl}/og?title=${encodeURIComponent(
+                  post.metadata.title
+                )}`,
+            url: url,
             author: {
               "@type": "Person",
+              name: post.metadata.author,
+            },
+            publisher: {
+              "@type": "Organization",
               name: "African Real Estate",
+              logo: {
+                "@type": "ImageObject",
+                url: `${baseUrl}/logo.png`,
+              },
+            },
+            mainEntityOfPage: {
+              "@type": "WebPage",
+              "@id": url,
             },
           }),
         }}
@@ -140,7 +162,7 @@ export default async function Page({
               {post.metadata.title}
             </h1>
 
-            <div className="flex justify-between gap-2 items-center mt-2 mb-4 text-sm  md:w-max">
+            <div className="flex justify-between gap-2 items-center mt-2 mb-4 text-sm md:w-max">
               <p className="">
                 Author:{" "}
                 <span className="font-bold">{post.metadata.author}</span>
@@ -149,7 +171,7 @@ export default async function Page({
               <p className="text-sm text-neutral-600">
                 Published on:{" "}
                 <span className="font-bold">
-                  {formatBlogDate(post.metadata.publishedAt)}
+                  {formatDate(post.metadata.publishedAt, true)}
                 </span>
               </p>
             </div>
@@ -162,24 +184,21 @@ export default async function Page({
 
             <article className="prose w-full max-w-2xl mx-auto">
               <CustomMDX source={post.content} />
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mt-8">
                 <ReportView slug={post.slug} />
-                <h2 className="flex items-center gap-4">
-                  <Eye />
-                  {Intl.NumberFormat("en-US", { notation: "compact" }).format(
-                    views
-                  )}{" "}
-                  {" views"}
-                </h2>
-                {/* <LikeButton
-                  slug={post.slug}
-                  initialLikes={likes}
-                  initialLiked={hasLiked}
-                /> */}
-                <BlogShare
-                  url={`${url}/blog/${post.metadata.category}/${post.slug}`}
-                  title={`Read ${post.metadata.title}`}
-                />
+                <div className="flex items-center gap-4 justify-between w-full">
+                  <span className="flex items-center gap-1 text-sm text-gray-500">
+                    <Eye className="w-4 h-4" />
+                    {Intl.NumberFormat("en-US", { notation: "compact" }).format(
+                      post.views
+                    )}
+                  </span>
+                  <BlogShare
+                    url={url}
+                    title={post.metadata.title}
+                    summary={post.metadata.summary}
+                  />
+                </div>
               </div>
             </article>
 

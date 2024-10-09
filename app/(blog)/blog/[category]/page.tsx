@@ -9,7 +9,7 @@ const redis = Redis.fromEnv();
 export const revalidate = 0;
 
 export async function generateStaticParams() {
-  let posts = getBlogPosts();
+  let posts = await getBlogPosts();
 
   return posts.map((post) => ({
     category: post.metadata.category,
@@ -30,21 +30,33 @@ export default async function Page({
 }: {
   params: { category: string };
 }) {
-  let posts = getBlogPosts().filter(
+  let allPosts;
+  try {
+    allPosts = await getBlogPosts();
+  } catch (error) {
+    console.error("Error fetching blog posts:", error);
+    notFound();
+  }
+
+  let posts = allPosts.filter(
     (post) => post.metadata.category === params.category
   );
 
   let views: Record<string, number> = {};
 
   if (posts.length > 0) {
-    views = (
-      await redis.mget<number[]>(
+    try {
+      const viewCounts = await redis.mget<number[]>(
         ...posts.map((p) => ["pageviews", "posts", p.slug].join(":"))
-      )
-    ).reduce((acc, v, i) => {
-      acc[posts[i].slug] = v ?? 0;
-      return acc;
-    }, {} as Record<string, number>);
+      );
+      views = viewCounts.reduce((acc, v, i) => {
+        acc[posts[i].slug] = v ?? 0;
+        return acc;
+      }, {} as Record<string, number>);
+    } catch (error) {
+      console.error("Error fetching view counts:", error);
+      // If we can't fetch view counts, we'll just use an empty object
+    }
   }
 
   if (!posts.length) {

@@ -5,13 +5,14 @@ import React from "react";
 import { Josefin_Sans } from "next/font/google";
 import { formatBlogDate } from "@/lib/utils";
 import { ArrowRight, CalendarDays, Eye } from "lucide-react";
+
 const josefin = Josefin_Sans({
   subsets: ["latin"],
   weight: ["600"],
 });
 
-export default function PropertyAdvice() {
-  let latestPosts = getBlogPosts();
+export default async function PropertyAdvice() {
+  let latestPosts = await getBlogPosts();
   return (
     <section className={`py-12 leading-relaxed`}>
       <div className=" w-[95%] max-w-7xl m-auto px-6 text-gray-600 md:px-12 xl:px-6">
@@ -74,7 +75,11 @@ export default function PropertyAdvice() {
                     </div>
                     <div className="flex items-center space-x-2">
                       <Eye className="text-rose-400" />
-                      <span className="text-sm text-gray-700">(4)</span>
+                      <span className="text-sm text-gray-700">
+                        {Intl.NumberFormat("en-US", {
+                          notation: "compact",
+                        }).format(post.views)}
+                      </span>
                     </div>
                   </div>
                   <h1 className="mt-6 font-bold hover:underline cursor-pointer mb-2 text-lg text-gray-700 line-clamp-2">
@@ -88,19 +93,6 @@ export default function PropertyAdvice() {
                     <ArrowRight className="size-4" />
                   </div>
                 </div>
-                {/* <h3
-                  className={`text-xl font-semibold text-gray-800 line-clamp-2 tracking-wide group-hover:text-ken-primary transition-all ${josefin.className}`}
-                >
-                  {post.metadata.title}
-                </h3>
-                <div className="flex gap-1 items-center">
-                  <span className="w-max block text-sm font-light text-gray-500 sm:mt-0">
-                    Published {formatBlogDate(post.metadata.publishedAt)}
-                  </span>
-                </div>
-                <p className="text-gray-600 text-[15px]/6 line-clamp-2">
-                  {post.metadata.summary}
-                </p> */}
               </Link>
             ))}
         </div>
@@ -108,19 +100,3 @@ export default function PropertyAdvice() {
     </section>
   );
 }
-
-// const BlogCard = ({ post }: any) => {
-//   return (
-//     <section className="bg-white round-md overflow-hidden">
-//       <div>
-//         <Image
-//           height={667}
-//           width={1000}
-//           alt={post.metadata.title}
-//           src={post.metadata.cover}
-//           className="h-60 w-full rounded-3xl object-cover object-top transition-all duration-500 group-hover:rounded-xl"
-//         />
-//       </div>
-//     </section>
-//   );
-// };

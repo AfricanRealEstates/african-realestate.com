@@ -1,71 +1,101 @@
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
-// get all the mdx files from the dir
-function getMDXFiles(dir: string) {
+import { Redis } from "@upstash/redis";
+
+const redis = Redis.fromEnv();
+
+export type BlogPost = {
+    slug: string;
+    metadata: {
+        title: string;
+        publishedAt: string;
+        summary: string;
+        author: string;
+        category: string;
+        image: string;
+        cover: string;
+    };
+    content: string;
+    views: number;
+};
+
+function getMDXFiles(dir: string): string[] {
     return fs.readdirSync(dir).filter((file) => path.extname(file) === ".mdx");
 }
-// Read data from those files
-function readMDXFile(filePath: fs.PathOrFileDescriptor) {
-    let rawContent = fs.readFileSync(filePath, "utf-8");
+
+function readMDXFile(filePath: string): { data: any; content: string } {
+    const rawContent = fs.readFileSync(filePath, "utf-8");
     return matter(rawContent);
 }
-// present the mdx data and metadata
-function getMDXData(dir: string) {
-    let mdxFiles = getMDXFiles(dir);
 
-    return mdxFiles.map((file) => {
-        let { data: metadata, content } = readMDXFile(path.join(dir, file));
-        let slug = path.basename(file, path.extname(file));
+async function getMDXData(dir: string): Promise<BlogPost[]> {
+    const mdxFiles = getMDXFiles(dir);
 
-        return {
-            metadata,
-            slug,
-            content,
-        };
-    });
+    const posts = await Promise.all(
+        mdxFiles.map(async (file) => {
+            const { data: metadata, content } = readMDXFile(path.join(dir, file));
+            const slug = path.basename(file, path.extname(file));
+            const views = await redis.get<number>(
+                ["pageviews", "posts", slug].join(":")
+            );
+
+            return {
+                metadata: metadata as BlogPost["metadata"],
+                slug,
+                content,
+                views: views ?? 0,
+            };
+        })
+    );
+
+    return posts;
 }
 
-export function getBlogPosts() {
-    return getMDXData(path.join(process.cwd(), "app", "(blog)", "blog", "contents"));
+export async function getBlogPosts(): Promise<BlogPost[]> {
+    const posts = await getMDXData(
+        path.join(process.cwd(), "app", "(blog)", "blog", "contents")
+    );
+    return posts.sort(
+        (a, b) =>
+            new Date(b.metadata.publishedAt).getTime() -
+            new Date(a.metadata.publishedAt).getTime()
+    );
 }
 
+export function formatDate(date: string, includeRelative = false): string {
+    const currentDate = new Date();
+    const targetDate = new Date(date);
 
-export function formatDate(date: string, includeRelative = false) {
-    let currentDate = new Date();
-    if (!date.includes('T')) {
-        date = `${date}T00:00:00`;
-    }
+    const formatter = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+    const diffInSeconds = (currentDate.getTime() - targetDate.getTime()) / 1000;
 
-    let targetDate = new Date(date);
-
-    let yearsAgo = currentDate.getFullYear() - targetDate.getFullYear();
-    let monthsAgo = currentDate.getMonth() - targetDate.getMonth();
-    let daysAgo = currentDate.getDate() - targetDate.getDate();
-
-    let formattedDate = "";
-
-    if (yearsAgo > 0) {
-        formattedDate = `${yearsAgo}y ago`
-    } else if (monthsAgo > 0) {
-        formattedDate = `${monthsAgo}mo ago`
-    } else if (yearsAgo > 0) {
-        formattedDate = `${yearsAgo}y ago`
-    } else if (daysAgo > 0) {
-        formattedDate = `${daysAgo}d ago`
+    let relativeTime: string;
+    if (diffInSeconds < 60) {
+        relativeTime = formatter.format(-Math.round(diffInSeconds), "second");
+    } else if (diffInSeconds < 3600) {
+        relativeTime = formatter.format(-Math.round(diffInSeconds / 60), "minute");
+    } else if (diffInSeconds < 86400) {
+        relativeTime = formatter.format(-Math.round(diffInSeconds / 3600), "hour");
+    } else if (diffInSeconds < 2592000) {
+        relativeTime = formatter.format(-Math.round(diffInSeconds / 86400), "day");
+    } else if (diffInSeconds < 31536000) {
+        relativeTime = formatter.format(
+            -Math.round(diffInSeconds / 2592000),
+            "month"
+        );
     } else {
-        formattedDate = "Today"
+        relativeTime = formatter.format(
+            -Math.round(diffInSeconds / 31536000),
+            "year"
+        );
     }
 
-    let fullDate = targetDate.toLocaleString("en-US", {
+    const fullDate = targetDate.toLocaleString("en-US", {
         month: "long",
         day: "numeric",
-        year: "numeric"
+        year: "numeric",
     });
 
-    if (!includeRelative) {
-        return fullDate;
-    }
-
-    return `${fullDate} (${formattedDate})`
+    return includeRelative ? `${fullDate} (${relativeTime})` : fullDate;
 }

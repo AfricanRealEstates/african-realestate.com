@@ -3,10 +3,6 @@ import React from "react";
 import LatestPosts from "../LatestPosts";
 import { getBlogPosts } from "@/lib/blog";
 import { Raleway } from "next/font/google";
-import { POSTS } from "../constants";
-import Link from "next/link";
-import { fetcher, fetchUrl } from "@/lib/utils";
-import useSWR from "swr";
 import PopularBlogs from "../PopularBlogs";
 import RecommendedTopics from "../RecommendedTopics";
 import { Redis } from "@upstash/redis";
@@ -24,7 +20,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Blog() {
-  let allPosts = getBlogPosts();
+  const allPosts = await getBlogPosts();
   const views = (
     await redis.mget<number[]>(
       ...allPosts.map((p) => ["pageviews", "posts", p.slug].join(":"))
@@ -34,9 +30,10 @@ export default async function Blog() {
     return acc;
   }, {} as Record<string, number>);
 
-  if (views.length < 1) {
+  if (Object.keys(views).length < 1) {
     return null;
   }
+
   return (
     <main className={`pt-6 pb-8 bg-white lg:pb-16 ${raleway.className}`}>
       <div className="mb-12 space-y-4 text-center container m-auto px-6 text-gray-600 md:px-12 xl:px-6">
