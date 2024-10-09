@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Share2, Facebook, Twitter, Linkedin, Link } from "lucide-react";
+import { Share2, Facebook, Twitter, Linkedin, Link, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -30,6 +30,11 @@ const BlogShare: React.FC<BlogShareProps> = ({ url, title, summary }) => {
         await navigator.share(shareData);
       } catch (err) {
         console.error("Error sharing:", err);
+        toast({
+          title: "Sharing failed",
+          description: "Please try another sharing method.",
+          variant: "destructive",
+        });
       }
     } else {
       handleCopyLink();
@@ -37,38 +42,51 @@ const BlogShare: React.FC<BlogShareProps> = ({ url, title, summary }) => {
   };
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(url);
-    toast({
-      title: "Link copied!",
-      description: "The blog post link has been copied to your clipboard.",
-    });
+    navigator.clipboard.writeText(url).then(
+      () => {
+        toast({
+          title: "Link copied!",
+          description: "The blog post link has been copied to your clipboard.",
+        });
+      },
+      (err) => {
+        console.error("Could not copy text: ", err);
+        toast({
+          title: "Copy failed",
+          description: "Please try again or use another sharing method.",
+          variant: "destructive",
+        });
+      }
+    );
   };
 
   const shareOnFacebook = () => {
-    const facebookShareUrl = `https://www.facebook.com/dialog/share?app_id=YOUR_FACEBOOK_APP_ID&display=popup&href=${encodeURIComponent(
+    const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
       url
-    )}&quote=${encodeURIComponent(title)}`;
-    window.open(facebookShareUrl, "_blank", "width=600,height=400");
+    )}`;
+    window.open(facebookShareUrl, "_blank", "noopener,noreferrer");
   };
 
   const shareOnTwitter = () => {
-    window.open(
-      `https://twitter.com/intent/tweet?url=${encodeURIComponent(
-        url
-      )}&text=${encodeURIComponent(title)}`,
-      "_blank"
-    );
+    const twitterShareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+      url
+    )}&text=${encodeURIComponent(title)}`;
+    window.open(twitterShareUrl, "_blank", "noopener,noreferrer");
   };
 
   const shareOnLinkedIn = () => {
-    window.open(
-      `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(
-        url
-      )}&title=${encodeURIComponent(title)}&summary=${encodeURIComponent(
-        summary
-      )}`,
-      "_blank"
+    const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+      url
+    )}`;
+    window.open(linkedInShareUrl, "_blank", "noopener,noreferrer");
+  };
+
+  const shareByEmail = () => {
+    const subject = encodeURIComponent(title);
+    const body = encodeURIComponent(
+      `Check out this blog post: ${title}\n\n${summary}\n\nRead more at: ${url}`
     );
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
   };
 
   return (
@@ -91,6 +109,10 @@ const BlogShare: React.FC<BlogShareProps> = ({ url, title, summary }) => {
         <DropdownMenuItem onClick={shareOnLinkedIn} className="cursor-pointer">
           <Linkedin className="mr-2 h-4 w-4" />
           <span>LinkedIn</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={shareByEmail} className="cursor-pointer">
+          <Mail className="mr-2 h-4 w-4" />
+          <span>Email</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleCopyLink} className="cursor-pointer">
           <Link className="mr-2 h-4 w-4" />
