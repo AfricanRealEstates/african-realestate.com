@@ -20,7 +20,6 @@ export async function GET(request: NextRequest) {
                 { description: { contains: q, mode: "insensitive" } },
                 { county: { contains: q, mode: "insensitive" } },
                 { nearbyTown: { contains: q, mode: "insensitive" } },
-                { propertyDetails: { contains: q, mode: "insensitive" } },
                 { user: { name: { contains: q, mode: "insensitive" } } },
                 { user: { agentName: { contains: q, mode: "insensitive" } } },
             ];
@@ -30,13 +29,8 @@ export async function GET(request: NextRequest) {
             where.status = status;
         }
 
-        // Updated price filtering
-        if (minPrice || maxPrice) {
-            where.price = {};
-            if (minPrice) where.price.gte = parseFloat(minPrice);
-            if (maxPrice) where.price.lte = parseFloat(maxPrice);
-        }
-
+        if (minPrice) where.price = { gte: parseFloat(minPrice) };
+        if (maxPrice) where.price = { ...where.price, lte: parseFloat(maxPrice) };
         if (propertyType) where.propertyType = propertyType;
         if (propertyDetails) where.propertyDetails = propertyDetails;
 
