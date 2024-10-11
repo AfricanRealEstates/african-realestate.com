@@ -13,6 +13,8 @@ import { getCurrentUser } from "@/lib/session";
 import prisma from "@/lib/prisma";
 import { Metadata } from "next";
 import BlogShare from "./SocialShare";
+import LikeButton from "./LikeButton";
+import { User } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
 
@@ -99,14 +101,6 @@ export default async function Page({
   );
 
   const user = await getCurrentUser();
-  const dbPost = await prisma.blogPost.findUnique({
-    where: { slug: params.slug },
-    include: { likedBy: true },
-  });
-
-  const likes = dbPost?.likes ?? 0;
-  const hasLiked =
-    dbPost?.likedBy.some((likedUser) => likedUser.id === user?.id) ?? false;
 
   const url = `${baseUrl}/blog/${post.metadata.category}/${post.slug}`;
 
@@ -193,6 +187,11 @@ export default async function Page({
                       post.views
                     )}
                   </span>
+                  <LikeButton
+                    slug={post.slug}
+                    initialLikes={post.likes}
+                    user={user as User}
+                  />
                   <BlogShare
                     url={url}
                     title={post.metadata.title}

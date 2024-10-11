@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import { Redis } from "@upstash/redis";
+import prisma from './prisma';
 
 const redis = Redis.fromEnv();
 
@@ -18,6 +19,7 @@ export type BlogPost = {
     };
     content: string;
     views: number;
+    likes: number;
 };
 
 function getMDXFiles(dir: string): string[] {
@@ -39,12 +41,17 @@ async function getMDXData(dir: string): Promise<BlogPost[]> {
             const views = await redis.get<number>(
                 ["pageviews", "posts", slug].join(":")
             );
+            const likes = await prisma.blogPost.findUnique({
+                where: { slug },
+                select: { likes: true },
+            });
 
             return {
                 metadata: metadata as BlogPost["metadata"],
                 slug,
                 content,
                 views: views ?? 0,
+                likes: likes?.likes ?? 0,
             };
         })
     );

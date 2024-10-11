@@ -30,8 +30,13 @@ export async function GET(request: NextRequest) {
             where.status = status;
         }
 
-        if (minPrice) where.price = { gte: parseFloat(minPrice) };
-        if (maxPrice) where.price = { ...where.price, lte: parseFloat(maxPrice) };
+        // Updated price filtering
+        if (minPrice || maxPrice) {
+            where.price = {};
+            if (minPrice) where.price.gte = parseFloat(minPrice);
+            if (maxPrice) where.price.lte = parseFloat(maxPrice);
+        }
+
         if (propertyType) where.propertyType = propertyType;
         if (propertyDetails) where.propertyDetails = propertyDetails;
 
