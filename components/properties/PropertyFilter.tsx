@@ -89,9 +89,16 @@ export default function PropertyFilter({
     const params = new URLSearchParams(searchParams);
     Object.entries(data).forEach(([key, value]) => {
       if (value) {
-        // Convert county and locality to lowercase for case-insensitive search
         if (key === "county" || key === "locality") {
           params.set(key, value.toLowerCase());
+        } else if (key === "minPrice" || key === "maxPrice") {
+          // Ensure price values are numbers
+          const numericValue = parseFloat(value.replace(/,/g, ""));
+          if (!isNaN(numericValue)) {
+            params.set(key, numericValue.toString());
+          } else {
+            params.delete(key);
+          }
         } else {
           params.set(key, value.toString());
         }
@@ -102,6 +109,14 @@ export default function PropertyFilter({
     setActiveFilters(data);
     router.push(`/${pageType}?${params.toString()}`);
     setIsOpen(false);
+  };
+
+  const formatPrice = (price: string) => {
+    const numericPrice = parseFloat(price.replace(/,/g, ""));
+    if (isNaN(numericPrice)) return "";
+    return new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(
+      numericPrice
+    );
   };
 
   const clearFilters = () => {
@@ -124,14 +139,6 @@ export default function PropertyFilter({
     const params = new URLSearchParams(searchParams);
     params.delete(key);
     router.push(`/${pageType}?${params.toString()}`);
-  };
-
-  const formatPrice = (price: string) => {
-    const numericPrice = parseFloat(price.replace(/,/g, ""));
-    if (isNaN(numericPrice)) return "";
-    return new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(
-      numericPrice
-    );
   };
 
   const handlePriceChange = (type: "minPrice" | "maxPrice", value: string) => {

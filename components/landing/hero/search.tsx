@@ -31,7 +31,7 @@ async function searchProperties(
 ) {
   const params = new URLSearchParams(query ? { q: query } : {});
   Object.entries(advancedParams).forEach(([key, value]) => {
-    if (value !== undefined && value !== null) {
+    if (value !== undefined && value !== null && value !== "") {
       params.append(key, value.toString());
     }
   });
@@ -80,7 +80,12 @@ function AdvancedSearch({
   };
 
   const handleApplyFilters = () => {
-    onSearch(params);
+    const filteredParams = Object.fromEntries(
+      Object.entries(params).filter(
+        ([_, value]) => value !== undefined && value !== null && value !== ""
+      )
+    );
+    onSearch(filteredParams as AdvancedSearchParams);
   };
 
   const getPropertyDetails = (propertyType: string) => {
@@ -173,12 +178,9 @@ function AdvancedSearch({
                     handlePriceChange("maxPrice", e.target.value)
                   }
                 />
-
                 <span className="ml-4 text-xs text-green-600  focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
                   {formatPrice(maxPriceInput)}
                 </span>
-
-                {/* <span className="text-sm text-gray-500 mt-1 block"></span> */}
               </div>
             </div>
           </div>
