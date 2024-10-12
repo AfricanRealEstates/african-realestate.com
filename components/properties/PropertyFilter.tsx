@@ -87,13 +87,8 @@ export default function PropertyFilter({
   const convertPriceToCents = (price: string): number => {
     // Remove commas and convert to a number
     const numericPrice = parseFloat(price.replace(/,/g, ""));
-    // Convert to cents (multiply by 100)
-    return Math.round(numericPrice * 100);
-  };
-
-  const convertCentsToPrice = (cents: number): string => {
-    // Convert cents back to a price (divide by 100)
-    return (cents / 100).toString();
+    // Return the numeric price as is, without multiplying by 100
+    return Math.round(numericPrice);
   };
 
   const onSubmit = (data: FilterValues) => {
@@ -103,10 +98,10 @@ export default function PropertyFilter({
         if (key === "county" || key === "locality") {
           params.set(key, value.toLowerCase());
         } else if (key === "minPrice" || key === "maxPrice") {
-          // Convert price to cents
-          const centsValue = convertPriceToCents(value);
-          if (!isNaN(centsValue)) {
-            params.set(key, centsValue.toString());
+          // Convert price to whole number
+          const wholeNumberValue = convertPriceToCents(value);
+          if (!isNaN(wholeNumberValue)) {
+            params.set(key, wholeNumberValue.toString());
           } else {
             params.delete(key);
           }
@@ -122,18 +117,12 @@ export default function PropertyFilter({
     setIsOpen(false);
   };
 
-  // Update the useEffect hook to convert cents back to price when setting active filters
+  // Update the useEffect hook to use the price values as is
   useEffect(() => {
     const filters: FilterValues = {};
     searchParams.forEach((value, key) => {
       if (key in filterSchema.shape) {
-        if (key === "minPrice" || key === "maxPrice") {
-          filters[key as keyof FilterValues] = convertCentsToPrice(
-            parseInt(value)
-          );
-        } else {
-          filters[key as keyof FilterValues] = value;
-        }
+        filters[key as keyof FilterValues] = value;
       }
     });
     setActiveFilters(filters);
