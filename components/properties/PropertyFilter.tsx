@@ -116,8 +116,6 @@ export default function PropertyFilter({
     const numericPrice = parseFloat(price.replace(/,/g, ""));
     if (isNaN(numericPrice)) return "";
     return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
       maximumFractionDigits: 0,
     }).format(numericPrice);
   };
