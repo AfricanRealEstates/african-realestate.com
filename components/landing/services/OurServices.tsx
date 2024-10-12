@@ -45,7 +45,7 @@ export default function OurServices() {
           </h4>
         </div>
         <Link
-          href="/services"
+          href="/guides"
           className={`${josefin.className} text-[#636262] hover:text-blue-500 group-hover:underline underline-offset-8 group font-semibold relative flex items-center gap-x-2`}
         >
           <span className=" group-hover:underline group-hover:underline-offset-4"></span>
@@ -88,8 +88,8 @@ export default function OurServices() {
                 </span>
 
                 <Link
-                  href="/services"
-                  aria-label="got to services"
+                  href="/guides"
+                  aria-label="got to guides"
                   className="relative ml-auto flex h-12 w-12 items-center justify-center before:absolute before:inset-0 before:rounded-full before:border before:border-gray-200/40 before:bg-gray-100 before:transition-transform before:duration-300 active:duration-75 active:before:scale-95 group-hover:before:scale-110 dark:before:border-gray-700 dark:before:bg-gray-800"
                 >
                   <svg

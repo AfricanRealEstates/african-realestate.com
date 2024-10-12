@@ -26,7 +26,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 
-// Import the propertyTypes constant
 import { propertyTypes } from "../../constants/index";
 
 const filterSchema = z.object({
@@ -92,8 +91,10 @@ export default function PropertyFilter({
         if (key === "county" || key === "locality") {
           params.set(key, value.toLowerCase());
         } else if (key === "minPrice" || key === "maxPrice") {
-          // Ensure price values are numbers
-          const numericValue = parseFloat(value.replace(/,/g, ""));
+          // Ensure price values are numbers and convert to cents
+          const numericValue = Math.round(
+            parseFloat(value.replace(/,/g, "")) * 100
+          );
           if (!isNaN(numericValue)) {
             params.set(key, numericValue.toString());
           } else {
@@ -114,9 +115,11 @@ export default function PropertyFilter({
   const formatPrice = (price: string) => {
     const numericPrice = parseFloat(price.replace(/,/g, ""));
     if (isNaN(numericPrice)) return "";
-    return new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(
-      numericPrice
-    );
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    }).format(numericPrice);
   };
 
   const clearFilters = () => {
@@ -153,7 +156,10 @@ export default function PropertyFilter({
           if (value && (key !== "status" || pageType === "search")) {
             return (
               <Badge key={key} variant="secondary" className="text-sm">
-                {key}: {value}
+                {key}:{" "}
+                {key === "minPrice" || key === "maxPrice"
+                  ? formatPrice(value)
+                  : value}
                 <Button
                   variant="ghost"
                   size="sm"
@@ -186,6 +192,7 @@ export default function PropertyFilter({
             </SheetDescription>
           </SheetHeader>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-4">
+            {/* Status field */}
             <div>
               <Label htmlFor="status">Status</Label>
               <Controller
@@ -208,6 +215,7 @@ export default function PropertyFilter({
                 )}
               />
             </div>
+            {/* Property Type field */}
             <div>
               <Label htmlFor="propertyType">Property Type</Label>
               <Controller
@@ -235,6 +243,7 @@ export default function PropertyFilter({
                 )}
               />
             </div>
+            {/* Property Details field */}
             {watchPropertyType && (
               <div>
                 <Label htmlFor="propertyDetails">Property Details</Label>
@@ -263,6 +272,7 @@ export default function PropertyFilter({
                 />
               </div>
             )}
+            {/* County field */}
             <div>
               <Label htmlFor="county">County</Label>
               <Controller
@@ -273,6 +283,7 @@ export default function PropertyFilter({
                 )}
               />
             </div>
+            {/* Locality field */}
             <div>
               <Label htmlFor="locality">Locality</Label>
               <Controller
@@ -283,6 +294,7 @@ export default function PropertyFilter({
                 )}
               />
             </div>
+            {/* Minimum Price field */}
             <div>
               <Label htmlFor="minPrice">Minimum Price</Label>
               <Controller
@@ -299,10 +311,11 @@ export default function PropertyFilter({
                   />
                 )}
               />
-              <span className="text-xs text-green-600 bg-green-50 focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
+              <span className="text-xs text-green-600 focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
                 {formatPrice(watchMinPrice || "")}
               </span>
             </div>
+            {/* Maximum Price field */}
             <div>
               <Label htmlFor="maxPrice">Maximum Price</Label>
               <Controller
@@ -319,7 +332,7 @@ export default function PropertyFilter({
                   />
                 )}
               />
-              <span className="text-xs text-green-600 bg-green-50 focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
+              <span className="text-xs text-green-600 focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
                 {formatPrice(watchMaxPrice || "")}
               </span>
             </div>
