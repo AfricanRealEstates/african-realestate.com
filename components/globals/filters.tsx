@@ -1,5 +1,5 @@
 "use client";
-import { propertyStatuses, properyTypes } from "@/constants";
+import { propertyStatuses, propertyTypes } from "@/constants";
 import { Button, Form, Input, InputNumber, Modal, Select, Tag } from "antd";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
@@ -16,7 +16,7 @@ export default function Filters({ searchParams }: { searchParams: any }) {
 
   const handlePropertyTypeChange = (value: string) => {
     // Find the selected property type and get its subOptions
-    const selectedPropertyType = properyTypes.find(
+    const selectedPropertyType = propertyTypes.find(
       (type) => type.value === value
     );
     const subOptions = selectedPropertyType
@@ -142,7 +142,7 @@ export default function Filters({ searchParams }: { searchParams: any }) {
             <section className="grid grid-cols-1 lg:grid-cols-3 gap-x-5 gap-y-2">
               <Form.Item name="propertyType" label="Property Type">
                 <Select
-                  options={properyTypes}
+                  options={propertyTypes}
                   placeholder="Select Property Type"
                   onChange={handlePropertyTypeChange}
                 />

@@ -27,7 +27,7 @@ import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 
 // Import the propertyTypes constant
-import { properyTypes } from "../../constants/index";
+import { propertyTypes } from "../../constants/index";
 
 const filterSchema = z.object({
   status: z.string().optional(),
@@ -225,7 +225,7 @@ export default function PropertyFilter({
                       <SelectValue placeholder="Select property type" />
                     </SelectTrigger>
                     <SelectContent>
-                      {properyTypes.map((type) => (
+                      {propertyTypes.map((type) => (
                         <SelectItem key={type.value} value={type.value}>
                           {type.label}
                         </SelectItem>
@@ -247,7 +247,7 @@ export default function PropertyFilter({
                         <SelectValue placeholder="Select property details" />
                       </SelectTrigger>
                       <SelectContent>
-                        {properyTypes
+                        {propertyTypes
                           .find((type) => type.value === watchPropertyType)
                           ?.subOptions.map((subOption) => (
                             <SelectItem

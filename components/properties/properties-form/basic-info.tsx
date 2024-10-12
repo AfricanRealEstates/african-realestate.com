@@ -12,7 +12,7 @@ import {
 import {
   currencyOptions,
   propertyStatuses,
-  properyTypes,
+  propertyTypes,
   appliances,
   commercialAppliances,
   landUnits,
@@ -51,7 +51,7 @@ export default function BasicInfo({
   ]);
 
   useEffect(() => {
-    const selectedPropertyType = properyTypes.find(
+    const selectedPropertyType = propertyTypes.find(
       (type) => type.value === propertyType
     );
 
@@ -178,7 +178,7 @@ export default function BasicInfo({
           className=""
         >
           <Select
-            options={properyTypes}
+            options={propertyTypes}
             placeholder="Select Property Type"
             onChange={handlePropertyTypeChange}
             className="border border-gray-300 rounded-md"

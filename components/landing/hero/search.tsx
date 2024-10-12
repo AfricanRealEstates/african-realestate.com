@@ -23,7 +23,7 @@
 //   SelectTrigger,
 //   SelectValue,
 // } from "@/components/ui/select";
-// import { properyTypes } from "@/constants";
+// import { propertyTypes } from "@/constants";
 
 // async function searchProperties(
 //   query: string,
@@ -89,7 +89,7 @@
 //   };
 
 //   const getPropertyDetails = (propertyType: string) => {
-//     const selectedType = properyTypes.find(
+//     const selectedType = propertyTypes.find(
 //       (type) => type.value === propertyType
 //     );
 //     return selectedType ? selectedType.subOptions : [];
@@ -198,7 +198,7 @@
 //                 <SelectValue placeholder="Select property type" />
 //               </SelectTrigger>
 //               <SelectContent>
-//                 {properyTypes.map((type) => (
+//                 {propertyTypes.map((type) => (
 //                   <SelectItem key={type.value} value={type.value}>
 //                     {type.label}
 //                   </SelectItem>
@@ -430,7 +430,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { properyTypes } from "@/constants";
+import { propertyTypes } from "@/constants";
 
 async function searchProperties(
   query: string,
@@ -491,7 +491,7 @@ function AdvancedSearch({
   };
 
   const getPropertyDetails = (propertyType: string) => {
-    const selectedType = properyTypes.find(
+    const selectedType = propertyTypes.find(
       (type) => type.value === propertyType
     );
     return selectedType ? selectedType.subOptions : [];
@@ -603,7 +603,7 @@ function AdvancedSearch({
                 <SelectValue placeholder="Select property type" />
               </SelectTrigger>
               <SelectContent>
-                {properyTypes.map((type) => (
+                {propertyTypes.map((type) => (
                   <SelectItem key={type.value} value={type.value}>
                     {type.label}
                   </SelectItem>

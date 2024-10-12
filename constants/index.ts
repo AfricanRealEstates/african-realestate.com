@@ -1,4 +1,4 @@
-export const properyTypes = [
+export const propertyTypes = [
   {
     label: "Residential",
     value: "Residential",
