@@ -84,6 +84,18 @@ export default function PropertyFilter({
     setActiveFilters(filters);
   }, [searchParams]);
 
+  const convertPriceToCents = (price: string): number => {
+    // Remove commas and convert to a number
+    const numericPrice = parseFloat(price.replace(/,/g, ""));
+    // Convert to cents (multiply by 100)
+    return Math.round(numericPrice * 100);
+  };
+
+  const convertCentsToPrice = (cents: number): string => {
+    // Convert cents back to a price (divide by 100)
+    return (cents / 100).toString();
+  };
+
   const onSubmit = (data: FilterValues) => {
     const params = new URLSearchParams(searchParams);
     Object.entries(data).forEach(([key, value]) => {
@@ -91,12 +103,10 @@ export default function PropertyFilter({
         if (key === "county" || key === "locality") {
           params.set(key, value.toLowerCase());
         } else if (key === "minPrice" || key === "maxPrice") {
-          // Ensure price values are numbers and convert to cents
-          const numericValue = Math.round(
-            parseFloat(value.replace(/,/g, "")) * 100
-          );
-          if (!isNaN(numericValue)) {
-            params.set(key, numericValue.toString());
+          // Convert price to cents
+          const centsValue = convertPriceToCents(value);
+          if (!isNaN(centsValue)) {
+            params.set(key, centsValue.toString());
           } else {
             params.delete(key);
           }
@@ -112,6 +122,24 @@ export default function PropertyFilter({
     setIsOpen(false);
   };
 
+  // Update the useEffect hook to convert cents back to price when setting active filters
+  useEffect(() => {
+    const filters: FilterValues = {};
+    searchParams.forEach((value, key) => {
+      if (key in filterSchema.shape) {
+        if (key === "minPrice" || key === "maxPrice") {
+          filters[key as keyof FilterValues] = convertCentsToPrice(
+            parseInt(value)
+          );
+        } else {
+          filters[key as keyof FilterValues] = value;
+        }
+      }
+    });
+    setActiveFilters(filters);
+  }, [searchParams]);
+
+  // Update the formatPrice function to handle large numbers
   const formatPrice = (price: string) => {
     const numericPrice = parseFloat(price.replace(/,/g, ""));
     if (isNaN(numericPrice)) return "";
