@@ -86,7 +86,7 @@ export default function SortingOptions({
   if (!isActive) return null;
 
   return (
-    <div className="mb-4 flex items-center space-x-4">
+    <div className="mb-4 flex items-center space-x-4 relative z-10">
       <Select value={selectedSort} onValueChange={handleSortChange}>
         <SelectTrigger className="w-[200px]">
           <SelectValue placeholder="Sort by" />
