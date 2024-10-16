@@ -1,4 +1,5 @@
 "use client";
+
 import React from "react";
 import { Lexend } from "next/font/google";
 import { Card } from "@/components/ui/card";
@@ -10,7 +11,8 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { BadgeCheck } from "lucide-react";
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
+import { Tab } from "@headlessui/react";
+import Image from "next/image";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -125,65 +127,74 @@ const reviews: { google: Review[]; trustpilot: Review[]; reviewsIO: Review[] } =
 
 const Reviews: React.FC = () => {
   return (
-    <section className="bg-neutral-50 px-5 py-16 md:px-10 md:py-16 lg:py-16">
-      <div className="mx-auto w-[95%] max-w-7xl">
+    <section className="bg-neutral-50 px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+      <div className="mx-auto max-w-7xl">
         <h4
-          className={`${lexend.className} text-gray-600 mt-4 tracking-tight text-3xl sm:text-4xl font-semibold capitalize text-center`}
+          className={`${lexend.className} text-gray-600 mt-4 tracking-tight text-2xl sm:text-3xl lg:text-4xl font-semibold capitalize text-center`}
         >
           Our recent customer reviews
         </h4>
 
-        <article className="mt-10">
-          <TabGroup>
-            <TabList className="justify-between items-center rounded-lg w-full grid grid-cols-1 lg:grid-cols-3 gap-4 bg-white">
+        <div className="mt-10">
+          <Tab.Group>
+            <Tab.List className="flex flex-col sm:flex-row justify-between items-center rounded-lg w-full gap-4 bg-white p-2">
               <Tab
-                as="div"
                 className={({ selected }) =>
-                  `col-span-1 flex items-center gap-3 ${
-                    selected ? "bg-white" : ""
+                  `w-full sm:w-auto flex items-center justify-center gap-3 p-2 rounded-md transition-colors ${
+                    selected
+                      ? "bg-blue-100 text-blue-700"
+                      : "text-gray-500 hover:bg-gray-100"
                   }`
                 }
               >
-                <img
+                <Image
                   src="/assets/google-review.png"
                   alt="Google Review"
-                  className="h-24"
+                  width={96}
+                  height={96}
+                  className="h-16 w-auto"
                 />
-                <p className="text-3xl font-bold text-gray-600">4.9/5</p>
+                <p className="text-xl font-bold">4.9/5</p>
               </Tab>
               <Tab
-                as="div"
                 className={({ selected }) =>
-                  `col-span-1 flex items-center gap-5 ${
-                    selected ? "bg-white" : ""
+                  `w-full sm:w-auto flex items-center justify-center gap-3 p-2 rounded-md transition-colors ${
+                    selected
+                      ? "bg-blue-100 text-blue-700"
+                      : "text-gray-500 hover:bg-gray-100"
                   }`
                 }
               >
-                <img
+                <Image
                   src="/assets/trustpilot.png"
                   alt="TrustPilot"
-                  className="h-[56px]"
+                  width={112}
+                  height={56}
+                  className="h-14 w-auto"
                 />
-                <p className="text-3xl font-bold text-gray-600">4.8/5</p>
+                <p className="text-xl font-bold">4.8/5</p>
               </Tab>
               <Tab
-                as="div"
                 className={({ selected }) =>
-                  `col-span-1 flex items-center gap-5 ${
-                    selected ? "bg-white" : ""
+                  `w-full sm:w-auto flex items-center justify-center gap-3 p-2 rounded-md transition-colors ${
+                    selected
+                      ? "bg-blue-100 text-blue-700"
+                      : "text-gray-500 hover:bg-gray-100"
                   }`
                 }
               >
-                <img
+                <Image
                   src="/assets/reviews-io.png"
                   alt="Reviews.io"
-                  className="h-[56px]"
+                  width={112}
+                  height={56}
+                  className="h-14 w-auto"
                 />
-                <p className="text-3xl font-bold text-gray-600">5.0/5</p>
+                <p className="text-xl font-bold">5.0/5</p>
               </Tab>
-            </TabList>
+            </Tab.List>
 
-            <Tab.Panels className="mt-2">
+            <Tab.Panels className="mt-4">
               <Tab.Panel>
                 <ReviewCarousel reviews={reviews.google} reviewType="google" />
               </Tab.Panel>
@@ -200,8 +211,8 @@ const Reviews: React.FC = () => {
                 />
               </Tab.Panel>
             </Tab.Panels>
-          </TabGroup>
-        </article>
+          </Tab.Group>
+        </div>
       </div>
     </section>
   );
@@ -223,204 +234,58 @@ const ReviewCarousel: React.FC<ReviewCarouselProps> = ({
   };
 
   return (
-    <div className="bg-[#f7f7f7] p-2 mt-4">
-      <Carousel className="mt-5 max-w-3xl mx-auto px-4 lg:px-8 relative">
+    <div className="bg-[#f7f7f7] p-2 mt-4 rounded-lg">
+      <Carousel className="w-full max-w-3xl mx-auto">
         <CarouselContent>
-          {reviews.map((review) => {
-            const { img, name, body, username } = review;
-            return (
-              <CarouselItem key={name} className="rounded-md">
-                <div className="p-4">
-                  <Card className="grid grid-cols-4 gap-4 p-4 rounded-md bg-white">
-                    <div className="col-span-1 flex flex-col space-y-2">
-                      <img
-                        src={img}
-                        alt=""
-                        className="rounded-md w-full h-3/4"
-                      />
-                      <p className="capitalize">{name}</p>
+          {reviews.map((review, index) => (
+            <CarouselItem key={index}>
+              <div className="p-2">
+                <Card className="flex flex-col h-full p-6 rounded-md bg-white shadow-md">
+                  <div className="flex items-center space-x-4 mb-4">
+                    <Image
+                      src={review.img}
+                      alt={review.name}
+                      width={64}
+                      height={64}
+                      className="rounded-full"
+                    />
+                    <div>
+                      <p className="font-semibold text-lg">{review.name}</p>
+                      <p className="text-sm text-gray-500">{review.username}</p>
                     </div>
-                    <div className="col-span-3 flex flex-col gap-4">
-                      <div className="flex justify-between items-center">
-                        <img
-                          src={reviewImages[reviewType]}
-                          alt={`${reviewType} Review`}
-                          className="h-[54px] border border-neutral-50"
-                        />
-                        <div className="flex space-x-1 items-center">
-                          <BadgeCheck className="size-5 text-emerald-600" />
-                          <p className="text-base/6 font-medium text-emerald-600">
-                            Verified order
-                          </p>
-                        </div>
-                      </div>
-                      <p className="text-sm leading-relaxed tracking-wide">
-                        &ldquo;{body}&rdquo;
+                  </div>
+                  <div className="flex-grow">
+                    <p className="text-base leading-relaxed tracking-wide mb-6">
+                      &ldquo;{review.body}&rdquo;
+                    </p>
+                  </div>
+                  <div className="flex justify-between items-center mt-4">
+                    <Image
+                      src={reviewImages[reviewType]}
+                      alt={`${reviewType} Review`}
+                      width={100}
+                      height={50}
+                      className="h-10 w-auto"
+                    />
+                    <div className="flex items-center space-x-1">
+                      <BadgeCheck className="w-5 h-5 text-emerald-600" />
+                      <p className="text-sm font-medium text-emerald-600">
+                        Verified
                       </p>
                     </div>
-                  </Card>
-                </div>
-              </CarouselItem>
-            );
-          })}
+                  </div>
+                </Card>
+              </div>
+            </CarouselItem>
+          ))}
         </CarouselContent>
-        <CarouselPrevious className="absolute left-0" />
-        <CarouselNext className="absolute right-0" />
+        <div className="flex justify-center mt-4 gap-2">
+          <CarouselPrevious />
+          <CarouselNext />
+        </div>
       </Carousel>
     </div>
   );
 };
 
 export default Reviews;
-
-// import React from "react";
-// import { Lexend } from "next/font/google";
-
-// import { Card } from "@/components/ui/card";
-// import {
-//   Carousel,
-//   CarouselContent,
-//   CarouselItem,
-//   CarouselNext,
-//   CarouselPrevious,
-// } from "@/components/ui/carousel";
-// import { BadgeCheck } from "lucide-react";
-
-// const lexend = Lexend({
-//   subsets: ["latin"],
-// });
-
-// const reviews = [
-//   {
-//     name: "Mungai Kihara",
-//     username: "@mtollah",
-//     body: "I recently used African Real Estate to advertise my property, and I couldn't be happier with the results. I highly recommend African Real Estate to anyone looking to sell or rent their property quickly!",
-//     img: "/assets/realtor-1.jpeg",
-//   },
-//   {
-//     name: "Jacenta Kang'ethe",
-//     username: "@ill_tw",
-//     body: "Buying my first home was a daunting experience, but African Real Estate made it seamless and enjoyable. Thanks to African Real Estate, I found my dream home in no time!",
-//     img: "/assets/placeholder.jpg",
-//   },
-//   {
-//     name: "John Mark",
-//     username: "@john",
-//     body: "As a small business owner, finding the perfect office space was crucial for our growth. African Real Estate had a fantastic selection of office spaces that fit our budget and needs perfectly. Highly recommended for any business looking for new office space!",
-//     img: "https://avatar.vercel.sh/john",
-//   },
-
-//   {
-//     name: "Jane M. Lochilia",
-//     username: "@jane",
-//     body: "I listed my apartment for rent on African Real Estate, and the response was overwhelming. The platform's reach is impressive, and the quality of the leads was top-notch. Within a week, I had a tenant who matched my criteria perfectly. Thanks",
-//     img: "https://avatar.vercel.sh/jane",
-//   },
-//   {
-//     name: "Alphonse Chakwera",
-//     username: "@jenny",
-//     body: "My wife and I were relocating to Nairobi and needed to find a house quickly. African Real Estate came to our rescue with its extensive and detailed listings. We were able to filter properties based on our specific needs and even schedule viewings online.",
-//     img: "/assets/house.jpg",
-//   },
-//   {
-//     name: "Amina S.",
-//     username: "@amina_es",
-//     body: "As an expat moving to Nairobi, I was initially overwhelmed by the apartment search. African Real Estate made it incredibly easy to find the perfect place. The site offered a comprehensive list of properties with detailed descriptions and high-quality photos. Thank you!",
-//     img: "/assets/house-1.jpg",
-//   },
-// ];
-
-// export default function Reviews() {
-//   return (
-//     <section className="bg-neutral-50 px-5 py-16 md:px-10 md:py-16 lg:py-16">
-//       <div className="mx-auto w-[95%] max-w-7xl">
-//         <h4
-//           className={`${lexend.className} text-gray-600 mt-4 tracking-tight text-3xl sm:text-4xl font-semibold capitalize text-center`}
-//         >
-//           Our recent customer reviews
-//         </h4>
-
-//         <article className="mt-10">
-//           <div className="w-full mx-auto">
-//             <ul className="flex justify-between items-center rounded-lg">
-//               <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-4 bg-white">
-//                 <div className="col-span-1 flex items-center gap-3">
-//                   <img
-//                     src="/assets/google-review.png"
-//                     alt=""
-//                     className="h-24"
-//                   />
-//                   <p className="text-3xl font-bold text-gray-600">4.9/5</p>
-//                 </div>
-//                 <div className="col-span-1 flex items-center gap-5">
-//                   <img
-//                     src="/assets/trustpilot.png"
-//                     alt="TrustPilot"
-//                     className="h-[56px]"
-//                   />
-//                   <p className="text-3xl font-bold text-gray-600">4.8/5</p>
-//                 </div>
-//                 <div className="col-span-1 flex items-center gap-5">
-//                   <img
-//                     src="/assets/reviews-io.png"
-//                     alt="TrustPilot"
-//                     className="h-[56px]"
-//                   />
-
-//                   <p className="text-3xl font-bold text-gray-600">5.0/5</p>
-//                 </div>
-//               </div>
-//             </ul>
-//           </div>
-//           <div className="bg-[#f7f7f7] p-2 mt-4">
-//             <Carousel className="mt-5 max-w-3xl mx-auto px-4 lg:px-8 relative">
-//               <CarouselContent>
-//                 {reviews.map((review) => {
-//                   const { img, name, body, username } = review;
-//                   return (
-//                     <CarouselItem key={name} className="rounded-md">
-//                       <div className="p-4">
-//                         <Card className="grid grid-cols-4 gap-4 p-4 rounded-md bg-white">
-//                           <div className="col-span-1 flex flex-col space-y-2">
-//                             <img
-//                               src={img}
-//                               alt=""
-//                               className="rounded-md w-full h-3/4"
-//                             />
-//                             <p className="capitalize">{name}</p>
-//                           </div>
-//                           <div className="col-span-3 flex flex-col gap-4">
-//                             <div className="flex justify-between items-center">
-//                               <img
-//                                 src="/assets/google-review.png"
-//                                 alt=""
-//                                 className="h-[54px] border border-neutral-50"
-//                               />
-//                               <div className="flex space-x-1 items-center">
-//                                 {/* <img src="/assets/verified-check.svg" alt="" />
-//                                  */}
-//                                 <BadgeCheck className="size-5 text-emerald-600" />
-//                                 <p className="text-base/6 font-medium text-emerald-600">
-//                                   Verified order
-//                                 </p>
-//                               </div>
-//                             </div>
-//                             <p className="text-sm leading-relaxed tracking-wide">
-//                               &ldquo;{body}&rdquo;
-//                             </p>
-//                           </div>
-//                         </Card>
-//                       </div>
-//                     </CarouselItem>
-//                   );
-//                 })}
-//               </CarouselContent>
-//               <CarouselPrevious className="absolute left-0" />
-//               <CarouselNext className="absolute right-0" />
-//             </Carousel>
-//           </div>
-//         </article>
-//       </div>
-//     </section>
-//   );
-// }
