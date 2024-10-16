@@ -60,9 +60,11 @@ interface AdvancedSearchParams {
 function AdvancedSearch({
   onSearch,
   initialParams,
+  onApplyFilters,
 }: {
   onSearch: (params: AdvancedSearchParams) => void;
   initialParams: AdvancedSearchParams;
+  onApplyFilters: (params: AdvancedSearchParams) => void;
 }) {
   const [params, setParams] = useState<AdvancedSearchParams>(initialParams);
   const [selectedPropertyType, setSelectedPropertyType] = useState<
@@ -85,7 +87,7 @@ function AdvancedSearch({
         ([_, value]) => value !== undefined && value !== null && value !== ""
       )
     );
-    onSearch(filteredParams as AdvancedSearchParams);
+    onApplyFilters(filteredParams as AdvancedSearchParams);
   };
 
   const getPropertyDetails = (propertyType: string) => {
@@ -99,8 +101,6 @@ function AdvancedSearch({
     const numericPrice = parseFloat(price.replace(/,/g, ""));
     if (isNaN(numericPrice)) return "";
     return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
       maximumFractionDigits: 0,
     }).format(numericPrice);
   };
@@ -134,7 +134,7 @@ function AdvancedSearch({
             <Label>Location</Label>
             <Input
               type="text"
-              placeholder="City, County, or Nearby Town"
+              placeholder="County, Nearby Town or Locality"
               value={params.location || ""}
               onChange={(e) => handleChange("location", e.target.value)}
             />
@@ -170,7 +170,7 @@ function AdvancedSearch({
                     handlePriceChange("minPrice", e.target.value)
                   }
                 />
-                <span className="text-xs text-green-600 bg-green-50 px-1 rounded">
+                <span className="text-xs text-green-600 px-1 rounded">
                   {formatPrice(minPriceInput)}
                 </span>
               </div>
@@ -183,7 +183,7 @@ function AdvancedSearch({
                     handlePriceChange("maxPrice", e.target.value)
                   }
                 />
-                <span className="text-xs text-green-600 bg-green-50 px-1 rounded">
+                <span className="text-xs text-green-600 px-1 rounded">
                   {formatPrice(maxPriceInput)}
                 </span>
               </div>
@@ -289,6 +289,10 @@ export default function SearchBar() {
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
+    navigateToSearchPage();
+  };
+
+  const navigateToSearchPage = () => {
     if (searchTerm.trim() || Object.keys(advancedParams).length > 0) {
       setIsSubmitting(true);
       try {
@@ -298,7 +302,7 @@ export default function SearchBar() {
             params.append(key, value.toString());
           }
         });
-        await router.push(`/search?${params.toString()}`);
+        router.push(`/search?${params.toString()}`);
       } finally {
         setIsSubmitting(false);
       }
@@ -317,14 +321,19 @@ export default function SearchBar() {
     debouncedSearch(searchTerm, params);
   };
 
+  const handleApplyFilters = (params: AdvancedSearchParams) => {
+    setAdvancedParams(params);
+    navigateToSearchPage();
+  };
+
   return (
     <form
       onSubmit={handleSearch}
-      className="flex w-full max-w-[560px] mx-auto items-center justify-center space-x-2 relative ml-10"
+      className="w-full max-w-[560px] mx-auto px-4 sm:px-6 lg:px-8"
     >
       <div className="relative w-full">
-        <div className="flex">
-          <div className="relative flex-grow ml-20">
+        <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2">
+          <div className="relative flex-grow w-full">
             <Input
               type="text"
               placeholder="Search properties..."
@@ -353,6 +362,7 @@ export default function SearchBar() {
                 <AdvancedSearch
                   onSearch={handleAdvancedSearch}
                   initialParams={advancedParams}
+                  onApplyFilters={handleApplyFilters}
                 />
               </button>
             </div>
@@ -364,7 +374,7 @@ export default function SearchBar() {
               (searchTerm.trim().length < 3 &&
                 Object.keys(advancedParams).length === 0)
             }
-            className="min-w-[80px] bg-blue-400 text-white hover:bg-blue-500 transition-all ml-2"
+            className="w-full sm:w-auto bg-blue-400 text-white hover:bg-blue-500 transition-all"
           >
             {isSubmitting ? (
               <>
@@ -378,7 +388,7 @@ export default function SearchBar() {
         </div>
         {isLoading && (
           <div
-            className="absolute left-0 right-0 bg-white p-2 shadow-md rounded-b-md mt-2 ml-20"
+            className="absolute left-0 right-0 bg-white p-2 shadow-md rounded-b-md mt-2"
             aria-live="polite"
           >
             Loading...
@@ -394,7 +404,7 @@ export default function SearchBar() {
         )}
         {results && !isLoading && (
           <div
-            className="absolute left-0 right-0 bg-white p-2 shadow-md rounded-b-md mt-2 ml-20"
+            className="absolute left-0 right-0 bg-white p-2 shadow-md rounded-b-md mt-2"
             aria-live="polite"
           >
             {results.count}{" "}

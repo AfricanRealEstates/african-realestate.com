@@ -29,13 +29,18 @@ export async function GET(request: NextRequest) {
             where.status = status;
         }
 
-        if (minPrice) where.price = { gte: parseFloat(minPrice) };
-        if (maxPrice) where.price = { ...where.price, lte: parseFloat(maxPrice) };
+        if (minPrice || maxPrice) {
+            where.price = {};
+            if (minPrice) where.price.gte = parseFloat(minPrice);
+            if (maxPrice) where.price.lte = parseFloat(maxPrice);
+        }
+
         if (propertyType) where.propertyType = propertyType;
         if (propertyDetails) where.propertyDetails = propertyDetails;
 
         if (location) {
             where.OR = [
+                ...(where.OR || []),
                 { locality: { contains: location, mode: "insensitive" } },
                 { nearbyTown: { contains: location, mode: "insensitive" } },
                 { county: { contains: location, mode: "insensitive" } },
@@ -47,7 +52,7 @@ export async function GET(request: NextRequest) {
             include: {
                 user: true,
             },
-            take: q ? 5 : undefined, // Limit to 5 results only for autocomplete queries
+            take: 20, // Limit results to 20 for pagination
         });
 
         const totalCount = await prisma.property.count({ where });

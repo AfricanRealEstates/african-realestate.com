@@ -219,9 +219,30 @@ export default async function SearchPage({
     ([_, value]) => value !== undefined
   );
 
+  // Format the price range for display
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(price);
+  };
+
+  const priceRangeDisplay = (() => {
+    if (advancedParams.minPrice && advancedParams.maxPrice) {
+      return `${formatPrice(advancedParams.minPrice)} - ${formatPrice(
+        advancedParams.maxPrice
+      )}`;
+    } else if (advancedParams.minPrice) {
+      return `From ${formatPrice(advancedParams.minPrice)}`;
+    } else if (advancedParams.maxPrice) {
+      return `Up to ${formatPrice(advancedParams.maxPrice)}`;
+    }
+    return null;
+  })();
+
   return (
     <div className="w-[95%] lg:max-w-7xl mx-auto py-[100px] lg:py-[160px]">
-      <div className="mb-8 flex justify-between">
+      <div className="mb-8 flex flex-col md:flex-row justify-between">
         <div>
           <h1 className="text-3xl font-bold mb-4">
             {query ? `Search Results for "${query}"` : "All Properties"}
@@ -234,19 +255,22 @@ export default async function SearchPage({
             matched result
             {searchResults.length !== 1 ? "s" : ""}
           </p>
-          {/* <p className="text-lg text-gray-600 mb-4"></p>
           {activeFilters.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-4">
+            <div className="flex flex-wrap gap-2 mt-4">
               {activeFilters.map(([key, value]) => (
                 <Badge key={key} variant="secondary">
-                  {key}: {Array.isArray(value) ? value.join(", ") : value}
+                  {key === "minPrice" || key === "maxPrice"
+                    ? priceRangeDisplay && "Price: " + priceRangeDisplay
+                    : `${key}: ${
+                        Array.isArray(value) ? value.join(", ") : value
+                      }`}
                 </Badge>
               ))}
             </div>
-          )} */}
+          )}
           <PropertyFilter pageType="search" />
         </div>
-        <div className="flex items-center gap-3 flex-end">
+        <div className="flex items-center gap-3 flex-end mt-4 md:mt-0">
           <SortingOptions
             currentSort={sortBy}
             currentOrder={sortOrder}
