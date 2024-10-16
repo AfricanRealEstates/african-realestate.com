@@ -77,6 +77,8 @@ function AdvancedSearch({
     initialParams.maxPrice?.toString() || ""
   );
 
+  const router = useRouter();
+
   const handleChange = (key: keyof AdvancedSearchParams, value: any) => {
     setParams((prev) => ({ ...prev, [key]: value }));
   };
@@ -87,7 +89,10 @@ function AdvancedSearch({
         ([_, value]) => value !== undefined && value !== null && value !== ""
       )
     );
-    onApplyFilters(filteredParams as AdvancedSearchParams);
+    const searchParams = new URLSearchParams(
+      filteredParams as Record<string, string>
+    );
+    router.push(`/search?${searchParams.toString()}`);
   };
 
   const getPropertyDetails = (propertyType: string) => {
