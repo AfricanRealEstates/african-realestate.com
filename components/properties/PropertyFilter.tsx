@@ -85,7 +85,9 @@ export default function PropertyFilter({
   }, [searchParams]);
 
   const convertPriceToCents = (price: string): number => {
+    // Remove commas and convert to a number
     const numericPrice = parseFloat(price.replace(/,/g, ""));
+    // Return the numeric price as is, without multiplying by 100
     return Math.round(numericPrice);
   };
 
@@ -94,9 +96,9 @@ export default function PropertyFilter({
     Object.entries(data).forEach(([key, value]) => {
       if (value) {
         if (key === "county" || key === "locality") {
-          // Store the original mixed case value
-          params.set(key, value);
+          params.set(key, value.toLowerCase());
         } else if (key === "minPrice" || key === "maxPrice") {
+          // Convert price to whole number
           const wholeNumberValue = convertPriceToCents(value);
           if (!isNaN(wholeNumberValue)) {
             params.set(key, wholeNumberValue.toString());
@@ -115,6 +117,18 @@ export default function PropertyFilter({
     setIsOpen(false);
   };
 
+  // Update the useEffect hook to use the price values as is
+  useEffect(() => {
+    const filters: FilterValues = {};
+    searchParams.forEach((value, key) => {
+      if (key in filterSchema.shape) {
+        filters[key as keyof FilterValues] = value;
+      }
+    });
+    setActiveFilters(filters);
+  }, [searchParams]);
+
+  // Update the formatPrice function to handle large numbers
   const formatPrice = (price: string) => {
     const numericPrice = parseFloat(price.replace(/,/g, ""));
     if (isNaN(numericPrice)) return "";
@@ -193,6 +207,7 @@ export default function PropertyFilter({
             </SheetDescription>
           </SheetHeader>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-4">
+            {/* Status field */}
             <div>
               <Label htmlFor="status">Status</Label>
               <Controller
@@ -215,6 +230,7 @@ export default function PropertyFilter({
                 )}
               />
             </div>
+            {/* Property Type field */}
             <div>
               <Label htmlFor="propertyType">Property Type</Label>
               <Controller
@@ -242,6 +258,7 @@ export default function PropertyFilter({
                 )}
               />
             </div>
+            {/* Property Details field */}
             {watchPropertyType && (
               <div>
                 <Label htmlFor="propertyDetails">Property Details</Label>
@@ -270,6 +287,7 @@ export default function PropertyFilter({
                 />
               </div>
             )}
+            {/* County field */}
             <div>
               <Label htmlFor="county">County</Label>
               <Controller
@@ -280,6 +298,7 @@ export default function PropertyFilter({
                 )}
               />
             </div>
+            {/* Locality field */}
             <div>
               <Label htmlFor="locality">Locality</Label>
               <Controller
@@ -290,6 +309,7 @@ export default function PropertyFilter({
                 )}
               />
             </div>
+            {/* Minimum Price field */}
             <div>
               <Label htmlFor="minPrice">Minimum Price</Label>
               <Controller
@@ -310,6 +330,7 @@ export default function PropertyFilter({
                 {formatPrice(watchMinPrice || "")}
               </span>
             </div>
+            {/* Maximum Price field */}
             <div>
               <Label htmlFor="maxPrice">Maximum Price</Label>
               <Controller
