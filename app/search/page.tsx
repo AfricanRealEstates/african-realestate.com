@@ -151,8 +151,14 @@ async function getSearchResults(
       isActive: true,
       isAvailableForPurchase: true,
       ...(status ? { status: status } : {}),
-      ...(minPrice ? { price: { gte: minPrice } } : {}),
-      ...(maxPrice ? { price: { lte: maxPrice } } : {}),
+      ...(minPrice || maxPrice
+        ? {
+            price: {
+              ...(minPrice ? { gte: minPrice } : {}),
+              ...(maxPrice ? { lte: maxPrice } : {}),
+            },
+          }
+        : {}),
       ...(propertyType ? { propertyType: propertyType } : {}),
       ...(propertyDetails ? { propertyDetails: propertyDetails } : {}),
       ...(location
@@ -223,7 +229,9 @@ export default async function SearchPage({
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "USD",
+      // currency: "USD",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     }).format(price);
   };
 
@@ -255,19 +263,24 @@ export default async function SearchPage({
             matched result
             {searchResults.length !== 1 ? "s" : ""}
           </p>
-          {activeFilters.length > 0 && (
+          {/* {activeFilters.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-4">
-              {activeFilters.map(([key, value]) => (
-                <Badge key={key} variant="secondary">
-                  {key === "minPrice" || key === "maxPrice"
-                    ? priceRangeDisplay && "Price: " + priceRangeDisplay
-                    : `${key}: ${
-                        Array.isArray(value) ? value.join(", ") : value
-                      }`}
-                </Badge>
-              ))}
+              {activeFilters.map(([key, value]) => {
+                if (key === "minPrice" || key === "maxPrice") {
+                  return priceRangeDisplay ? (
+                    <Badge key="price" variant="secondary">
+                      Price: {priceRangeDisplay}
+                    </Badge>
+                  ) : null;
+                }
+                return (
+                  <Badge key={key} variant="secondary">
+                    {key}: {Array.isArray(value) ? value.join(", ") : value}
+                  </Badge>
+                );
+              })}
             </div>
-          )}
+          )} */}
           <PropertyFilter pageType="search" />
         </div>
         <div className="flex items-center gap-3 flex-end mt-4 md:mt-0">
