@@ -108,9 +108,9 @@ export default function ImageCarousel({ property, whatsappNumber }: Props) {
   }, [index]);
 
   return (
-    <section className="lg:w-3/5 xl:w-2/3 space-y-8 lg:space-y-10 lg:pr-10">
+    <section className="w-full lg:w-3/5 xl:w-2/3 space-y-4 lg:space-y-10 lg:pr-10 h-full">
       <MotionConfig transition={{ duration: 0.7, ease: [0.32, 0.72, 0, 1] }}>
-        <div className="relative overflow-hidden h-full w-full">
+        <div className="relative overflow-hidden h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] w-full">
           <div className="relative h-full w-full">
             <motion.div
               animate={{ x: -index * 100 + "%" }}
@@ -127,7 +127,8 @@ export default function ImageCarousel({ property, whatsappNumber }: Props) {
                     src={image}
                     alt={`Property Image ${i}`}
                     layout="fill"
-                    className="rounded-xl object-cover"
+                    objectFit="cover"
+                    className="rounded-xl"
                   />
                 </div>
               ))}
@@ -142,22 +143,22 @@ export default function ImageCarousel({ property, whatsappNumber }: Props) {
                   objectFit="cover"
                   className="rounded-xl"
                 />
-                <div className="absolute inset-0 bg-black bg-opacity-70 flex flex-col items-center justify-center text-white p-8">
-                  <h2 className="text-4xl font-bold mb-4 text-center">
+                <div className="absolute inset-0 bg-black bg-opacity-70 flex flex-col items-center justify-center text-white p-4 sm:p-8">
+                  <h2 className="text-2xl sm:text-4xl font-bold mb-2 sm:mb-4 text-center">
                     Ready to Make This Your Property?
                   </h2>
-                  <p className="text-2xl mb-8 text-center">
+                  <p className="text-lg sm:text-2xl mb-4 sm:mb-8 text-center">
                     Contact Agent now to schedule a viewing!
                   </p>
                   <button
-                    className="flex items-center justify-center px-8 py-4 text-3xl font-bold bg-gradient-to-r from-teal-400 to-blue-500 hover:from-teal-500 hover:to-blue-600 text-white rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-teal-300 focus:ring-opacity-50"
+                    className="flex items-center justify-center px-4 sm:px-8 py-2 sm:py-4 text-xl sm:text-3xl font-bold bg-gradient-to-r from-teal-400 to-blue-500 hover:from-teal-500 hover:to-blue-600 text-white rounded-full shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-teal-300 focus:ring-opacity-50"
                     onClick={() => {
                       if (whatsappNumber) {
                         window.location.href = `tel:${whatsappNumber}`;
                       }
                     }}
                   >
-                    <Phone className="w-8 h-8 mr-4" />
+                    <Phone className="w-6 h-6 sm:w-8 sm:h-8 mr-2 sm:mr-4" />
                     {whatsappNumber ? (
                       <>
                         {whatsappNumber.substring(0, 7)}
@@ -212,9 +213,9 @@ export default function ImageCarousel({ property, whatsappNumber }: Props) {
             ref={thumbnailRef}
             className="w-full absolute bottom-0 left-0 p-2 rounded-md shadow-md overflow-x-scroll text-xs scrollbar-hide"
           >
-            <div className="flex gap-6 w-max">
+            <div className="flex gap-2 sm:gap-4 w-max">
               {allImages.map((image, i) => (
-                <div key={i} className="relative w-16 h-16">
+                <div key={i} className="relative w-12 h-12 sm:w-16 sm:h-16">
                   <Image
                     src={image}
                     alt="Thumbnail"
@@ -227,7 +228,7 @@ export default function ImageCarousel({ property, whatsappNumber }: Props) {
                   />
                 </div>
               ))}
-              <div className="relative w-16 h-16">
+              <div className="relative w-12 h-12 sm:w-16 sm:h-16">
                 <div
                   className={`w-full h-full rounded-full ring-2 ring-gray-100 cursor-pointer bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold ${
                     index === allImages.length ? "border-4 border-blue-500" : ""

@@ -558,13 +558,14 @@ export default async function PropertyDetails({
           </h2>
         </div>
 
-        <section className="flex flex-col lg:flex-row mt-8 w-full">
+        <section className="flex flex-col lg:flex-row mt-8 w-full h-full">
           <ImageCarousel
             property={property}
             whatsappNumber={agent.whatsappNumber}
           />
+
           <div className="flex-grow lg:mt-0 h-full">
-            <article className="flex flex-col-reverse h-full">
+            <article className="flex flex-col-reverse h-full mb-8">
               <div className="flex flex-col gap-4">
                 <div className="space-y-8 w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 sm:space-y-6 px-0 sm:p-4 xl:p-4">
                   <div className="flex items-center justify-between">
@@ -730,7 +731,7 @@ export default async function PropertyDetails({
                           : `/agencies/${agent.id}`
                       }
                       color="blue"
-                      className=""
+                      className="mb-8 lg:mb-0" // Added margin-bottom for mobile
                     >
                       {user?.role === "AGENT"
                         ? "View all agent's properties"
