@@ -7,23 +7,30 @@ import { AnimatePresence, motion, MotionConfig } from "framer-motion";
 import useKeypress from "react-use-keypress";
 import Image from "next/image";
 import heic2any from "heic2any";
-import { Phone } from "lucide-react";
+import { Phone, Play } from "lucide-react";
 
 interface Props {
   property: {
     coverPhotos: string[];
     images: string[];
   };
+  videoLink?: string;
   whatsappNumber: string | null;
 }
 
 const removeDuplicates = (images: string[]) => Array.from(new Set(images));
 
-export default function ImageCarousel({ property, whatsappNumber }: Props) {
+export default function Component({
+  property,
+  whatsappNumber,
+  videoLink,
+}: Props) {
   const ref = useRef<CarouselRef>(null);
   const thumbnailRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
   const [allImages, setAllImages] = useState<string[]>([]);
+  const [showVideo, setShowVideo] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
 
   // Combine and remove duplicate images
   const combinedImages = [
@@ -81,6 +88,7 @@ export default function ImageCarousel({ property, whatsappNumber }: Props) {
   const handleChangeIndex = (newIndex: number) => {
     setIndex(newIndex);
     scrollThumbnailIntoView(newIndex);
+    setShowVideo(false);
   };
 
   const scrollThumbnailIntoView = (newIndex: number) => {
@@ -110,7 +118,7 @@ export default function ImageCarousel({ property, whatsappNumber }: Props) {
   return (
     <section className="w-full lg:w-3/5 xl:w-2/3 space-y-4 lg:space-y-10 lg:pr-10 h-full">
       <MotionConfig transition={{ duration: 0.7, ease: [0.32, 0.72, 0, 1] }}>
-        <div className="relative overflow-hidden h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] w-full">
+        <div className="relative overflow-hidden h-[300px] sm:h-[400px] md:h-[500px] lg:h-[570px] w-full">
           <div className="relative h-full w-full">
             <motion.div
               animate={{ x: -index * 100 + "%" }}
@@ -129,7 +137,32 @@ export default function ImageCarousel({ property, whatsappNumber }: Props) {
                     layout="fill"
                     objectFit="cover"
                     className="rounded-xl"
+                    onDoubleClick={() => setShowPreview(true)}
                   />
+                  {videoLink && (
+                    <button
+                      className="absolute top-2 right-2 bg-black bg-opacity-50 p-2 rounded-full"
+                      onClick={() => setShowVideo(true)}
+                    >
+                      <Play className="w-6 h-6 text-white" />
+                    </button>
+                  )}
+                  {showVideo && videoLink && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-75">
+                      <video
+                        src={videoLink}
+                        controls
+                        className="w-full h-full object-contain"
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                      <button
+                        className="absolute top-2 right-2 bg-white p-2 rounded-full"
+                        onClick={() => setShowVideo(false)}
+                      >
+                        Close
+                      </button>
+                    </div>
+                  )}
                 </div>
               ))}
               <div
@@ -226,6 +259,11 @@ export default function ImageCarousel({ property, whatsappNumber }: Props) {
                     }`}
                     onClick={() => handleThumbnailClick(i)}
                   />
+                  {videoLink && i === 0 && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full">
+                      <Play className="w-6 h-6 text-white" />
+                    </div>
+                  )}
                 </div>
               ))}
               <div className="relative w-12 h-12 sm:w-16 sm:h-16">
@@ -242,6 +280,29 @@ export default function ImageCarousel({ property, whatsappNumber }: Props) {
           </section>
         </div>
       </MotionConfig>
+
+      {showPreview && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+          onClick={() => setShowPreview(false)}
+        >
+          <div className="relative max-w-4xl max-h-full">
+            <Image
+              src={allImages[index]}
+              alt={`Property Image ${index}`}
+              width={1200}
+              height={800}
+              className="object-contain"
+            />
+            <button
+              className="absolute top-4 right-4 bg-white p-2 rounded-full"
+              onClick={() => setShowPreview(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

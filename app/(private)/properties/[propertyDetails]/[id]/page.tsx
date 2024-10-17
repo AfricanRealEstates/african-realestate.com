@@ -754,9 +754,15 @@ export default async function PropertyDetails({
                 currency={property.currency}
               />
             </div>
+            {/* Add SurroundingFeatures for mobile view */}
+            <div className="lg:hidden mt-8">
+              <SurroundingFeatures property={property} />
+            </div>
           </section>
           <section className="hidden lg:flex lg:w-2/5 xl:w-1/3 mt-14 lg:mt-0 flex-col">
-            <div className=" flex-grow">{renderSidebar()}</div>
+            <div className="flex-grow">
+              <SurroundingFeatures property={property} />
+            </div>
           </section>
         </main>
 
