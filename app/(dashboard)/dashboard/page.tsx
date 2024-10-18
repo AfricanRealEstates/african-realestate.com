@@ -131,18 +131,21 @@ export default async function UserDashboard() {
           <PropertyList
             properties={properties}
             emptyMessage="You haven't posted any properties yet."
+            showActions={true}
           />
         </TabsContent>
         <TabsContent value="favorites">
           <PropertyList
             properties={favorites}
             emptyMessage="You haven't favorited any properties yet."
+            showActions={false}
           />
         </TabsContent>
         <TabsContent value="bookmarks">
           <PropertyList
             properties={bookmarks}
             emptyMessage="You haven't bookmarked any properties yet."
+            showActions={false}
           />
         </TabsContent>
         <TabsContent value="ratings">
@@ -178,16 +181,18 @@ function StatCard({
 function PropertyList({
   properties,
   emptyMessage,
+  showActions,
 }: {
   properties: any[];
   emptyMessage: string;
+  showActions: boolean;
 }) {
   if (properties.length === 0) {
     return <p className="text-center text-gray-500">{emptyMessage}</p>;
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {properties.map((property) => (
         <Card key={property.id} className="overflow-hidden bg-white">
           <div className="relative h-48">
@@ -222,48 +227,50 @@ function PropertyList({
                   View Details
                 </Link>
               </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="h-8 w-8 p-0">
-                    <span className="sr-only">Open menu</span>
-                    <MoreVertical className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href={`/agent/properties/edit-property/${property.id}`}
-                    >
-                      <Edit className="mr-2 h-4 w-4" />
-                      Edit
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href={`/agent/properties/create-property?cloneFrom=${property.id}`}
-                    >
-                      <Copy className="mr-2 h-4 w-4" />
-                      Clone
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <form action={deleteProperty}>
-                      <input
-                        type="hidden"
-                        name="propertyId"
-                        value={property.id}
-                      />
-                      <button
-                        type="submit"
-                        className="flex items-center w-full"
+              {showActions && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                      <span className="sr-only">Open menu</span>
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href={`/agent/properties/edit-property/${property.id}`}
                       >
-                        <Trash className="mr-2 h-4 w-4" />
-                        Delete
-                      </button>
-                    </form>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                        <Edit className="mr-2 h-4 w-4" />
+                        Edit
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href={`/agent/properties/create-property?cloneFrom=${property.id}`}
+                      >
+                        <Copy className="mr-2 h-4 w-4" />
+                        Clone
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <form action={deleteProperty}>
+                        <input
+                          type="hidden"
+                          name="propertyId"
+                          value={property.id}
+                        />
+                        <button
+                          type="submit"
+                          className="flex items-center w-full"
+                        >
+                          <Trash className="mr-2 h-4 w-4" />
+                          Delete
+                        </button>
+                      </form>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
             </div>
           </CardContent>
         </Card>
