@@ -1,3 +1,5 @@
+import React, { Suspense } from "react";
+import Link from "next/link";
 import IconMenu from "@/components/globals/icon-menu";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,12 +11,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import prisma from "@/lib/prisma";
 import { MoreVertical, Plus, SquarePen, Trash2 } from "lucide-react";
-import Link from "next/link";
-import React, { Suspense } from "react";
 import SearchInput from "../../components/SearchInput";
 import Loading from "./loading";
 
-export default async function UsersPage({
+export default async function AgenciesPage({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
@@ -23,14 +23,14 @@ export default async function UsersPage({
     typeof searchParams.search === "string" ? searchParams.search : undefined;
 
   return (
-    <section className="px-8 bg-gray-50 pt-12 flex flex-col">
-      <div className="flex items-center justify-between mb-8">
-        <div className="mt-1 w-80">
+    <section className="px-4 sm:px-8 bg-gray-50 pt-6 sm:pt-12 flex flex-col">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8">
+        <div className="w-full sm:w-80 mb-4 sm:mb-0">
           <SearchInput search={search} searchType="agencies" />
         </div>
 
-        <div className="mt-0 ml-16 flex-none">
-          <button className="flex items-center gap-3 w-full rounded-md bg-indigo-600 py-1.5 px-3 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+        <div className="w-full sm:w-auto">
+          <button className="flex items-center justify-center gap-3 w-full sm:w-auto rounded-md bg-indigo-600 py-2 px-4 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
             <Plus className="size-4" />
             Add agency
           </button>
@@ -38,7 +38,9 @@ export default async function UsersPage({
       </div>
 
       <Suspense fallback={<Loading />}>
-        <AgenciesTable searchParams={searchParams} />
+        <div className="p-2">
+          <AgenciesTable searchParams={searchParams} />
+        </div>
       </Suspense>
     </section>
   );
@@ -91,33 +93,33 @@ async function AgenciesTable({
   if (page > 1) {
     currentSearchParams.set("page", `${page}`);
   }
+
   return (
     <>
       <p className="text-muted-foreground text-base">
         There are{" "}
         <span className="font-bold text-rose-500 underline underline-offset-4">
-          {" "}
           {totalAgencies}
         </span>{" "}
         Agencies so far!
       </p>
       <div className="mt-8 flow-root">
-        <div className="-my-2 -mx-6">
-          <div className="inline-block min-w-full py-2 align-middle px-6">
-            <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
-              <table className="min-w-full divide-y divide-gray-300 table-fixed">
+        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+            <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+              <table className="min-w-full divide-y divide-gray-300">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="py-3.5 pr-3 text-left text-sm font-semibold text-gray-900 pl-6">
+                    <th className="py-3.5 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
                       Name
                     </th>
-                    <th className="py-3.5 pr-3 text-left text-sm font-semibold text-gray-900 pl-6">
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 hidden sm:table-cell">
                       Email
                     </th>
-                    <th className="py-3.5 pr-3 text-left text-sm font-semibold text-gray-900 pl-6">
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 hidden md:table-cell">
                       ROLE
                     </th>
-                    <th className="py-3.5 pr-3 text-left text-sm font-semibold text-gray-900 pl-6">
+                    <th className="py-3.5 pl-3 pr-4 sm:pr-6 text-left text-sm font-semibold text-gray-900">
                       Actions
                     </th>
                   </tr>
@@ -125,16 +127,16 @@ async function AgenciesTable({
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {agencies.map((user) => (
                     <tr key={user.id}>
-                      <td className="whitespace-nowrap py-4 pr-3 text-sm font-medium text-gray-900 pl-6">
+                      <td className="whitespace-nowrap py-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                         {user.name}
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 hidden sm:table-cell">
                         {user.email}
                       </td>
-                      <td className="whitespace-nowrap py-4 pr-3 text-sm font-medium text-gray-900 pl-6">
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 hidden md:table-cell">
                         {user.role}
                       </td>
-                      <td className="whitespace-nowrap py-4 pr-3 text-sm font-medium text-gray-900 pl-6">
+                      <td className="whitespace-nowrap py-4 pl-3 pr-4 sm:pr-6 text-sm font-medium">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button
@@ -158,7 +160,7 @@ async function AgenciesTable({
                               </button>
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem className="group flex w-full items-center justify-between  text-left p-0 text-sm font-base text-neutral-500 ">
+                            <DropdownMenuItem className="group flex w-full items-center justify-between text-left p-0 text-sm font-base text-neutral-500">
                               <button className="w-full justify-start flex text-red-500 rounded-md p-2 transition-all duration-75 hover:bg-neutral-100">
                                 <IconMenu
                                   text="Delete"
@@ -177,8 +179,8 @@ async function AgenciesTable({
           </div>
         </div>
       </div>
-      <article className="mt-4 flex items-center justify-between">
-        <p className="text-sm text-gray-700">
+      <div className="mt-4 flex flex-col sm:flex-row items-center justify-between">
+        <p className="text-sm text-gray-700 mb-4 sm:mb-0">
           Showing{" "}
           <span className="font-semibold">{(page - 1) * perPage + 1}</span> to{" "}
           <span className="font-semibold">
@@ -194,7 +196,7 @@ async function AgenciesTable({
             currentSearchParams={currentSearchParams}
           />
         </div>
-      </article>
+      </div>
     </>
   );
 }

@@ -22,7 +22,6 @@ export default async function PropertiesTable({
   const search =
     typeof searchParams.search === "string" ? searchParams.search : undefined;
 
-  // Fetch the authenticated user
   const user = await auth();
 
   if (!user) {
@@ -31,13 +30,12 @@ export default async function PropertiesTable({
 
   const perPage = 10;
 
-  // Fetch the properties based on the role of the user
   const whereClause = {
     title: {
       contains: search,
     },
     ...(user.user.role !== "ADMIN" && {
-      userId: user.user.id, // Fetch only properties for the logged-in user if not ADMIN
+      userId: user.user.id,
     }),
   };
 
@@ -76,160 +74,142 @@ export default async function PropertiesTable({
   return (
     <>
       <div className="mt-8 flow-root">
-        <div className="-my-2 -mx-6">
-          <div className="inline-block min-w-full py-2 align-middle px-6">
-            <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
-              <table className="min-w-full divide-y divide-gray-300">
-                <thead className="bg-gray-50 uppercase">
-                  <tr>
-                    <th className="p-4">
-                      <div className="flex items-center">
-                        <input
-                          id="checkbox-all"
-                          type="checkbox"
-                          aria-describedby="checkbox-1"
-                          className="size-4 border-gray-300 rounded bg-white focus:ring-3 focus:ring-blue-300"
-                        />
-                        <label
-                          htmlFor="checkbox-all"
-                          className="sr-only"
-                        ></label>
-                      </div>
-                    </th>
-                    <th className="p-4 text-xs font-medium text-left text-gray-500">
-                      Title
-                    </th>
-                    <th className="p-4 text-xs font-medium text-left text-gray-500">
-                      Status
-                    </th>
-                    <th className="p-4 text-xs font-medium text-left text-gray-500">
-                      Property Detail
-                    </th>
-                    <th className="p-4 text-xs font-medium text-left text-gray-500">
-                      Currency
-                    </th>
-                    <th className="p-4 text-xs font-medium text-left text-gray-500">
-                      Price
-                    </th>
-                    <th className="p-4 text-xs font-medium text-left text-gray-500">
-                      Added on
-                    </th>
-                    <th className="p-4 text-xs font-medium text-left text-gray-500">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 bg-white">
-                  {properties.map((property) => (
-                    <tr key={property.id} className="hover:bg-gray-100">
-                      <td className="w-4 p-4">
-                        <div className="flex items-center">
+        <div className="-mx-4 -my-2 sm:-mx-6">
+          <div className="inline-block min-w-full py-2 align-middle">
+            <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-300">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="p-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <span className="sr-only">Select</span>
+                      </th>
+                      <th className="p-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Title
+                      </th>
+                      <th className="p-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
+                        Status
+                      </th>
+                      <th className="p-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                        Property Detail
+                      </th>
+                      <th className="p-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                        Currency
+                      </th>
+                      <th className="p-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Price
+                      </th>
+                      <th className="p-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
+                        Added on
+                      </th>
+                      <th className="p-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {properties.map((property) => (
+                      <tr key={property.id} className="hover:bg-gray-100">
+                        <td className="p-4">
                           <input
                             type="checkbox"
-                            id={`checkbox-${property.id}`}
-                            className="size-4 border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300"
+                            className="size-4 border-gray-300 rounded focus:ring-blue-500"
                           />
-                          <label
-                            htmlFor={`checkbox-${property.id}`}
-                            className="sr-only"
-                          >
-                            checkbox
-                          </label>
-                        </div>
-                      </td>
-                      <td className="p-4 text-base font-normal text-gray-900 whitespace-nowrap">
-                        {property.title}
-                      </td>
-                      <td className="p-4 text-base font-normal text-gray-900 whitespace-nowrap capitalize">
-                        {property.status}
-                      </td>
-                      <td className="p-4 text-base font-normal text-gray-900 whitespace-nowrap">
-                        {property.propertyDetails}
-                      </td>
-                      <td className="p-4 text-base font-normal text-gray-900 whitespace-nowrap">
-                        {property.currency}
-                      </td>
-                      <td className="p-4 text-base font-normal text-gray-900 whitespace-nowrap">
-                        {property.price.toLocaleString()}
-                      </td>
-                      <td className="p-4 text-base font-normal text-gray-900 whitespace-nowrap">
-                        {formatDate(property.createdAt, "MMM d, yyyy")}
-                      </td>
-                      <td className="p-4 text-base font-normal text-gray-900 whitespace-nowrap">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              className="flex size-8 p-0 data-[state=open]:bg-muted"
+                        </td>
+                        <td className="p-4 text-sm font-medium text-gray-900">
+                          {property.title}
+                        </td>
+                        <td className="p-4 text-sm text-gray-500 hidden sm:table-cell capitalize">
+                          {property.status}
+                        </td>
+                        <td className="p-4 text-sm text-gray-500 hidden lg:table-cell">
+                          {property.propertyDetails}
+                        </td>
+                        <td className="p-4 text-sm text-gray-500 hidden md:table-cell">
+                          {property.currency}
+                        </td>
+                        <td className="p-4 text-sm text-gray-900">
+                          {property.price.toLocaleString()}
+                        </td>
+                        <td className="p-4 text-sm text-gray-500 hidden sm:table-cell">
+                          {formatDate(property.createdAt, "MMM d, yyyy")}
+                        </td>
+                        <td className="p-4 text-sm font-medium">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                className="size-8 p-0 data-[state=open]:bg-muted"
+                              >
+                                <MoreVertical className="size-4" />
+                                <span className="sr-only">Open menu</span>
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                              align="end"
+                              className="w-[160px]"
                             >
-                              <MoreVertical className="size-4" />
-                              <span className="sr-only">Open menu</span>
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent
-                            align="end"
-                            className="w-[160px] z-50"
-                          >
-                            <DropdownMenuItem className="group flex w-full items-center justify-between text-left p-0 text-sm font-base text-neutral-500">
-                              <Link
-                                href={`/properties/${property.propertyDetails}/${property.id}`}
-                                className="w-full justify-start flex rounded-md p-2 transition-all duration-75 hover:bg-neutral-100"
-                              >
-                                <IconMenu
-                                  text="View"
-                                  icon={<Eye className="size-4" />}
-                                />
-                              </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem className="group flex w-full items-center justify-between text-left p-0 text-sm font-base text-neutral-500">
-                              <Link
-                                href={`/agent/properties/create-property/?cloneFrom=${property.id}`}
-                                className="w-full justify-start flex rounded-md p-2 transition-all duration-75 hover:bg-neutral-100"
-                              >
-                                <IconMenu
-                                  text="Duplicate"
-                                  icon={<Copy className="size-4" />}
-                                />
-                              </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem className="group flex w-full items-center justify-between text-left p-0 text-sm font-base text-neutral-500">
-                              <Link
-                                href={`/agent/properties/edit-property/${property.id}`}
-                                className="w-full justify-start flex rounded-md p-2 transition-all duration-75 hover:bg-neutral-100"
-                              >
-                                <IconMenu
-                                  text="Edit"
-                                  icon={<SquarePen className="size-4" />}
-                                />
-                              </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem className="group flex w-full items-center justify-between  text-left p-0 text-sm font-base text-neutral-500 ">
-                              <Link
-                                href={`/agent/properties`}
-                                className="w-full justify-start flex text-red-500 rounded-md p-2 transition-all duration-75 hover:bg-neutral-100"
-                              >
-                                <IconMenu
-                                  text="Delete"
-                                  icon={<Trash2 className="size-4" />}
-                                />
-                              </Link>
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                              <DropdownMenuItem asChild>
+                                <Link
+                                  href={`/properties/${property.propertyDetails}/${property.id}`}
+                                  className="flex w-full items-center"
+                                >
+                                  <IconMenu
+                                    text="View"
+                                    icon={<Eye className="size-4 mr-2" />}
+                                  />
+                                </Link>
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem asChild>
+                                <Link
+                                  href={`/agent/properties/create-property/?cloneFrom=${property.id}`}
+                                  className="flex w-full items-center"
+                                >
+                                  <IconMenu
+                                    text="Duplicate"
+                                    icon={<Copy className="size-4 mr-2" />}
+                                  />
+                                </Link>
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem asChild>
+                                <Link
+                                  href={`/agent/properties/edit-property/${property.id}`}
+                                  className="flex w-full items-center"
+                                >
+                                  <IconMenu
+                                    text="Edit"
+                                    icon={<SquarePen className="size-4 mr-2" />}
+                                  />
+                                </Link>
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem asChild>
+                                <Link
+                                  href={`/agent/properties`}
+                                  className="flex w-full items-center text-red-500"
+                                >
+                                  <IconMenu
+                                    text="Delete"
+                                    icon={<Trash2 className="size-4 mr-2" />}
+                                  />
+                                </Link>
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <article className="mt-4 flex items-center justify-between">
-        <p className="text-sm text-gray-700">
+      <div className="mt-4 flex flex-col sm:flex-row items-center justify-between">
+        <p className="text-sm text-gray-700 mb-4 sm:mb-0">
           Showing{" "}
           <span className="font-semibold">{(page - 1) * perPage + 1}</span> to{" "}
           <span className="font-semibold">
@@ -237,7 +217,7 @@ export default async function PropertiesTable({
           </span>{" "}
           of <span className="font-semibold">{totalProperties}</span> properties
         </p>
-        <div className="space-x-2">
+        <div className="flex space-x-2">
           <PreviousPage page={page} currentSearchParams={currentSearchParams} />
           <NextPage
             page={page}
@@ -245,7 +225,7 @@ export default async function PropertiesTable({
             currentSearchParams={currentSearchParams}
           />
         </div>
-      </article>
+      </div>
     </>
   );
 }

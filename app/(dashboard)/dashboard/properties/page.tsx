@@ -34,20 +34,17 @@ export default async function PropertiesPage({
     typeof searchParams.search === "string" ? searchParams.search : undefined;
 
   return (
-    <section className="px-8 pt-5 flex flex-col">
+    <section className="px-4 sm:px-8 pt-5 flex flex-col">
       <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl mb-4">
         All properties
       </h1>
       {userProperties.length > 0 ? (
         <>
-          <div className="sm:flex items-center">
-            <div className="flex items-center justify-between mb-8">
-              <div className="mt-1 w-80">
-                <SearchInput search={search} searchType="properties" />
-              </div>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8">
+            <div className="w-full sm:w-80 mb-4 sm:mb-0">
+              <SearchInput search={search} searchType="properties" />
             </div>
-
-            <div className="flex items-center ml-auto space-x-2 sm:space-x-3 mb-8">
+            <div className="flex items-center space-x-2 sm:space-x-3">
               <Button asChild>
                 <Link
                   href="/agent/properties/create-property"

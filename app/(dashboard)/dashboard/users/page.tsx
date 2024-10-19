@@ -1,3 +1,7 @@
+import React, { Suspense } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { formatDate } from "date-fns";
 import IconMenu from "@/components/globals/icon-menu";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,15 +13,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import prisma from "@/lib/prisma";
 import { MoreVertical, Plus, SquarePen, Trash2 } from "lucide-react";
-import Link from "next/link";
-import React, { Suspense } from "react";
 import SearchInput from "../../components/SearchInput";
 import Loading from "./loading";
-import PromoteAgent from "./PromoteAgent";
-import Breadcrumb from "../../components/BreadcrumbDashboard";
-import Image from "next/image";
-import { UserData } from "@/lib/types";
-import { formatDate } from "date-fns";
 
 export default async function UsersPage({
   searchParams,
@@ -28,7 +25,7 @@ export default async function UsersPage({
     typeof searchParams.search === "string" ? searchParams.search : undefined;
 
   return (
-    <section className="px-8  pt-5 flex flex-col">
+    <section className="px-4 sm:px-8 pt-5 flex flex-col">
       <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl mb-4">
         All users
       </h1>
@@ -50,58 +47,60 @@ export default async function UsersPage({
         Those who love AFRICAN REAL ESTATE&trade; 💪️
       </div>
 
-      <div className="sm:flex items-center">
-        <div className="sm:flex items-center divide-x divide-gray-100 mb-8">
-          <div className="mt-1 w-80 pr-6">
-            <SearchInput search={search} searchType="users" />
-          </div>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8">
+        <div className="w-full sm:w-auto mb-4 sm:mb-0">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:divide-x sm:divide-gray-100">
+            <div className="w-full sm:w-80 sm:pr-6 mb-4 sm:mb-0">
+              <SearchInput search={search} searchType="users" />
+            </div>
 
-          <div className="flex pl-0 space-x-1 sm:pl-2">
-            <a
-              href="#"
-              className="inline-flex justify-center p-1 text-gray-400 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-            >
-              <svg
-                className="w-6 h-6"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
+            <div className="flex space-x-1 sm:pl-2">
+              <a
+                href="#"
+                className="inline-flex justify-center p-1 text-gray-400 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
               >
-                <path
-                  fillRule="evenodd"
-                  d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
-                  clipRule="evenodd"
-                ></path>
-              </svg>
-            </a>
-            <a
-              href="#"
-              className="inline-flex justify-center p-1 text-gray-400 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-            >
-              <svg
-                className="w-6 h-6"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
+                <svg
+                  className="w-6 h-6"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                    clipRule="evenodd"
+                  ></path>
+                </svg>
+              </a>
+              <a
+                href="#"
+                className="inline-flex justify-center p-1 text-gray-400 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
               >
-                <path
-                  fillRule="evenodd"
-                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                  clipRule="evenodd"
-                ></path>
-              </svg>
-            </a>
+                <svg
+                  className="w-6 h-6"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  ></path>
+                </svg>
+              </a>
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center ml-auto space-x-2 sm:space-x-3 mb-8">
-          <button className="flex items-center gap-3 w-full rounded-md bg-indigo-600 py-1.5 px-3 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+        <div className="flex items-center space-x-2 sm:space-x-3">
+          <button className="flex items-center gap-3 w-full sm:w-auto rounded-md bg-indigo-600 py-1.5 px-3 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
             <Plus className="size-4" />
             Add user
           </button>
           <a
             href="#"
-            className="inline-flex items-center justify-center w-1/2 px-3 py-2.5 text-sm font-medium text-center text-gray-800 bg-gray-100 border-gray-50 rounded-lg hover:bg-gray-200 focus:ring-4 focus:ring-blue-300 sm:w-auto"
+            className="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-center text-gray-800 bg-gray-100 border-gray-50 rounded-lg hover:bg-gray-200 focus:ring-4 focus:ring-blue-300"
           >
             <svg
               className="w-5 h-5 mr-2 -ml-1"
@@ -120,9 +119,6 @@ export default async function UsersPage({
         </div>
       </div>
 
-      {/* <div className="my-4">
-        <PromoteAgent />
-      </div> */}
       <Suspense fallback={<Loading />}>
         <UsersTable searchParams={searchParams} />
       </Suspense>
@@ -182,139 +178,89 @@ async function UsersTable({
   return (
     <>
       <div className="mt-8 flow-root">
-        <div className="-my-2 -mx-6">
-          <div className="inline-block min-w-full py-2 align-middle px-6">
-            <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
-              <table className="min-w-full divide-y divide-gray-300 table-fixed">
+        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+            <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+              <table className="min-w-full divide-y divide-gray-300">
                 <thead className="bg-gray-50 uppercase">
                   <tr>
-                    <th className="p-4">
-                      <div className="flex items-center">
-                        <input
-                          id="checkbox-all"
-                          type="checkbox"
-                          aria-describedby="checkbox-1"
-                          className="size-4 border-gray-300 rounded bg-white focus:ring-3 focus:ring-blue-300"
-                        />
-                        <label
-                          htmlFor="checkbox-all"
-                          className="sr-only"
-                        ></label>
-                      </div>
+                    <th className="py-3.5 pl-4 pr-3 text-left text-xs font-medium text-gray-500 sm:pl-6">
+                      <span className="sr-only">Select</span>
                     </th>
-
-                    <th className="p-4 text-xs font-medium text-left text-gray-500">
+                    <th className="py-3.5 px-3 text-left text-xs font-medium text-gray-500">
                       Name
                     </th>
-                    {/* <th className="p-4 text-xs font-medium text-left text-gray-500">
-                      Bio
-                    </th> */}
-                    <th className="p-4 text-xs font-medium text-left text-gray-500">
+                    <th className="py-3.5 px-3 text-left text-xs font-medium text-gray-500 hidden sm:table-cell">
                       Agent Name
                     </th>
-                    <th className="p-4 text-xs font-medium text-left text-gray-500">
+                    <th className="py-3.5 px-3 text-left text-xs font-medium text-gray-500 hidden md:table-cell">
                       Whatsapp Number
                     </th>
-                    <th className="p-4 text-xs font-medium text-left text-gray-500">
+                    <th className="py-3.5 px-3 text-left text-xs font-medium text-gray-500 hidden lg:table-cell">
                       Role
                     </th>
-                    <th className="p-4 text-xs font-medium text-left text-gray-500">
+                    <th className="py-3.5 px-3 text-left text-xs font-medium text-gray-500">
                       Status
                     </th>
-                    <th className="p-4 text-xs font-medium text-left text-gray-500">
+                    <th className="py-3.5 px-3 text-left text-xs font-medium text-gray-500 hidden xl:table-cell">
                       Joined
                     </th>
-                    <th className="p-4 text-xs font-medium text-left text-gray-500">
-                      Actions
+                    <th className="py-3.5 pl-3 pr-4 sm:pr-6">
+                      <span className="sr-only">Actions</span>
                     </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {users.map((user) => (
                     <tr key={user.id}>
-                      <td className="w-4 p-4">
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                        <input
+                          type="checkbox"
+                          className="size-4 border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300"
+                        />
+                      </td>
+                      <td className="whitespace-nowrap py-4 px-3 text-sm">
                         <div className="flex items-center">
-                          <input
-                            type="checkbox"
-                            id={`checkbox-${user.id}`}
-                            className="size-4 border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300"
-                          />
-                          <label
-                            htmlFor={`checkbox-${user.id}`}
-                            className="sr-only"
-                          >
-                            checkbox
-                          </label>
-                        </div>
-                      </td>
-                      <td className="p-4 whitespace-nowrap flex items-center space-x-6">
-                        {user.image ? (
-                          <Image
-                            className="size-10 rounded-full border border-gray-100"
-                            src={user.image}
-                            alt={`Picture of ${user.name}`}
-                            width={40}
-                            height={40}
-                          />
-                        ) : (
-                          <Image
-                            className="size-10 rounded-full border border-gray-100"
-                            src={"/assets/placeholder.jpg"}
-                            alt={`Picture of ${user.name}`}
-                            width={40}
-                            height={40}
-                          />
-                        )}
-                        <div className="text-sm font-normal text-gray-500">
-                          <div className="text-base font-medium text-gray-600">
-                            {user.name}
+                          <div className="size-10 flex-shrink-0">
+                            <Image
+                              className="size-10 rounded-full"
+                              src={user.image || "/assets/placeholder.jpg"}
+                              alt={`Picture of ${user.name}`}
+                              width={40}
+                              height={40}
+                            />
                           </div>
-                          <div className="text-sm font-normal text-gray-500">
-                            {user.email}
+                          <div className="ml-4">
+                            <div className="font-medium text-gray-900">
+                              {user.name}
+                            </div>
+                            <div className="text-gray-500">{user.email}</div>
                           </div>
                         </div>
                       </td>
-
-                      {user.agentName ? (
-                        <td className=" p-4 text-base font-normal text-gray-900 whitespace-nowrap">
-                          {user.agentName}
-                        </td>
-                      ) : (
-                        <td className=" p-4 text-base font-normal text-gray-900 whitespace-nowrap">
-                          -
-                        </td>
-                      )}
-                      {user.whatsappNumber ? (
-                        <td className=" p-4 text-base font-normal text-gray-900 whitespace-nowrap">
-                          {user.whatsappNumber}
-                        </td>
-                      ) : (
-                        <td className=" p-4 text-base font-normal text-gray-900 whitespace-nowrap">
-                          -
-                        </td>
-                      )}
-                      <td className="p-4 text-base font-normal text-gray-900 whitespace-nowrap">
+                      <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500 hidden sm:table-cell">
+                        {user.agentName || "-"}
+                      </td>
+                      <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500 hidden md:table-cell">
+                        {user.whatsappNumber || "-"}
+                      </td>
+                      <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500 hidden lg:table-cell">
                         {user.role}
                       </td>
-                      <td className="p-4 text-base font-normal text-gray-900 whitespace-nowrap">
+                      <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
                         <div className="flex items-center">
-                          {user.isActive ? (
-                            <>
-                              <div className="size-2.5 rounded-full bg-green-400 mr-2"></div>{" "}
-                              Active
-                            </>
-                          ) : (
-                            <>
-                              <div className="size-2.5 rounded-full bg-red-500 mr-2"></div>
-                              Inactive
-                            </>
-                          )}
+                          <div
+                            className={`size-2.5 rounded-full mr-2 ${
+                              user.isActive ? "bg-green-400" : "bg-red-500"
+                            }`}
+                          ></div>
+                          {user.isActive ? "Active" : "Inactive"}
                         </div>
                       </td>
-                      <td className="p-4 text-base font-normal text-gray-900 whitespace-nowrap">
+                      <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500 hidden xl:table-cell">
                         {formatDate(user.createdAt, "MMM d, yyyy")}
                       </td>
-                      <td className="p-4 text-base font-normal text-gray-900 whitespace-nowrap">
+                      <td className="whitespace-nowrap py-4 pl-3 pr-4 text-sm font-medium sm:pr-6">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button
@@ -329,22 +275,18 @@ async function UsersTable({
                             align="end"
                             className="w-[160px] z-50"
                           >
-                            <DropdownMenuItem className="group flex w-full items-center justify-between text-left p-0 text-sm font-base text-neutral-500">
-                              <button className="w-full justify-start flex rounded-md p-2 transition-all duration-75 hover:bg-neutral-100">
-                                <IconMenu
-                                  text="Edit"
-                                  icon={<SquarePen className="size-4" />}
-                                />
-                              </button>
+                            <DropdownMenuItem className="cursor-pointer">
+                              <IconMenu
+                                text="Edit"
+                                icon={<SquarePen className="size-4" />}
+                              />
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem className="group flex w-full items-center justify-between  text-left p-0 text-sm font-base text-neutral-500 ">
-                              <button className="w-full justify-start flex text-red-500 rounded-md p-2 transition-all duration-75 hover:bg-neutral-100">
-                                <IconMenu
-                                  text="Block user"
-                                  icon={<Trash2 className="size-4" />}
-                                />
-                              </button>
+                            <DropdownMenuItem className="cursor-pointer text-red-500">
+                              <IconMenu
+                                text="Block user"
+                                icon={<Trash2 className="size-4" />}
+                              />
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -357,8 +299,8 @@ async function UsersTable({
           </div>
         </div>
       </div>
-      <article className="mt-4 flex items-center justify-between">
-        <p className="text-sm text-gray-700">
+      <div className="mt-4 flex flex-col sm:flex-row items-center justify-between">
+        <p className="text-sm text-gray-700 mb-4 sm:mb-0">
           Showing{" "}
           <span className="font-semibold">{(page - 1) * perPage + 1}</span> to{" "}
           <span className="font-semibold">
@@ -374,7 +316,7 @@ async function UsersTable({
             currentSearchParams={currentSearchParams}
           />
         </div>
-      </article>
+      </div>
     </>
   );
 }
