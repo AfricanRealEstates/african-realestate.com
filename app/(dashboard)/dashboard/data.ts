@@ -1,50 +1,98 @@
 import prisma from '@/lib/prisma'
 
-export async function getUserFavorites(userId: string | undefined) {
-    const favorites = await prisma.like.findMany({
-        where: { userId },
-        include: {
-            property: {
-                select: {
-                    id: true,
-                    title: true,
-                    locality: true,
-                    county: true,
-                    currency: true,
-                    price: true,
-                    coverPhotos: true,
-                }
-            }
-        }
-    })
+const ITEMS_PER_PAGE = 5 // Adjust this value as needed
 
-    return favorites.map(favorite => ({
-        ...favorite.property,
-    }))
+export async function getUserFavorites(userId: string | undefined, page: number = 1) {
+    const skip = (page - 1) * ITEMS_PER_PAGE
+    const [favorites, totalCount] = await Promise.all([
+        prisma.like.findMany({
+            where: { userId },
+            include: {
+                property: {
+                    select: {
+                        id: true,
+                        title: true,
+                        locality: true,
+                        county: true,
+                        currency: true,
+                        price: true,
+                        coverPhotos: true,
+                    }
+                }
+            },
+            skip,
+            take: ITEMS_PER_PAGE,
+        }),
+        prisma.like.count({ where: { userId } })
+    ])
+
+    return {
+        items: favorites.map(favorite => ({ ...favorite.property })),
+        totalPages: Math.ceil(totalCount / ITEMS_PER_PAGE),
+        currentPage: page,
+    }
 }
 
-export async function getUserBookmarks(userId: string | undefined) {
-    const bookmarks = await prisma.savedProperty.findMany({
-        where: { userId },
-        include: {
-            property: {
-                select: {
-                    id: true,
-                    title: true,
-                    locality: true,
-                    county: true,
-                    currency: true,
-                    price: true,
-                    coverPhotos: true,
+export async function getUserBookmarks(userId: string | undefined, page: number = 1) {
+    const skip = (page - 1) * ITEMS_PER_PAGE
+    const [bookmarks, totalCount] = await Promise.all([
+        prisma.savedProperty.findMany({
+            where: { userId },
+            include: {
+                property: {
+                    select: {
+                        id: true,
+                        title: true,
+                        locality: true,
+                        county: true,
+                        currency: true,
+                        price: true,
+                        coverPhotos: true,
+                    }
                 }
-            }
-        }
-    })
+            },
+            skip,
+            take: ITEMS_PER_PAGE,
+        }),
+        prisma.savedProperty.count({ where: { userId } })
+    ])
 
-    return bookmarks.map(bookmark => ({
-        ...bookmark.property,
-    }))
+    return {
+        items: bookmarks.map(bookmark => ({ ...bookmark.property })),
+        totalPages: Math.ceil(totalCount / ITEMS_PER_PAGE),
+        currentPage: page,
+    }
 }
+
+export async function getUserProperties(userId: string | undefined, page: number = 1) {
+    const skip = (page - 1) * ITEMS_PER_PAGE
+    const [properties, totalCount] = await Promise.all([
+        prisma.property.findMany({
+            where: { userId },
+            select: {
+                id: true,
+                title: true,
+                locality: true,
+                county: true,
+                currency: true,
+                price: true,
+                coverPhotos: true,
+            },
+            skip,
+            take: ITEMS_PER_PAGE,
+        }),
+        prisma.property.count({ where: { userId } })
+    ])
+
+    return {
+        items: properties,
+        totalPages: Math.ceil(totalCount / ITEMS_PER_PAGE),
+        currentPage: page,
+    }
+}
+
+// Keep other functions (getUserRatings, getUserStats, getPropertySummary) as they are
+
 
 export async function getUserRatings(userId: string | undefined) {
     return prisma.rating.findMany({
@@ -59,21 +107,6 @@ export async function getUserRatings(userId: string | undefined) {
                     coverPhotos: true
                 }
             }
-        }
-    })
-}
-
-export async function getUserProperties(userId: string | undefined) {
-    return prisma.property.findMany({
-        where: { userId },
-        select: {
-            id: true,
-            title: true,
-            locality: true,
-            county: true,
-            currency: true,
-            price: true,
-            coverPhotos: true,
         }
     })
 }
