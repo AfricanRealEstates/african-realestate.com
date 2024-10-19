@@ -27,7 +27,7 @@ const avatar = [
   },
   {
     name: "My Favorites",
-    href: "/my-favorites",
+    href: "/dashboard",
   },
   {
     name: "Profile Account",
