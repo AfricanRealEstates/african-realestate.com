@@ -62,8 +62,20 @@ export default function LoginForm() {
 
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-xl">
-        <h2 className="mt-4 text-center text-xl font-bold leading-9 tracking-tight text-gray-900">
+      <div className="sm:mx-auto sm:w-full sm:max-w-xl flex items-center justify-center flex-col mt-12">
+        <Link href="/" className={`flex items-center gap-2 no-underline`}>
+          <img
+            src="/assets/logo.png"
+            width={40}
+            height={40}
+            alt="ARE"
+            className="object-cover"
+          />
+          <span className={`lg:text-xl tracking-tight font-bold`}>
+            African Real Estate.
+          </span>
+        </Link>
+        <h2 className="mt-4 text-center text-lg font-medium leading-9 tracking-tight text-gray-600">
           Sign in to your account
         </h2>
       </div>
