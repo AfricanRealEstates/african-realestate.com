@@ -278,7 +278,7 @@ function PropertyList({
                           href={`/agent/properties/create-property?cloneFrom=${property.id}`}
                         >
                           <Copy className="mr-2 h-4 w-4" />
-                          Clone
+                          Duplicate
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem>

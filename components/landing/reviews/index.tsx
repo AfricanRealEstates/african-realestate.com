@@ -28,12 +28,12 @@ interface Review {
 const reviews: { google: Review[]; trustpilot: Review[]; reviewsIO: Review[] } =
   {
     google: [
-      {
-        name: "Mungai Kihara",
-        username: "@mtollah",
-        body: "I recently used African Real Estate to advertise my property, and I couldn't be happier with the results. I highly recommend African Real Estate to anyone looking to sell or rent their property quickly!",
-        img: "/assets/realtor-1.jpeg",
-      },
+      // {
+      //   name: "Mungai Kihara",
+      //   username: "@mtollah",
+      //   body: "I recently used African Real Estate to advertise my property, and I couldn't be happier with the results. I highly recommend African Real Estate to anyone looking to sell or rent their property quickly!",
+      //   img: "/assets/realtor-1.jpeg",
+      // },
       {
         name: "Nancy Nyam. O",
         username: "@nancy_o",
@@ -135,7 +135,7 @@ const Reviews: React.FC = () => {
           Our recent customer reviews
         </h4>
 
-        <div className="mt-10">
+        <div className="mt-10 overflow-x-auto">
           <Tab.Group>
             <Tab.List className="flex flex-col sm:flex-row justify-between items-center rounded-lg w-full gap-4 bg-white p-2">
               <Tab

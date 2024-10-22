@@ -17,7 +17,7 @@ export default async function PropertyAdvice() {
     <section className={`py-12 leading-relaxed`}>
       <div className=" w-[95%] max-w-7xl m-auto px-6 text-gray-600 md:px-12 xl:px-6">
         <p className={`text-xl text-gray-900 md:mb-4 ${josefin.className}`}>
-          Property guides
+          Property Insights & Tips
           <Link
             href="/blog"
             className="inline-flex font-light items-center ml-2 text-ken-primary md:ml-2 hover:underline group"

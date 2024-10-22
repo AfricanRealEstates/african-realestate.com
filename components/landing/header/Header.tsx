@@ -255,27 +255,6 @@ export default function Component() {
                   <div className="mt-6 flow-root">
                     <div className="-my-6">
                       <div className="space-y-2 py-6">
-                        {/* <Accordion
-                          type="single"
-                          collapsible
-                          className="border-b-0"
-                        >
-                          <AccordionItem value="products">
-                            <AccordionTrigger>Products</AccordionTrigger>
-                            <AccordionContent>
-                              {[...products, ...callsToAction].map((item) => (
-                                <Link
-                                  key={item.name}
-                                  href={item.href}
-                                  className="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-400 hover:bg-gray-50"
-                                >
-                                  {item.name}
-                                </Link>
-                              ))}
-                            </AccordionContent>
-                          </AccordionItem>
-                        </Accordion> */}
-
                         <Link
                           href="/buy"
                           className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-400 hover:bg-gray-50"
@@ -311,7 +290,7 @@ export default function Component() {
                           </AccordionItem>
                         </Accordion>
                       </div>
-                      <div className="py-6">
+                      <div className="pb-6">
                         {user ? (
                           <div className="flex flex-col gap-y-4 items-start w-full">
                             <Link
@@ -347,6 +326,15 @@ export default function Component() {
                             </span>
                           </Link>
                         )}
+
+                        <Button
+                          type="submit"
+                          color="blue"
+                          href={`/agent/properties/create-property`}
+                          className="h-fit mt-4"
+                        >
+                          Sell fast
+                        </Button>
                       </div>
                     </div>
                   </div>
