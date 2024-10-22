@@ -101,6 +101,8 @@ export async function generateMetadata({
     description: description,
     image: imageUrl,
     price: `${property.currency} ${property.price.toLocaleString()}`,
+    priceCurrency: property.currency,
+    availability: property.status === "sale" ? "for sale" : "to let",
     address: {
       "@type": "PostalAddress",
       addressLocality: property.locality,
@@ -145,8 +147,8 @@ export async function generateMetadata({
       "twitter:data1": `${
         property.currency
       } ${property.price.toLocaleString()}`,
-      "twitter:label2": "Location",
-      "twitter:data2": `${property.locality}, ${property.county}`,
+      "twitter:label2": "Status",
+      "twitter:data2": property.status === "sale" ? "For Sale" : "To Let",
 
       // LinkedIn
       "linkedin:owner": "African Real Estate",
