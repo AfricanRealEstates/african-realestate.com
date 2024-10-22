@@ -22,44 +22,43 @@ function ShareButton({
     typeof window !== "undefined" ? window.location.origin : ""
   }/properties/${property.propertyDetails}/${propertyId}`;
 
-  const shareText = `Check out this amazing property: ${property.title}`;
+  const shareText = `Check out this ${property.propertyType} property: ${
+    property.title
+  } - ${property.bedrooms} bed, ${
+    property.bathrooms
+  } bath, ${property.price.toLocaleString()} ${property.currency}`;
+
+  const shareImage =
+    property.coverPhotos[0] || "/assets/default-property-image.jpg";
 
   const shareToFacebook = () => {
-    window.open(
-      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-        shareUrl
-      )}`,
-      "_blank",
-      "noopener,noreferrer"
-    );
+    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+      shareUrl
+    )}&quote=${encodeURIComponent(shareText)}`;
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const shareToTwitter = () => {
-    window.open(
-      `https://twitter.com/intent/tweet?url=${encodeURIComponent(
-        shareUrl
-      )}&text=${encodeURIComponent(shareText)}`,
-      "_blank",
-      "noopener,noreferrer"
-    );
+    const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+      shareUrl
+    )}&text=${encodeURIComponent(shareText)}`;
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const shareToLinkedIn = () => {
-    window.open(
-      `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
-        shareUrl
-      )}`,
-      "_blank",
-      "noopener,noreferrer"
-    );
+    const url = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(
+      shareUrl
+    )}&title=${encodeURIComponent(property.title)}&summary=${encodeURIComponent(
+      shareText
+    )}`;
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const shareToWhatsApp = () => {
-    window.open(
-      `https://wa.me/?text=${encodeURIComponent(shareText + " " + shareUrl)}`,
-      "_blank",
-      "noopener,noreferrer"
-    );
+    const url = `https://wa.me/?text=${encodeURIComponent(
+      shareText + " " + shareUrl
+    )}`;
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const copyToClipboard = () => {
@@ -163,7 +162,6 @@ function ShareButton({
             </svg>
             LinkedIn
           </Button>
-
           <Button
             variant="ghost"
             className="w-full justify-start"

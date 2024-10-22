@@ -31,6 +31,8 @@ export default function Component({
   const [allImages, setAllImages] = useState<string[]>([]);
   const [showVideo, setShowVideo] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
 
   // Combine and remove duplicate images
   const combinedImages = [
@@ -81,6 +83,30 @@ export default function Component({
     }
   });
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStart - touchEnd > 75) {
+      // Swipe left
+      if (index + 1 < allImages.length + 1) {
+        handleChangeIndex(index + 1);
+      }
+    }
+
+    if (touchStart - touchEnd < -75) {
+      // Swipe right
+      if (index > 0) {
+        handleChangeIndex(index - 1);
+      }
+    }
+  };
+
   const handleThumbnailClick = (i: number) => {
     handleChangeIndex(i);
   };
@@ -119,7 +145,12 @@ export default function Component({
     <section className="w-full lg:w-3/5 xl:w-2/3 space-y-4 lg:space-y-10 lg:pr-10 h-full">
       <MotionConfig transition={{ duration: 0.7, ease: [0.32, 0.72, 0, 1] }}>
         <div className="relative overflow-hidden h-[300px] sm:h-[400px] md:h-[500px] lg:h-[570px] w-full">
-          <div className="relative h-full w-full">
+          <div
+            className="relative h-full w-full"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
             <motion.div
               animate={{ x: -index * 100 + "%" }}
               className="flex h-full w-full"
@@ -248,7 +279,10 @@ export default function Component({
           >
             <div className="flex gap-2 sm:gap-4 w-max">
               {allImages.map((image, i) => (
-                <div key={i} className="relative w-12 h-12 sm:w-16 sm:h-16">
+                <div
+                  key={i}
+                  className="relative w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16"
+                >
                   <Image
                     src={image}
                     alt="Thumbnail"
@@ -266,7 +300,7 @@ export default function Component({
                   )}
                 </div>
               ))}
-              <div className="relative w-12 h-12 sm:w-16 sm:h-16">
+              <div className="relative w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16">
                 <div
                   className={`w-full h-full rounded-full ring-2 ring-gray-100 cursor-pointer bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white text-xs font-bold ${
                     index === allImages.length ? "border-4 border-blue-500" : ""
