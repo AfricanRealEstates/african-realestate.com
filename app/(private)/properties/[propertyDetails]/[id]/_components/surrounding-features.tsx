@@ -74,7 +74,7 @@ export default function SurroundingFeatures({ property }: { property: any }) {
           <h2 className="text-[22px] font-semibold mb-4">
             Amenities Within 2KM Radius
           </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-[25px] mt-1 mb-4 text-sm text-neutral-700">
+          <div className="grid grid-cols-2 sm:grid-cols-1 lg:grid-cols-2 gap-[25px] mt-1 mb-4 text-sm text-neutral-700">
             {property.surroundingFeatures.slice(0, 6).map((feature: string) => (
               <div key={feature} className="flex items-center gap-x-3">
                 {featureIcons[feature]}
@@ -98,7 +98,7 @@ export default function SurroundingFeatures({ property }: { property: any }) {
                 </DialogTitle>
               </DialogHeader>
               <ScrollArea className="h-[60vh] mt-4 pr-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 text-sm text-neutral-700">
+                <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-6 text-sm text-neutral-700">
                   {property.surroundingFeatures.map((feature: string) => (
                     <div key={feature} className="flex items-center space-x-3">
                       {featureIcons[feature]}

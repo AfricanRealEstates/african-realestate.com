@@ -63,7 +63,7 @@ export default function Amenities({ amenities }: AmenitiesProps) {
 
   return (
     <div className="w-full flex flex-col sm:rounded-2xl space-y-6 sm:space-y-8 pb-1 leading-relaxed">
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 text-sm text-neutral-700 mt-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-6 text-sm text-neutral-700 mt-4">
         {filteredAmenities.slice(0, 6).map((amenity) => (
           <div key={amenity} className="flex items-center space-x-3">
             {amenityIcons[amenity]}
@@ -90,7 +90,7 @@ export default function Amenities({ amenities }: AmenitiesProps) {
               <DialogTitle>Amenities</DialogTitle>
             </DialogHeader>
             <ScrollArea className="h-[60vh] mt-4 pr-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredAmenities.map((amenity) => (
                   <div
                     key={amenity}
