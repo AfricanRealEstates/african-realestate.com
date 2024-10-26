@@ -17,12 +17,15 @@ export default async function Agencies() {
     include: {
       properties: true,
     },
+    where: {
+      role: UserRole.AGENCY,
+    },
   });
 
   const agentsWithSubscriptions = await prisma.user.findMany({
     where: {
       AND: [
-        { role: UserRole.AGENT }, // filter users with role Agent
+        { role: UserRole.AGENCY }, // filter users with role Agent
         { subscriptions: { some: {} } },
       ],
     },
@@ -62,7 +65,7 @@ export default async function Agencies() {
                 </h3>
                 <dl className="mt-1 flex flex-grow flex-col justify-between">
                   <dt className="sr-only">Title</dt>
-                  <dd className="text-sm my-4 text-gray-500">AGENT</dd>
+                  <dd className="text-sm my-4 text-gray-500">AGENCY</dd>
                   <dt className="sr-only">Role</dt>
 
                   <dd className="mt-3">
