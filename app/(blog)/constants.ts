@@ -26,3 +26,6 @@ export const POSTS: { title: string; href: string; description: string }[] = [
     },
 
 ];
+
+// sell fast
+// about

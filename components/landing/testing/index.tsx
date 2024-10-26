@@ -52,7 +52,7 @@ export default function Testing() {
               <p
                 className={`${josefin.className} leading-relaxed font-medium text-white hidden md:block`}
               >
-                We&apos;ve more than 75,000 properties listed for you.
+                We&apos;ve more than 7,000 properties listed for you.
               </p>
             </div>
             <div className="max-w-3xl flex items-center justify-center w-full">

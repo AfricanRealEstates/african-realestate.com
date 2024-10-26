@@ -5,7 +5,6 @@ import { redirect } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -38,10 +37,10 @@ import {
 import { auth } from "@/auth";
 import { deleteProperty } from "@/actions/deleteProperty";
 
-export default async function UserDashboard({
-  searchParams,
+export default async function Component({
+  searchParams = {},
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams?: { [key: string]: string | string[] | undefined };
 }) {
   const session = await auth();
   const user = session?.user;
@@ -68,114 +67,121 @@ export default async function UserDashboard({
   }
 
   return (
-    <div className="container mx-auto p-6">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-lg lg:text-4xl font-bold text-gradient bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-600">
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white shadow-sm sticky top-0 z-10">
+        <div className="container mx-auto px-4 py-4">
+          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-gradient bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-indigo-600">
             {greeting}, {user.name}
           </h1>
-          <p className="text-gray-500 mt-2 text-sm lg:text-base">
+          <p className="text-gray-500 mt-1 text-sm">
             Welcome to your dashboard
           </p>
         </div>
-      </div>
+      </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <StatCard
-          icon={<Heart className="h-6 w-6 text-red-500" />}
-          title="Favorites"
-          value={stats.favoritesCount}
-        />
-        <StatCard
-          icon={<Bookmark className="h-6 w-6 text-blue-500" />}
-          title="Bookmarks"
-          value={stats.bookmarksCount}
-        />
-        <StatCard
-          icon={<Star className="h-6 w-6 text-yellow-500" />}
-          title="Avg. Rating"
-          value={stats.averageRating.toFixed(1)}
-        />
-        <StatCard
-          icon={<Home className="h-6 w-6 text-green-500" />}
-          title="Properties"
-          value={stats.propertiesCount}
-        />
-      </div>
+      <main className="container mx-auto px-4 py-6">
+        <Card className="mb-6 bg-white shadow-md">
+          <CardHeader className="p-4">
+            <CardTitle className="text-lg">Your Property Summary</CardTitle>
+          </CardHeader>
+          <CardContent className="p-4">
+            <div className="grid grid-cols-3 gap-4">
+              <StatCard
+                icon={<BarChart2 className="h-5 w-5 text-blue-500" />}
+                title="Total Likes"
+                value={propertySummary.totalLikes}
+              />
+              <StatCard
+                icon={<TrendingUp className="h-5 w-5 text-green-500" />}
+                title="Total Bookmarks"
+                value={propertySummary.totalBookmarks}
+              />
+              <StatCard
+                icon={<Star className="h-5 w-5 text-yellow-500" />}
+                title="Avg Rating"
+                value={propertySummary.averageRating.toFixed(1)}
+              />
+            </div>
+          </CardContent>
+        </Card>
 
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>Your Property Summary</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="flex items-center space-x-2">
-              <BarChart2 className="h-5 w-5 text-blue-500" />
-              <span>Total Likes: {propertySummary.totalLikes}</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <TrendingUp className="h-5 w-5 text-green-500" />
-              <span>Total Bookmarks: {propertySummary.totalBookmarks}</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Award className="h-5 w-5 text-yellow-500" />
-              <span>
-                Average Rating: {propertySummary.averageRating.toFixed(1)}
-              </span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Tabs defaultValue="properties" className="space-y-4">
-        <ScrollArea className="w-full whitespace-nowrap rounded-md border">
-          <TabsList className="inline-flex w-max p-1 h-10">
-            <TabsTrigger value="properties" className="px-3">
-              Your Properties
-            </TabsTrigger>
-            <TabsTrigger value="favorites" className="px-3">
-              Favorites
-            </TabsTrigger>
-            <TabsTrigger value="bookmarks" className="px-3">
-              Bookmarks
-            </TabsTrigger>
-            <TabsTrigger value="ratings" className="px-3">
-              Your Ratings
-            </TabsTrigger>
-          </TabsList>
-          <ScrollBar orientation="horizontal" className="invisible" />
-        </ScrollArea>
-        <TabsContent value="properties">
-          <PropertyList
-            properties={properties.items}
-            currentPage={properties.currentPage}
-            totalPages={properties.totalPages}
-            emptyMessage="You haven't posted any properties yet."
-            showActions={true}
-          />
-        </TabsContent>
-        <TabsContent value="favorites">
-          <PropertyList
-            properties={favorites.items}
-            currentPage={favorites.currentPage}
-            totalPages={favorites.totalPages}
-            emptyMessage="You haven't favorited any properties yet."
-            showActions={false}
-          />
-        </TabsContent>
-        <TabsContent value="bookmarks">
-          <PropertyList
-            properties={bookmarks.items}
-            currentPage={bookmarks.currentPage}
-            totalPages={bookmarks.totalPages}
-            emptyMessage="You haven't bookmarked any properties yet."
-            showActions={false}
-          />
-        </TabsContent>
-        <TabsContent value="ratings">
-          <RatingsList ratings={ratings} />
-        </TabsContent>
-      </Tabs>
+        <Card className="bg-white shadow-md flex flex-col h-[calc(100vh-200px)]">
+          <CardContent className="p-0 flex flex-col h-full">
+            <Tabs
+              defaultValue="properties"
+              className="w-full h-full flex flex-col"
+            >
+              <div className="border-b">
+                <TabsList className="flex w-full justify-start">
+                  <TabsTrigger
+                    value="properties"
+                    className="flex-shrink-0 px-3 py-2 flex items-center text-sm"
+                  >
+                    <Home className="h-4 w-4 mr-1" />
+                    <span className="hidden sm:inline">Properties</span>
+                    <span className="ml-1 bg-primary text-primary-foreground rounded-full px-1.5 py-0.5 text-xs">
+                      {stats.propertiesCount}
+                    </span>
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="favorites"
+                    className="flex-shrink-0 px-3 py-2 flex items-center text-sm"
+                  >
+                    <Heart className="h-4 w-4 mr-1" />
+                    <span className="hidden sm:inline">Favorites</span>
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="bookmarks"
+                    className="flex-shrink-0 px-3 py-2 flex items-center text-sm"
+                  >
+                    <Bookmark className="h-4 w-4 mr-1" />
+                    <span className="hidden sm:inline">Bookmarks</span>
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="ratings"
+                    className="flex-shrink-0 px-3 py-2 flex items-center text-sm"
+                  >
+                    <Star className="h-4 w-4 mr-1" />
+                    <span className="hidden sm:inline">Ratings</span>
+                  </TabsTrigger>
+                </TabsList>
+              </div>
+              <div className="flex-grow overflow-y-auto">
+                <TabsContent value="properties" className="h-full">
+                  <PropertyList
+                    properties={properties.items}
+                    currentPage={properties.currentPage}
+                    totalPages={properties.totalPages}
+                    emptyMessage="You haven't posted any properties yet."
+                    showActions={true}
+                  />
+                </TabsContent>
+                <TabsContent value="favorites" className="h-full">
+                  <PropertyList
+                    properties={favorites.items}
+                    currentPage={favorites.currentPage}
+                    totalPages={favorites.totalPages}
+                    emptyMessage="You haven't favorited any properties yet."
+                    showActions={false}
+                  />
+                </TabsContent>
+                <TabsContent value="bookmarks" className="h-full">
+                  <PropertyList
+                    properties={bookmarks.items}
+                    currentPage={bookmarks.currentPage}
+                    totalPages={bookmarks.totalPages}
+                    emptyMessage="You haven't bookmarked any properties yet."
+                    showActions={false}
+                  />
+                </TabsContent>
+                <TabsContent value="ratings" className="h-full">
+                  <RatingsList ratings={ratings} />
+                </TabsContent>
+              </div>
+            </Tabs>
+          </CardContent>
+        </Card>
+      </main>
     </div>
   );
 }
@@ -190,15 +196,13 @@ function StatCard({
   value: number | string;
 }) {
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        {icon}
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-      </CardContent>
-    </Card>
+    <div className="flex items-center space-x-2">
+      {icon}
+      <div>
+        <p className="text-xs text-gray-500">{title}</p>
+        <p className="text-lg font-semibold">{value}</p>
+      </div>
+    </div>
   );
 }
 
@@ -220,11 +224,11 @@ function PropertyList({
   }
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {properties.map((property) => (
-          <Card key={property.id} className="overflow-hidden bg-white">
-            <div className="relative h-48">
+          <Card key={property.id} className="bg-white shadow-sm">
+            <div className="relative h-40">
               <Image
                 src={property.coverPhotos[0]}
                 alt={property.title}
@@ -232,22 +236,20 @@ function PropertyList({
                 objectFit="cover"
               />
             </div>
-            <CardContent className="p-4">
-              <div>
-                <h3 className="font-semibold text-lg mb-2 line-clamp-2">
-                  {property.title}
-                </h3>
-                <p className="text-gray-600 mb-2 line-clamp-2">
-                  {property.locality}, {property.county}
-                </p>
-                <p className="font-bold text-lg mb-4 line-clamp-2">
-                  {property.currency} {property.price.toLocaleString()}
-                </p>
-              </div>
-
+            <CardContent className="p-3">
+              <h3 className="font-semibold text-base mb-1 line-clamp-1">
+                {property.title}
+              </h3>
+              <p className="text-gray-600 text-sm mb-1 line-clamp-1">
+                {property.locality}, {property.county}
+              </p>
+              <p className="font-bold text-base mb-2">
+                {property.currency} {property.price.toLocaleString()}
+              </p>
               <div className="flex justify-between items-center">
                 <Button
                   asChild
+                  size="sm"
                   className="bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white transition-colors"
                 >
                   <Link
@@ -259,7 +261,7 @@ function PropertyList({
                 {showActions && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                         <span className="sr-only">Open menu</span>
                         <MoreVertical className="h-4 w-4" />
                       </Button>
@@ -319,13 +321,18 @@ function Pagination({
 }) {
   return (
     <div className="flex justify-center space-x-2">
-      <Button variant="outline" disabled={currentPage === 1} asChild>
+      <Button variant="outline" size="sm" disabled={currentPage === 1} asChild>
         <Link href={`?page=${currentPage - 1}`}>Previous</Link>
       </Button>
-      <span className="flex items-center">
+      <span className="flex items-center text-sm">
         Page {currentPage} of {totalPages}
       </span>
-      <Button variant="outline" disabled={currentPage === totalPages} asChild>
+      <Button
+        variant="outline"
+        size="sm"
+        disabled={currentPage === totalPages}
+        asChild
+      >
         <Link href={`?page=${currentPage + 1}`}>Next</Link>
       </Button>
     </div>
@@ -342,28 +349,32 @@ function RatingsList({ ratings }: { ratings: any[] }) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {ratings.map((rating) => (
-        <Card key={rating.id}>
-          <CardContent className="p-4 flex items-center space-x-4">
-            <Avatar className="h-12 w-12">
+        <Card key={rating.id} className="bg-white shadow-sm">
+          <CardContent className="p-3 flex items-center space-x-3">
+            <Avatar className="h-10 w-10">
               <AvatarImage
                 src={rating.property.coverPhotos[0]}
                 alt={rating.property.title}
               />
               <AvatarFallback>{rating.property.title[0]}</AvatarFallback>
             </Avatar>
-            <div className="flex-1">
-              <h3 className="font-semibold">{rating.property.title}</h3>
-              <p className="text-sm text-gray-500">
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold text-sm truncate">
+                {rating.property.title}
+              </h3>
+              <p className="text-xs text-gray-500 truncate">
                 {rating.property.locality}, {rating.property.county}
               </p>
             </div>
             <div className="flex items-center">
-              <Star className="h-5 w-5 text-yellow-500 mr-1" />
-              <span className="font-bold">{rating.ratings.toFixed(1)}</span>
+              <Star className="h-4 w-4 text-yellow-500 mr-1" />
+              <span className="font-bold text-sm">
+                {rating.ratings.toFixed(1)}
+              </span>
             </div>
-            <Button variant="ghost" size="sm" asChild>
+            <Button variant="ghost" size="sm" className="p-1" asChild>
               <Link
                 href={`/properties/${rating.property.propertyDetails}/${rating.property.id}`}
               >

@@ -28,7 +28,7 @@ export default async function DashboardLayout({
   return (
     <div className="h-screen flex">
       <div className="w-[14%] md:w-[w-8%] lg:w-[16%] xl:w-[14%]  p-4 border-r border-gray-100">
-        <Link
+        {/* <Link
           href={`/`}
           className="flex items-center justify-center lg:justify-start gap-2"
         >
@@ -37,6 +37,24 @@ export default async function DashboardLayout({
             className="bg-[#eb6753] text-white px-0.5 py-0.5 rounded-lg"
           />
           <span className="hidden lg:block font-bold">African Real Estate</span>
+        </Link> */}
+
+        <Link href="/" className={`flex items-center gap-2 no-underline`}>
+          <img
+            src="/assets/logo.png"
+            width={40}
+            height={40}
+            alt="ARE"
+            className="object-cover"
+          />
+          {/* <span className="bg-[#eb6753] text-white py-1 px-2 rounded-lg">
+                <HomeIcon />
+              </span> */}
+          <span
+            className={`hidden lg:block lg:text-lg tracking-tight font-bold`}
+          >
+            African Real Estate.
+          </span>
         </Link>
         <Menu />
       </div>

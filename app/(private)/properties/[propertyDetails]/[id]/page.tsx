@@ -92,7 +92,7 @@ export async function generateMetadata({
   const title = `${capitalizeWords(property.title)} | African Real Estate`;
   const description = property.description.substring(0, 160); // Truncate to 160 characters for meta description
   const imageUrl = property.coverPhotos[0] || "/assets/Kilimani.webp";
-  const fullUrl = `https://modernsite1.vercel.app/properties/${property.propertyDetails}/${property.id}`;
+  const fullUrl = `https://www.african-realestate.com/properties/${property.propertyDetails}/${property.id}`;
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -677,7 +677,7 @@ export default async function PropertyDetails({
                             <Link
                               target="_blank"
                               rel="noopener noreferrer"
-                              href={`tel:${agent.officeLine}`}
+                              href={`tel:${agent?.phoneNumber}`}
                               className="flex size-6 items-center justify-center text-[#777f8a] hover:text-gray-500"
                             >
                               <span className="sr-only">Contact on Call</span>

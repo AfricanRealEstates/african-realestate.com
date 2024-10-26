@@ -14,5 +14,47 @@ export default async function sitemap() {
         lastModified: new Date().toISOString(),
     }));
 
-    return [...blogs, ...routes];
+    let additionalPages = [
+
+        {
+            url: `${baseUrl}/buy`,
+            lastModified: new Date().toISOString(),
+        },
+        {
+            url: `${baseUrl}/let`,
+            lastModified: new Date().toISOString(),
+        },
+        {
+            url: `${baseUrl}/agent/properties/create-property`,
+            lastModified: new Date().toISOString(),
+        },
+        {
+            url: `${baseUrl}/blog`,
+            lastModified: new Date().toISOString(),
+        },
+
+        {
+            url: `${baseUrl}/about`,
+            lastModified: new Date().toISOString(),
+        },
+
+        {
+            url: `${baseUrl}/properties`,
+            lastModified: new Date().toISOString(),
+        },
+        {
+            url: `${baseUrl}/guides`,
+            lastModified: new Date().toISOString(),
+        },
+        {
+            url: `${baseUrl}`,
+            lastModified: new Date().toISOString(),
+        },
+    ];
+
+    return [
+        ...blogs,
+        ...routes,
+        ...additionalPages,
+    ];
 }
