@@ -111,7 +111,7 @@ export default async function PropertyDetails({
     >
       <article className="flex flex-col md:flex-row justify-between items-start md:items-center my-8 space-y-4 md:space-y-0">
         <div className="w-full md:w-2/3">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-2">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-2">
             All{" "}
             <span className="text-[#eb6753] font-extrabold">
               {searchProperties.length}
@@ -125,7 +125,7 @@ export default async function PropertyDetails({
             Explore our curated selection of properties
           </p>
         </div>
-        <div className="w-full md:w-1/3">
+        <div className="w-full md:w-1/3 z-30">
           <ActiveFilters searchParams={searchParams} />
           <SortingOptions
             currentSort={sort}
