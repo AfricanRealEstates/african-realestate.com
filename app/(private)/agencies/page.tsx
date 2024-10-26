@@ -61,7 +61,7 @@ export default async function Agencies() {
                   alt={agent.name!}
                 />
                 <h3 className="mt-6 text-sm font-medium text-gray-900">
-                  {agent.name}
+                  {agent.role === "AGENT" ? agent.name : agent.agentName}
                 </h3>
                 <dl className="mt-1 flex flex-grow flex-col justify-between">
                   <dt className="sr-only">Title</dt>

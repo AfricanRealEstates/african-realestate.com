@@ -239,23 +239,22 @@ export default async function PropertyDetails({
         id: id, // Exclude the current property
       },
       AND: [
-        { status: property.status }, // Match the status (sale or let)
+        { propertyDetails: property.propertyDetails }, // First priority: same property details
+        { status: property.status }, // Second priority: same status
         {
-          OR: [
-            { propertyDetails: property.propertyDetails }, // First priority: same property details
-            { county: property.county }, // Second priority: same county
-          ],
+          price: {
+            gte: property.price * 0.8, // Price range: 80% to 120% of the current property's price
+            lte: property.price * 1.2,
+          },
         },
+        { county: property.county }, // Fourth priority: same county
       ],
-      price: {
-        gte: property.price * 0.8, // Price range: 80% to 120% of the current property's price
-        lte: property.price * 1.2,
-      },
     },
     orderBy: [
-      { propertyDetails: "asc" }, // Prioritize matching propertyDetails
-      { county: "asc" }, // Then prioritize matching county
-      { price: "asc" }, // Then sort by price
+      { propertyDetails: "asc" },
+      { status: "asc" },
+      { price: "asc" },
+      { county: "asc" },
     ],
     take: 3, // Limit to 3 related properties
   });
