@@ -121,7 +121,7 @@ export function calculatePercentageSavings(basePrice: number, leastPrice: number
 export const fetchUrl =
   process.env.NODE_ENV === "development"
     ? "http://localhost:3000/api"
-    : "https://modernsite1.vercel.app/api";
+    : "https://www.african-realestate.com/api";
 
 type ResponseData = {
   category: string;

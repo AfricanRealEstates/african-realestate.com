@@ -45,7 +45,7 @@ export default function Hero() {
               Find your Dream Home
             </h2>
             <p className="text-white text-center">
-              We&apos;ve more than 75,000 properties listed for you.
+              We&apos;ve more than 7,000 properties listed for you.
             </p>
           </div>
           <div className="w-full max-w-3xl mt-12">
