@@ -109,17 +109,23 @@ export default async function PropertyDetails({
     <div
       className={`${raleway.className} w-[95%] lg:max-w-7xl mx-auto py-[90px] lg:py-[120px]`}
     >
-      <article className="flex justify-between my-8">
-        <div>
-          <h2 className="text-3xl text-gray-900 md:text-4xl my-4 mb-8">
+      <article className="flex flex-col md:flex-row justify-between items-start md:items-center my-8 space-y-4 md:space-y-0">
+        <div className="w-full md:w-2/3">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-2">
             All{" "}
-            <span className="text-[#eb6753] font-bold">
-              {searchProperties.length} {decodedPropertyDetails}{" "}
-            </span>
-            Available Right Now.
+            <span className="text-[#eb6753] font-extrabold">
+              {searchProperties.length}
+            </span>{" "}
+            <span className="text-[#eb6753] font-bold capitalize">
+              {decodedPropertyDetails}
+            </span>{" "}
+            <span className="block md:inline">Available Right Now</span>
           </h2>
+          <p className="text-gray-600 text-lg mt-2">
+            Explore our curated selection of properties
+          </p>
         </div>
-        <div>
+        <div className="w-full md:w-1/3">
           <ActiveFilters searchParams={searchParams} />
           <SortingOptions
             currentSort={sort}
@@ -132,7 +138,7 @@ export default async function PropertyDetails({
       </article>
       <Suspense fallback={<Loader />} key={key}>
         {searchProperties.length === 0 ? (
-          <div className="flex h-full items-center justify-center mt-8">
+          <div className="flex h-full items-center justify-center mt-8 text-gray-600 text-lg">
             No properties matched your search query. Please try again with a
             different term.
           </div>
