@@ -53,7 +53,7 @@ export default function SurroundingFeatures({ property }: { property: any }) {
 
   return (
     <section className="leading-relaxed">
-      <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border sm:border-neutral-200 sm:space-y-2 pb-1 px-4 sm:p-4 xl:p-4">
+      <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border sm:border-neutral-200 sm:space-y-2 pb-1 lg:px-4 sm:p-4 xl:p-4">
         <section className="flex items-center justify-between">
           <div className="my-0.5 gap-2 flex flex-col">
             <span className="text-blue-800 bg-blue-100 w-fit px-2 py-[1.5px] text-[12px] rounded-full">
