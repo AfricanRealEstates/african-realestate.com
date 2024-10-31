@@ -78,41 +78,20 @@ export async function generateMetadata({
   params: { id },
 }: PropertyDetailsProps): Promise<Metadata> {
   const property = await prisma.property.findUnique({
-    where: {
-      id: id,
-    },
+    where: { id },
   });
 
   if (!property) {
-    return {
-      title: "Property Not Found",
-    };
+    return { title: "Property Not Found" };
   }
 
   const title = `${capitalizeWords(property.title)} | African Real Estate`;
-  const description = property.description.substring(0, 160);
+  const description = property.description.substring(0, 200);
   const imageUrl = property.coverPhotos[0] || "/assets/Kilimani.webp";
   const fullUrl = `https://www.african-realestate.com/properties/${property.propertyDetails}/${property.id}`;
   const formattedPrice = `${
     property.currency
   } ${property.price.toLocaleString()}`;
-
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "RealEstateListing",
-    name: property.title,
-    description: description,
-    image: imageUrl,
-    price: formattedPrice,
-    priceCurrency: property.currency,
-    availability: property.status === "sale" ? "for sale" : "to let",
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: property.locality,
-      addressRegion: property.county,
-      addressCountry: property.country || "Kenya",
-    },
-  };
 
   return {
     title,
@@ -120,6 +99,8 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
+      url: fullUrl,
+      siteName: "African Real Estate",
       images: [
         {
           url: imageUrl,
@@ -128,61 +109,30 @@ export async function generateMetadata({
           alt: property.title,
         },
       ],
+      locale: "en_US",
       type: "website",
-      url: fullUrl,
-      siteName: "African Real Estate",
     },
     twitter: {
       card: "summary_large_image",
-      site: "@AfricanRealEsta",
-      creator: "@AfricanRealEsta",
       title,
       description,
+      site: "@AfricanRealEsta",
+      creator: "@AfricanRealEsta",
       images: [imageUrl],
     },
     alternates: {
       canonical: fullUrl,
     },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        "max-video-preview": -1,
-        "max-image-preview": "large",
-        "max-snippet": -1,
-      },
-    },
     other: {
-      // OpenGraph metadata
-      "og:title": title,
-      "og:description": description,
-      "og:image": imageUrl,
-      "og:url": fullUrl,
-      "og:type": "website",
       "og:price:amount": property.price.toString(),
       "og:price:currency": property.currency,
       "og:availability": property.status === "sale" ? "for sale" : "to let",
-
-      // Twitter metadata
-      "twitter:title": title,
-      "twitter:description": description,
-      "twitter:image": imageUrl,
-      "twitter:card": "summary_large_image",
-      "twitter:site": "@AfricanRealEsta",
-      "twitter:creator": "@AfricanRealEsta",
+      "og:image:width": "1200",
+      "og:image:height": "630",
       "twitter:label1": "Price",
       "twitter:data1": formattedPrice,
       "twitter:label2": "Status",
       "twitter:data2": property.status === "sale" ? "For Sale" : "To Let",
-
-      // WhatsApp specific metadata
-      "og:site_name": "African Real Estate",
-      "og:locale": "en_US",
-      "og:image:width": "1200",
-      "og:image:height": "630",
-      "og:image:alt": property.title,
     },
   };
 }
