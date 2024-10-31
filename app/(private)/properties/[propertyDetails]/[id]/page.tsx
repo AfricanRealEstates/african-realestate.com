@@ -318,7 +318,7 @@ export default async function PropertyDetails({
                 <Bed className="size-4 text-blue-600" />
                 <span className="ml-1">
                   {property.bedrooms}{" "}
-                  <span className="hidden sm:inline-block">
+                  <span className="sm:inline-block text-ellipsis">
                     {property.propertyType === "Commercial" ||
                     property.propertyType === "Industrial"
                       ? "Parkings"
@@ -332,7 +332,7 @@ export default async function PropertyDetails({
                 <Bath className="size-4 text-blue-600" />
                 <span className="ml-1">
                   {property.bathrooms}{" "}
-                  <span className="hidden sm:inline-block">baths</span>
+                  <span className="sm:inline-block text-ellipsis">baths</span>
                 </span>
               </div>
             )}
@@ -341,7 +341,7 @@ export default async function PropertyDetails({
                 <ExpandIcon className="size-4 text-blue-600" />
                 <span className="">
                   {convertedLandSize.toPrecision(3)}{" "}
-                  <span className="hidden sm:inline-block capitalize">
+                  <span className="sm:inline-block capitalize text-ellipsis">
                     {" "}
                     acres
                   </span>
