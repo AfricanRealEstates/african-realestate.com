@@ -87,7 +87,8 @@ export async function generateMetadata({
 
   const title = `${capitalizeWords(property.title)} | African Real Estate`;
   const description = property.description.substring(0, 200);
-  const imageUrl = property.coverPhotos[0] || "/assets/Kilimani.webp";
+  const imageUrl =
+    property.coverPhotos[0] || "/assets/default-property-image.jpg";
   const fullUrl = `https://www.african-realestate.com/properties/${property.propertyDetails}/${property.id}`;
   const formattedPrice = `${
     property.currency
@@ -133,6 +134,11 @@ export async function generateMetadata({
       "twitter:data1": formattedPrice,
       "twitter:label2": "Status",
       "twitter:data2": property.status === "sale" ? "For Sale" : "To Let",
+      "twitter:label3": "Location",
+      "twitter:data3": `${property.locality}, ${property.county}`,
+      "whatsapp:title": title,
+      "whatsapp:description": `${description} - ${formattedPrice}`,
+      "whatsapp:image": imageUrl,
     },
   };
 }
