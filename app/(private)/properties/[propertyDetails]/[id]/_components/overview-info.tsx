@@ -90,12 +90,12 @@ export default function OverviewInfo({
             {readButtonText}
           </ButtonSecondary>
         )}
-        <ButtonSecondary
+        {/* <ButtonSecondary
           onClick={togglePhoneNumbers}
           className="text-primary-500"
         >
           {phoneButtonText}
-        </ButtonSecondary>
+        </ButtonSecondary> */}
       </div>
     </div>
   );

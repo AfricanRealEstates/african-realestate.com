@@ -144,7 +144,7 @@ export default function Component({
   return (
     <section className="w-full lg:w-3/5 xl:w-2/3 space-y-4 lg:space-y-10 lg:pr-10 h-full">
       <MotionConfig transition={{ duration: 0.7, ease: [0.32, 0.72, 0, 1] }}>
-        <div className="relative overflow-hidden h-[300px] sm:h-[400px] md:h-[500px] lg:h-[570px] w-full">
+        <div className="relative overflow-hidden h-[350px] sm:h-[400px] md:h-[500px] lg:h-[570px] w-full">
           <div
             className="relative h-full w-full"
             onTouchStart={handleTouchStart}

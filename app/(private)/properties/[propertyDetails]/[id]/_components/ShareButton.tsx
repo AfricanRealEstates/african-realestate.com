@@ -55,9 +55,12 @@ function ShareButton({
   };
 
   const shareToWhatsApp = () => {
-    const url = `https://wa.me/?text=${encodeURIComponent(
-      shareText + " " + shareUrl
-    )}`;
+    const formattedPrice = `${
+      property.currency
+    } ${property.price.toLocaleString()}`;
+    const shareMessage = `*${property.title}*\n\n📍 ${property.locality}, ${property.county}\n💰 ${formattedPrice}\n\n${shareImage}\n\n${shareUrl}`;
+
+    const url = `https://wa.me/?text=${encodeURIComponent(shareMessage)}`;
     window.open(url, "_blank", "noopener,noreferrer");
   };
 

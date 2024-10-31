@@ -90,9 +90,12 @@ export async function generateMetadata({
   }
 
   const title = `${capitalizeWords(property.title)} | African Real Estate`;
-  const description = property.description.substring(0, 160); // Truncate to 160 characters for meta description
+  const description = property.description.substring(0, 160);
   const imageUrl = property.coverPhotos[0] || "/assets/Kilimani.webp";
   const fullUrl = `https://www.african-realestate.com/properties/${property.propertyDetails}/${property.id}`;
+  const formattedPrice = `${
+    property.currency
+  } ${property.price.toLocaleString()}`;
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -100,7 +103,7 @@ export async function generateMetadata({
     name: property.title,
     description: description,
     image: imageUrl,
-    price: `${property.currency} ${property.price.toLocaleString()}`,
+    price: formattedPrice,
     priceCurrency: property.currency,
     availability: property.status === "sale" ? "for sale" : "to let",
     address: {
@@ -127,44 +130,59 @@ export async function generateMetadata({
       ],
       type: "website",
       url: fullUrl,
+      siteName: "African Real Estate",
     },
     twitter: {
       card: "summary_large_image",
       site: "@AfricanRealEsta",
       creator: "@AfricanRealEsta",
-      title: title,
-      description: description,
+      title,
+      description,
       images: [imageUrl],
     },
+    alternates: {
+      canonical: fullUrl,
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
     other: {
-      // OpenGraph
+      // OpenGraph metadata
+      "og:title": title,
+      "og:description": description,
+      "og:image": imageUrl,
+      "og:url": fullUrl,
+      "og:type": "website",
       "og:price:amount": property.price.toString(),
       "og:price:currency": property.currency,
       "og:availability": property.status === "sale" ? "for sale" : "to let",
 
-      // Twitter
+      // Twitter metadata
+      "twitter:title": title,
+      "twitter:description": description,
+      "twitter:image": imageUrl,
+      "twitter:card": "summary_large_image",
+      "twitter:site": "@AfricanRealEsta",
+      "twitter:creator": "@AfricanRealEsta",
       "twitter:label1": "Price",
-      "twitter:data1": `${
-        property.currency
-      } ${property.price.toLocaleString()}`,
+      "twitter:data1": formattedPrice,
       "twitter:label2": "Status",
       "twitter:data2": property.status === "sale" ? "For Sale" : "To Let",
 
-      // LinkedIn
-      "linkedin:owner": "African Real Estate",
-      "linkedin:title": title,
-      "linkedin:description": description,
-      "linkedin:image": imageUrl,
-
-      // TikTok
-      "tiktok:app_id": "YOUR_TIKTOK_APP_ID", // Replace with your TikTok App ID
-      "tiktok:app_name": "African Real Estate",
-      "tiktok:title": title,
-      "tiktok:description": description,
-      "tiktok:image": imageUrl,
-
-      // Structured Data
-      structuredData: JSON.stringify(structuredData),
+      // WhatsApp specific metadata
+      "og:site_name": "African Real Estate",
+      "og:locale": "en_US",
+      "og:image:width": "1200",
+      "og:image:height": "630",
+      "og:image:alt": property.title,
     },
   };
 }
@@ -338,7 +356,7 @@ export default async function PropertyDetails({
         <div className="w-full border-b border-neutral-100 my-6" />
         <div className="flex flex-col space-y-2">
           <h2 className="text-2xl font-semibold mb-3">Salient Features</h2>
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 text-sm text-neutral-700 mt-8">
+          <div className="grid grid-cols-3 xl:grid-cols-3 gap-6 text-sm text-neutral-700 mt-8">
             {property.bedrooms && property.bedrooms > 0 && (
               <div className="flex items-center space-x-3 ">
                 <Bed className="size-4 text-blue-600" />
@@ -503,7 +521,7 @@ export default async function PropertyDetails({
 
   return (
     <div className="bg-white py-12 md:py-0">
-      <div className="mx-auto max-w-7xl px-4 pt-32 pb-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 pt-12 lg:pt-32 pb-8 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-y-4 ">
           <nav aria-label="Breadcrumb">
             <ol className="mx-auto flex mt-4 items-center space-x-2 lg:max-w-7xl">
@@ -569,7 +587,7 @@ export default async function PropertyDetails({
             <article className="flex flex-col-reverse h-full mb-8">
               <div className="flex flex-col gap-4">
                 <div className="space-y-8 w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 sm:space-y-6 px-0 sm:p-4 xl:p-4">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between pt-4 lg:pt-0">
                     <p className="rounded-full font-semibold w-fit bg-neutral-50 px-2 py-1 text-indigo-500">
                       {property.status === "let" ? "To " : "For "}
                       <span className="capitalize">{property.status}</span>
@@ -635,7 +653,7 @@ export default async function PropertyDetails({
                         </div>
                       </div>
 
-                      <div className="block text-neutral-500 space-y-2.5">
+                      <div className="block text-neutral-500 space-y-4">
                         <h3 className="font-medium text-gray-900">
                           Contact Agent
                         </h3>
@@ -676,12 +694,12 @@ export default async function PropertyDetails({
                             <Link
                               target="_blank"
                               rel="noopener noreferrer"
-                              href={`tel:${agent?.phoneNumber}`}
-                              className="flex size-6 items-center justify-center text-[#777f8a] hover:text-gray-500"
+                              href={`tel:${agent.whatsappNumber}`}
+                              className="flex size-6 items-center justify-center text-gray-400 hover:text-gray-500"
                             >
-                              <span className="sr-only">Contact on Call</span>
+                              <span className="sr-only">Call Agent</span>
                               <PhoneIcon
-                                className="h-5 w-5 text-gray-400"
+                                className="size-6"
                                 aria-hidden="true"
                               />
                             </Link>
@@ -691,17 +709,20 @@ export default async function PropertyDetails({
                               target="_blank"
                               rel="noopener noreferrer"
                               href={`mailto:${agent.email}`}
-                              className="flex size-6 items-center justify-center text-[#777f8a] hover:text-gray-500"
+                              className="flex size-6 items-center justify-center text-gray-400 hover:text-gray-500"
                             >
-                              <span className="sr-only">Contact on Email</span>
-                              <EnvelopeIcon className="h-5 w-5 text-gray-400" />
+                              <span className="sr-only">Email Agent</span>
+                              <EnvelopeIcon
+                                className="size-6"
+                                aria-hidden="true"
+                              />
                             </Link>
                           </li>
                         </ul>
                       </div>
                     </div>
 
-                    <div className="bg-white border-l border-neutral-100 w-full flex-1 flex justify-center items-center">
+                    <div className="bg-white lg:border-l border-neutral-100 w-full flex-1 flex gap-y-4 lg:justify-center lg:items-center">
                       {agent.image ? (
                         <Image
                           height={100}
@@ -724,7 +745,7 @@ export default async function PropertyDetails({
 
                   {/* == */}
                   <div className="w-full border-b border-neutral-200"></div>
-                  <div className="flex items-center justify-center w-full mb-12">
+                  <div className="flex lg:items-center lg:justify-center w-full mb-12">
                     <Button
                       href={
                         user?.role === "AGENT"
@@ -748,16 +769,17 @@ export default async function PropertyDetails({
         <main className="relative z-10 mt-8 flex flex-col lg:flex-row h-full">
           <section className="w-full lg:w-3/5 xl:w-2/3 space-y-8 lg:space-y-10 lg:pr-10 flex flex-col">
             {renderSection1()}
+
+            {/* Add SurroundingFeatures for mobile view */}
+            <div className="lg:hidden mt-8">
+              <SurroundingFeatures property={property} />
+            </div>
             <div className="flex-grow">
               <OverviewInfo
                 description={property.description}
                 serviceCharge={property.serviceCharge}
                 currency={property.currency}
               />
-            </div>
-            {/* Add SurroundingFeatures for mobile view */}
-            <div className="lg:hidden mt-8">
-              <SurroundingFeatures property={property} />
             </div>
           </section>
           <section className="hidden lg:flex lg:w-2/5 xl:w-1/3 mt-14 lg:mt-0 flex-col">
