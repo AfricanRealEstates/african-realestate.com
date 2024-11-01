@@ -704,9 +704,10 @@ export default async function PropertyDetails({
                   <div className="flex lg:items-center lg:justify-center w-full mb-12">
                     <Button
                       href={
-                        user?.role === "AGENT"
-                          ? `/agents/${agent.id}`
-                          : `/agencies/${agent.id}`
+                        // user?.role === "AGENT"
+                        //   ? `/agents/${agent.id}`
+                        //   :
+                        `/agencies/${agent.id}`
                       }
                       color="blue"
                       className="mb-8 lg:mb-0" // Added margin-bottom for mobile
