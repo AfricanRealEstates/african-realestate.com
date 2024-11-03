@@ -62,14 +62,14 @@ export default async function sitemap() {
         {
             url: `${baseUrl}/buy`,
             lastModified: new Date().toISOString(),
-            changefreq: 'weekly',
-            priority: 0.8,
+            changefreq: 'hourly',
+            priority: 0.9,
         },
         {
             url: `${baseUrl}/let`,
             lastModified: new Date().toISOString(),
-            changefreq: 'weekly',
-            priority: 0.8,
+            changefreq: 'hourly',
+            priority: 0.9,
         },
         {
             url: `${baseUrl}/agent/properties/create-property`,
