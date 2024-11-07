@@ -45,19 +45,18 @@ export default async function BuyPage({
     <div
       className={`${raleway.className} w-[95%] lg:max-w-7xl mx-auto py-[90px] lg:py-[120px]`}
     >
-      <h1 className="text-3xl font-bold mb-8">Properties for Sale</h1>
-      <article className="flex items-center justify-between">
-        <div className="my-5">
+      <h1 className="text-3xl font-semibold mb-8">Properties for Sale</h1>
+      <article className="flex items-center justify-between w-full">
+        <div className="mb-8">
           <PropertyFilter pageType="buy" />
         </div>
-        <div className="my-5">
-          <SortingOptions
-            currentSort={sort}
-            currentOrder={order}
-            currentStatus={status}
-            isActive={isFiltered || properties.length > 0}
-          />
-        </div>
+
+        <SortingOptions
+          currentSort={sort}
+          currentOrder={order}
+          currentStatus={status}
+          isActive={isFiltered || properties.length > 0}
+        />
       </article>
       <Suspense fallback={<Loader />}>
         {properties.length === 0 ? (
