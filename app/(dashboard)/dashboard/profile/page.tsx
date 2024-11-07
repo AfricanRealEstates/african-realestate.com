@@ -11,7 +11,7 @@ import { notFound, redirect } from "next/navigation";
 import React, { cache } from "react";
 import { getUserDataSelect, UserData } from "@/lib/types";
 import UserAvatar from "@/components/crm/user-avatar";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { formatDate } from "date-fns";
 import { formatNumber } from "@/lib/formatter";
 import { getCurrentUser } from "@/lib/session";

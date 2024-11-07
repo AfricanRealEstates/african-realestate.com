@@ -1,7 +1,7 @@
 // app/actions/searchActions.ts
 "use server";
 
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 export async function searchProperties(query: string) {
     if (!query.trim()) return [];

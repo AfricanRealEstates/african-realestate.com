@@ -1,6 +1,6 @@
 import PageTitle from "@/components/globals/page-title";
 import React from "react";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import AgentsTable from "@/components/agents/agents-table";
 
 import { getSEOTags } from "@/lib/seo";

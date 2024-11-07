@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import BillingInfo from "@/components/crm/billing-info";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import React from "react";
 

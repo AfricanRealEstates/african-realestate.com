@@ -1,11 +1,16 @@
 import { ThumbsUp } from "lucide-react";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 async function getLikes(propertyId: string) {
-  const likes = await prisma.like.count({
-    where: { propertyId: propertyId },
-  });
-  return likes;
+  try {
+    const likes = await prisma.like.count({
+      where: { propertyId: propertyId },
+    });
+    return likes;
+  } catch (error) {
+    console.error("Error fetching likes:", error);
+    return 0;
+  }
 }
 
 export default async function LikeCounter({

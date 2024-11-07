@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import { Redis } from "@upstash/redis";
-import prisma from './prisma';
+import { prisma } from './prisma';
 
 const redis = Redis.fromEnv();
 

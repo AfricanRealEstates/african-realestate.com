@@ -1,7 +1,7 @@
 // app/actions/likeBlogPost.ts
 'use server'
 
-import prisma from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
 
 export async function likeBlogPost(slug: string) {

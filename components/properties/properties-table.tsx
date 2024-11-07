@@ -1,5 +1,5 @@
 // import React from "react";
-// import prisma from "@/lib/prisma";
+// import {prisma} from "@/lib/prisma";
 // import ClientTable from "./client-table";
 // import { getCurrentUser } from "@/actions/users";
 // export default async function PropertiesTable({
@@ -34,7 +34,7 @@
 // }
 
 import React from "react";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import ClientTable from "./client-table";
 import { Property } from "@prisma/client";
 import { auth } from "@/auth";

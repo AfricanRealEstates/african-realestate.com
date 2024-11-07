@@ -1,5 +1,5 @@
 import React from "react";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { Property } from "@prisma/client";
 import PropertyCard from "./new/PropertyCard";
 import { PropertyData } from "@/lib/types";

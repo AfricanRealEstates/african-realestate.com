@@ -1,6 +1,6 @@
 import React from "react";
 import CitySlider from "./CitySlider";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 async function getPropertiesByNearbyTown() {
   // Group by nearbyTown and get the count of properties for each town

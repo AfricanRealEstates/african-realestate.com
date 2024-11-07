@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 
 const ITEMS_PER_PAGE = 5 // Adjust this value as needed
 

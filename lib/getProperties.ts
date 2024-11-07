@@ -1,4 +1,4 @@
-// import prisma from './prisma'
+// import {prisma} from './prisma'
 // import { Prisma } from '@prisma/client'
 
 // export async function getProperties(searchParams: { [key: string]: string | string[] | undefined }) {
@@ -34,7 +34,7 @@
 //     return properties
 // }
 
-import prisma from "./prisma";
+import { prisma } from "./prisma";
 
 export async function getProperties(
     searchParams: { [key: string]: string | string[] | undefined },

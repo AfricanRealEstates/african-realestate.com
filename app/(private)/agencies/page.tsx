@@ -1,6 +1,6 @@
 import React from "react";
 import { Raleway } from "next/font/google";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import Image from "next/image";
 import { BadgeCheck } from "lucide-react";

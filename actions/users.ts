@@ -2,7 +2,7 @@
 import { RegisterInputProps } from '@/types/types';
 import { Resend } from 'resend';
 import bcrypt from "bcrypt"
-import prisma from "@/lib/prisma"
+import { prisma } from "@/lib/prisma"
 import EmailTemplate from '@/components/email/email-template';
 import { revalidatePath } from 'next/cache';
 import { getCurrentUser } from '@/lib/session';

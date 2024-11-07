@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import Avatar from "@/components/globals/avatar";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { Property } from "@prisma/client";
 import { Mail } from "lucide-react";
 import { Metadata } from "next";

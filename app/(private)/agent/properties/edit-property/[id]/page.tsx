@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import PageTitle from "@/components/globals/page-title";
 import PropertiesForm from "@/components/properties/properties-form";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { getSEOTags } from "@/lib/seo";
 import { getCurrentUser } from "@/lib/session";
 import { redirect } from "next/navigation";

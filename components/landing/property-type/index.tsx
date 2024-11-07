@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { Josefin_Sans } from "next/font/google";
 import React from "react";
 

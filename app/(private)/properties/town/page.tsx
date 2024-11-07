@@ -1,5 +1,5 @@
 import Link from "next/link";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import Image from "next/image";
 import { Metadata } from "next";
 import { baseUrl } from "@/app/sitemap";

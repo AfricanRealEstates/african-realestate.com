@@ -5,7 +5,7 @@ import UserAccountNav from "./UserAccountNav";
 import { getCurrentUser } from "@/lib/session";
 import Breadcrumb from "./BreadcrumbDashboard";
 import NotificationIcon from "./NotificationIcon";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 export default async function Navbar() {
   const user = await getCurrentUser();

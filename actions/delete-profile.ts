@@ -1,5 +1,5 @@
 import { auth, signOut } from "@/auth"
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 export const deleteProfile = async () => {
     const currentUser = await auth();

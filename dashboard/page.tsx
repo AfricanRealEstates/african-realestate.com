@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { getSEOTags } from "@/lib/seo";
 import Link from "next/link";
 import { redirect } from "next/navigation";

@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { MoreVertical, Plus, SquarePen, Trash2 } from "lucide-react";
 import SearchInput from "../../components/SearchInput";
 import Loading from "./loading";

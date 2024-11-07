@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import BuyButton from "@/components/subscriptions/buy-button";
 import { subscriptionPlans } from "@/constants";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { getSEOTags } from "@/lib/seo";
 import { getCurrentUser } from "@/lib/session";
 import { CircleCheckBig } from "lucide-react";

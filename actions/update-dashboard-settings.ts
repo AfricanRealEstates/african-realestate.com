@@ -1,7 +1,7 @@
 "use server"
 
 import { auth } from "@/auth"
-import prisma from "@/lib/prisma"
+import { prisma } from "@/lib/prisma"
 import { profileFormSchema, updateUserSchema } from "@/lib/validation"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"

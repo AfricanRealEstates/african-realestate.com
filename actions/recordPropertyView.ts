@@ -1,6 +1,6 @@
 "use server";
 import { getCurrentUser } from '../lib/session';
-import prisma from '../lib/prisma'
+import { prisma } from "@/lib/prisma";
 import { headers } from 'next/headers'
 import { UAParser } from 'ua-parser-js'
 

@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import PropertyCard from "@/components/properties/new/PropertyCard";
 import { PropertyData } from "@/lib/types";
 import SortingOptions from "./SortingOptions";

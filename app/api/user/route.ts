@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { profileFormSchema } from "@/lib/validation";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod"

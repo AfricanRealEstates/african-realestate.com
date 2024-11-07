@@ -5,7 +5,7 @@ import { Property } from "@prisma/client";
 import SortingOptions from "@/app/search/SortingOptions";
 import Loader from "@/components/globals/loader";
 import PropertyCard from "@/components/properties/new/PropertyCard";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { PropertyData } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";

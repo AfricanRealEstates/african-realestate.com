@@ -1,4 +1,4 @@
-// import prisma from "@/lib/prisma";
+// import {prisma }from "@/lib/prisma";
 // import { cn } from "@/lib/utils";
 // import { Heart } from "lucide-react";
 // import React from "react";

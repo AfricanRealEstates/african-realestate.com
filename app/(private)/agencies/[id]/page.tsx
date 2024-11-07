@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { capitalizeWords } from "@/lib/utils";
 import NotFound from "@/app/not-found";
 import { formatDate } from "date-fns";

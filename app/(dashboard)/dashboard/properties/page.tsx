@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 import { getCurrentUser } from "@/lib/session";
 import { redirect } from "next/navigation";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import SearchInput from "../../components/SearchInput";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";

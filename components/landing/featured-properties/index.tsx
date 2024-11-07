@@ -1,34 +1,13 @@
 import { Property } from "@prisma/client";
-import {
-  ArrowRight,
-  Bath,
-  Bed,
-  ChevronLeft,
-  ChevronRight,
-  LandPlot,
-} from "lucide-react";
-import Link from "next/link";
+
 import React from "react";
-import prisma from "@/lib/prisma";
-import {
-  Josefin_Sans,
-  Lexend,
-  Plus_Jakarta_Sans,
-  Raleway,
-} from "next/font/google";
-import Image from "next/image";
+import { prisma } from "@/lib/prisma";
+import { Lexend } from "next/font/google";
 
 import { cache } from "@/lib/cache";
-import FeaturedCard from "@/components/properties/featured-card";
 import { Button } from "@/components/utils/Button";
 import PropertyCard from "@/components/properties/new/PropertyCard";
 import { PropertyData } from "@/lib/types";
-
-const raleway = Raleway({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-nunitosans",
-});
 
 const lexend = Lexend({
   subsets: ["latin"],

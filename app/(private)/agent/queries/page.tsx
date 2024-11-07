@@ -1,6 +1,6 @@
 import PageTitle from "@/components/globals/page-title";
 import React from "react";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import UserQueriesTable from "@/components/queries/user-queries-table";
 import { getSEOTags } from "@/lib/seo";
 import { redirect } from "next/navigation";

@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import PageTitle from "@/components/globals/page-title";
 import PropertiesForm from "@/components/properties/properties-form";
 import { Button } from "@/components/ui/button";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { getSEOTags } from "@/lib/seo";
 import { Property } from "@prisma/client";
 import Link from "next/link";

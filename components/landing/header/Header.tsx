@@ -3,6 +3,7 @@
 import { Fragment, useEffect, useState } from "react";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
   SheetHeader,
@@ -16,121 +17,67 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  ArrowPathIcon,
-  ArrowRightStartOnRectangleIcon,
-  Bars3Icon,
-  ChartPieIcon,
-  ChevronDownIcon,
-  ChevronRightIcon,
-  ChevronUpIcon,
-  CursorArrowRaysIcon,
-  FingerPrintIcon,
-  SquaresPlusIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
-import {
-  LightBulbIcon,
-  PhoneIcon,
-  PlayCircleIcon,
-  ShieldCheckIcon,
-  UserCircleIcon,
-} from "@heroicons/react/20/solid";
+import { ChevronRightIcon, Bars3Icon } from "@heroicons/react/24/outline";
+import { PhoneIcon, PlayCircleIcon } from "@heroicons/react/20/solid";
 
 import {
-  ArrowDown,
   ChevronUp,
-  Cloud,
-  CreditCard,
-  Github,
-  Keyboard,
-  LayoutDashboard,
   LayoutGrid,
-  LayoutPanelLeft,
-  LifeBuoy,
-  LogOut,
   LogOutIcon,
-  Mail,
-  MessageSquare,
-  Plus,
-  PlusCircle,
-  Settings,
   User,
-  UserPlus,
-  Users,
-  Heart,
-  Package,
+  BarChart2,
+  NotebookText,
+  HandCoins,
+  Blocks,
+  Workflow,
 } from "lucide-react";
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { HomeIcon } from "lucide-react";
-import clsx from "clsx";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import ProductMenu from "./ProductMenu";
-import CompanyMenu from "./CompanyMenu";
 import { Button } from "@/components/utils/Button";
 import AvatarMenu from "./AvatarMenu";
-
-import { Inter, Nunito_Sans } from "next/font/google";
 import Modal from "@/components/modals/Modal";
 import AuthContent from "@/components/auth/AuthContent";
-const nunito = Nunito_Sans({
-  subsets: ["latin"],
-  weight: ["600"],
-});
 
-const products = [
-  {
-    name: "Analytics",
-    description: "Get a better understanding of your traffic",
-    href: "#",
-    icon: ChartPieIcon,
-  },
-  {
-    name: "Engagement",
-    description: "Speak directly to your customers",
-    href: "#",
-    icon: CursorArrowRaysIcon,
-  },
-  {
-    name: "Security",
-    description: "Your customers' data will be safe and secure",
-    href: "#",
-    icon: FingerPrintIcon,
-  },
-  {
-    name: "Integrations",
-    description: "Connect with third-party tools",
-    href: "#",
-    icon: SquaresPlusIcon,
-  },
-  {
-    name: "Automations",
-    description: "Build strategic funnels that will convert",
-    href: "#",
-    icon: ArrowPathIcon,
-  },
-];
 const callsToAction = [
   { name: "Watch demo", href: "#", icon: PlayCircleIcon },
   { name: "Contact sales", href: "/contact", icon: PhoneIcon },
+];
+
+const products = [
+  {
+    name: "Properties",
+    description: "Explore all property listings.",
+    href: "/properties",
+    icon: <BarChart2 className="flex-shrink-0 size-4" />,
+  },
+  {
+    name: "Agent Move",
+    description: "Speak directly to expert agents.",
+    href: "/contact",
+    icon: <NotebookText className="flex-shrink-0 size-4" />,
+  },
+  {
+    name: "Valuations",
+    description: "Get exact valuations of property for better decision.",
+    href: "#",
+    icon: <HandCoins className="flex-shrink-0 size-4" />,
+  },
+  {
+    name: "Guides",
+    description: "Learn about real estate",
+    href: "/guides",
+    icon: <Blocks className="flex-shrink-0 size-4" />,
+  },
+  {
+    name: "Property Management",
+    description: "Explore investment opportunities.",
+    href: "/property-management",
+    icon: <Workflow className="flex-shrink-0 size-4" />,
+  },
 ];
 
 const company = [
@@ -160,7 +107,7 @@ const company = [
   },
 ];
 
-export default function Component() {
+export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [stickyMenu, setStickyMenu] = useState(false);
   const [showProductMenu, setShowProductMenu] = useState(false);
@@ -228,14 +175,14 @@ export default function Component() {
               <span
                 className={`${
                   stickyMenu || !isHomePage ? "text-gray-700" : "text-white"
-                } text-lg tracking-tight font-semibold hidden lg:block`}
+                } text-lg tracking-tight font-semibold block`}
               >
                 African Real Estate.
               </span>
             </Link>
           </div>
           <div className="flex lg:hidden">
-            <Sheet>
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild>
                 <button className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700">
                   <span className="sr-only">Open main menu</span>
@@ -255,19 +202,23 @@ export default function Component() {
                   <div className="mt-6 flow-root">
                     <div className="-my-6">
                       <div className="space-y-2 py-6">
-                        <Link
-                          href="/buy"
-                          className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-400 hover:bg-gray-50"
-                        >
-                          Buy
-                        </Link>
+                        <SheetClose asChild>
+                          <Link
+                            href="/buy"
+                            className="-mx-3 block rounded-lg px-3 py-2 text-sm font-medium leading-7 text-gray-400 hover:bg-gray-50"
+                          >
+                            Buy
+                          </Link>
+                        </SheetClose>
 
-                        <Link
-                          href="/let"
-                          className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-400 hover:bg-gray-50"
-                        >
-                          Let
-                        </Link>
+                        <SheetClose asChild>
+                          <Link
+                            href="/let"
+                            className="-mx-3 block rounded-lg px-3 py-2 text-sm font-medium leading-7 text-gray-400 hover:bg-gray-50"
+                          >
+                            Let
+                          </Link>
+                        </SheetClose>
 
                         <Accordion
                           type="single"
@@ -275,16 +226,43 @@ export default function Component() {
                           className="border-b-0"
                         >
                           <AccordionItem value="company">
-                            <AccordionTrigger>Company</AccordionTrigger>
+                            <AccordionTrigger className="text-sm text-gray-400 hover:no-underline hover:text-blue-500">
+                              Company
+                            </AccordionTrigger>
                             <AccordionContent>
                               {company.map((item) => (
-                                <Link
-                                  key={item.name}
-                                  href={item.href}
-                                  className="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-400 hover:bg-gray-50"
-                                >
-                                  {item.name}
-                                </Link>
+                                <SheetClose asChild key={item.name}>
+                                  <Link
+                                    href={item.href}
+                                    className="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-400 hover:bg-gray-50"
+                                  >
+                                    {item.name}
+                                  </Link>
+                                </SheetClose>
+                              ))}
+                            </AccordionContent>
+                          </AccordionItem>
+                        </Accordion>
+
+                        <Accordion
+                          type="single"
+                          collapsible
+                          className="border-b-0"
+                        >
+                          <AccordionItem value="solutions">
+                            <AccordionTrigger className="text-sm text-gray-400 hover:no-underline hover:text-blue-500">
+                              Solutions
+                            </AccordionTrigger>
+                            <AccordionContent>
+                              {products.map((item) => (
+                                <SheetClose asChild key={item.name}>
+                                  <Link
+                                    href={item.href}
+                                    className="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-400 hover:bg-gray-50"
+                                  >
+                                    {item.name}
+                                  </Link>
+                                </SheetClose>
                               ))}
                             </AccordionContent>
                           </AccordionItem>
@@ -293,48 +271,58 @@ export default function Component() {
                       <div className="pb-6">
                         {user ? (
                           <div className="flex flex-col gap-y-4 items-start w-full">
-                            <Link
-                              href="/dashboard"
-                              className="flex items-center gap-x-2 text-sm font-semibold leading-6"
-                            >
-                              <User className="h-5 w-5" />
-                              Welcome, {user.name}
-                            </Link>
-                            <Link
-                              href="/dashboard"
-                              className="flex items-center gap-x-2 text-sm font-semibold leading-6"
-                            >
-                              <LayoutGrid className="h-5 w-5" />
-                              Dashboard
-                            </Link>
-                            <button
-                              onClick={handleSignOut}
-                              className="flex items-center gap-x-2 text-sm font-semibold leading-6"
-                            >
-                              <LogOutIcon className="h-5 w-5" />
-                              Sign out
-                            </button>
+                            <SheetClose asChild>
+                              <Link
+                                href="/dashboard"
+                                className="flex items-center gap-x-2 text-sm font-medium leading-6"
+                              >
+                                <User className="size-4 text-gray-400" />
+                                Welcome, {user.name}
+                              </Link>
+                            </SheetClose>
+                            <SheetClose asChild>
+                              <Link
+                                href="/dashboard"
+                                className="flex items-center gap-x-2 text-sm font-medium leading-6"
+                              >
+                                <LayoutGrid className="size-4 text-gray-400" />
+                                Dashboard
+                              </Link>
+                            </SheetClose>
+                            <SheetClose asChild>
+                              <button
+                                onClick={handleSignOut}
+                                className="flex items-center gap-x-2 text-sm font-medium leading-6"
+                              >
+                                <LogOutIcon className="size-4 text-gray-400" />
+                                Sign out
+                              </button>
+                            </SheetClose>
                           </div>
                         ) : (
-                          <Link
-                            href="/login"
-                            className="w-full -mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                          >
-                            <span className="group inline-flex items-center">
-                              Log in{" "}
-                              <ChevronRightIcon className="ml-1 size-3 transition-transform duration-300 group-hover:translate-x-1" />
-                            </span>
-                          </Link>
+                          <SheetClose asChild>
+                            <Link
+                              href="/login"
+                              className="w-full -mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                            >
+                              <span className="group inline-flex items-center">
+                                Log in{" "}
+                                <ChevronRightIcon className="ml-1 size-3 transition-transform duration-300 group-hover:translate-x-1" />
+                              </span>
+                            </Link>
+                          </SheetClose>
                         )}
 
-                        <Button
-                          type="submit"
-                          color="blue"
-                          href={`/agent/properties/create-property`}
-                          className="h-fit mt-4"
-                        >
-                          Sell fast
-                        </Button>
+                        <SheetClose asChild>
+                          <Button
+                            type="submit"
+                            color="blue"
+                            href={`/agent/properties/create-property`}
+                            className="h-fit mt-4"
+                          >
+                            Sell fast
+                          </Button>
+                        </SheetClose>
                       </div>
                     </div>
                   </div>

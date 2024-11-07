@@ -1,5 +1,5 @@
 import React from "react";
-import prisma from "../../../../../../lib/prisma";
+import { prisma } from "../../../../../../lib/prisma";
 import { Eye } from "lucide-react";
 import { formatNumber } from "@/lib/utils";
 

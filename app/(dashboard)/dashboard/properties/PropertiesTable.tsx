@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreVertical, Eye, Copy, SquarePen, Trash2 } from "lucide-react";
 import IconMenu from "@/components/globals/icon-menu";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 
 export default async function PropertiesTable({

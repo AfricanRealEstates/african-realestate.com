@@ -2,7 +2,7 @@
 
 
 import { auth } from "@/auth";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 export const addQuery = async (query: any) => {
   try {
     const session = await auth()

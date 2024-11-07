@@ -1,5 +1,5 @@
 import React from "react";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { Raleway } from "next/font/google";
 import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/20/solid";
 import {
@@ -153,6 +153,20 @@ const formatName = (name: string | null): string => {
   const lastName = names.slice(1).join(" ");
   return `${firstName[0]}. ${lastName}`;
 };
+
+function formatPhoneNumber(phoneNumber: any) {
+  // Remove all non-digit characters
+  const cleaned = ("" + phoneNumber).replace(/\D/g, "");
+
+  // Check if the number has a country code
+  if (cleaned.length > 10) {
+    // If it does, format it with a plus sign
+    return "+" + cleaned;
+  } else {
+    // If it doesn't, assume it's a local number and add the country code
+    return "+1" + cleaned; // Replace +1 with your country code if not US/Canada
+  }
+}
 
 export default async function PropertyDetails({
   params: { id },
@@ -650,7 +664,9 @@ export default async function PropertyDetails({
                             <Link
                               target="_blank"
                               rel="noopener noreferrer"
-                              href={`tel:${agent.whatsappNumber}`}
+                              href={`tel:${formatPhoneNumber(
+                                agent.phoneNumber
+                              )}`}
                               className="flex size-6 items-center justify-center text-gray-400 hover:text-gray-500"
                             >
                               <span className="sr-only">Call Agent</span>

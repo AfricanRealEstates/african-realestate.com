@@ -17,6 +17,8 @@ const raleway = Raleway({
 export const metadata = getSEOTags({
   title: "To Let Properties | African Real Estate",
   canonicalUrlRelative: "/let",
+  description:
+    "Browse our extensive list of properties available for rent in Africa. Find your perfect home with our easy-to-use search filters.",
 });
 
 export default async function PropertyPage({
@@ -45,35 +47,40 @@ export default async function PropertyPage({
 
   return (
     <div
-      className={`${raleway.className} w-[95%] lg:max-w-7xl mx-auto py-[90px] lg:py-[120px]`}
+      className={`${raleway.className} w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto py-[90px] lg:py-[120px]`}
     >
-      <article className="flex justify-between">
-        <div className="my-5">
-          <PropertyFilter pageType="let" />
-        </div>
-        <div className="my-5">
-          <SortingOptions
-            currentSort={sort}
-            currentOrder={order}
-            currentStatus={status}
-            isActive={isFiltered || properties.length > 0}
-          />
-        </div>
-      </article>
-      <Suspense fallback={<Loader />}>
-        {properties.length === 0 ? (
-          <div className="flex h-full items-center justify-center mt-8">
-            No properties matched your search query. Please try again with a
-            different term.
+      <div className="flex flex-col  gap-6">
+        <div className="">
+          <div className="flex w-full items-center justify-between">
+            <div className="mb-8">
+              <PropertyFilter pageType="let" />
+            </div>
+            <SortingOptions
+              currentSort={sort}
+              currentOrder={order}
+              currentStatus={status}
+              isActive={isFiltered || properties.length > 0}
+            />
           </div>
-        ) : (
-          <section className="mx-auto mb-8 gap-8 grid w-full grid-cols-[repeat(auto-fill,minmax(335px,1fr))] justify-center">
-            {properties.map((property) => (
-              <PropertyCard key={property.id} data={property as PropertyData} />
-            ))}
-          </section>
-        )}
-      </Suspense>
+          <Suspense fallback={<Loader />}>
+            {properties.length === 0 ? (
+              <div className="flex h-full items-center justify-center mt-8">
+                No properties matched your search query. Please try again with a
+                different term.
+              </div>
+            ) : (
+              <section className="mx-auto mb-8 gap-8 grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-center">
+                {properties.map((property: any) => (
+                  <PropertyCard
+                    key={property.id}
+                    data={property as PropertyData}
+                  />
+                ))}
+              </section>
+            )}
+          </Suspense>
+        </div>
+      </div>
     </div>
   );
 }

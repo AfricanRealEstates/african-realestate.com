@@ -10,7 +10,7 @@ import { Redis } from "@upstash/redis";
 import { ReportView } from "./view";
 import { Eye } from "lucide-react";
 import { getCurrentUser } from "@/lib/session";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { Metadata } from "next";
 import BlogShare from "./SocialShare";
 import LikeButton from "./LikeButton";

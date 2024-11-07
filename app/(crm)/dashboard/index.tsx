@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { SearchInput } from "@/components/crm/search-input";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { getSEOTags } from "@/lib/seo";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
 import { Plus } from "lucide-react";
