@@ -47,7 +47,9 @@ export default async function PayPage() {
   const isAdmin = userRole === "ADMIN";
 
   if (!userId) {
-    return <div>Please log in to access this page.</div>;
+    return (
+      <div className="py-24 lg:py-32">Please log in to access this page.</div>
+    );
   }
 
   const properties = await getProperties(userId, isAdmin);
