@@ -48,7 +48,11 @@ export default async function PayPage() {
 
   if (!userId) {
     return (
-      <div className="py-24 lg:py-32">Please log in to access this page.</div>
+      <div className="py-24 lg:py-32">
+        <h2 className="text-center font-semibold p-1 text-green-500 bg-green-50">
+          Please log in to access this page.
+        </h2>
+      </div>
     );
   }
 
