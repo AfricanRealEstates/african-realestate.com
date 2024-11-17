@@ -11,45 +11,45 @@ export interface TransactionProps {
   currency?: string;
 }
 
-const config = {
-  reference: new Date().getTime().toString(),
-  email: "user@example.com",
-  amount: 20000, //Amount is in the country's lowest currency. E.g Kobo, so 20000 kobo = N200
-  publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY as string,
-  currency: "KES",
-};
+function PaymentForm({
+  transactionConfig,
+}: {
+  transactionConfig: TransactionProps;
+}) {
+  const defaultConfig = {
+    reference: new Date().getTime().toString(),
+    // amount: 20000, //Amount is in the country's lowest currency. E.g Kobo, so 20000 kobo = N200
+    publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY as string,
+    currency: "KES", // Kenyan shillings
+  };
 
-// you can call this function anything
-const onSuccess = (reference: any) => {
-  // Implementation for whatever you want to do with reference and after success call.
-  console.log(reference);
-};
+  const config = {
+    ...defaultConfig,
+    ...transactionConfig,
+  };
 
-// you can call this function anything
-const onClose = () => {
-  // implementation for  whatever you want to do when the Paystack dialog closed.
-  console.log("closed");
-};
+  // you can call this function anything
+  const onSuccess = (reference: any) => {
+    // Implementation for whatever you want to do with reference and after success call.
+    console.log("Payment successful", reference);
+  };
 
-const PaystackHookExample = () => {
+  // you can call this function anything
+  const onClose = () => {
+    // implementation for  whatever you want to do when the Paystack dialog closed.
+    console.log("Payment closed");
+  };
+
   const initializePayment = usePaystackPayment(config);
   return (
-    <div>
+    <div className="max-w-4xl mx-auto p-8">
       <Button
         onClick={() => {
           initializePayment({ onSuccess, onClose });
         }}
       >
-        Paystack Hooks Implementation
+        Pay with Paystack (KES)
       </Button>
-    </div>
-  );
-};
-
-function PaymentForm() {
-  return (
-    <div className="max-w-4xl mx-auto p-8">
-      <PaystackHookExample />
     </div>
   );
 }

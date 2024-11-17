@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 async function getProperties(userId: string, isAdmin: boolean) {
   if (isAdmin) {
     return await prisma.property.findMany({
-      take: 15,
+      take: 3,
       select: {
         id: true,
         title: true,
@@ -27,7 +27,7 @@ async function getProperties(userId: string, isAdmin: boolean) {
         userId: userId,
         isActive: true,
       },
-      take: 15,
+      take: 3,
       select: {
         id: true,
         title: true,
@@ -58,6 +58,14 @@ export default async function PayPage() {
 
   const properties = await getProperties(userId, isAdmin);
 
+  const config = {
+    reference: new Date().getTime().toString(),
+    email: "user@example.com",
+    amount: 20000, //Amount is in the country's lowest currency. E.g Kobo, so 20000 kobo = N200
+    publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY as string,
+    currency: "KES",
+  };
+
   return (
     <div className="py-24 lg:py-32">
       <div className="container mx-auto px-4">
@@ -65,7 +73,7 @@ export default async function PayPage() {
           Showing up to 10 properties
         </p>
         <PaymentPricingPlansWrapper properties={properties} isAdmin={isAdmin} />
-        <PaymentForm />
+        <PaymentForm transactionConfig={config} />
       </div>
     </div>
   );

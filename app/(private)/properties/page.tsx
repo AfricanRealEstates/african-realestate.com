@@ -6,6 +6,11 @@ import { Raleway } from "next/font/google";
 import React, { Suspense } from "react";
 import { Metadata } from "next";
 import { baseUrl } from "@/app/sitemap";
+import PropertyFilter from "@/components/properties/PropertyFilter";
+import SortingOptions from "@/app/search/SortingOptions";
+import { getProperties } from "@/lib/getProperties";
+import PropertyCard from "@/components/properties/new/PropertyCard";
+import { PropertyData } from "@/lib/types";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -48,8 +53,30 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function Properties({ searchParams }: { searchParams: string }) {
-  const key = JSON.stringify(searchParams);
+export default async function Properties({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+  const sort = (searchParams.sort as string) || "createdAt";
+  const order = (searchParams.order as string) || "desc";
+  const status = (searchParams.status as string) || "sale";
+
+  // Ensure status is either "sale" or "let"
+  const validStatus = status === "let" ? "let" : "sale";
+
+  const properties = await getProperties(searchParams, validStatus);
+
+  const isFiltered = Object.keys(searchParams).some((key) =>
+    [
+      "propertyType",
+      "propertyDetails",
+      "county",
+      "locality",
+      "minPrice",
+      "maxPrice",
+    ].includes(key)
+  );
 
   return (
     <>
@@ -103,17 +130,33 @@ export default function Properties({ searchParams }: { searchParams: string }) {
         className={`${raleway.className} w-[95%] lg:max-w-7xl mx-auto py-[90px] lg:py-[120px]`}
       >
         <h1 className="text-3xl font-bold mb-8">Explore Our Properties</h1>
-        <Filter searchParams={searchParams} />
-        <Suspense fallback={<Loader />} key={key}>
-          {searchParams.length === 0 ? (
+        <article className="flex items-center justify-between w-full">
+          <div className="mb-8">
+            <PropertyFilter pageType="properties" />
+          </div>
+
+          <SortingOptions
+            currentSort={sort}
+            currentOrder={order}
+            currentStatus={validStatus}
+            isActive={isFiltered || properties.length > 0}
+          />
+        </article>
+        <Suspense fallback={<Loader />}>
+          {properties.length === 0 ? (
             <div className="flex h-full items-center justify-center mt-8">
               No properties matched your search query. Please try again with a
               different term.
             </div>
           ) : (
-            <div className="mt-8">
-              <AllProperties searchParams={searchParams} />
-            </div>
+            <section className="mx-auto mb-8 gap-8 grid w-full grid-cols-[repeat(auto-fill,minmax(335px,1fr))] justify-center">
+              {properties.map((property) => (
+                <PropertyCard
+                  key={property.id}
+                  data={property as PropertyData}
+                />
+              ))}
+            </section>
           )}
         </Suspense>
       </div>

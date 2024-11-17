@@ -604,7 +604,7 @@ export default async function PropertyDetails({
                   <h2 className="text-2xl font-semibold">Agent Information</h2>
                   <div className="w-full border-b border-neutral-200"></div>
 
-                  <section className="flex flex-col lg:flex-row gap-3">
+                  <section className="flex lg:flex-row gap-3">
                     <div className="space-y-3 flex-1">
                       <div className="flex items-center space-x-4">
                         <div>
@@ -694,14 +694,14 @@ export default async function PropertyDetails({
                       </div>
                     </div>
 
-                    <div className="bg-white lg:border-l border-neutral-100 w-full flex-1 flex gap-y-4 lg:justify-center lg:items-center">
+                    <div className="bg-white h-full border-l border-neutral-100 w-full flex-1 flex gap-y-4 lg:justify-center lg:items-center">
                       {agent.image ? (
                         <Image
                           height={100}
                           width={100}
                           src={agent.image}
                           alt="Agent"
-                          className="object-cover h-28 w-28 rounded-full border border-gray-100"
+                          className="object-cover lg:h-28 lg:w-28 h-36 w-36 ml-4 lg:ml-0 rounded-full border border-gray-200"
                         />
                       ) : (
                         <Image
@@ -709,7 +709,7 @@ export default async function PropertyDetails({
                           width={100}
                           src="/assets/placeholder.jpg"
                           alt="Placeholder"
-                          className="object-cover h-28 w-28 rounded-full"
+                          className="object-cover lg:h-28 lg:w-28 h-36 w-36 ml-4 lg:ml-0 rounded-full"
                         />
                       )}
                     </div>

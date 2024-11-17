@@ -18,9 +18,9 @@ export default function About() {
   return (
     <div className={`${raleway.className} `}>
       <section className="mx-auto w-[95%] max-w-7xl px-5 py-24 md:px-10 md:py-24 lg:py-32">
-        <h2 className="mb-8 text-3xl font-bold md:text-5xl lg:mb-11 text-[#181a20]">
+        <h1 className="mb-8 text-3xl font-bold md:text-5xl lg:mb-11 text-[#181a20]">
           Meet African Real Estate
-        </h2>
+        </h1>
         <p className="mb-8 max-w-lg text-sm lg:text-[18px] leading-relaxed lg:mb-16 text-[#808080]">
           Africa&apos;s most opulent real estate catalogue, property reviews and
           trusted source of property search. We feature thousands of new

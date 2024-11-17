@@ -1,7 +1,8 @@
 "use client";
+
 import { deleteProperty } from "@/actions/properties";
 import { Property } from "@prisma/client";
-import { Button, Table } from "antd";
+import { Table } from "antd";
 import dayjs from "dayjs";
 import { PencilLine, Save, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -9,11 +10,21 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import PropertyQueries from "./property-queries";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface ClientTableProps {
   properties: Property[];
   fromAdmin?: boolean;
 }
+
 export default function ClientTable({
   properties,
   fromAdmin,
@@ -24,108 +35,116 @@ export default function ClientTable({
   );
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
+  const [propertyToDelete, setPropertyToDelete] = useState<string | null>(null);
 
-  const onDelete = async (id: string) => {
+  const onDelete = async () => {
+    if (!propertyToDelete) return;
     try {
       setLoading(true);
-      const res = await deleteProperty(id);
+      const res = await deleteProperty(propertyToDelete);
       if (res.error) throw new Error(res.error);
       toast.success("Property deleted successfully");
+      setDeleteConfirmVisible(false);
+      setPropertyToDelete(null);
     } catch (error) {
       toast.error("Failed to delete property");
     } finally {
       setLoading(false);
     }
   };
+
   const columns: any = [
     {
       title: "Title",
       dataIndex: "title",
       key: "title",
-      render(title: string, record: Property) {
-        return (
-          <Link href={`/properties/${record.propertyDetails}/${record.id}`}>
-            {title}
-          </Link>
-        );
-      },
+      render: (title: string, record: Property) => (
+        <Link href={`/properties/${record.propertyDetails}/${record.id}`}>
+          {title}
+        </Link>
+      ),
     },
     {
       title: "Currency",
       dataIndex: "currency",
       key: "currency",
+      responsive: ["md"],
     },
     {
       title: "Price",
-      dataIndex: `price`,
+      dataIndex: "price",
       key: "price",
-      render(price: number) {
-        return <span>{price.toLocaleString()}</span>;
-      },
+      render: (price: number) => <span>{price.toLocaleString()}</span>,
     },
     {
       title: "Type",
       dataIndex: "propertyDetails",
       key: "type",
+      responsive: ["lg"],
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      responsive: ["md"],
     },
     {
       title: "Updated At",
       dataIndex: "updatedAt",
-      render(updatedAt: Date) {
-        return dayjs(updatedAt).format("DD MMM YYYY HH:mm: A");
-      },
+      key: "updatedAt",
+      render: (updatedAt: Date) =>
+        dayjs(updatedAt).format("DD MMM YYYY HH:mm A"),
+      responsive: ["lg"],
     },
     {
       title: "Actions",
       dataIndex: "actions",
-      render(value: any, record: Property) {
-        return (
-          <div className="flex gap-5">
-            <Button
-              size="small"
-              className="flex items-center"
-              onClick={() => {
-                setSelectedProperty(record);
-                setShowQueries(true);
-              }}
-            >
-              Queries
-            </Button>
-            <Button
-              size="small"
-              className="flex items-center"
-              onClick={() => onDelete(record.id)}
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-            <Button
-              size="small"
-              className="flex items-center"
-              onClick={() =>
-                router.push(
-                  `/agent/properties/create-property/?cloneFrom=${record.id}`
-                )
-              }
-            >
-              <Save className="h-4 w-4" />
-            </Button>
-            <Button
-              size="small"
-              className="flex items-center"
-              onClick={() =>
-                router.push(`/agent/properties/edit-property/${record.id}`)
-              }
-            >
-              <PencilLine className="h-4 w-4" />
-            </Button>
-          </div>
-        );
-      },
+      key: "actions",
+      render: (value: any, record: Property) => (
+        <div className="flex flex-wrap gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              setSelectedProperty(record);
+              setShowQueries(true);
+            }}
+          >
+            Queries
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              setPropertyToDelete(record.id);
+              setDeleteConfirmVisible(true);
+            }}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() =>
+              router.push(
+                `/agent/properties/create-property/?cloneFrom=${record.id}`
+              )
+            }
+          >
+            <Save className="h-4 w-4" />
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() =>
+              router.push(`/agent/properties/edit-property/${record.id}`)
+            }
+          >
+            <PencilLine className="h-4 w-4" />
+          </Button>
+        </div>
+      ),
     },
   ];
 
@@ -134,19 +153,29 @@ export default function ClientTable({
       title: "Agent",
       dataIndex: "agent",
       key: "agent",
-      render(value: any, record: any) {
-        return <div className="flex gap-5">{record.user.agentName}</div>;
-      },
+      render: (value: any, record: any) => (
+        <div className="flex gap-5">{record.user.agentName}</div>
+      ),
+      responsive: ["md"],
     });
   }
+
   return (
     <>
-      <Table
-        dataSource={properties}
-        columns={columns}
-        loading={loading}
-        rowKey="id"
-      />
+      <div className="overflow-x-auto">
+        <Table
+          dataSource={properties}
+          columns={columns}
+          loading={loading}
+          rowKey="id"
+          scroll={{ x: true }}
+          pagination={{
+            responsive: true,
+            showSizeChanger: true,
+            showQuickJumper: true,
+          }}
+        />
+      </div>
 
       {showQueries && (
         <PropertyQueries
@@ -155,6 +184,34 @@ export default function ClientTable({
           setShowQueriesModal={setShowQueries}
         />
       )}
+      <Dialog
+        open={deleteConfirmVisible}
+        onOpenChange={setDeleteConfirmVisible}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Delete</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this property? This action cannot
+              be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setDeleteConfirmVisible(false);
+                setPropertyToDelete(null);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={onDelete}>
+              Yes, delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

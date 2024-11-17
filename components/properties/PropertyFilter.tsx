@@ -43,7 +43,7 @@ type FilterValues = z.infer<typeof filterSchema>;
 export default function PropertyFilter({
   pageType = "buy",
 }: {
-  pageType?: "buy" | "let" | "search";
+  pageType?: "buy" | "let" | "search" | "properties";
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
