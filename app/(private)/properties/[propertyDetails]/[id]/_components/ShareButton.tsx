@@ -34,14 +34,17 @@ function ShareButton({
   const shareToFacebook = () => {
     const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
       shareUrl
+    )}&quote=${encodeURIComponent(shareText)}&picture=${encodeURIComponent(
+      shareImage
     )}`;
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const shareToTwitter = () => {
-    const twitterText = `${shareText}\n\n${shareUrl}\n\nImage: ${shareImage}`;
-    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-      twitterText
+    const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+      shareUrl
+    )}&text=${encodeURIComponent(shareText)}&media=${encodeURIComponent(
+      shareImage
     )}`;
     window.open(url, "_blank", "noopener,noreferrer");
   };
@@ -59,7 +62,7 @@ function ShareButton({
     const formattedPrice = `${
       property.currency
     } ${property.price.toLocaleString()}`;
-    const shareMessage = `*${property.title}*\n\n📍 ${property.locality}, ${property.county}\n💰 ${formattedPrice}\n🛏 ${property.bedrooms} bed, 🛁 ${property.bathrooms} bath\n\nImage: ${shareImage}\n\nCheck out this property:`;
+    const shareMessage = `*${property.title}*\n\n📍 ${property.locality}, ${property.county}\n💰 ${formattedPrice}\n🛏 ${property.bedrooms} bed, 🛁 ${property.bathrooms} bath\n\nCheck out this property:`;
 
     const url = `https://wa.me/?text=${encodeURIComponent(
       shareMessage + " " + shareUrl

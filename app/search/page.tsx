@@ -250,7 +250,7 @@ export default async function SearchPage({
 
   return (
     <div className="w-[95%] lg:max-w-7xl mx-auto py-[100px] lg:py-[160px]">
-      <div className="mb-8 flex flex-col md:flex-row justify-between">
+      <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold mb-4">
             {query ? `Search Results for "${query}"` : "All Properties"}
