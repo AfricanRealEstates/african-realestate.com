@@ -96,7 +96,7 @@ export default function OurServices() {
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
-                    stroke-width="1.5"
+                    strokeWidth="1.5"
                     stroke="currentColor"
                     className="relative text-gray-500 h-4 w-4 transition duration-300 group-hover:-rotate-45 group-hover:text-blue-600"
                   >
