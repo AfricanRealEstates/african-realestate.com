@@ -85,7 +85,7 @@ export async function generateMetadata({
   }
 
   const title = `${capitalizeWords(property.title)} | African Real Estate`;
-  const description = property.description.substring(0, 150);
+  const description = `${property.description.substring(0, 150)}...`;
   const imageUrl = property.coverPhotos[0] || "/assets/Kilimani.webp";
   const fullUrl = `https://www.african-realestate.com/properties/${property.propertyDetails}/${property.id}`;
   const formattedPrice = `${
@@ -139,9 +139,13 @@ export async function generateMetadata({
       "og:image": absoluteImageUrl,
       "og:image:width": "1200",
       "og:image:height": "630",
+      "og:image:alt": property.title,
+      "og:image:type": "image/jpeg",
+      "og:image:secure_url": absoluteImageUrl,
 
       // Twitter
       "twitter:image": absoluteImageUrl,
+      "twitter:image:alt": property.title,
       "twitter:label1": "Price",
       "twitter:data1": formattedPrice,
       "twitter:label2": "Status",
@@ -149,9 +153,40 @@ export async function generateMetadata({
       "twitter:label3": "Location",
       "twitter:data3": location,
 
-      // WhatsApp
-      "og:image:secure_url": absoluteImageUrl,
-      "og:image:type": "image/jpeg",
+      // Schema.org JSON-LD
+      "script:type": "application/ld+json",
+      "script:innerHTML": JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "RealEstateListing",
+        name: property.title,
+        description: description,
+        image: absoluteImageUrl,
+        url: fullUrl,
+        price: formattedPrice,
+        priceCurrency: property.currency,
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: property.locality,
+          addressRegion: property.county,
+          addressCountry: "KE",
+        },
+        numberOfRooms: property.bedrooms,
+        numberOfBathroomsTotal: property.bathrooms,
+        floorSize: {
+          "@type": "QuantitativeValue",
+          value: property.landSize,
+          unitCode: property.landUnits,
+        },
+        offers: {
+          "@type": "Offer",
+          price: property.price,
+          priceCurrency: property.currency,
+          availability:
+            property.status === "sale"
+              ? "https://schema.org/InStock"
+              : "https://schema.org/LimitedAvailability",
+        },
+      }),
     },
   };
 }
