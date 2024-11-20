@@ -87,12 +87,16 @@ export async function generateMetadata({
 
   const title = `${capitalizeWords(property.title)} | African Real Estate`;
   const description = property.description.substring(0, 200);
-  const imageUrl =
-    property.coverPhotos[0] || "/assets/default-property-image.jpg";
+  const imageUrl = property.coverPhotos[0] || "/assets/Kilimani.webp";
   const fullUrl = `https://www.african-realestate.com/properties/${property.propertyDetails}/${property.id}`;
   const formattedPrice = `${
     property.currency
   } ${property.price.toLocaleString()}`;
+
+  // Ensure the imageUrl is an absolute URL
+  const absoluteImageUrl = imageUrl.startsWith("http")
+    ? imageUrl
+    : `https://www.african-realestate.com${imageUrl}`;
 
   return {
     title,
@@ -104,7 +108,7 @@ export async function generateMetadata({
       siteName: "African Real Estate",
       images: [
         {
-          url: imageUrl,
+          url: absoluteImageUrl,
           width: 1200,
           height: 630,
           alt: property.title,
@@ -119,7 +123,7 @@ export async function generateMetadata({
       description,
       site: "@AfricanRealEsta",
       creator: "@AfricanRealEsta",
-      images: [imageUrl],
+      images: [absoluteImageUrl],
     },
     alternates: {
       canonical: fullUrl,
@@ -128,8 +132,10 @@ export async function generateMetadata({
       "og:price:amount": property.price.toString(),
       "og:price:currency": property.currency,
       "og:availability": property.status === "sale" ? "for sale" : "to let",
+      "og:image": absoluteImageUrl,
       "og:image:width": "1200",
       "og:image:height": "630",
+      "twitter:image": absoluteImageUrl,
       "twitter:label1": "Price",
       "twitter:data1": formattedPrice,
       "twitter:label2": "Status",
@@ -138,11 +144,10 @@ export async function generateMetadata({
       "twitter:data3": `${property.locality}, ${property.county}`,
       "whatsapp:title": title,
       "whatsapp:description": `${description} - ${formattedPrice}`,
-      "whatsapp:image": imageUrl,
+      "whatsapp:image": absoluteImageUrl,
     },
   };
 }
-
 const formatName = (name: string | null): string => {
   if (!name) return "N/A";
 
