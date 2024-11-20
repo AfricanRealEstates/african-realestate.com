@@ -1,6 +1,5 @@
 import React from "react";
 import { prisma } from "@/lib/prisma";
-import { Raleway } from "next/font/google";
 import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/20/solid";
 import {
   Banknote,
@@ -131,12 +130,15 @@ export async function generateMetadata({
       canonical: fullUrl,
     },
     other: {
+      // OpenGraph
       "og:price:amount": property.price.toString(),
       "og:price:currency": property.currency,
       "og:availability": property.status === "sale" ? "for sale" : "to let",
       "og:image": absoluteImageUrl,
       "og:image:width": "1200",
       "og:image:height": "630",
+
+      // Twitter
       "twitter:image": absoluteImageUrl,
       "twitter:label1": "Price",
       "twitter:data1": formattedPrice,
@@ -144,9 +146,10 @@ export async function generateMetadata({
       "twitter:data2": property.status === "sale" ? "For Sale" : "To Let",
       "twitter:label3": "Location",
       "twitter:data3": location,
-      "whatsapp:title": title,
-      "whatsapp:description": `${description} - ${formattedPrice} - ${location}`,
-      "whatsapp:image": absoluteImageUrl,
+
+      // WhatsApp
+      "og:image:secure_url": absoluteImageUrl,
+      "og:image:type": "image/jpeg",
     },
   };
 }
