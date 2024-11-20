@@ -85,7 +85,7 @@ export async function generateMetadata({
   }
 
   const title = `${capitalizeWords(property.title)} | African Real Estate`;
-  const description = property.description.substring(0, 200);
+  const description = property.description.substring(0, 150);
   const imageUrl = property.coverPhotos[0] || "/assets/Kilimani.webp";
   const fullUrl = `https://www.african-realestate.com/properties/${property.propertyDetails}/${property.id}`;
   const formattedPrice = `${
@@ -121,10 +121,12 @@ export async function generateMetadata({
       type: "website",
     },
     twitter: {
-      ...sharedMetadata,
       card: "summary_large_image",
       site: "@AfricanRealEsta",
       creator: "@AfricanRealEsta",
+      title: sharedMetadata.title,
+      description: sharedMetadata.description,
+      images: [absoluteImageUrl],
     },
     alternates: {
       canonical: fullUrl,
