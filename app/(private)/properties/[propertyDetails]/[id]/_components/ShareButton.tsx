@@ -11,7 +11,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-function ShareButton({
+export default function ShareButton({
   propertyId,
   property,
 }: {
@@ -24,9 +24,7 @@ function ShareButton({
 
   const shareText = `Check out this ${property.propertyType} property: ${
     property.title
-  } - ${property.bedrooms} bed, ${
-    property.bathrooms
-  } bath, ${property.price.toLocaleString()} ${property.currency}`;
+  }, ${property.price.toLocaleString()} ${property.currency}`;
 
   const shareImage =
     property.coverPhotos[0] || "/assets/default-property-image.jpg";
@@ -188,5 +186,3 @@ function ShareButton({
     </Popover>
   );
 }
-
-export default ShareButton;
