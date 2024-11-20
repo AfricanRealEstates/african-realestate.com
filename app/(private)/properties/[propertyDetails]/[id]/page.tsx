@@ -92,38 +92,40 @@ export async function generateMetadata({
   const formattedPrice = `${
     property.currency
   } ${property.price.toLocaleString()}`;
+  const location = `${property.locality}, ${property.county}`;
 
   // Ensure the imageUrl is an absolute URL
   const absoluteImageUrl = imageUrl.startsWith("http")
     ? imageUrl
     : `https://www.african-realestate.com${imageUrl}`;
 
-  return {
+  const sharedMetadata = {
     title,
-    description,
+    description: `${description} - ${formattedPrice} - ${location}`,
+    images: [
+      {
+        url: absoluteImageUrl,
+        width: 1200,
+        height: 630,
+        alt: property.title,
+      },
+    ],
+  };
+
+  return {
+    ...sharedMetadata,
     openGraph: {
-      title,
-      description,
+      ...sharedMetadata,
       url: fullUrl,
       siteName: "African Real Estate",
-      images: [
-        {
-          url: absoluteImageUrl,
-          width: 1200,
-          height: 630,
-          alt: property.title,
-        },
-      ],
       locale: "en_US",
       type: "website",
     },
     twitter: {
+      ...sharedMetadata,
       card: "summary_large_image",
-      title,
-      description,
       site: "@AfricanRealEsta",
       creator: "@AfricanRealEsta",
-      images: [absoluteImageUrl],
     },
     alternates: {
       canonical: fullUrl,
@@ -141,13 +143,14 @@ export async function generateMetadata({
       "twitter:label2": "Status",
       "twitter:data2": property.status === "sale" ? "For Sale" : "To Let",
       "twitter:label3": "Location",
-      "twitter:data3": `${property.locality}, ${property.county}`,
+      "twitter:data3": location,
       "whatsapp:title": title,
-      "whatsapp:description": `${description} - ${formattedPrice}`,
+      "whatsapp:description": `${description} - ${formattedPrice} - ${location}`,
       "whatsapp:image": absoluteImageUrl,
     },
   };
 }
+
 const formatName = (name: string | null): string => {
   if (!name) return "N/A";
 
