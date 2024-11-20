@@ -70,13 +70,10 @@ export default function ShareButton({
 
   const copyToClipboard = () => {
     const fullShareText = `${shareText}\n\nImage: ${shareImage}\n\n${shareUrl}`;
-    navigator.clipboard.writeText(fullShareText);
-    toast.success(
-      "Property details and image link copied to clipboard. Share now!",
-      {
-        icon: <Link className="h-5 w-5" />,
-      }
-    );
+    navigator.clipboard.writeText(shareUrl);
+    toast.success(`Property copied to clipboard. Share now!`, {
+      icon: <Link className="h-5 w-5" />,
+    });
   };
 
   return (
