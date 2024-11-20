@@ -152,6 +152,8 @@ export async function generateMetadata({
       "twitter:data2": property.status === "sale" ? "For Sale" : "To Let",
       "twitter:label3": "Location",
       "twitter:data3": location,
+      "twitter:label4": "Description",
+      "twitter:data4": description,
 
       // Schema.org JSON-LD
       "script:type": "application/ld+json",

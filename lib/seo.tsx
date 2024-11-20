@@ -89,7 +89,7 @@ export const renderSchemaTags = () => {
             "Premier African real estate agency specializing in luxury and affordable properties across Kenya and Africa.",
           image: `https://${config.domainName}/logo.png`,
           url: `https://${config.domainName}/`,
-          telephone: "+254732945534", // Replace with actual phone number
+          telephone: "+254732945534",
           address: {
             "@type": "PostalAddress",
             streetAddress: "123 Kenyatta Avenue",
