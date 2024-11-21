@@ -125,7 +125,7 @@ export default async function PropertyDetails({
             Explore our curated selection of properties
           </p>
         </div>
-        <div className="w-full md:w-1/3 z-30">
+        <div className="w-full md:w-1/3 z-10">
           <ActiveFilters searchParams={searchParams} />
           <SortingOptions
             currentSort={sort}

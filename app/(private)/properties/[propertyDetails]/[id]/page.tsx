@@ -583,8 +583,11 @@ export default async function PropertyDetails({
               </li>
             </ol>
           </nav>
-          <p className="text-sm text-gray-500 inline-flex gap-1 items-center">
-            #ARE:
+          <p className="text-gray-500 inline-flex gap-1 items-center">
+            #ARE:{" "}
+            <span className="bg-neutral-50 text-indigo-500 font-semibold text-sm">
+              {property.propertyNumber}
+            </span>
             <Link
               href={`/properties/${property.propertyDetails}`}
               className="ml-1 rounded-full bg-neutral-50 px-2 py-1 text-sm text-indigo-500 hover:bg-blue-100 hover:text-indigo-600 transition-all"

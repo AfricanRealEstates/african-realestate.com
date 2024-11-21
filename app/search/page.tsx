@@ -18,6 +18,7 @@ export async function generateMetadata({
     location?: string;
     minPrice?: string;
     maxPrice?: string;
+    propertyNumber?: string;
   };
 }): Promise<Metadata> {
   const query = searchParams.q || "";
@@ -27,6 +28,7 @@ export async function generateMetadata({
   const location = searchParams.location || "";
   const minPrice = searchParams.minPrice || "";
   const maxPrice = searchParams.maxPrice || "";
+  const propertyNumber = searchParams.propertyNumber || "";
 
   let title = "Property Search | African Real Estate";
   let description = "Find your perfect property in Africa.";
@@ -63,6 +65,11 @@ export async function generateMetadata({
     description += ` Price range: ${priceRange}.`;
   }
 
+  if (propertyNumber) {
+    title += ` | Property #${propertyNumber}`;
+    description += ` Specific property number: ${propertyNumber}.`;
+  }
+
   // Fetch the first property to use its image in OpenGraph metadata
   const firstProperty = await prisma.property.findFirst({
     where: {
@@ -87,6 +94,7 @@ export async function generateMetadata({
             ],
           }
         : {}),
+      ...(propertyNumber ? { propertyNumber: parseInt(propertyNumber) } : {}),
     },
     select: {
       coverPhotos: true,
@@ -122,6 +130,7 @@ interface AdvancedSearchParams {
   propertyDetails?: string;
   status?: string;
   location?: string;
+  propertyNumber?: number;
 }
 
 async function getSearchResults(
@@ -137,6 +146,7 @@ async function getSearchResults(
     propertyDetails,
     status,
     location,
+    propertyNumber,
   } = advancedParams;
 
   const properties = await prisma.property.findMany({
@@ -170,6 +180,7 @@ async function getSearchResults(
             ],
           }
         : {}),
+      ...(propertyNumber ? { propertyNumber: propertyNumber } : {}),
     },
     include: {
       user: true,
@@ -195,6 +206,7 @@ export default async function SearchPage({
     propertyType?: string;
     propertyDetails?: string;
     location?: string;
+    propertyNumber?: string;
   };
 }) {
   const query = searchParams.q || "";
@@ -212,6 +224,9 @@ export default async function SearchPage({
     propertyDetails: searchParams.propertyDetails,
     status: searchParams.status,
     location: searchParams.location,
+    propertyNumber: searchParams.propertyNumber
+      ? parseInt(searchParams.propertyNumber)
+      : undefined,
   };
 
   const searchResults = await getSearchResults(
@@ -253,6 +268,9 @@ export default async function SearchPage({
       <div>
         <h1 className="text-3xl font-bold mb-4">
           {query ? `Search Results for "${query}"` : "All Properties"}
+          {advancedParams.propertyNumber
+            ? ` - Property #${advancedParams.propertyNumber}`
+            : ""}
         </h1>
         <p className="mb-4 md:mb-0 inline-flex items-center justify-center rounded px-[15px] text-sm leading-none h-[35px] bg-green-50 text-green-500 focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
           Showing
@@ -276,6 +294,20 @@ export default async function SearchPage({
           />
         </div>
       </div>
+      {activeFilters.length > 0 && (
+        <div className="mb-4">
+          <h2 className="text-lg font-semibold mb-2">Active Filters:</h2>
+          <div className="flex flex-wrap gap-2">
+            {activeFilters.map(([key, value]) => (
+              <Badge key={key} variant="secondary">
+                {key === "minPrice" || key === "maxPrice"
+                  ? priceRangeDisplay
+                  : `${key}: ${value}`}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      )}
       {searchResults.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {searchResults.map((property) => (

@@ -10,6 +10,7 @@ export async function GET(request: NextRequest) {
         const maxPrice = searchParams.get('maxPrice');
         const propertyType = searchParams.get('propertyType');
         const propertyDetails = searchParams.get('propertyDetails');
+        const propertyNumber = searchParams.get('propertyNumber');
         const location = searchParams.get('location');
 
         const where: any = {};
@@ -22,6 +23,7 @@ export async function GET(request: NextRequest) {
                 { nearbyTown: { contains: q, mode: "insensitive" } },
                 { user: { name: { contains: q, mode: "insensitive" } } },
                 { user: { agentName: { contains: q, mode: "insensitive" } } },
+                { propertyNumber: parseInt(q) || undefined },
             ];
         }
 
@@ -36,7 +38,15 @@ export async function GET(request: NextRequest) {
         }
 
         if (propertyType) where.propertyType = propertyType;
+
         if (propertyDetails) where.propertyDetails = propertyDetails;
+
+        if (propertyNumber) {
+            const parsedPropertyNumber = parseInt(propertyNumber);
+            if (!isNaN(parsedPropertyNumber)) {
+                where.propertyNumber = parsedPropertyNumber;
+            }
+        }
 
         if (location) {
             where.OR = [
