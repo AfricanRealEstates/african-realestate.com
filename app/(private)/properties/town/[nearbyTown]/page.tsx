@@ -69,11 +69,15 @@ async function getPropertiesByNearbyTown(
     orderBy,
   });
 
-  if (properties.length === 0) {
-    notFound();
-  }
-
   return properties;
+}
+
+async function getAllPropertiesByNearbyTown(nearbyTown: string) {
+  return await prisma.property.findMany({
+    where: { nearbyTown },
+    orderBy: { createdAt: "desc" },
+    take: 3,
+  });
 }
 
 export default async function NearbyTownPropertiesPage({
@@ -86,6 +90,12 @@ export default async function NearbyTownPropertiesPage({
   const status = (searchParams.status as string) || "";
 
   const properties = await getPropertiesByNearbyTown(town, sort, order, status);
+  const allProperties =
+    properties.length === 0 ? await getAllPropertiesByNearbyTown(town) : [];
+
+  if (properties.length === 0 && allProperties.length === 0) {
+    notFound();
+  }
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -131,7 +141,7 @@ export default async function NearbyTownPropertiesPage({
             <p className="mb-4 md:mb-0 inline-flex items-center justify-center rounded px-[15px] text-sm leading-none h-[35px] bg-green-50 text-green-500 focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
               Explore our selection of{" "}
               <span className="font-semibold text-green-600 mx-1">
-                {properties.length}
+                {properties.length || allProperties.length}
               </span>{" "}
               properties available in{" "}
               <span className="font-semibold text-green-600 mx-1">{town}</span>{" "}
@@ -150,11 +160,42 @@ export default async function NearbyTownPropertiesPage({
             </Suspense>
           </div>
         </article>
-        <section className="mx-auto mb-8 gap-8 grid w-full grid-cols-[repeat(auto-fill,minmax(335px,1fr))] justify-center">
-          {properties.map((property) => (
-            <PropertyCard key={property.id} data={property as PropertyData} />
-          ))}
-        </section>
+        {properties.length === 0 ? (
+          <div className="space-y-8">
+            <div className="text-center py-12">
+              <h2 className="text-2xl font-semibold mb-4 text-red-600">
+                No properties matched your current filters
+              </h2>
+              <p className="text-lg mb-4">
+                Here are some other properties in{" "}
+                <span className="bg-green-50 text-green-500">{town}</span>
+              </p>
+            </div>
+
+            <div className="">
+              <Link
+                href={`/properties/town/${encodeURIComponent(town)}`}
+                className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition-colors"
+              >
+                View all properties in {town}
+              </Link>
+            </div>
+            <section className="mx-auto mb-8 gap-8 grid w-full grid-cols-[repeat(auto-fill,minmax(335px,1fr))] justify-center">
+              {allProperties.map((property) => (
+                <PropertyCard
+                  key={property.id}
+                  data={property as PropertyData}
+                />
+              ))}
+            </section>
+          </div>
+        ) : (
+          <section className="mx-auto mb-8 gap-8 grid w-full grid-cols-[repeat(auto-fill,minmax(335px,1fr))] justify-center">
+            {properties.map((property) => (
+              <PropertyCard key={property.id} data={property as PropertyData} />
+            ))}
+          </section>
+        )}
       </div>
     </>
   );
