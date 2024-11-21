@@ -250,37 +250,21 @@ export default async function SearchPage({
 
   return (
     <div className="w-[95%] lg:max-w-7xl mx-auto py-[100px] lg:py-[160px]">
+      <div>
+        <h1 className="text-3xl font-bold mb-4">
+          {query ? `Search Results for "${query}"` : "All Properties"}
+        </h1>
+        <p className="mb-4 md:mb-0 inline-flex items-center justify-center rounded px-[15px] text-sm leading-none h-[35px] bg-green-50 text-green-500 focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
+          Showing
+          <span className="font-semibold text-green-600 mx-1">
+            {searchResults.length}
+          </span>{" "}
+          matched result
+          {searchResults.length !== 1 ? "s" : ""}
+        </p>
+      </div>
       <div className="mb-8 flex flex-col md:flex-row justify-between">
         <div>
-          <h1 className="text-3xl font-bold mb-4">
-            {query ? `Search Results for "${query}"` : "All Properties"}
-          </h1>
-          <p className="mb-4 md:mb-0 inline-flex items-center justify-center rounded px-[15px] text-sm leading-none h-[35px] bg-green-50 text-green-500 focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
-            Showing
-            <span className="font-semibold text-green-600 mx-1">
-              {searchResults.length}
-            </span>{" "}
-            matched result
-            {searchResults.length !== 1 ? "s" : ""}
-          </p>
-          {/* {activeFilters.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-4">
-              {activeFilters.map(([key, value]) => {
-                if (key === "minPrice" || key === "maxPrice") {
-                  return priceRangeDisplay ? (
-                    <Badge key="price" variant="secondary">
-                      Price: {priceRangeDisplay}
-                    </Badge>
-                  ) : null;
-                }
-                return (
-                  <Badge key={key} variant="secondary">
-                    {key}: {Array.isArray(value) ? value.join(", ") : value}
-                  </Badge>
-                );
-              })}
-            </div>
-          )} */}
           <PropertyFilter pageType="search" />
         </div>
         <div className="flex items-center gap-3 flex-end mt-4 md:mt-0">
