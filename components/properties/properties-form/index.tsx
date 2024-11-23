@@ -2,11 +2,7 @@
 import { Steps } from "antd";
 import React, { useEffect, useState } from "react";
 import BasicInfo from "./basic-info";
-import LocationInfo from "./location-info";
 import Media from "./media";
-import Amenities from "./amenities";
-import AgentInfo from "./agent-info";
-import { useRouter } from "next/navigation";
 
 export interface PropertiesFormStepProps {
   currentStep: number;
