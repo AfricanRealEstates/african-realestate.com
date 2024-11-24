@@ -27,11 +27,18 @@ export const getSEOTags = ({
     title: title || defaultTitle,
     description: description || defaultDescription,
     keywords: keywords || defaultKeywords,
+    authors: [{ name: "African Real Estate" }],
+    creator: "African Real Estate",
+    formatDetection: {
+      email: false,
+      address: false,
+      telephone: false,
+    },
     applicationName: config.appName,
     metadataBase: new URL(
       process.env.NODE_ENV === "development"
-        ? "http://localhost:3000/"
-        : `https://${config.domainName}/`
+        ? "http://localhost:3000"
+        : `https://${config.domainName}`
     ),
     openGraph: {
       title: openGraph?.title || defaultTitle,
@@ -53,7 +60,7 @@ export const getSEOTags = ({
       title: openGraph?.title || defaultTitle,
       description: openGraph?.description || defaultDescription,
       card: "summary_large_image",
-      creator: "@ken_cipher",
+      creator: "@AfricanRealEsta",
       images: [`https://${config.domainName}/twitter-image.jpg`],
     },
     robots: {
@@ -66,6 +73,15 @@ export const getSEOTags = ({
         "max-image-preview": "large",
         "max-snippet": -1,
       },
+    },
+    icons: {
+      icon: "/favicon.ico",
+      shortcut: "/favicon-16x16.png",
+      apple: "/apple-touch-icon.png",
+    },
+    manifest: "/site.webmanifest",
+    verification: {
+      google: "Ip7b3Hpc1VU0LkPSh0lgqyz3ImGRpGjc2BLLCvz3Xzo",
     },
     alternates: {
       canonical: canonicalUrlRelative

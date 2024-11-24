@@ -10,7 +10,7 @@ export default async function sitemap() {
     const blogs = (await getBlogPosts()).map((post) => ({
         url: `${baseUrl}/blog/${post.metadata.category}/${post.slug}`,
         lastModified: new Date(post.metadata.publishedAt).toISOString(),
-        changefreq: 'weekly',
+        changefreq: 'hourly',
         priority: 0.7,
     }));
 
@@ -42,8 +42,8 @@ export default async function sitemap() {
     const routes = POSTS.map((route) => ({
         url: `${baseUrl}${route.href}`,
         lastModified: new Date().toISOString(),
-        changefreq: 'monthly',
-        priority: 0.6,
+        changefreq: 'hourly',
+        priority: 0.9,
     }));
 
     const additionalPages = [
