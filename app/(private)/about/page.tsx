@@ -10,7 +10,7 @@ import StatisticsSection from "./StatisticsSection";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "About African Real Estate | Premier Property Platform in Africa",
+  title: "About | African Real Estate",
   description:
     "Discover Africa's leading real estate platform. Buy, sell, or list properties across the continent. Learn about our mission, team, and success stories.",
   keywords:
