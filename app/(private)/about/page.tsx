@@ -12,7 +12,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "About African Real Estate | Premier Property Platform in Africa",
   description:
-    "Discover Africa's leading real estate platform. Buy, sell, or list luxury properties across the continent. Learn about our mission, team, and success stories.",
+    "Discover Africa's leading real estate platform. Buy, sell, or list properties across the continent. Learn about our mission, team, and success stories.",
   keywords:
     "African real estate, luxury properties, property listings, buy property in Africa, sell property in Africa, real estate team, property testimonials",
   openGraph: {
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
       "Connect with Africa's leading real estate marketplace. Explore exclusive listings, meet our expert team, and read success stories from satisfied clients.",
     images: [
       {
-        url: "/assets/og-image.jpg",
+        url: "opengraph-image.jpg",
         width: 1200,
         height: 630,
         alt: "African Real Estate",
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     title: "About African Real Estate | Luxury Properties Across Africa",
     description:
       "Your gateway to Africa's most exclusive properties. Discover our mission, meet our team, and explore client testimonials.",
-    images: ["/assets/twitter-image.jpg"],
+    images: ["twitter-image.jpg"],
   },
 };
 
