@@ -12,9 +12,9 @@ export default function Contact() {
     <>
       <section className="max-w-7xl px-4 md:px-10 py-32 lg:py-36 mx-auto">
         <div className="max-w-3xl mb-10 lg:mb-14">
-          <h2 className="font-semibold text-2xl md:text-4xl md:leading-tight text-blue-500">
+          <h1 className="font-semibold text-2xl md:text-4xl md:leading-tight text-blue-500">
             Contact us
-          </h2>
+          </h1>
           <p className="mt-2 text-neutral-400">
             Whatever your inquiry - we will get you there.
           </p>

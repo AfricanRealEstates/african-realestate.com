@@ -70,9 +70,9 @@ export default function FAQs() {
     <section className="" id="faq">
       <article className="py-32 lg:py-36 px-8 max-w-7xl mx-auto flex flex-col gap-12">
         {/* <p className="inline-block font-semibold text-primary mb-4">FAQ</p> */}
-        <p className="sm:text-4xl text-3xl font-extrabold text-base-content text-blue-500">
+        <h1 className="sm:text-4xl text-3xl font-extrabold text-base-content text-blue-500">
           Frequently Asked Questions
-        </p>
+        </h1>
         <ul className="basis-1/2">
           {faqList.map((list, i) => {
             return <FAQItem key={i} item={list} />;

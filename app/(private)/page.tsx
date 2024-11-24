@@ -16,9 +16,6 @@ export default async function Home() {
   return (
     <div className="home-page">
       {renderSchemaTags()}
-      <h1 className="sr-only">
-        African Real Estate - Premier Properties in Kenya
-      </h1>
       <Testing />
       <FeaturedProperties />
       <OurServices />

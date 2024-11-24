@@ -49,6 +49,7 @@ export default async function PropertyPage({
     <div
       className={`${raleway.className} w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto py-[90px] lg:py-[120px]`}
     >
+      <h1 className="text-3xl font-semibold mb-8">Properties to Let</h1>
       <div className="flex flex-col  gap-6">
         <div className="">
           <div className="flex w-full items-center justify-between">

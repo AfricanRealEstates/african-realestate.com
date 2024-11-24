@@ -44,7 +44,7 @@ function RoundedImage(props: any) {
       style={{ width: "300px", height: "300px" }}
     >
       <Image
-        alt={props.alt || ""}
+        alt={props.alt || "Blog Image"}
         src={props.src}
         width={300} // Explicit width
         height={300} // Explicit height

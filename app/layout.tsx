@@ -22,12 +22,6 @@ export default async function RootLayout({
   const session = await auth();
   const user = session?.user;
 
-  // if (!user) redirect("/");
-
-  // const value = {
-  //   user: session.user,
-  //   session,
-  // };
   return (
     <html lang="en" className={cn(GeistSans.variable, GeistMono.variable)}>
       <head>
