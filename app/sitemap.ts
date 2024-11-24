@@ -1,10 +1,8 @@
-import { propertyDetail } from './../node_modules/.prisma/client/index.d';
 import { getBlogPosts } from "@/lib/blog";
 // import { getProperties } from "@/lib/properties";
 // import { getLocations } from "@/lib/locations";
 // import { getPropertyTypes } from "@/lib/propertyTypes";
 import { POSTS } from "./(blog)/constants";
-import { getAllNearbyTowns, getAllProperties } from "@/lib/getAllProperties";
 
 export const baseUrl = 'https://www.african-realestate.com'
 
@@ -16,18 +14,7 @@ export default async function sitemap() {
         priority: 0.7,
     }));
 
-    const properties = await getAllProperties()
-    const nearbyTowns = await getAllNearbyTowns()
 
-    const propertyEntries = properties.map((property) => ({
-        url: `https://www.africanrealestate.com/properties/${property.propertyDetails}/${property.id}`,
-        lastModified: new Date(property.updatedAt),
-    }))
-
-    const nearbyTownEntries = nearbyTowns.map((town) => ({
-        url: `https://www.africanrealestate.com/search?nearbyTown=${encodeURIComponent(town)}`,
-        lastModified: new Date(),
-    }))
 
     // const properties = (await getProperties()).map((property) => ({
     //     url: `${baseUrl}/properties/${property.id}`,
@@ -116,8 +103,6 @@ export default async function sitemap() {
         // ...properties,
         // ...locations,
         // ...propertyTypes,
-        ...propertyEntries,
-        ...nearbyTownEntries,
         ...blogs,
         ...routes,
         ...additionalPages,
