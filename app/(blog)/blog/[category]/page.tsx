@@ -64,13 +64,13 @@ export default async function Page({
       <section className="py-12">
         <div className="xl:container max-w-5xl m-auto px-6 text-gray-600 md:px-12 xl:px-16">
           <div className="lg:bg-gray-50 dark:lg:bg-darker lg:p-16 rounded-[4rem] space-y-6 md:flex flex-col md:gap-6 justify-center md:space-y-0 lg:items-center">
-            <h2 className="text-3xl text-gray-900 md:text-4xl">
+            <h1 className="text-3xl text-gray-900 md:text-4xl">
               No articles found on{" "}
               <span className="text-ken-primary capitalize">
                 {params.category}{" "}
               </span>
               category
-            </h2>
+            </h1>
             <p className="my-8 text-gray-600">
               Try searching for a different category or explore some of our
               other blogs about real estate.

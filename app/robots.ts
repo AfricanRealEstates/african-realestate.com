@@ -12,7 +12,6 @@ export default function robots() {
                     '/private/',
                     '*/login',
                     '*/signup',
-                    '/agent/properties/create-property',
                     '/*.json$',
                     '/*?*', // Disallow URLs with query parameters
                 ],
