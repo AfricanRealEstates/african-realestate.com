@@ -27,7 +27,7 @@ export default function Testing() {
             className="object-cover w-full h-full"
             // src="https://cdn.rareblocks.xyz/collection/celebration/images/signin/2/man-eating-noodles.jpg"
             src="/assets/house-1.jpg"
-            alt=""
+            alt="Hero cover"
           />
         </div>
 

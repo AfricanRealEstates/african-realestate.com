@@ -14,7 +14,7 @@ export default function Facts() {
           fill
           className="object-cover w-full h-full md:object-left md:scale-150 md:origin-top-left"
           src="/assets/fact.jpg"
-          alt=""
+          alt="fact"
         />
       </div>
 
