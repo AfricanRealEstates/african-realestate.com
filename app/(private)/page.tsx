@@ -16,6 +16,7 @@ export default async function Home() {
   return (
     <div className="home-page">
       {renderSchemaTags()}
+      <h1 className="sr-only">Home page</h1>
       <Testing />
       <FeaturedProperties />
       <OurServices />

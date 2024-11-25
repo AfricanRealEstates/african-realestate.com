@@ -34,9 +34,9 @@ export default async function Agencies() {
   return (
     <div className={`${raleway.className}`}>
       <section className="mx-auto w-[95%] max-w-7xl px-5 py-24 md:px-10 md:py-24 lg:py-32">
-        <h2 className="text-center text-2xl font-bold md:text-4xl lg:text-left">
+        <h1 className="text-center text-2xl font-bold md:text-4xl lg:text-left">
           Agencies
-        </h2>
+        </h1>
         <p className="font-medium capitalize mb-8 mt-4 text-center text-sm text-[#636363] sm:text-base md:mb-12 lg:mb-16 lg:text-left">
           Discover our network of expert agents
           {/* offering diverse array of
