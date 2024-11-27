@@ -1,47 +1,53 @@
 import { Metadata } from "next";
-import { Raleway } from "next/font/google";
 import Image from "next/image";
-import { FaHome, FaHandshake, FaListUl } from "react-icons/fa";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import TeamSection from "./TeamSection";
-import TestimonialsSection from "./TestimonialsSection";
-import StatisticsSection from "./StatisticsSection";
-import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "About | African Real Estate",
   description:
-    "Discover Africa's leading real estate platform. Buy, sell, or list properties across the continent. Learn about our mission, team, and success stories.",
-  keywords:
-    "African real estate, luxury properties, property listings, buy property in Africa, sell property in Africa, real estate team, property testimonials",
+    "Discover African Real Estate, the continent's premier property platform. Learn about our mission to revolutionize African real estate, meet our expert team, and explore our vision for connecting property seekers, sellers, and investors across Africa.",
+  keywords: [
+    "African real estate",
+    "property platform",
+    "buy property in Africa",
+    "sell property in Africa",
+    "African real estate team",
+    "African property investment",
+    "real estate technology Africa",
+    "African property listings",
+  ],
   openGraph: {
-    title: "About African Real Estate | Premier Property Platform in Africa",
+    title:
+      "About African Real Estate | Transforming Property Transactions in Africa",
     description:
-      "Connect with Africa's leading real estate marketplace. Explore exclusive listings, meet our expert team, and read success stories from satisfied clients.",
+      "Explore African Real Estate, the leading digital gateway for property in Africa. Learn how we're revolutionizing real estate transactions and connecting stakeholders across the continent.",
+    url: "https://www.african-realestate.com/about",
+    siteName: "African Real Estate",
     images: [
       {
-        url: "opengraph-image.jpg",
+        url: "https://www.african-realestate.com/opengraph-image.jpg",
         width: 1200,
         height: 630,
-        alt: "African Real Estate",
+        alt: "African Real Estate Team and Vision",
       },
     ],
+    locale: "en_US",
+    type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "About African Real Estate | Luxury Properties Across Africa",
+    title:
+      "About African Real Estate | Innovating Property Solutions in Africa",
     description:
-      "Your gateway to Africa's most exclusive properties. Discover our mission, meet our team, and explore client testimonials.",
-    images: ["twitter-image.jpg"],
+      "Discover how African Real Estate is reshaping the property landscape across Africa. Meet our team and learn about our mission to simplify real estate transactions continent-wide.",
+    images: ["https://www.african-realestate.com/twitter-image.jpg"],
+    creator: "@AfricanRealEstate",
+    site: "@AfricanRealEstate",
+  },
+  alternates: {
+    canonical: "https://www.african-realestate.com/about",
   },
 };
-
-const raleway = Raleway({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-raleway",
-});
 
 interface FeatureCardProps {
   icon: React.ReactNode;
@@ -63,106 +69,115 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
   </Card>
 );
 
+interface TeamMemberProps {
+  name: string;
+  role: string;
+  imageSrc: string;
+}
+
+const TeamMember: React.FC<TeamMemberProps> = ({ name, role, imageSrc }) => (
+  <div>
+    <div className="rounded-full bg-ui w-32 h-32 border p-0.5 shadow shadow-gray-950/5">
+      <Image
+        className="rounded-full object-cover w-full h-full"
+        src={imageSrc}
+        alt={name}
+        width={80}
+        height={80}
+        loading="lazy"
+      />
+    </div>
+    <span className="text-title mt-2 block text-sm font-medium">{name}</span>
+    <span className="text-caption block text-xs">{role}</span>
+  </div>
+);
+
 export default function About() {
   return (
-    <div className={`${raleway.variable} font-sans`}>
-      <main className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-32">
-        <section className="text-center mb-16">
-          <h1 className="text-4xl font-bold tracking-tight text-primary sm:text-5xl md:text-6xl">
+    <section className="py-24 lg:py-32">
+      <article className="mx-auto max-w-6xl space-y-16 px-6">
+        <div className="relative z-10 mx-auto max-w-3xl space-y-6">
+          <h1 className="text-4xl font-medium lg:text-5xl text-blue-300">
             About African Real Estate
           </h1>
-          <p className="mt-6 max-w-3xl mx-auto text-xl text-muted-foreground">
-            Welcome to Africa&apos;s premier real estate platform. We connect
-            buyers, sellers, and investors with the most opulent and exclusive
-            properties across the continent.
+          <p className="text-lg text-gray-600">
+            Leading African Property Portal & Real Estate Services
           </p>
-        </section>
+        </div>
 
-        <section className="grid gap-8 md:grid-cols-3 mb-16">
-          <FeatureCard
-            icon={<FaHome className="w-10 h-10 text-blue-400" />}
-            title="Buy Properties"
-            description="Explore a wide range of luxury homes, from beachfront villas to urban penthouses."
-          />
-          <FeatureCard
-            icon={<FaHandshake className="w-10 h-10 text-blue-400" />}
-            title="Sell Properties"
-            description="List your property with us to reach a network of high-net-worth buyers across Africa."
-          />
-          <FeatureCard
-            icon={<FaListUl className="w-10 h-10 text-blue-400" />}
-            title="Create Listings"
-            description="Easily create and manage property listings with our user-friendly platform."
-          />
-        </section>
-
-        <section className="grid gap-10 lg:grid-cols-2 lg:gap-12 mb-16">
-          <Image
-            src="/assets/mission.jpg"
-            alt="African Real Estate Mission"
-            width={600}
-            height={400}
-            className="rounded-lg object-cover"
-          />
-          <Card>
-            <CardContent className="p-8">
-              <h2 className="text-3xl font-bold mb-4 text-blue-400">
-                Our Mission & Vision
+        <div className="mx-auto max-w-3xl border-t px-6">
+          <span className="text-caption -ml-6 -mt-3.5 block w-max px-6 bg-gray-50">
+            Vision
+          </span>
+          <div className="mt-6 bg-gray-50 p-2">
+            {/* <div className="sm:w-1/5">
+              <h2 className="text-title text-3xl font-bold sm:text-4xl">
+                Our vision
               </h2>
-              <div className="space-y-4 text-muted-foreground">
-                <p>
-                  <strong>Mission:</strong> Our mission is to revolutionize the
-                  African real estate market by providing an accessible,
-                  transparent, and efficient platform for luxury property
-                  transactions.
-                </p>
-                <p>
-                  <strong>Vision:</strong> We envision a future where African
-                  real estate is at the forefront of global property investment.
-                  We strive to:
-                </p>
-                <ul className="list-disc pl-6 space-y-2">
-                  <li>
-                    Showcase the diversity and potential of African real estate
-                    to the world
-                  </li>
-                  <li>Facilitate seamless transactions across borders</li>
-                  <li>
-                    Promote sustainable and responsible property development
-                  </li>
-                  <li>
-                    Contribute to the economic growth of African communities
-                    through real estate
-                  </li>
-                </ul>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
+            </div> */}
+            <div className="mt-6 sm:mt-0 ">
+              <p className="text-gray-500">
+                To be the premier digital gateway for real estate in Africa,
+                connecting property seekers, sellers, and investors across the
+                continent.
+              </p>
+            </div>
+          </div>
+        </div>
 
-        <StatisticsSection />
-        <TeamSection />
-        <TestimonialsSection />
+        {/* <div className="grid gap-12 divide-y md:divide-y-0 md:divide-x *:text-center md:grid-cols-3 md:gap-2">
+          <div className="space-y-4">
+            <div className="text-3xl font-bold text-gray-400">+7200</div>
+            <p className="text-lg text-gray-600">Properties posted</p>
+          </div>
+          <div className="space-y-4">
+            <div className="text-3xl font-bold text-gray-400">Over 1000</div>
+            <p className="text-lg text-gray-600">Satisfied customers</p>
+          </div>
+          <div className="space-y-4">
+            <div className="text-3xl font-bold text-gray-400">+2</div>
+            <p className="text-lg text-gray-600">Countries covered</p>
+          </div>
+        </div> */}
+      </article>
 
-        <section className="text-center py-16 bg-muted rounded-lg">
-          <h2 className="text-3xl font-bold mb-4 text-blue-400">
-            Ready to Find Your Dream Property?
-          </h2>
-          <p className="mb-8 text-muted-foreground">
-            Join thousands of satisfied clients who have found their perfect
-            home with African Real Estate.
-          </p>
-          <Button
-            size="lg"
-            asChild
-            className="bg-blue-400 hover:bg-blue-500 transtion-colors"
-          >
-            <Link href="/properties" className="text-white">
-              Explore Listings
-            </Link>
-          </Button>
-        </section>
-      </main>
-    </div>
+      {/* Team */}
+      <article className="mx-auto max-w-3xl px-8 lg:px-0">
+        <h2 className="my-16 text-3xl lg:text-4xl font-semibold text-blue-300">
+          Our Team
+        </h2>
+
+        <div>
+          {/* <h3 className="mb-6 text-lg font-medium">Leadership</h3> */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 border-t py-6">
+            <TeamMember
+              name="Mungai Kihara"
+              role="CEO & Founder"
+              imageSrc="/assets/mungai.jpg"
+            />
+            <TeamMember
+              name="Vincent K."
+              role="Head of Marketing"
+              imageSrc="/assets/vincent.jpg"
+            />
+            <TeamMember
+              name="Ken Mwangi"
+              role="Lead Developer"
+              imageSrc="/assets/ken.jpeg"
+            />
+          </div>
+        </div>
+
+        {/* <div className="mt-12">
+          <h3 className="mb-6 text-lg font-medium">Engineering</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 border-t py-6"></div>
+        </div>
+
+        <div className="mt-12">
+          <h3 className="mb-6 text-lg font-medium">Marketing</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 border-t py-6"></div>
+        </div> */}
+      </article>
+    </section>
   );
 }
