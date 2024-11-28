@@ -4,6 +4,7 @@ import CardCategory from "../../CardCategory";
 import Link from "next/link";
 import { Redis } from "@upstash/redis";
 import { notFound } from "next/navigation";
+import { Metadata } from "next";
 
 const redis = Redis.fromEnv();
 export const revalidate = 0;
@@ -16,12 +17,66 @@ export async function generateStaticParams() {
   }));
 }
 
-export function generateMetadata({ params }: { params: { category: string } }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: { category: string };
+}): Promise<Metadata> {
   let { category } = params;
+  const capitalizedCategory =
+    category.charAt(0).toUpperCase() + category.slice(1);
+
+  let posts;
+  try {
+    posts = await getBlogPosts();
+  } catch (error) {
+    console.error("Error fetching blog posts:", error);
+    return {
+      title: "Category Not Found",
+      description: "The requested blog category could not be found.",
+    };
+  }
+
+  const categoryPosts = posts.filter(
+    (post) => post.metadata.category === category
+  );
+  const postCount = categoryPosts.length;
 
   return {
-    title: category.toLocaleUpperCase(),
-    description: `All articles regarding ${category}`,
+    title: `${capitalizedCategory} Category Articles`,
+    description: `Explore ${postCount} articles about ${capitalizedCategory} in African real estate. Get expert insights, market trends, and investment opportunities.`,
+    keywords: [
+      `${category} real estate`,
+      "African property",
+      "real estate investment",
+      `${category} property trends`,
+      "African real estate market",
+    ],
+    openGraph: {
+      title: `${capitalizedCategory} Articles | African Real Estate`,
+      description: `Discover ${postCount} articles on ${capitalizedCategory} in African real estate. Expert analysis and insights for property investors and enthusiasts.`,
+      url: `https://www.african-realestate.com/blog/${category}`,
+      type: "website",
+      images: [
+        {
+          url: `https://www.african-realestate.com/blog-categories/${category}.jpg`,
+          width: 1200,
+          height: 630,
+          alt: `${capitalizedCategory} Real Estate Category`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${capitalizedCategory} Articles | African Real Estate`,
+      description: `Explore ${postCount} articles on ${capitalizedCategory} in African real estate. Stay informed about market trends and investment opportunities.`,
+      images: [
+        `https://www.african-realestate.com/blog-categories/${category}-twitter.jpg`,
+      ],
+    },
+    alternates: {
+      canonical: `https://www.african-realestate.com/blog/${category}`,
+    },
   };
 }
 

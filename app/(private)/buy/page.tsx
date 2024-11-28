@@ -80,9 +80,7 @@ export default async function BuyPage({
         ) : (
           <section className="mx-auto mb-8 gap-8 grid w-full grid-cols-[repeat(auto-fill,minmax(335px,1fr))] justify-center">
             {properties.map((property) => (
-              <Suspense key={property.id} fallback={<Loader />}>
-                <PropertyCard data={property as PropertyData} />
-              </Suspense>
+              <PropertyCard data={property as PropertyData} key={property.id} />
             ))}
           </section>
         )}

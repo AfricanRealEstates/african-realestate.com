@@ -37,8 +37,37 @@ export async function generateMetadata({
     },
   });
 
+  if (!agent) {
+    return {
+      title: "Agent Not Found",
+      description: "The requested agent profile could not be found.",
+    };
+  }
+
+  const agentName = capitalizeWords(agent.name || "Agent");
+  const propertyCount = agent.properties.length;
+
   return {
-    title: `${capitalizeWords(agent?.name!)}'s Listings | African Real Estate`,
+    title: `${agentName}'s Listings | African Real Estate`,
+    description: `View ${propertyCount} properties listed by ${agentName}. Find your dream home or investment property in Africa.`,
+    openGraph: {
+      title: `${agentName} - Real Estate Agent | African Real Estate`,
+      description: `Explore ${propertyCount} listings by ${agentName}. Expert in African real estate market.`,
+      images: [
+        {
+          url: agent.image || "/placeholder.jpg",
+          width: 1200,
+          height: 630,
+          alt: `${agentName} - Real Estate Agent`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${agentName} - Real Estate Agent | African Real Estate`,
+      description: `Discover ${propertyCount} properties listed by ${agentName}. Your gateway to African real estate.`,
+      images: [agent.image || "/default-agent-image.jpg"],
+    },
   };
 }
 

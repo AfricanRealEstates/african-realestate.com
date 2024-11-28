@@ -17,8 +17,7 @@ export const metadata: Metadata = {
     "African property listings",
   ],
   openGraph: {
-    title:
-      "About African Real Estate | Transforming Property Transactions in Africa",
+    title: "About | African Real Estate",
     description:
       "Explore African Real Estate, the leading digital gateway for property in Africa. Learn how we're revolutionizing real estate transactions and connecting stakeholders across the continent.",
     url: "https://www.african-realestate.com/about",

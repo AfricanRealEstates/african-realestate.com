@@ -12,6 +12,11 @@ import Testing from "@/components/landing/testing";
 import { getSEOTags, renderSchemaTags } from "@/lib/seo";
 import React from "react";
 
+export const metadata = getSEOTags({
+  title: "Home | African Real Estate",
+  canonicalUrlRelative: "/",
+});
+
 export default async function Home() {
   return (
     <div className="home-page">
