@@ -60,7 +60,7 @@ export default async function DashboardLayout({
       </div>
       <div className="w-[86%] md:w-[w-92%] lg:w-[84%] xl:w-[86%] overflow-scroll min-h-screen">
         <Navbar />
-        <div className="bg-gray-50 min-h-screen flex flex-col">
+        <div className="bg-white min-h-screen flex flex-col">
           <main className="flex-1">{children}</main>
 
           <p className="block text-center text-sm text-gray-600 bg-gray-50 my-8">

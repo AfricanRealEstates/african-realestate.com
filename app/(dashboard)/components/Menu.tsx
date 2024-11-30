@@ -46,6 +46,12 @@ const menuItems = [
         visible: [UserRole.ADMIN],
       },
       {
+        icon: "/assets/house-3.svg",
+        title: "Discounts",
+        url: "/dashboard/discounts",
+        visible: [UserRole.ADMIN],
+      },
+      {
         icon: "/assets/support.png",
         title: "Support",
         url: "/dashboard/support",
