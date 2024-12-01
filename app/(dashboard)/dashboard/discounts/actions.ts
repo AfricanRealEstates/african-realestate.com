@@ -1,11 +1,11 @@
 'use server'
 
-import { prisma } from '@/lib/prisma'
 import { addDays } from 'date-fns'
 import { generateDiscountCode } from './generateDiscount'
+import { prisma } from '@/lib/prisma'
 
 export interface User {
-    id?: string
+    id: string | null
     email: string | null
 }
 
@@ -20,7 +20,7 @@ export interface Discount {
     code: string
     percentage: number
     expirationDate: Date
-    user: User
+    users: User[]
 }
 
 export async function searchUsers(query: string): Promise<User[]> {
@@ -39,24 +39,41 @@ export async function searchUsers(query: string): Promise<User[]> {
 }
 
 export async function createDiscount({
-    userId,
+    userIds,
     percentage,
     expirationDate,
 }: {
-    userId: string
+    userIds: (string | null)[]
     percentage: number
     expirationDate: Date
 }) {
     const code = generateDiscountCode()
 
-    return await prisma.discount.create({
-        data: {
-            code,
-            percentage,
-            expirationDate,
-            userId,
-        },
-    })
+    try {
+        const discount = await prisma.discount.create({
+            data: {
+                code,
+                percentage,
+                expirationDate,
+                users: {
+                    connect: userIds.filter((id): id is string => id !== null).map(id => ({ id }))
+                }
+            },
+            include: {
+                users: {
+                    select: {
+                        id: true,
+                        email: true
+                    }
+                }
+            }
+        })
+
+        return discount
+    } catch (error) {
+        console.error("Error creating discount:", error)
+        throw new Error("Failed to create discount code")
+    }
 }
 
 export async function getDiscountSummary(): Promise<DiscountSummary> {
@@ -105,12 +122,15 @@ export async function getDiscounts(page: number, pageSize: number, filter: strin
         case 'expired':
             whereClause = { expirationDate: { lte: now } }
             break
+        case 'revoked':
+            whereClause = { expirationDate: { lte: now } }
+            break
     }
 
     const [discounts, totalCount] = await Promise.all([
         prisma.discount.findMany({
             where: whereClause,
-            include: { user: { select: { email: true } } },
+            include: { users: { select: { id: true, email: true } } },
             skip: (page - 1) * pageSize,
             take: pageSize,
             orderBy: { createdAt: 'desc' },
@@ -128,6 +148,12 @@ export async function revokeDiscount(discountId: string) {
     await prisma.discount.update({
         where: { id: discountId },
         data: { expirationDate: new Date() },
+    })
+}
+
+export async function deleteRevokedDiscount(discountId: string) {
+    await prisma.discount.delete({
+        where: { id: discountId, expirationDate: { lte: new Date() } },
     })
 }
 

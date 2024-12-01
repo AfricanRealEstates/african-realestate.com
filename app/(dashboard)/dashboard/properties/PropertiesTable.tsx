@@ -85,6 +85,9 @@ export default async function PropertiesTable({
                         <span className="sr-only">Select</span>
                       </th>
                       <th className="p-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Property Number
+                      </th>
+                      <th className="p-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Title
                       </th>
                       <th className="p-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
@@ -115,6 +118,9 @@ export default async function PropertiesTable({
                             type="checkbox"
                             className="size-4 border-gray-300 rounded focus:ring-blue-500"
                           />
+                        </td>
+                        <td className="p-4 text-sm font-medium text-gray-900">
+                          {property.propertyNumber}
                         </td>
                         <td className="p-4 text-sm font-medium text-gray-900">
                           {property.title}

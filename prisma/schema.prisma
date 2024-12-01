@@ -69,7 +69,7 @@ model User {
   notifications    Notification[]
   viewedProperties PropertyView[]
   likedPosts       BlogPost[]      @relation("UserLikedPosts")
-  Discount         Discount[]
+  discounts        Discount[]      @relation("UserDiscounts")
 
   @@map("users")
 }
@@ -200,8 +200,7 @@ model Discount {
   code           String   @unique
   percentage     Int
   expirationDate DateTime
-  userId         String
-  user           User     @relation(fields: [userId], references: [id])
+  users          User[]   @relation("UserDiscounts")
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
