@@ -343,7 +343,12 @@ export default function DiscountsManager() {
               />
             </CardContent>
             <CardFooter>
-              <Button type="submit">Create Discount Code</Button>
+              <Button
+                type="submit"
+                className="bg-blue-400 text-white hover:bg-blue-300 transition-all"
+              >
+                Create Discount Code
+              </Button>
             </CardFooter>
           </form>
         </Form>
@@ -461,6 +466,7 @@ export default function DiscountsManager() {
             <Button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
+              className="bg-blue-400 text-white hover:bg-blue-300 transition-all"
             >
               Previous
             </Button>
@@ -472,6 +478,7 @@ export default function DiscountsManager() {
                 setCurrentPage((prev) => Math.min(prev + 1, totalPages))
               }
               disabled={currentPage === totalPages}
+              className="bg-blue-400 text-white hover:bg-blue-300 transition-all"
             >
               Next
             </Button>
