@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format, addDays } from "date-fns";
+import { format, addDays, startOfMonth, endOfMonth } from "date-fns";
 import { toast } from "sonner";
 import { Check, ChevronsUpDown, X } from "lucide-react";
 
@@ -57,18 +57,28 @@ import {
   getDiscounts,
   revokeDiscount,
   deleteRevokedDiscount,
+  getAllAgencyAndAgentUsers,
+  getNewSignups,
   User,
   DiscountSummary,
   Discount,
 } from "./actions";
 
-const createDiscountSchema = z.object({
-  userIds: z.array(z.string()).min(1, "At least one user must be selected"),
-  percentage: z.number().min(1).max(100),
-  expirationDate: z
-    .date()
-    .min(new Date(), "Expiration date must be in the future"),
-});
+const createDiscountSchema = z
+  .object({
+    userCategory: z.enum(["selected", "all", "new"]),
+    userIds: z.array(z.string()).optional(),
+    percentage: z.number().min(1).max(100),
+    startDate: z.date(),
+    expirationDate: z.date(),
+    customCode: z.string().optional(),
+    newSignupStartDate: z.date().optional(),
+    newSignupEndDate: z.date().optional(),
+  })
+  .refine((data) => data.expirationDate > data.startDate, {
+    message: "Expiration date must be after the start date",
+    path: ["expirationDate"],
+  });
 
 type CreateDiscountFormValues = z.infer<typeof createDiscountSchema>;
 
@@ -84,13 +94,27 @@ export default function DiscountsManager() {
   const [filter, setFilter] = useState<
     "all" | "active" | "expiring" | "expired" | "revoked"
   >("all");
+  const [userCategory, setUserCategory] = useState<"selected" | "all" | "new">(
+    "selected"
+  );
+  const [newSignupStartDate, setNewSignupStartDate] = useState<Date>(
+    startOfMonth(new Date())
+  );
+  const [newSignupEndDate, setNewSignupEndDate] = useState<Date>(
+    endOfMonth(new Date())
+  );
 
   const form = useForm<CreateDiscountFormValues>({
     resolver: zodResolver(createDiscountSchema),
     defaultValues: {
+      userCategory: "selected",
       userIds: [],
       percentage: 0,
+      startDate: new Date(),
       expirationDate: undefined,
+      customCode: "",
+      newSignupStartDate: startOfMonth(new Date()),
+      newSignupEndDate: endOfMonth(new Date()),
     },
   });
 
@@ -98,6 +122,22 @@ export default function DiscountsManager() {
     fetchDiscountSummary();
     fetchDiscounts();
   }, [currentPage, filter]);
+
+  useEffect(() => {
+    if (userCategory === "all") {
+      fetchAllAgencyAndAgentUsers();
+    } else if (userCategory === "new") {
+      const startDate = form.getValues("newSignupStartDate");
+      const endDate = form.getValues("newSignupEndDate");
+      if (startDate && endDate) {
+        fetchNewSignups(startDate, endDate);
+      }
+    }
+  }, [
+    userCategory,
+    form.watch("newSignupStartDate"),
+    form.watch("newSignupEndDate"),
+  ]);
 
   const fetchDiscountSummary = async () => {
     try {
@@ -140,9 +180,64 @@ export default function DiscountsManager() {
     }
   };
 
+  const fetchAllAgencyAndAgentUsers = async () => {
+    try {
+      const users = await getAllAgencyAndAgentUsers();
+      setSelectedUsers(users);
+      form.setValue(
+        "userIds",
+        users.map((u) => u.id).filter((id): id is string => id !== null)
+      );
+    } catch (error) {
+      console.error("Error fetching agency and agent users:", error);
+      toast.error("Failed to fetch agency and agent users");
+    }
+  };
+
+  const fetchNewSignups = async (startDate: Date, endDate: Date) => {
+    try {
+      const users = await getNewSignups(startDate, endDate);
+      setSelectedUsers(users);
+      form.setValue(
+        "userIds",
+        users.map((u) => u.id).filter((id): id is string => id !== null)
+      );
+    } catch (error) {
+      console.error("Error fetching new signups:", error);
+      toast.error("Failed to fetch new signups");
+    }
+  };
+
   const handleCreateDiscount = async (values: CreateDiscountFormValues) => {
     try {
-      const discount = await createDiscount(values);
+      let userIds: string[] = [];
+      if (values.userCategory === "selected") {
+        userIds = values.userIds || [];
+      } else if (values.userCategory === "all") {
+        userIds = selectedUsers
+          .map((u) => u.id)
+          .filter((id): id is string => id !== null);
+      } else if (
+        values.userCategory === "new" &&
+        values.newSignupStartDate &&
+        values.newSignupEndDate
+      ) {
+        const newUsers = await getNewSignups(
+          values.newSignupStartDate,
+          values.newSignupEndDate
+        );
+        userIds = newUsers
+          .map((u) => u.id)
+          .filter((id): id is string => id !== null);
+      }
+
+      const discount = await createDiscount({
+        userIds,
+        percentage: values.percentage,
+        startDate: values.startDate,
+        expirationDate: values.expirationDate,
+        customCode: values.customCode,
+      });
 
       if (discount) {
         toast.success(`Discount code created: ${discount.code}`);
@@ -162,7 +257,7 @@ export default function DiscountsManager() {
     const currentUserIds = form.getValues("userIds");
     form.setValue(
       "userIds",
-      currentUserIds.filter((id) => id !== userId)
+      currentUserIds ? currentUserIds.filter((id) => id !== userId) : []
     );
   };
 
@@ -201,110 +296,176 @@ export default function DiscountsManager() {
         </CardHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleCreateDiscount)}>
-            <CardContent className="space-y-4">
+            <CardContent className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               <FormField
                 control={form.control}
-                name="userIds"
+                name="userCategory"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Select Users</FormLabel>
-                    <FormControl>
-                      <Popover open={open} onOpenChange={setOpen}>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            role="combobox"
-                            aria-expanded={open}
-                            className="w-full justify-between"
-                          >
-                            {selectedUsers.length > 0
-                              ? `${selectedUsers.length} user(s) selected`
-                              : "Select users..."}
-                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-[400px] p-0">
-                          <div className="p-2">
-                            <Input
-                              placeholder="Search users..."
-                              value={searchQuery}
-                              onChange={(e) => handleSearch(e.target.value)}
-                            />
-                          </div>
-                          {users.length === 0 && (
-                            <div className="p-2 text-sm text-gray-500">
-                              No user found.
+                    <FormLabel>User Category</FormLabel>
+                    <Select
+                      onValueChange={(value) => {
+                        setUserCategory(value as "selected" | "all" | "new");
+                        field.onChange(value);
+                      }}
+                      defaultValue={userCategory}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select user category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="selected">Selected Users</SelectItem>
+                        <SelectItem value="all">
+                          All Agency/Agent Users
+                        </SelectItem>
+                        <SelectItem value="new">New Signups</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
+
+              {userCategory === "selected" && (
+                <FormField
+                  control={form.control}
+                  name="userIds"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Select Users</FormLabel>
+                      <FormControl>
+                        <Popover open={open} onOpenChange={setOpen}>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              aria-expanded={open}
+                              className="w-full justify-between"
+                            >
+                              {selectedUsers.length > 0
+                                ? `${selectedUsers.length} user(s) selected`
+                                : "Select users..."}
+                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-[400px] p-0">
+                            <div className="p-2">
+                              <Input
+                                placeholder="Search users..."
+                                value={searchQuery}
+                                onChange={(e) => handleSearch(e.target.value)}
+                              />
                             </div>
-                          )}
-                          <ul className="max-h-60 overflow-auto">
-                            {users.map((user) => (
-                              <li
-                                key={user.id}
-                                className={cn(
-                                  "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground",
-                                  selectedUsers.some((u) => u.id === user.id) &&
-                                    "bg-accent text-accent-foreground"
-                                )}
-                                onClick={() => {
-                                  const newSelectedUsers = selectedUsers.some(
-                                    (u) => u.id === user.id
-                                  )
-                                    ? selectedUsers.filter(
-                                        (u) => u.id !== user.id
-                                      )
-                                    : [...selectedUsers, user];
-                                  setSelectedUsers(newSelectedUsers);
-                                  field.onChange(
-                                    newSelectedUsers
-                                      .map((u) => u.id)
-                                      .filter((id): id is string => id !== null)
-                                  );
-                                }}
-                              >
-                                <Check
+                            {users.length === 0 && (
+                              <div className="p-2 text-sm text-gray-500">
+                                No user found.
+                              </div>
+                            )}
+                            <ul className="max-h-60 overflow-auto">
+                              {users.map((user) => (
+                                <li
+                                  key={user.id}
                                   className={cn(
-                                    "mr-2 h-4 w-4",
-                                    selectedUsers.some((u) => u.id === user.id)
-                                      ? "opacity-100"
-                                      : "opacity-0"
+                                    "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground",
+                                    selectedUsers.some(
+                                      (u) => u.id === user.id
+                                    ) && "bg-accent text-accent-foreground"
                                   )}
-                                />
-                                {user.email}
-                              </li>
-                            ))}
-                          </ul>
-                        </PopoverContent>
-                      </Popover>
+                                  onClick={() => {
+                                    const newSelectedUsers = selectedUsers.some(
+                                      (u) => u.id === user.id
+                                    )
+                                      ? selectedUsers.filter(
+                                          (u) => u.id !== user.id
+                                        )
+                                      : [...selectedUsers, user];
+                                    setSelectedUsers(newSelectedUsers);
+                                    field.onChange(
+                                      newSelectedUsers
+                                        .map((u) => u.id)
+                                        .filter(
+                                          (id): id is string => id !== null
+                                        )
+                                    );
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      selectedUsers.some(
+                                        (u) => u.id === user.id
+                                      )
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                  {user.email}
+                                </li>
+                              ))}
+                            </ul>
+                          </PopoverContent>
+                        </Popover>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              {userCategory === "new" && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name="newSignupStartDate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Start Date</FormLabel>
+                        <DatePicker
+                          selected={field.value}
+                          onSelect={(date) => {
+                            if (date) {
+                              setNewSignupStartDate(date);
+                              field.onChange(date);
+                            }
+                          }}
+                        />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="newSignupEndDate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>End Date</FormLabel>
+                        <DatePicker
+                          selected={field.value}
+                          onSelect={(date) => {
+                            if (date) {
+                              setNewSignupEndDate(date);
+                              field.onChange(date);
+                            }
+                          }}
+                        />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
+
+              <FormField
+                control={form.control}
+                name="customCode"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Custom Code (Optional)</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="e.g., SUMMER25" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              {selectedUsers.length > 0 && (
-                <div className="space-y-2">
-                  <Label>Selected Users</Label>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedUsers.map((user) => (
-                      <div
-                        key={user.id}
-                        className="bg-secondary text-secondary-foreground px-2 py-1 rounded-md flex items-center"
-                      >
-                        <span>{user.email}</span>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="ml-2 h-4 w-4 p-0"
-                          onClick={() =>
-                            handleRemoveSelectedUser(user.id as string)
-                          }
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+
               <FormField
                 control={form.control}
                 name="percentage"
@@ -316,14 +477,40 @@ export default function DiscountsManager() {
                         type="number"
                         min="1"
                         max="100"
+                        placeholder="Enter discount percentage"
                         {...field}
-                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        onChange={(e) => {
+                          const value =
+                            e.target.value === ""
+                              ? undefined
+                              : Number(e.target.value);
+                          field.onChange(value);
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name="startDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Start Date</FormLabel>
+                    <FormControl>
+                      <DatePicker
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        minDate={new Date()}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="expirationDate"
@@ -398,6 +585,7 @@ export default function DiscountsManager() {
                 <TableHead>Code</TableHead>
                 <TableHead>Users</TableHead>
                 <TableHead>Percentage</TableHead>
+                <TableHead>Start Date</TableHead>
                 <TableHead>Expiration Date</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Actions</TableHead>
@@ -411,6 +599,9 @@ export default function DiscountsManager() {
                     {discount.users.map((user) => user.email).join(", ")}
                   </TableCell>
                   <TableCell>{discount.percentage}%</TableCell>
+                  <TableCell>
+                    {format(new Date(discount.startDate), "PPP")}
+                  </TableCell>
                   <TableCell>
                     {format(new Date(discount.expirationDate), "PPP")}
                   </TableCell>

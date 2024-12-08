@@ -13,6 +13,7 @@ import { MoreVertical, Eye, Copy, SquarePen, Trash2 } from "lucide-react";
 import IconMenu from "@/components/globals/icon-menu";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
+import { deleteProperty } from "./deleteProperty";
 
 export default async function PropertiesTable({
   searchParams,
@@ -191,16 +192,24 @@ export default async function PropertiesTable({
                                 </Link>
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
-                              <DropdownMenuItem asChild>
-                                <Link
-                                  href={`/agent/properties`}
-                                  className="flex w-full items-center text-red-500"
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem>
+                                <form
+                                  action={deleteProperty.bind(
+                                    null,
+                                    property.id
+                                  )}
                                 >
-                                  <IconMenu
-                                    text="Delete"
-                                    icon={<Trash2 className="size-4 mr-2" />}
-                                  />
-                                </Link>
+                                  <button
+                                    type="submit"
+                                    className="flex w-full items-center text-red-500"
+                                  >
+                                    <IconMenu
+                                      text="Delete"
+                                      icon={<Trash2 className="size-4 mr-2" />}
+                                    />
+                                  </button>
+                                </form>
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>

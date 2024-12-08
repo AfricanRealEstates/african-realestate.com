@@ -199,6 +199,7 @@ model Discount {
   id             String   @id @default(dbgenerated("concat('discount_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
   code           String   @unique
   percentage     Int
+  startDate      DateTime
   expirationDate DateTime
   users          User[]   @relation("UserDiscounts")
   createdAt      DateTime @default(now())

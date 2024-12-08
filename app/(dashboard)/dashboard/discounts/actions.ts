@@ -1,6 +1,6 @@
 'use server'
 
-import { addDays } from 'date-fns'
+import { addDays, startOfMonth, endOfMonth } from 'date-fns'
 import { generateDiscountCode } from './generateDiscount'
 import { prisma } from '@/lib/prisma'
 
@@ -19,6 +19,7 @@ export interface Discount {
     id: string
     code: string
     percentage: number
+    startDate: Date
     expirationDate: Date
     users: User[]
 }
@@ -41,19 +42,24 @@ export async function searchUsers(query: string): Promise<User[]> {
 export async function createDiscount({
     userIds,
     percentage,
+    startDate,
     expirationDate,
+    customCode,
 }: {
     userIds: (string | null)[]
     percentage: number
+    startDate: Date
     expirationDate: Date
+    customCode?: string
 }) {
-    const code = generateDiscountCode()
+    const code = customCode || generateDiscountCode()
 
     try {
         const discount = await prisma.discount.create({
             data: {
                 code,
                 percentage,
+                startDate,
                 expirationDate,
                 users: {
                     connect: userIds.filter((id): id is string => id !== null).map(id => ({ id }))
@@ -154,6 +160,36 @@ export async function revokeDiscount(discountId: string) {
 export async function deleteRevokedDiscount(discountId: string) {
     await prisma.discount.delete({
         where: { id: discountId, expirationDate: { lte: new Date() } },
+    })
+}
+
+export async function getAllAgencyAndAgentUsers(): Promise<User[]> {
+    return await prisma.user.findMany({
+        where: {
+            OR: [
+                { role: 'AGENCY' },
+                { role: 'AGENT' }
+            ]
+        },
+        select: {
+            id: true,
+            email: true,
+        },
+    })
+}
+
+export async function getNewSignups(startDate: Date, endDate: Date): Promise<User[]> {
+    return await prisma.user.findMany({
+        where: {
+            createdAt: {
+                gte: startDate,
+                lte: endDate,
+            }
+        },
+        select: {
+            id: true,
+            email: true,
+        },
     })
 }
 
