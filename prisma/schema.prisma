@@ -4,10 +4,15 @@ generator client {
   binaryTargets   = ["native", "debian-openssl-1.1.x"]
 }
 
+// datasource db {
+//   provider  = "postgresql"
+//   url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+//   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+// }
+
 datasource db {
-  provider  = "postgresql"
-  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum UserRole {
@@ -120,7 +125,7 @@ model propertyDetail {
 
 model Property {
   id                     String   @id @default(dbgenerated("concat('property_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
-  propertyNumber         Int      @unique @default(autoincrement())
+  propertyNumber         Int      @unique
   userId                 String
   user                   User     @relation(fields: [userId], references: [id])
   slug                   String?  @unique
@@ -172,8 +177,8 @@ model Property {
 }
 
 model PropertyNumberSequence {
-  id  Int @id @default(autoincrement())
-  seq Int
+  id  Int @id @default(1)
+  seq Int @default(6999)
 
   @@map("property_number_seq")
 }

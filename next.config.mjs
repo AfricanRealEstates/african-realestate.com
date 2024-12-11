@@ -33,6 +33,9 @@ const nextConfig = {
         hostname: "avatars.githubusercontent.com",
       },
       {
+        hostname: "african-real-estate-photos.s3.eu-north-1.amazonaws.com",
+      },
+      {
         protocol: "https",
         hostname: "utfs.io",
         pathname: `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/*`,
