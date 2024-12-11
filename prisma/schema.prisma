@@ -30,7 +30,7 @@ model User {
   isVerified       Boolean         @default(false)
   isActive         Boolean         @default(true)
   token            Int?
-  agentName        String? // moved from property
+  agentName        String?
   agentEmail       String?
   agentLocation    String?
   officeLine       String?
