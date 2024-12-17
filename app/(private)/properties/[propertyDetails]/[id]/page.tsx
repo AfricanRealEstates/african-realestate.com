@@ -204,6 +204,23 @@ const formatName = (name: string | null): string => {
   return `${firstName[0]}. ${lastName}`;
 };
 
+const truncateAgentName = (name: string, maxLength: number = 15) => {
+  if (!name) return "";
+
+  // Capitalize the name
+  const capitalizedName = name
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+
+  // Truncate if necessary
+  if (capitalizedName.length > maxLength) {
+    return `${capitalizedName.slice(0, maxLength)}...`;
+  }
+
+  return capitalizedName;
+};
+
 function formatPhoneNumber(phoneNumber: any) {
   // Remove all non-digit characters
   const cleaned = ("" + phoneNumber).replace(/\D/g, "");
@@ -665,7 +682,9 @@ export default async function PropertyDetails({
                             <>
                               <p className="block text-lg text-indigo-500 font-medium">
                                 {formatName(agent?.name)} -{" "}
-                                {agent.agentName || "No agency name yet"}
+                                {agent.agentName
+                                  ? truncateAgentName(agent.agentName)
+                                  : "No agency name yet"}
                               </p>
                             </>
                           ) : (
