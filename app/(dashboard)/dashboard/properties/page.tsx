@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Loading from "./loading";
 import { EmptyPlaceholder } from "../../components/EmptyPlaceholder";
-import PropertiesTable from "./PropertiesTable";
+import PropertyPaymentManager from "./PropertyPaymentManager";
 
 export default async function PropertiesPage({
   searchParams,
@@ -75,7 +75,14 @@ export default async function PropertiesPage({
           </div>
 
           <Suspense fallback={<Loading />}>
-            <PropertiesTable searchParams={searchParams} />
+            <PropertyPaymentManager
+              properties={userProperties}
+              user={{
+                email: user.email || "",
+                name: user.name || "",
+                phone: user.phoneNumber || "",
+              }}
+            />
           </Suspense>
         </>
       ) : (

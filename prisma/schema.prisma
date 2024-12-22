@@ -18,57 +18,58 @@ enum UserRole {
 }
 
 model User {
-  id               String          @id @default(dbgenerated("concat('user_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
-  name             String?
-  username         String?
-  email            String?         @unique
-  emailVerified    DateTime?
-  image            String?
-  role             UserRole        @default(USER)
-  permissions      String[]
-  password         String?
-  isVerified       Boolean         @default(false)
-  isActive         Boolean         @default(true)
-  token            Int?
-  agentName        String?
-  agentEmail       String?
-  agentLocation    String?
-  officeLine       String?
-  whatsappNumber   String?
-  phoneNumber      String?
-  address          String?
-  postalCode       String?
-  profilePhoto     String?
-  coverPhoto       String?
-  bio              String?
-  xLink            String?
-  tiktokLink       String?
-  facebookLink     String?
-  youtubeLink      String?
-  linkedinLink     String?
-  instagramLink    String?
-  showAgentContact Boolean?        @default(false) // moved from property
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
-  isPremium        Boolean         @default(false)
-  accounts         Account[]
-  sessions         Session[]
-  properties       Property[]
-  queries          Query[]
-  subscriptions    Subscription[]
-  orders           Order[]
-  likes            Like[]
-  favoriteIds      String[]
-  ratings          Rating[]
-  saved            SavedProperty[]
-  comments         Comment[]
-  followedBy       Follows[]       @relation("following")
-  following        Follows[]       @relation("follower")
-  upvotes          Upvote[]
-  notifications    Notification[]
-  viewedProperties PropertyView[]
-  likedPosts       BlogPost[]      @relation("UserLikedPosts")
-  discounts        Discount[]      @relation("UserDiscounts")
+  id                String          @id @default(dbgenerated("concat('user_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
+  name              String?
+  username          String?
+  email             String?         @unique
+  emailVerified     DateTime?
+  image             String?
+  role              UserRole        @default(USER)
+  permissions       String[]
+  password          String?
+  isVerified        Boolean         @default(false)
+  isActive          Boolean         @default(true)
+  suspensionEndDate DateTime?
+  token             Int?
+  agentName         String?
+  agentEmail        String?
+  agentLocation     String?
+  officeLine        String?
+  whatsappNumber    String?
+  phoneNumber       String?
+  address           String?
+  postalCode        String?
+  profilePhoto      String?
+  coverPhoto        String?
+  bio               String?
+  xLink             String?
+  tiktokLink        String?
+  facebookLink      String?
+  youtubeLink       String?
+  linkedinLink      String?
+  instagramLink     String?
+  showAgentContact  Boolean?        @default(false) // moved from property
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  isPremium         Boolean         @default(false)
+  accounts          Account[]
+  sessions          Session[]
+  properties        Property[]
+  queries           Query[]
+  subscriptions     Subscription[]
+  orders            Order[]
+  likes             Like[]
+  favoriteIds       String[]
+  ratings           Rating[]
+  saved             SavedProperty[]
+  comments          Comment[]
+  followedBy        Follows[]       @relation("following")
+  following         Follows[]       @relation("follower")
+  upvotes           Upvote[]
+  notifications     Notification[]
+  viewedProperties  PropertyView[]
+  likedPosts        BlogPost[]      @relation("UserLikedPosts")
+  discounts         Discount[]      @relation("UserDiscounts")
 
   @@map("users")
 }

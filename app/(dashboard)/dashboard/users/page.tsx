@@ -15,6 +15,8 @@ import { prisma } from "@/lib/prisma";
 import { MoreVertical, Plus, SquarePen, Trash2 } from "lucide-react";
 import SearchInput from "../../components/SearchInput";
 import Loading from "./loading";
+import { auth } from "@/auth";
+import UserActions from "./UserActions";
 
 export default async function UsersPage({
   searchParams,
@@ -23,6 +25,10 @@ export default async function UsersPage({
 }) {
   const search =
     typeof searchParams.search === "string" ? searchParams.search : undefined;
+
+  const session = await auth();
+
+  const isAdmin = session?.user?.role === "ADMIN";
 
   return (
     <section className="px-4 sm:px-8 pt-5 flex flex-col">
@@ -118,9 +124,8 @@ export default async function UsersPage({
           </a>
         </div>
       </div>
-
       <Suspense fallback={<Loading />}>
-        <UsersTable searchParams={searchParams} />
+        <UsersTable searchParams={searchParams} isAdmin={isAdmin} />
       </Suspense>
     </section>
   );
@@ -128,8 +133,10 @@ export default async function UsersPage({
 
 async function UsersTable({
   searchParams,
+  isAdmin,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
+  isAdmin: boolean;
 }) {
   const search =
     typeof searchParams.search === "string" ? searchParams.search : undefined;
@@ -199,14 +206,18 @@ async function UsersTable({
                     <th className="py-3.5 px-3 text-left text-xs font-medium text-gray-500 hidden lg:table-cell">
                       Role
                     </th>
-                    <th className="py-3.5 px-3 text-left text-xs font-medium text-gray-500">
-                      Status
-                    </th>
                     <th className="py-3.5 px-3 text-left text-xs font-medium text-gray-500 hidden xl:table-cell">
                       Joined
                     </th>
-                    <th className="py-3.5 pl-3 pr-4 sm:pr-6">
+
+                    <th className="py-3.5 px-3 text-left text-xs font-medium text-gray-500">
+                      Status
+                    </th>
+                    {/* <th className="py-3.5 pl-3 pr-4 sm:pr-6">
                       <span className="sr-only">Actions</span>
+                    </th> */}
+                    <th className="py-3.5 px-3 text-left text-xs font-medium text-gray-500">
+                      Actions
                     </th>
                   </tr>
                 </thead>
@@ -247,7 +258,7 @@ async function UsersTable({
                       <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500 hidden lg:table-cell">
                         {user.role}
                       </td>
-                      <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
+                      {/* <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
                         <div className="flex items-center">
                           <div
                             className={`size-2.5 rounded-full mr-2 ${
@@ -256,11 +267,31 @@ async function UsersTable({
                           ></div>
                           {user.isActive ? "Active" : "Inactive"}
                         </div>
-                      </td>
+                      </td> */}
                       <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500 hidden xl:table-cell">
                         {formatDate(user.createdAt, "MMM d, yyyy")}
                       </td>
+                      <td className="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
+                        <div className="flex items-center">
+                          <div
+                            className={`size-2.5 rounded-full mr-2 ${
+                              user.isActive ? "bg-green-400" : "bg-red-500"
+                            }`}
+                          ></div>
+                          {user.isActive
+                            ? "Active"
+                            : user.suspensionEndDate
+                            ? `Suspended until ${formatDate(
+                                user.suspensionEndDate,
+                                "MMM d, yyyy"
+                              )}`
+                            : "Blocked"}
+                        </div>
+                      </td>
                       <td className="whitespace-nowrap py-4 pl-3 pr-4 text-sm font-medium sm:pr-6">
+                        {isAdmin && <UserActions user={user} />}
+                      </td>
+                      {/* <td className="whitespace-nowrap py-4 pl-3 pr-4 text-sm font-medium sm:pr-6">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button
@@ -290,7 +321,7 @@ async function UsersTable({
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
-                      </td>
+                      </td> */}
                     </tr>
                   ))}
                 </tbody>

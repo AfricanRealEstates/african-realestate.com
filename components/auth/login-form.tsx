@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import { Button } from "@/components/utils/Button";
 import { Loader2 } from "lucide-react";
@@ -10,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
 import { Icons } from "../globals/icons";
+import { getUserStatus } from "./user-status";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -41,11 +43,25 @@ export default function LoginForm() {
         callbackUrl,
       });
 
-      setIsLoading(false);
-
       if (!res?.error) {
-        toast.success(`Successfully logged in`);
-        router.push(callbackUrl);
+        // Successful sign-in, now fetch user status
+        const userData = await getUserStatus();
+
+        if (userData.isActive) {
+          toast.success(`Successfully logged in`);
+          router.push(callbackUrl);
+        } else {
+          if (userData.suspensionEndDate) {
+            const endDate = new Date(userData.suspensionEndDate);
+            toast.error(
+              `Your account is suspended until ${endDate.toLocaleDateString()}.`
+            );
+          } else {
+            toast.error(
+              "Your account has been blocked. Please contact support for assistance."
+            );
+          }
+        }
       } else {
         const message = "Invalid email or password";
         toast.error("Uh oh! Something went wrong");
@@ -62,7 +78,7 @@ export default function LoginForm() {
 
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-xl flex items-center justify-center flex-col mt-12">
+      <div className="sm:mx-auto sm:w-full sm:max-w-xl flex items-center justify-center flex-col mt-8">
         <Link href="/" className={`flex items-center gap-2 no-underline`}>
           <img
             src="/assets/logo.png"
@@ -75,13 +91,13 @@ export default function LoginForm() {
             African Real Estate.
           </span>
         </Link>
-        <h2 className="mt-4 text-center text-lg font-medium leading-9 tracking-tight text-gray-600">
+        <h2 className="mt-2 text-center text-sm font-medium leading-9 tracking-tight text-gray-600">
           Sign in to your account
         </h2>
       </div>
 
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
-        <div className="bg-white px-6 py-12 border border-gray-200 sm:rounded-lg sm:px-12">
+      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-[480px]">
+        <div className="bg-white px-6 py-9 border border-gray-200 sm:rounded-lg sm:px-12">
           <form className="space-y-3" onSubmit={handleSubmit(onSubmitHandler)}>
             {error && (
               <p className="text-center bg-rose-50 text-rose-500 py-4 mb-6 rounded">
@@ -132,7 +148,7 @@ export default function LoginForm() {
               )}
             </div>
 
-            <div>
+            <div className="mt-2">
               <Button
                 color="blue"
                 className="w-full"
@@ -152,7 +168,7 @@ export default function LoginForm() {
           </form>
 
           <div>
-            <div className="relative mt-10">
+            <div className="relative mt-6">
               <div
                 className="absolute inset-0 flex items-center"
                 aria-hidden="true"
@@ -166,7 +182,7 @@ export default function LoginForm() {
               </div>
             </div>
 
-            <div className="mt-6 grid grid-cols-1 place-content-center gap-4">
+            <div className="mt-4 grid grid-cols-1 place-content-center gap-4">
               <Button
                 variant="outline"
                 className="flex items-center gap-4"

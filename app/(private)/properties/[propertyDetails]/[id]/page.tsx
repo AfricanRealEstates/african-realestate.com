@@ -204,7 +204,7 @@ const formatName = (name: string | null): string => {
   return `${firstName[0]}. ${lastName}`;
 };
 
-const truncateAgentName = (name: string, maxLength: number = 15) => {
+const truncateAgentName = (name: string, maxLength: number = 18) => {
   if (!name) return "";
 
   // Capitalize the name
