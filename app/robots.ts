@@ -13,7 +13,6 @@ export default function robots() {
                     '*/login',
                     '*/signup',
                     '/*.json$',
-                    '/*?*', // Disallow URLs with query parameters
                 ],
             },
             {

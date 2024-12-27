@@ -52,8 +52,8 @@ export default function PaymentPricingPlansWrapper({
   };
 
   return (
-    <div className="container px-4 mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Your Properties</h2>
+    <div className="max-w-[1200px] w-full mx-auto">
+      {/* <h2 className="text-2xl font-bold mb-4">Your Properties</h2>
       <Table className="mb-8">
         <TableHeader>
           <TableRow>
@@ -83,7 +83,7 @@ export default function PaymentPricingPlansWrapper({
             </TableRow>
           ))}
         </TableBody>
-      </Table>
+      </Table> */}
 
       <PaymentPricingPlans
         propertyCount={propertyCount}

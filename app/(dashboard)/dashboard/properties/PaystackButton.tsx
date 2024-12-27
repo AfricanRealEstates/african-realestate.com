@@ -63,7 +63,11 @@ export default function PaystackButton({
 
   return (
     <Button onClick={handlePayment} disabled={isLoading}>
-      {isLoading ? "Processing..." : "Pay with Paystack"}
+      {isLoading
+        ? "Processing..."
+        : amount === 0
+        ? "Complete Free Order"
+        : "Pay with Paystack"}
     </Button>
   );
 }

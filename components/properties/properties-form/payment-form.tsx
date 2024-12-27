@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { FeatureList } from "@/app/(dashboard)/dashboard/properties/FeatureList";
 
 export type PropertyCountRange =
   | "1-3"
@@ -179,14 +180,10 @@ export default function PaymentPricingPlans({
                   {tier.duration}
                 </p>
               </div>
-              <ul className="space-y-2">
-                {tier.features.map((feature) => (
-                  <li key={feature} className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-primary flex-shrink-0" />
-                    <span className="text-sm">{feature}</span>
-                  </li>
-                ))}
-              </ul>
+              <FeatureList
+                features={tier.features}
+                initialVisibleCount={tier.name === "Platinum" ? 5 : 4}
+              />
             </CardContent>
             <CardFooter>
               <Button

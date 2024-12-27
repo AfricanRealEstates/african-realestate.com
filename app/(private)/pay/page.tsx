@@ -1,7 +1,18 @@
+import PropertyPaymentManager from "@/app/(dashboard)/dashboard/properties/PropertyPaymentManager";
 import { auth } from "@/auth";
 import PaymentForm from "@/components/payments/PaymentForm";
 import PaymentPricingPlansWrapper from "@/components/properties/properties-form/PaymentPricingPlansWrapper";
 import { prisma } from "@/lib/prisma";
+import { getSEOTags } from "@/lib/seo";
+import { getCurrentUser } from "@/lib/session";
+import { redirect } from "next/navigation";
+
+export const metadata = getSEOTags({
+  title: "Pay | African Real Estate",
+  canonicalUrlRelative: "/pay",
+  description:
+    "Pay for your properties to publish them and reach more customers.",
+});
 
 async function getProperties(userId: string, isAdmin: boolean) {
   if (isAdmin) {
@@ -46,6 +57,22 @@ export default async function PayPage() {
   const userRole = session?.user.role;
   const isAdmin = userRole === "ADMIN";
 
+  const user = await getCurrentUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  // Fetch the user's properties
+  const userProperties = await prisma.property.findMany({
+    where: {
+      userId: user.id,
+    },
+    orderBy: {
+      createdAt: "desc", // Sort by most recent
+    },
+  });
+
   if (!userId) {
     return (
       <div className="py-24 lg:py-32">
@@ -68,12 +95,20 @@ export default async function PayPage() {
 
   return (
     <div className="py-24 lg:py-32">
-      <div className="container mx-auto px-4">
+      <div className="max-w-[1200px] w-full mx-auto">
         <p className="text-sm text-gray-600 mb-4">
           Showing up to 10 properties
         </p>
+        <PropertyPaymentManager
+          properties={userProperties}
+          user={{
+            email: user.email || "",
+            name: user.name || "",
+            phone: user.phoneNumber || "",
+          }}
+        />
         <PaymentPricingPlansWrapper properties={properties} isAdmin={isAdmin} />
-        <PaymentForm transactionConfig={config} />
+        {/* <PaymentForm transactionConfig={config} />  */}
       </div>
     </div>
   );

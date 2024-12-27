@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Check } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Check, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
@@ -27,7 +28,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import PaystackButton from "./PaystackButton";
+import { FeatureList } from "./FeatureList";
+import { getUserDiscount, applyDiscountCode } from "./discountActions";
+import { toast } from "sonner";
 
 export type PropertyCountRange =
   | "1-3"
@@ -55,6 +60,21 @@ export default function PricingPlanModal({
   user,
 }: PricingPlanModalProps) {
   const [selectedTier, setSelectedTier] = useState<string | null>(null);
+  const [discountPercentage, setDiscountPercentage] = useState<number | null>(
+    null
+  );
+  const [discountCode, setDiscountCode] = useState<string>("");
+  const [discountError, setDiscountError] = useState<string | null>(null);
+  const [isApplyingDiscount, setIsApplyingDiscount] = useState(false);
+
+  useEffect(() => {
+    async function fetchDiscount() {
+      const { percentage, code } = await getUserDiscount();
+      setDiscountPercentage(percentage);
+      setDiscountCode(code || "");
+    }
+    fetchDiscount();
+  }, []);
 
   const propertyCount = selectedProperties.length;
   const propertyRange: PropertyCountRange =
@@ -72,6 +92,25 @@ export default function PricingPlanModal({
 
   const handleTierSelection = (tierName: string) => {
     setSelectedTier(tierName);
+  };
+
+  const handleApplyDiscount = async () => {
+    setIsApplyingDiscount(true);
+    setDiscountError(null);
+    try {
+      const result = await applyDiscountCode(discountCode);
+      if (result.success) {
+        setDiscountPercentage(result.percentage ?? null);
+        setDiscountCode("");
+      } else {
+        toast.error(
+          result.message ?? "An error occurred while applying the discount."
+        );
+      }
+    } catch (error) {
+      toast.error("An error occurred while applying the discount.");
+    }
+    setIsApplyingDiscount(false);
   };
 
   const tiers = [
@@ -146,12 +185,25 @@ export default function PricingPlanModal({
   const calculateTotalAmount = (tierName: string) => {
     const tier = tiers.find((t) => t.name === tierName);
     if (!tier) return 0;
-    return parseInt(tier.pricing[propertyRange]) * propertyCount;
+    const baseAmount = parseInt(tier.pricing[propertyRange]) * propertyCount;
+    if (discountPercentage) {
+      const discountedAmount = baseAmount * (1 - discountPercentage / 100);
+      return Math.round(discountedAmount);
+    }
+    return baseAmount;
+  };
+
+  const calculateSavings = (tierName: string) => {
+    const tier = tiers.find((t) => t.name === tierName);
+    if (!tier || !discountPercentage) return 0;
+    const baseAmount = parseInt(tier.pricing[propertyRange]) * propertyCount;
+    const discountedAmount = calculateTotalAmount(tierName);
+    return Math.round(baseAmount - discountedAmount);
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[900px] h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[1200px] h-[90vh] overflow-y-auto">
         <DialogHeader className="text-center mb-8">
           <DialogTitle className="text-3xl font-bold tracking-tight text-blue-900">
             Our Pricing Plans
@@ -161,7 +213,7 @@ export default function PricingPlanModal({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="mb-8 flex justify-center w-full">
+        <div className="mb-8 flex flex-col items-center w-full space-y-4">
           <div className="inline-flex items-center rounded-lg border p-2 bg-muted">
             <Label className="mr-3 text-sm font-medium whitespace-nowrap">
               Selected Properties:
@@ -180,13 +232,57 @@ export default function PricingPlanModal({
               </SelectContent>
             </Select>
           </div>
+
+          <div className="flex w-full max-w-sm items-center space-x-2">
+            <Input
+              type="text"
+              placeholder="Enter discount code"
+              value={discountCode}
+              onChange={(e) => setDiscountCode(e.target.value)}
+            />
+            <Button onClick={handleApplyDiscount} disabled={isApplyingDiscount}>
+              Apply
+            </Button>
+          </div>
+
+          {discountError && (
+            <Alert variant="destructive">
+              <X className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{discountError}</AlertDescription>
+            </Alert>
+          )}
+
+          {discountPercentage && (
+            <div className="w-full max-w-3xl mx-auto">
+              <Alert className="bg-green-100 border-green-500 border">
+                <Check className="h-6 w-6 text-green-600" />
+                <AlertTitle className="text-lg font-bold text-green-800">
+                  Discount Applied!
+                </AlertTitle>
+                <AlertDescription className="mt-2">
+                  <span className="text-xl font-extrabold text-green-700">
+                    {discountPercentage}% OFF
+                  </span>
+                  <span className="ml-2 text-green-700">
+                    on your entire order!
+                  </span>
+                </AlertDescription>
+              </Alert>
+              <div className="mt-2 text-center animate-bounce">
+                <span className="inline-block transform rotate-45 text-green-500 text-2xl">
+                  ➜
+                </span>
+              </div>
+            </div>
+          )}
         </div>
 
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 justify-items-center">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 justify-items-center">
           {tiers.map((tier, index) => (
             <Card
               key={tier.name}
-              className={`flex flex-col w-[280px] ${
+              className={`flex flex-col w-full ${
                 selectedTier === tier.name ? "ring-2 ring-blue-500" : ""
               }`}
             >
@@ -218,15 +314,17 @@ export default function PricingPlanModal({
                   <p className="text-sm text-muted-foreground mt-1">
                     {tier.duration}
                   </p>
+                  {discountPercentage && (
+                    <p className="text-sm text-green-600 mt-1">
+                      You save: KES{" "}
+                      {calculateSavings(tier.name).toLocaleString()}
+                    </p>
+                  )}
                 </div>
-                <ul className="space-y-2">
-                  {tier.features.map((feature) => (
-                    <li key={feature} className="flex items-center gap-2">
-                      <Check className="h-4 w-4 text-primary flex-shrink-0" />
-                      <span className="text-sm">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
+                <FeatureList
+                  features={tier.features}
+                  initialVisibleCount={tier.name === "Platinum" ? 5 : 4}
+                />
               </CardContent>
               <CardFooter>
                 <Button
@@ -254,6 +352,12 @@ export default function PricingPlanModal({
               <p className="text-xl font-semibold">
                 Total: KES {calculateTotalAmount(selectedTier).toLocaleString()}
               </p>
+              {discountPercentage && (
+                <p className="text-sm text-green-600">
+                  You save: KES{" "}
+                  {calculateSavings(selectedTier).toLocaleString()}
+                </p>
+              )}
               <PaystackButton
                 amount={calculateTotalAmount(selectedTier)}
                 email={user.email}

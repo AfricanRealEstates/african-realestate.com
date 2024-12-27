@@ -21,14 +21,13 @@ export default function OverviewInfo({
 }) {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [displayedDescription, setDisplayedDescription] = useState("");
-  const [showPhoneNumbers, setShowPhoneNumbers] = useState(false);
 
   // Function to hide phone numbers
   const hidePhoneNumbers = (text: string) => {
-    const phoneRegex = /(\+?254|0)?[17]\d{8}/g;
+    const phoneRegex = /\b(07\d{8})\b/g;
     return text.replace(phoneRegex, (match) => {
       const lastFourDigits = match.slice(-4);
-      return `XXXX-XXX-${lastFourDigits}`;
+      return `07XXXX${lastFourDigits}`;
     });
   };
 
@@ -37,30 +36,17 @@ export default function OverviewInfo({
     setShowFullDescription(!showFullDescription);
   };
 
-  // Toggle the state to show or hide phone numbers
-  const togglePhoneNumbers = () => {
-    setShowPhoneNumbers(!showPhoneNumbers);
-  };
-
   useEffect(() => {
-    let processedDescription = description;
-
-    if (!showPhoneNumbers) {
-      processedDescription = hidePhoneNumbers(processedDescription);
-    }
+    let processedDescription = hidePhoneNumbers(description);
 
     if (!showFullDescription && processedDescription.length > 300) {
       setDisplayedDescription(`${processedDescription.slice(0, 300)}...`);
     } else {
       setDisplayedDescription(processedDescription);
     }
-  }, [description, showFullDescription, showPhoneNumbers]);
+  }, [description, showFullDescription]);
 
-  // Determine the text for the "Read More" or "Read Less" button
   const readButtonText = showFullDescription ? "Read Less" : "Read More";
-  const phoneButtonText = showPhoneNumbers
-    ? "Hide Phone Numbers"
-    : "Show Phone Numbers";
 
   return (
     <div className="mt-4 lg:mt-0 w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200  space-y-4 sm:space-y-4 pb-10 px-0 sm:p-4 xl:p-5">
@@ -90,12 +76,6 @@ export default function OverviewInfo({
             {readButtonText}
           </ButtonSecondary>
         )}
-        {/* <ButtonSecondary
-          onClick={togglePhoneNumbers}
-          className="text-primary-500"
-        >
-          {phoneButtonText}
-        </ButtonSecondary> */}
       </div>
     </div>
   );
