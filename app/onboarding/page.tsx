@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -40,17 +40,13 @@ export default function Onboarding() {
       const result = await upgradeUserRole(selectedRole);
       setIsLoading(false);
       if (result.success) {
-        setIsSessionUpdating(true);
-        await update({
-          ...session,
-          user: {
-            ...session?.user,
-            role: selectedRole,
-          },
-        });
-        setIsSessionUpdating(false);
         toast.success(`Your role has been upgraded to ${selectedRole}`);
         setStep(4); // Move to the final step
+
+        // Sign out the user after a short delay
+        setTimeout(() => {
+          signOut({ callbackUrl: "/login" });
+        }, 3000); // 3 second delay
       } else {
         toast.error("An error occurred while upgrading your role");
       }
@@ -289,15 +285,9 @@ export default function Onboarding() {
                 <strong className="text-emerald-500 bg-emerald-50">
                   {selectedRole}
                 </strong>
-                . You can now access all the features associated with your new
-                role.
+                . You will be logged out in a few seconds. Please log in again
+                to access all the features associated with your new role.
               </p>
-              <Button
-                onClick={() => router.push("/dashboard/profile")}
-                className="w-full bg-blue-500 hover:bg-blue-600 text-white"
-              >
-                Go to Dashboard
-              </Button>
             </motion.div>
           )}
         </CardContent>
