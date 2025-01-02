@@ -2,6 +2,7 @@
 
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
+import { Discount } from "@prisma/client"
 
 
 export async function getUserDiscount() {
@@ -28,6 +29,33 @@ export async function getUserDiscount() {
     return activeDiscount
         ? { percentage: activeDiscount.percentage, code: activeDiscount.code }
         : { percentage: null, code: null }
+}
+
+export async function getUserDiscounts(): Promise<{ success: boolean; discounts?: Discount[]; message?: string }> {
+    const session = await auth()
+    if (!session || !session.user) {
+        return { success: false, message: "User not authenticated" }
+    }
+
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: session.user.id },
+            include: {
+                discounts: {
+                    orderBy: { createdAt: 'desc' }
+                }
+            }
+        });
+
+        if (!user) {
+            return { success: false, message: "User not found" }
+        }
+
+        return { success: true, discounts: user.discounts }
+    } catch (error) {
+        console.error('Error fetching user discounts:', error);
+        return { success: false, message: "Failed to fetch discounts" }
+    }
 }
 
 export async function applyDiscountCode(code: string): Promise<{ success: boolean; message?: string; percentage: number | null }> {
@@ -62,3 +90,18 @@ export async function applyDiscountCode(code: string): Promise<{ success: boolea
     return { success: true, percentage: discount.percentage }
 }
 
+function getFilterCondition(filter: string) {
+    const now = new Date();
+    const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+    switch (filter) {
+        case 'active':
+            return { expirationDate: { gt: now } };
+        case 'expiring':
+            return { expirationDate: { gt: now, lte: sevenDaysFromNow } };
+        case 'expired':
+            return { expirationDate: { lte: now } };
+        default:
+            return {};
+    }
+}

@@ -3,6 +3,7 @@
 import { addDays, startOfMonth, endOfMonth } from 'date-fns'
 import { generateDiscountCode } from './generateDiscount'
 import { prisma } from '@/lib/prisma'
+import { revalidatePath } from 'next/cache'
 
 export interface User {
     id: string | null
@@ -82,6 +83,57 @@ export async function createDiscount({
     }
 }
 
+export async function editDiscount(discountId: string, data: {
+    userIds: string[];
+    percentage: number;
+    startDate: Date;
+    expirationDate: Date;
+    customCode?: string;
+}) {
+    try {
+        // Find the existing discount
+        const existingDiscount = await prisma.discount.findUnique({
+            where: { id: discountId },
+            include: { users: true }
+        });
+
+        if (!existingDiscount) {
+            throw new Error('Discount not found');
+        }
+
+        // Update the discount
+        const updatedDiscount = await prisma.discount.update({
+            where: { id: discountId },
+            data: {
+                code: data.customCode || existingDiscount.code, // Use existing code if no new code provided
+                percentage: data.percentage,
+                startDate: data.startDate,
+                expirationDate: data.expirationDate,
+                users: {
+                    disconnect: existingDiscount.users.map(user => ({ id: user.id })),
+                    connect: data.userIds.map(id => ({ id }))
+                }
+            },
+            include: { users: true }
+        });
+
+        // Revalidate the discounts page to reflect the changes
+        revalidatePath('/discounts');
+
+        return {
+            success: true,
+            message: 'Discount updated successfully',
+            discount: updatedDiscount
+        };
+    } catch (error) {
+        console.error('Error updating discount:', error);
+        return {
+            success: false,
+            message: 'Failed to update discount',
+            error: error instanceof Error ? error.message : 'Unknown error'
+        };
+    }
+}
 export async function getDiscountSummary(): Promise<DiscountSummary> {
     const now = new Date()
     const sevenDaysFromNow = addDays(now, 7)

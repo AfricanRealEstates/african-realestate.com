@@ -70,6 +70,7 @@ export default function PaymentPricingPlans({
       title: "Advanced Agent",
       duration: "30 DAYS",
       description: "Everything in Bronze, plus enhanced visibility",
+      recommended: true,
       features: [
         "Everything in Bronze, Plus",
         "Special marketing campaign",
@@ -149,10 +150,19 @@ export default function PaymentPricingPlans({
         {tiers.map((tier, index) => (
           <Card
             key={tier.name}
-            className={`flex flex-col ${
+            className={`flex flex-col relative ${
               selectedTier === tier.name ? "ring-2 ring-blue-500" : ""
+            } ${
+              tier.recommended
+                ? "shadow-lg transform hover:scale-105 transition-transform duration-300"
+                : ""
             }`}
           >
+            {tier.recommended && (
+              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-blue-500 text-white text-xs font-semibold py-1 px-3 rounded-full">
+                Recommended
+              </div>
+            )}
             <CardHeader>
               <CardTitle className="text-xl text-blue-800">
                 {tier.title}
@@ -191,8 +201,15 @@ export default function PaymentPricingPlans({
                 variant={selectedTier === tier.name ? "default" : "outline"}
                 style={{
                   backgroundColor:
-                    selectedTier === tier.name ? "#3b82f6" : "transparent",
-                  color: selectedTier === tier.name ? "white" : "#3b82f6",
+                    selectedTier === tier.name
+                      ? "#3b82f6"
+                      : tier.recommended
+                      ? "#3b82f6"
+                      : "transparent",
+                  color:
+                    selectedTier === tier.name || tier.recommended
+                      ? "white"
+                      : "#3b82f6",
                   borderColor: "#3b82f6",
                 }}
                 onClick={() => handleTierSelection(tier.name)}

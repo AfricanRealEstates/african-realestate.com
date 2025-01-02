@@ -47,11 +47,23 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { DatePicker } from "./DatePicker";
 import { cn } from "@/lib/utils";
 
 import {
   createDiscount,
+  editDiscount,
   searchUsers,
   getDiscountSummary,
   getDiscounts,
@@ -68,7 +80,16 @@ const createDiscountSchema = z
   .object({
     userCategory: z.enum(["selected", "all", "new"]),
     userIds: z.array(z.string()).optional(),
-    percentage: z.number().min(1).max(100),
+    percentage: z
+      .number()
+      .min(1)
+      .max(100)
+      .or(
+        z
+          .string()
+          .regex(/^\d+(\.\d)?$/)
+          .transform(Number)
+      ),
     startDate: z.date(),
     expirationDate: z.date(),
     customCode: z.string().optional(),
@@ -103,13 +124,17 @@ export default function DiscountsManager() {
   const [newSignupEndDate, setNewSignupEndDate] = useState<Date>(
     endOfMonth(new Date())
   );
+  const [editingDiscountId, setEditingDiscountId] = useState<string | null>(
+    null
+  );
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<CreateDiscountFormValues>({
     resolver: zodResolver(createDiscountSchema),
     defaultValues: {
       userCategory: "selected",
       userIds: [],
-      percentage: 0,
+      percentage: undefined,
       startDate: new Date(),
       expirationDate: undefined,
       customCode: "",
@@ -208,7 +233,10 @@ export default function DiscountsManager() {
     }
   };
 
-  const handleCreateDiscount = async (values: CreateDiscountFormValues) => {
+  const handleCreateOrEditDiscount = async (
+    values: CreateDiscountFormValues
+  ) => {
+    setIsSubmitting(true);
     try {
       let userIds: string[] = [];
       if (values.userCategory === "selected") {
@@ -231,24 +259,34 @@ export default function DiscountsManager() {
           .filter((id): id is string => id !== null);
       }
 
-      const discount = await createDiscount({
+      const discountData = {
         userIds,
         percentage: values.percentage,
         startDate: values.startDate,
         expirationDate: values.expirationDate,
         customCode: values.customCode,
-      });
+      };
 
-      if (discount) {
-        toast.success(`Discount code created: ${discount.code}`);
+      let result: any;
+      if (editingDiscountId) {
+        result = await editDiscount(editingDiscountId, discountData);
+      } else {
+        result = await createDiscount(discountData);
+      }
+
+      if (result.success) {
+        toast.success(result.message);
         setSelectedUsers([]);
         form.reset();
+        setEditingDiscountId(null);
         fetchDiscountSummary();
         fetchDiscounts();
       }
     } catch (error) {
-      console.error("Error creating discount:", error);
-      toast.error("Failed to create discount code");
+      console.error("Error creating/editing discount:", error);
+      toast.error("Failed to create/edit discount code");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -285,17 +323,40 @@ export default function DiscountsManager() {
     }
   };
 
+  const handleEditDiscount = (discount: Discount) => {
+    setEditingDiscountId(discount.id);
+    form.reset({
+      userCategory: "selected",
+      userIds: discount.users
+        .map((u) => u.id)
+        .filter((id): id is string => id !== null),
+      percentage: discount.percentage,
+      startDate: new Date(discount.startDate),
+      expirationDate: new Date(discount.expirationDate),
+      customCode: discount.code,
+    });
+    setSelectedUsers(discount.users);
+    setUserCategory("selected");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <div className="space-y-8">
       <Card>
         <CardHeader>
-          <CardTitle>Generate Discount Code</CardTitle>
+          <CardTitle>
+            {editingDiscountId
+              ? "Edit Discount Code"
+              : "Generate Discount Code"}
+          </CardTitle>
           <CardDescription>
-            Search for users and create a discount code
+            {editingDiscountId
+              ? "Modify the discount code details"
+              : "Search for users and create a discount code"}
           </CardDescription>
         </CardHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleCreateDiscount)}>
+          <form onSubmit={form.handleSubmit(handleCreateOrEditDiscount)}>
             <CardContent className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               <FormField
                 control={form.control}
@@ -308,7 +369,7 @@ export default function DiscountsManager() {
                         setUserCategory(value as "selected" | "all" | "new");
                         field.onChange(value);
                       }}
-                      defaultValue={userCategory}
+                      value={userCategory}
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select user category" />
@@ -474,16 +535,12 @@ export default function DiscountsManager() {
                     <FormLabel>Discount Percentage</FormLabel>
                     <FormControl>
                       <Input
-                        type="number"
-                        min="1"
-                        max="100"
+                        type="text"
                         placeholder="Enter discount percentage"
                         {...field}
                         onChange={(e) => {
                           const value =
-                            e.target.value === ""
-                              ? undefined
-                              : Number(e.target.value);
+                            e.target.value === "" ? undefined : e.target.value;
                           field.onChange(value);
                         }}
                       />
@@ -533,9 +590,55 @@ export default function DiscountsManager() {
               <Button
                 type="submit"
                 className="bg-blue-400 text-white hover:bg-blue-300 transition-all"
+                disabled={isSubmitting}
               >
-                Create Discount Code
+                {isSubmitting ? (
+                  <>
+                    <span className="mr-2">
+                      <svg
+                        className="animate-spin h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                    </span>
+                    {editingDiscountId ? "Updating..." : "Creating..."}
+                  </>
+                ) : editingDiscountId ? (
+                  "Update Discount Code"
+                ) : (
+                  "Create Discount Code"
+                )}
               </Button>
+              {editingDiscountId && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setEditingDiscountId(null);
+                    form.reset();
+                    setSelectedUsers([]);
+                    setUserCategory("selected");
+                  }}
+                  className="ml-2"
+                >
+                  Cancel Edit
+                </Button>
+              )}
             </CardFooter>
           </form>
         </Form>
@@ -631,6 +734,15 @@ export default function DiscountsManager() {
                   </TableCell>
                   <TableCell>
                     <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleEditDiscount(discount)}
+                      disabled={new Date(discount.expirationDate) <= new Date()}
+                      className="mr-2"
+                    >
+                      Edit
+                    </Button>
+                    <Button
                       variant="destructive"
                       size="sm"
                       onClick={() => handleRevokeDiscount(discount.id)}
@@ -639,14 +751,35 @@ export default function DiscountsManager() {
                       Revoke
                     </Button>
                     {new Date(discount.expirationDate) <= new Date() && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDeleteRevokedDiscount(discount.id)}
-                        className="ml-2"
-                      >
-                        Delete
-                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="outline" size="sm" className="ml-2">
+                            Delete
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Are you absolutely sure?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will
+                              permanently delete the discount code and remove it
+                              from our servers.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() =>
+                                handleDeleteRevokedDiscount(discount.id)
+                              }
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     )}
                   </TableCell>
                 </TableRow>

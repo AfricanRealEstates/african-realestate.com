@@ -29,9 +29,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import PaystackButton from "./PaystackButton";
 import { FeatureList } from "./FeatureList";
-import { getUserDiscount, applyDiscountCode } from "./discountActions";
+import { applyDiscountCode, getUserDiscounts } from "./discountActions";
 import { toast } from "sonner";
 
 export type PropertyCountRange =
@@ -53,6 +54,15 @@ interface PricingPlanModalProps {
   };
 }
 
+interface Discount {
+  id: string;
+  code: string;
+  percentage: number;
+  startDate: Date;
+  expirationDate: Date;
+  createdAt: Date;
+}
+
 export default function PricingPlanModal({
   isOpen,
   onClose,
@@ -66,14 +76,21 @@ export default function PricingPlanModal({
   const [discountCode, setDiscountCode] = useState<string>("");
   const [discountError, setDiscountError] = useState<string | null>(null);
   const [isApplyingDiscount, setIsApplyingDiscount] = useState(false);
+  const [userDiscounts, setUserDiscounts] = useState<Discount[]>([]);
+  const [selectedDiscount, setSelectedDiscount] = useState<Discount | null>(
+    null
+  );
 
   useEffect(() => {
-    async function fetchDiscount() {
-      const { percentage, code } = await getUserDiscount();
-      setDiscountPercentage(percentage);
-      setDiscountCode(code || "");
+    async function fetchDiscounts() {
+      const result = await getUserDiscounts();
+      if (result.success && result.discounts) {
+        setUserDiscounts(result.discounts);
+      } else {
+        toast.error(result.message || "Failed to fetch discounts");
+      }
     }
-    fetchDiscount();
+    fetchDiscounts();
   }, []);
 
   const propertyCount = selectedProperties.length;
@@ -94,6 +111,12 @@ export default function PricingPlanModal({
     setSelectedTier(tierName);
   };
 
+  const handleDiscountSelection = (discount: Discount) => {
+    setSelectedDiscount(discount);
+    setDiscountCode(discount.code);
+    setDiscountPercentage(discount.percentage);
+  };
+
   const handleApplyDiscount = async () => {
     setIsApplyingDiscount(true);
     setDiscountError(null);
@@ -102,6 +125,7 @@ export default function PricingPlanModal({
       if (result.success) {
         setDiscountPercentage(result.percentage ?? null);
         setDiscountCode("");
+        toast.success("Discount applied successfully");
       } else {
         toast.error(
           result.message ?? "An error occurred while applying the discount."
@@ -139,6 +163,7 @@ export default function PricingPlanModal({
       title: "Advanced Agent",
       duration: "30 DAYS",
       description: "Everything in Bronze, plus enhanced visibility",
+      recommended: true,
       features: [
         "Everything in Bronze, Plus",
         "Special marketing campaign",
@@ -233,6 +258,33 @@ export default function PricingPlanModal({
             </Select>
           </div>
 
+          {userDiscounts.length > 0 && (
+            <div className="flex flex-wrap justify-center gap-2 mb-4">
+              {userDiscounts.map((discount) => {
+                const isActive =
+                  new Date(discount.startDate) <= new Date() &&
+                  new Date(discount.expirationDate) >= new Date();
+                return (
+                  <Badge
+                    key={discount.id}
+                    variant={
+                      selectedDiscount?.id === discount.id
+                        ? "default"
+                        : "outline"
+                    }
+                    className={`cursor-pointer ${isActive ? "" : "opacity-50"}`}
+                    onClick={() =>
+                      isActive && handleDiscountSelection(discount)
+                    }
+                  >
+                    {discount.code} - {discount.percentage}% OFF
+                    {!isActive && " (Inactive)"}
+                  </Badge>
+                );
+              })}
+            </div>
+          )}
+
           <div className="flex w-full max-w-sm items-center space-x-2">
             <Input
               type="text"
@@ -282,10 +334,19 @@ export default function PricingPlanModal({
           {tiers.map((tier, index) => (
             <Card
               key={tier.name}
-              className={`flex flex-col w-full ${
+              className={`flex flex-col w-full relative ${
                 selectedTier === tier.name ? "ring-2 ring-blue-500" : ""
+              } ${
+                tier.recommended
+                  ? "shadow-lg transform hover:scale-105 transition-transform duration-300"
+                  : ""
               }`}
             >
+              {tier.recommended && (
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-blue-500 text-white text-xs font-semibold py-1 px-3 rounded-full">
+                  Recommended
+                </div>
+              )}
               <CardHeader>
                 <CardTitle className="text-xl text-blue-800">
                   {tier.title}
@@ -332,8 +393,15 @@ export default function PricingPlanModal({
                   variant={selectedTier === tier.name ? "default" : "outline"}
                   style={{
                     backgroundColor:
-                      selectedTier === tier.name ? "#3b82f6" : "transparent",
-                    color: selectedTier === tier.name ? "white" : "#3b82f6",
+                      selectedTier === tier.name
+                        ? "#3b82f6"
+                        : tier.recommended
+                        ? "#3b82f6"
+                        : "transparent",
+                    color:
+                      selectedTier === tier.name || tier.recommended
+                        ? "white"
+                        : "#3b82f6",
                     borderColor: "#3b82f6",
                   }}
                   onClick={() => handleTierSelection(tier.name)}

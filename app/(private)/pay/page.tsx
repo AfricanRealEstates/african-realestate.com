@@ -85,13 +85,7 @@ export default async function PayPage() {
 
   const properties = await getProperties(userId, isAdmin);
 
-  const config = {
-    reference: new Date().getTime().toString(),
-    email: "user@example.com",
-    amount: 20000, //Amount is in the country's lowest currency. E.g Kobo, so 20000 kobo = N200
-    publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY as string,
-    currency: "KES",
-  };
+  //
 
   return (
     <div className="py-24 lg:py-32">

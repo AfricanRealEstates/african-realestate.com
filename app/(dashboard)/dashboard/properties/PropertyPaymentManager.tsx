@@ -26,7 +26,7 @@ export default function PropertyPaymentManager({
 
   const { unpaidPropertiesCount, totalPropertiesCount } = useMemo(() => {
     const unpaidCount = properties.filter(
-      (property) => !property.isActive
+      (property) => property.isActive
     ).length;
     return {
       unpaidPropertiesCount: unpaidCount,

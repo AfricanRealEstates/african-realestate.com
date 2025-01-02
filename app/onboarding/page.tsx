@@ -277,16 +277,15 @@ export default function Onboarding() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <h3 className="text-lg font-semibold mb-4">
+              {/* <h3 className="text-lg font-semibold mb-4">
                 Role Updated Successfully
-              </h3>
+              </h3> */}
               <p className="mb-6">
-                Your role has been updated to{" "}
+                Congratulations for upgrade to
                 <strong className="text-emerald-500 bg-emerald-50">
-                  {selectedRole}
+                  {selectedRole}. Welcome to African Real Estate team.
                 </strong>
-                . You will be logged out in a few seconds. Please log in again
-                to access all the features associated with your new role.
+                Please log in again to continue.
               </p>
             </motion.div>
           )}
