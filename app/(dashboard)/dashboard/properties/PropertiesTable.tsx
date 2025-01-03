@@ -25,6 +25,13 @@ import Link from "next/link";
 import IconMenu from "@/components/globals/icon-menu";
 import { deleteProperty } from "./deleteProperty";
 import { formatDate } from "date-fns";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface PropertiesTableProps {
   properties: Property[];
@@ -38,18 +45,24 @@ export default function PropertiesTable({
   onPropertySelect,
 }: PropertiesTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
-  const propertiesPerPage = 10;
-  const totalPages = Math.ceil(properties.length / propertiesPerPage);
 
+  const [propertiesPerPage, setPropertiesPerPage] = useState(10);
+
+  const totalPages = Math.ceil(properties.length / propertiesPerPage);
   const indexOfLastProperty = currentPage * propertiesPerPage;
   const indexOfFirstProperty = indexOfLastProperty - propertiesPerPage;
   const currentProperties = properties.slice(
     indexOfFirstProperty,
-    indexOfLastProperty
+    Math.min(indexOfLastProperty, indexOfFirstProperty + 5)
   );
 
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
+  };
+
+  const handlePropertiesPerPageChange = (value: string) => {
+    setPropertiesPerPage(Number(value));
+    setCurrentPage(1);
   };
 
   return (
@@ -202,7 +215,23 @@ export default function PropertiesTable({
           </tbody>
         </table>
       </div>
+
       <div className="flex items-center justify-between px-4 py-3 sm:px-6">
+        <div className="flex items-center">
+          <Select
+            onValueChange={handlePropertiesPerPageChange}
+            defaultValue="10"
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Properties per page" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="10">10 per page</SelectItem>
+              <SelectItem value="20">20 per page</SelectItem>
+              <SelectItem value="30">30 per page</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
         <div className="flex flex-1 justify-between sm:hidden">
           <Button
             onClick={() => handlePageChange(currentPage - 1)}
@@ -237,7 +266,7 @@ export default function PropertiesTable({
               aria-label="Pagination"
             >
               <Button
-                onClick={() => handlePageChange(currentPage - 1)}
+                onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
                 variant="outline"
                 className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
@@ -245,20 +274,38 @@ export default function PropertiesTable({
                 <span className="sr-only">Previous</span>
                 <ChevronLeft className="h-5 w-5" aria-hidden="true" />
               </Button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (page) => (
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                const pageNumber =
+                  currentPage <= 3 ? i + 1 : currentPage - 2 + i;
+                return pageNumber <= totalPages ? (
                   <Button
-                    key={page}
-                    onClick={() => handlePageChange(page)}
-                    variant={currentPage === page ? "default" : "outline"}
+                    key={pageNumber}
+                    onClick={() => handlePageChange(pageNumber)}
+                    variant={currentPage === pageNumber ? "default" : "outline"}
                     className="relative inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                   >
-                    {page}
+                    {pageNumber}
                   </Button>
-                )
+                ) : null;
+              })}
+              {totalPages > 5 && currentPage < totalPages - 2 && (
+                <>
+                  <span className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0">
+                    ...
+                  </span>
+                  <Button
+                    onClick={() => handlePageChange(totalPages)}
+                    variant="outline"
+                    className="relative inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  >
+                    {totalPages}
+                  </Button>
+                </>
               )}
               <Button
-                onClick={() => handlePageChange(currentPage + 1)}
+                onClick={() =>
+                  handlePageChange(Math.min(totalPages, currentPage + 1))
+                }
                 disabled={currentPage === totalPages}
                 variant="outline"
                 className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"

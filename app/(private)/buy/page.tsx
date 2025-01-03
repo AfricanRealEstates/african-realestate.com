@@ -1,25 +1,13 @@
 import { Suspense } from "react";
 import { Raleway } from "next/font/google";
 import { getSEOTags } from "@/lib/seo";
-import { getProperties } from "@/lib/getProperties";
-import dynamic from "next/dynamic";
 import Loader from "@/components/globals/loader";
 import { PropertyData } from "@/lib/types";
 import SortingOptions from "@/app/search/SortingOptions";
-
-const PropertyFilter = dynamic(
-  () => import("@/components/properties/PropertyFilter"),
-  {
-    loading: () => <Loader />,
-  }
-);
-
-const PropertyCard = dynamic(
-  () => import("@/components/properties/new/PropertyCard"),
-  {
-    loading: () => <Loader />,
-  }
-);
+import PropertyFilter from "@/components/properties/PropertyFilter";
+import dynamic from "next/dynamic";
+import { getProperties } from "./getProperties";
+import InfiniteScrollLoader from "./InfiniteScrollLoader";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -32,6 +20,10 @@ export const metadata = getSEOTags({
   canonicalUrlRelative: "/buy",
 });
 
+const InfinitePropertyList = dynamic(() => import("./InfinitePropertyList"), {
+  loading: () => <InfiniteScrollLoader />,
+});
+
 export default async function BuyPage({
   searchParams,
 }: {
@@ -41,7 +33,7 @@ export default async function BuyPage({
   const order = (searchParams.order as string) || "desc";
   const status = "sale";
 
-  const properties = await getProperties(searchParams, status);
+  const initialProperties = await getProperties(searchParams, status, 1, 12); // Load first 12 properties
 
   const isFiltered = Object.keys(searchParams).some((key) =>
     [
@@ -68,22 +60,15 @@ export default async function BuyPage({
           currentSort={sort}
           currentOrder={order}
           currentStatus={status}
-          isActive={isFiltered || properties.length > 0}
+          isActive={isFiltered || initialProperties.length > 0}
         />
       </article>
-      <Suspense fallback={<Loader />}>
-        {properties.length === 0 ? (
-          <div className="flex h-full items-center justify-center mt-8">
-            No properties matched your search query. Please try again with a
-            different term.
-          </div>
-        ) : (
-          <section className="mx-auto mb-8 gap-8 grid w-full grid-cols-[repeat(auto-fill,minmax(335px,1fr))] justify-center">
-            {properties.map((property) => (
-              <PropertyCard data={property as PropertyData} key={property.id} />
-            ))}
-          </section>
-        )}
+      <Suspense fallback={<InfiniteScrollLoader />}>
+        <InfinitePropertyList
+          initialProperties={initialProperties}
+          searchParams={searchParams}
+          status={status}
+        />
       </Suspense>
     </div>
   );
