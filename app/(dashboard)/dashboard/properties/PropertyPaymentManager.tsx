@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useMemo } from "react";
 import { Property } from "@prisma/client";
 import PropertiesTable from "./PropertiesTable";
@@ -22,17 +21,19 @@ export default function PropertyPaymentManager({
 }: PropertyPaymentManagerProps) {
   const [selectedProperties, setSelectedProperties] = useState<string[]>([]);
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
-  const [showUnpaidProperties, setShowUnpaidProperties] = useState(false);
+  const [viewMode, setViewMode] = useState<"unpaid" | "paid" | "all">("unpaid");
 
-  const { unpaidPropertiesCount, totalPropertiesCount } = useMemo(() => {
-    const unpaidCount = properties.filter(
-      (property) => property.isActive
-    ).length;
-    return {
-      unpaidPropertiesCount: unpaidCount,
-      totalPropertiesCount: properties.length,
-    };
-  }, [properties]);
+  const { unpaidPropertiesCount, paidPropertiesCount, totalPropertiesCount } =
+    useMemo(() => {
+      const unpaidCount = properties.filter(
+        (property) => !property.isActive // Inactive = Unpaid
+      ).length;
+      return {
+        unpaidPropertiesCount: unpaidCount,
+        paidPropertiesCount: properties.length - unpaidCount,
+        totalPropertiesCount: properties.length,
+      };
+    }, [properties]);
 
   const handlePropertySelect = (propertyId: string, isSelected: boolean) => {
     setSelectedProperties((prev) =>
@@ -42,21 +43,26 @@ export default function PropertyPaymentManager({
     );
   };
 
-  const togglePropertyView = () => {
-    setShowUnpaidProperties((prev) => !prev);
-  };
-
-  const filteredProperties = properties.filter((property) =>
-    showUnpaidProperties ? !property.isActive : property.isActive
-  );
+  const filteredProperties = useMemo(() => {
+    switch (viewMode) {
+      case "unpaid":
+        return properties.filter((property) => !property.isActive); // Unpaid = Inactive
+      case "paid":
+        return properties.filter((property) => property.isActive); // Paid = Active
+      case "all":
+      default:
+        return properties;
+    }
+  }, [properties, viewMode]);
 
   return (
     <div>
       <PropertyPaymentCTA
         unpaidPropertiesCount={unpaidPropertiesCount}
+        paidPropertiesCount={paidPropertiesCount}
         totalPropertiesCount={totalPropertiesCount}
-        showUnpaidProperties={showUnpaidProperties}
-        onTogglePropertyView={togglePropertyView}
+        viewMode={viewMode}
+        onChangeViewMode={setViewMode}
       />
       {filteredProperties.length > 0 ? (
         <>
@@ -76,9 +82,11 @@ export default function PropertyPaymentManager({
       ) : (
         <div className="text-center py-8">
           <p className="text-gray-500">
-            {showUnpaidProperties
-              ? "Great job! All your properties are paid and published."
-              : "You don't have any paid properties yet. Pay for your properties to publish them."}
+            {viewMode === "unpaid"
+              ? "Great job! All your properties are paid."
+              : viewMode === "paid"
+              ? "You don't have any paid properties yet. Pay for your properties to publish them."
+              : "You don't have any properties yet."}
           </p>
         </div>
       )}

@@ -9,16 +9,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserRole {
-  USER
-  AGENT
-  AGENCY
-  ADMIN
-  SUPPORT
-}
-
 model User {
-  id                String          @id @default(dbgenerated("concat('user_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
+  id                String          @id @default(dbgenerated("concat('user_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
   name              String?
   username          String?
   email             String?         @unique
@@ -29,7 +21,6 @@ model User {
   password          String?
   isVerified        Boolean         @default(false)
   isActive          Boolean         @default(true)
-  suspensionEndDate DateTime?
   token             Int?
   agentName         String?
   agentEmail        String?
@@ -48,54 +39,54 @@ model User {
   youtubeLink       String?
   linkedinLink      String?
   instagramLink     String?
-  showAgentContact  Boolean?        @default(false) // moved from property
+  showAgentContact  Boolean?        @default(false)
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
   isPremium         Boolean         @default(false)
-  accounts          Account[]
-  sessions          Session[]
-  properties        Property[]
-  queries           Query[]
-  subscriptions     Subscription[]
-  orders            Order[]
-  likes             Like[]
   favoriteIds       String[]
-  ratings           Rating[]
-  saved             SavedProperty[]
+  suspensionEndDate DateTime?
   comments          Comment[]
-  followedBy        Follows[]       @relation("following")
   following         Follows[]       @relation("follower")
-  upvotes           Upvote[]
+  followedBy        Follows[]       @relation("following")
+  likes             Like[]
   notifications     Notification[]
   viewedProperties  PropertyView[]
-  likedPosts        BlogPost[]      @relation("UserLikedPosts")
+  ratings           Rating[]
+  saved             SavedProperty[]
+  upvotes           Upvote[]
+  accounts          Account[]
+  orders            Order[]
+  properties        Property[]
+  queries           Query[]
+  sessions          Session[]
+  subscriptions     Subscription[]
   discounts         Discount[]      @relation("UserDiscounts")
+  likedPosts        BlogPost[]      @relation("UserLikedPosts")
 
   @@map("users")
 }
 
 model Account {
-  id                String  @id @default(dbgenerated("concat('account_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
+  id                String  @id @default(dbgenerated("concat('account_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
   userId            String
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
 }
 
 model Session {
-  id           String   @id @default(dbgenerated("concat('session_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
+  id           String   @id @default(dbgenerated("concat('session_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
   sessionToken String   @unique
   userId       String
   expires      DateTime
@@ -114,16 +105,15 @@ model VerificationToken {
 }
 
 model propertyDetail {
-  id   String @id @default(dbgenerated("concat('propertyDetail_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
+  id   String @id @default(dbgenerated("concat('propertyDetail_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
   name String @unique
 }
 
 model Property {
-  id                     String   @id @default(dbgenerated("concat('property_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
-  propertyNumber         Int      @unique
+  id                     String          @id @default(dbgenerated("concat('property_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
+  propertyNumber         Int             @unique
   userId                 String
-  user                   User     @relation(fields: [userId], references: [id])
-  slug                   String?  @unique
+  slug                   String?         @unique
   status                 String
   title                  String
   propertyType           String
@@ -152,21 +142,20 @@ model Property {
   surroundingFeatures    String[]
   images                 String[]
   coverPhotos            String[]
-  isAvailableForPurchase Boolean  @default(true)
-  isActive               Boolean  @default(true)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  queries       Query[]
-  orders        Order[]
-  likes         Like[]
-  ratings       Rating[]
-  savedBy       SavedProperty[]
-  comments      Comment[]
-  upvotes       Upvote[]
-  notifications Notification[]
-  views         PropertyView[]
+  isAvailableForPurchase Boolean         @default(true)
+  isActive               Boolean         @default(false)
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+  comments               Comment[]
+  likes                  Like[]
+  notifications          Notification[]
+  views                  PropertyView[]
+  ratings                Rating[]
+  savedBy                SavedProperty[]
+  upvotes                Upvote[]
+  orders                 Order[]
+  user                   User            @relation(fields: [userId], references: [id])
+  queries                Query[]
 
   @@map("properties")
 }
@@ -181,39 +170,37 @@ model PropertyNumberSequence {
 model PropertyView {
   id         String   @id @default(cuid())
   propertyId String
-  property   Property @relation(fields: [propertyId], references: [id])
   userId     String?
-  user       User?    @relation(fields: [userId], references: [id])
   deviceType String
   browser    String
   os         String
   country    String?
   city       String?
   viewedAt   DateTime @default(now())
+  property   Property @relation(fields: [propertyId], references: [id])
+  user       User?    @relation(fields: [userId], references: [id])
 
   @@index([propertyId])
   @@index([userId])
 }
 
 model Discount {
-  id             String   @id @default(dbgenerated("concat('discount_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
+  id             String   @id @default(dbgenerated("concat('discount_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
   code           String   @unique
   percentage     Int
   startDate      DateTime
   expirationDate DateTime
-  users          User[]   @relation("UserDiscounts")
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+  users          User[]   @relation("UserDiscounts")
 
   @@map("discounts")
 }
 
 model Query {
-  id         String   @id @default(dbgenerated("concat('query_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
+  id         String   @id @default(dbgenerated("concat('query_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
   userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   propertyId String
-  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   name       String
   email      String
   phone      String
@@ -221,32 +208,33 @@ model Query {
   message    String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("queries")
 }
 
 model Subscription {
-  id        String   @id @default(dbgenerated("concat('subscription_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
+  id        String   @id @default(dbgenerated("concat('subscription_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   plan      Json
   paymentId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("subscriptions")
 }
 
 model Order {
-  id        String   @id @default(dbgenerated("concat('order_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
-  pricePaid Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  id         String   @id @default(dbgenerated("concat('order_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
+  pricePaid  Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
   userId     String
   propertyId String
+  property   Property @relation(fields: [propertyId], references: [id])
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  property   Property @relation(fields: [propertyId], references: [id], onDelete: Restrict)
 
   @@map("orders")
 }
@@ -277,26 +265,19 @@ model Rating {
   id         Int      @id @default(autoincrement())
   ratings    Decimal
   propertyId String
-  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   userId     String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
-
-// plan   Plan
-// planId String
-// startDate DateTime @default(now())
-// endDate   DateTime
-// isActive  Boolean  @default(true)
 
 model Like {
   id         String   @id @default(cuid())
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   propertyId String
   userId     String
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([propertyId, userId])
   @@index([userId])
@@ -306,11 +287,10 @@ model SavedProperty {
   id         String   @id @default(cuid())
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   propertyId String
   userId     String
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([propertyId, userId])
   @@index([userId])
@@ -319,11 +299,11 @@ model SavedProperty {
 model Upvote {
   id         String   @id @default(cuid())
   propertyId String
-  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   userId     String
-  user       User     @relation(fields: [userId], references: [id])
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id])
 }
 
 model Comment {
@@ -332,21 +312,17 @@ model Comment {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   body           String
-  property       Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   propertyId     String
   userId         String
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  // @@index([propertyId])
-  // @@index([userId])
+  property       Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Follows {
-  follower    User   @relation("follower", fields: [followerId], references: [id])
   followerId  String
-  following   User   @relation("following", fields: [followingId], references: [id])
   followingId String
+  follower    User   @relation("follower", fields: [followerId], references: [id])
+  following   User   @relation("following", fields: [followingId], references: [id])
 
   @@id([followerId, followingId])
   @@index([followerId])
@@ -356,16 +332,24 @@ model Follows {
 model Notification {
   id             String             @id @default(cuid())
   userId         String
-  user           User               @relation(fields: [userId], references: [id])
   body           String
   profilePicture String
   propertyId     String
   commentId      String?
-  property       Property           @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   type           NotificationType
   status         NotificationStatus @default(UNREAD)
   createdAt      DateTime           @default(now())
   updatedAt      DateTime           @updatedAt
+  property       Property           @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  user           User               @relation(fields: [userId], references: [id])
+}
+
+enum UserRole {
+  USER
+  AGENT
+  AGENCY
+  ADMIN
+  SUPPORT
 }
 
 enum Status {

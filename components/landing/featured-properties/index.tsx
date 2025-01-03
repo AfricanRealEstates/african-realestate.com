@@ -12,6 +12,9 @@ const lexend = Lexend({
 async function getProperties() {
   try {
     const properties = await prisma.property.findMany({
+      where: {
+        isActive: true, // Filter for active properties only
+      },
       orderBy: {
         updatedAt: "desc",
       },

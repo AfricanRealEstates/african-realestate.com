@@ -45,7 +45,6 @@ export default function PropertiesTable({
   onPropertySelect,
 }: PropertiesTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
-
   const [propertiesPerPage, setPropertiesPerPage] = useState(10);
 
   const totalPages = Math.ceil(properties.length / propertiesPerPage);
@@ -79,6 +78,7 @@ export default function PropertiesTable({
                       onPropertySelect(property.id, checked === true)
                     );
                   }}
+                  disabled={properties.some((property) => property.isActive)} // Disable Select All if any property is active
                 />
               </th>
               <th scope="col" className="px-6 py-3">
@@ -119,6 +119,7 @@ export default function PropertiesTable({
                     onCheckedChange={(checked) =>
                       onPropertySelect(property.id, checked === true)
                     }
+                    disabled={property.isActive} // Disable checkbox if property is active
                   />
                 </td>
                 <td className="px-6 py-4">{property.propertyNumber}</td>

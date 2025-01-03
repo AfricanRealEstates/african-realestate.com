@@ -1,21 +1,24 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { AlertCircle, CheckCircle } from "lucide-react";
 
 interface PropertyPaymentCTAProps {
   unpaidPropertiesCount: number;
+  paidPropertiesCount: number;
   totalPropertiesCount: number;
-  showUnpaidProperties: boolean;
-  onTogglePropertyView: () => void;
+  viewMode: "unpaid" | "paid" | "all";
+  onChangeViewMode: (mode: "unpaid" | "paid" | "all") => void;
 }
 
 export function PropertyPaymentCTA({
   unpaidPropertiesCount,
+  paidPropertiesCount,
   totalPropertiesCount,
-  showUnpaidProperties,
-  onTogglePropertyView,
+  viewMode,
+  onChangeViewMode,
 }: PropertyPaymentCTAProps) {
-  const paidPropertiesCount = totalPropertiesCount - unpaidPropertiesCount;
+  //const paidPropertiesCount = totalPropertiesCount - unpaidPropertiesCount;
 
   if (unpaidPropertiesCount === 0) {
     return (
@@ -58,16 +61,30 @@ export function PropertyPaymentCTA({
             </p>
           </div>
         </div>
-        <div className="ml-4">
+        <div className="ml-4 flex items-center space-x-2">
           <Button
-            onClick={onTogglePropertyView}
-            variant="outline"
+            onClick={() => onChangeViewMode("unpaid")}
+            variant={viewMode === "unpaid" ? "default" : "outline"}
             size="sm"
             className="bg-yellow-50 text-yellow-700 hover:bg-yellow-100"
           >
-            {showUnpaidProperties
-              ? `Show Paid (${paidPropertiesCount})`
-              : `Show Unpaid (${unpaidPropertiesCount})`}
+            Unpaid ({unpaidPropertiesCount})
+          </Button>
+          <Button
+            onClick={() => onChangeViewMode("paid")}
+            variant={viewMode === "paid" ? "default" : "outline"}
+            size="sm"
+            className="bg-yellow-50 text-yellow-700 hover:bg-yellow-100"
+          >
+            Paid ({paidPropertiesCount})
+          </Button>
+          <Button
+            onClick={() => onChangeViewMode("all")}
+            variant={viewMode === "all" ? "default" : "outline"}
+            size="sm"
+            className="bg-yellow-50 text-yellow-700 hover:bg-yellow-100"
+          >
+            All ({totalPropertiesCount})
           </Button>
         </div>
       </div>
