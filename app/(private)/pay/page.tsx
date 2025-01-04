@@ -85,7 +85,16 @@ export default async function PayPage() {
 
   const properties = await getProperties(userId, isAdmin);
 
-  //
+  const userOrders = await prisma.order.findMany({
+    where: {
+      userId: user.id,
+    },
+    orderBy: {
+      createdAt: "desc", // Sort by most recent
+    },
+  });
+
+  console.log(userOrders);
 
   return (
     <div className="py-24 lg:py-32">
@@ -96,6 +105,7 @@ export default async function PayPage() {
         <PropertyPaymentManager
           properties={userProperties}
           user={{
+            id: user.id || "",
             email: user.email || "",
             name: user.name || "",
             phone: user.phoneNumber || "",

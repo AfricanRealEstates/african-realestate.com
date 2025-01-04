@@ -9,6 +9,7 @@ import { PropertyPaymentCTA } from "./PropertyPaymentCTA";
 interface PropertyPaymentManagerProps {
   properties: Property[];
   user: {
+    id: string;
     email: string;
     name: string;
     phone: string;
@@ -71,7 +72,7 @@ export default function PropertyPaymentManager({
             selectedProperties={selectedProperties}
             onPropertySelect={handlePropertySelect}
           />
-          {selectedProperties.length > 0 && (
+          {selectedProperties.length > 0 && viewMode !== "paid" && (
             <div className="mt-4 text-center">
               <Button onClick={() => setIsPricingModalOpen(true)}>
                 Pay for Selected Properties ({selectedProperties.length})
@@ -83,7 +84,7 @@ export default function PropertyPaymentManager({
         <div className="text-center py-8">
           <p className="text-gray-500">
             {viewMode === "unpaid"
-              ? "Great job! All your properties are paid."
+              ? "No properties to pay for."
               : viewMode === "paid"
               ? "You don't have any paid properties yet. Pay for your properties to publish them."
               : "You don't have any properties yet."}

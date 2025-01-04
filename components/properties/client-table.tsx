@@ -59,11 +59,24 @@ export default function ClientTable({
       title: "Title",
       dataIndex: "title",
       key: "title",
-      render: (title: string, record: Property) => (
-        <Link href={`/properties/${record.propertyDetails}/${record.id}`}>
-          {title}
-        </Link>
+      render: (title: string, record: Property) =>
+        record.isActive ? (
+          <Link href={`/properties/${record.propertyDetails}/${record.id}`}>
+            {title}
+          </Link>
+        ) : (
+          <span className="text-gray-400 cursor-not-allowed">{title}</span>
+        ),
+    },
+
+    {
+      title: "Status",
+      dataIndex: "isActive",
+      key: "status",
+      render: (isActive: boolean) => (
+        <span>{isActive ? "Published" : "Draft"}</span>
       ),
+      responsive: ["md"],
     },
     {
       title: "Currency",

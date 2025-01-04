@@ -51,7 +51,10 @@ export async function getProperties(
         maxPrice,
     } = searchParams;
 
-    const where: any = { status };
+    const where: any = {
+        status,
+        isActive: true // Ensure only active properties are fetched
+    };
 
     if (propertyType) where.propertyType = propertyType;
     if (propertyDetails) where.propertyDetails = propertyDetails;

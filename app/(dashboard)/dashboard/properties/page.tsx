@@ -61,6 +61,7 @@ export default async function PropertiesPage({
             <PropertyPaymentManager
               properties={userProperties}
               user={{
+                id: user.id || "",
                 email: user.email || "",
                 name: user.name || "",
                 phone: user.phoneNumber || "",

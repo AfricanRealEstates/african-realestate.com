@@ -128,9 +128,22 @@ export default function PropertiesTable({
                   scope="row"
                   className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
                 >
-                  {property.title.length > 50
-                    ? `${property.title.substring(0, 50)}...`
-                    : property.title}
+                  {property.isActive ? (
+                    <Link
+                      href={`/properties/${property.propertyDetails}/${property.id}`}
+                      className="text-blue-600 hover:underline"
+                    >
+                      {property.title.length > 50
+                        ? `${property.title.substring(0, 50)}...`
+                        : property.title}
+                    </Link>
+                  ) : (
+                    <span className="text-gray-500 cursor-not-allowed">
+                      {property.title.length > 50
+                        ? `${property.title.substring(0, 50)}...`
+                        : property.title}
+                    </span>
+                  )}
                 </td>
 
                 <td className="px-6 py-4">{property.propertyDetails}</td>
@@ -143,7 +156,15 @@ export default function PropertiesTable({
                 </td>
                 <td className="px-6 py-4">{property.status}</td>
                 <td className="px-6 py-4">
-                  <Badge>{property.isActive ? "Paid" : "Unpaid"}</Badge>
+                  <Badge
+                    className={
+                      property.isActive
+                        ? "bg-emerald-500 hover:bg-emerald-600 text-green-300"
+                        : "bg-rose-500 hover:bg-red-600 text-rose-100"
+                    }
+                  >
+                    {property.isActive ? "Paid" : "Unpaid"}
+                  </Badge>
                 </td>
 
                 <td className="p-4 text-sm font-medium">

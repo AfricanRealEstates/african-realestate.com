@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Check, X } from "lucide-react";
 import {
   Dialog,
@@ -48,6 +48,7 @@ interface PricingPlanModalProps {
   onClose: () => void;
   selectedProperties: string[];
   user: {
+    id: string;
     email: string;
     name: string;
     phone: string;
@@ -226,6 +227,14 @@ export default function PricingPlanModal({
     return Math.round(baseAmount - discountedAmount);
   };
 
+  const handlePaymentSuccess = useCallback(
+    (reference: any) => {
+      toast.success("Payment successful! Your properties have been activated.");
+      onClose();
+    },
+    [onClose]
+  );
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[1200px] h-[90vh] overflow-y-auto">
@@ -260,11 +269,15 @@ export default function PricingPlanModal({
 
           {userDiscounts.length > 0 && (
             <div className="flex flex-wrap justify-center gap-2 mb-4">
-              {userDiscounts.map((discount) => {
-                const isActive =
-                  new Date(discount.startDate) <= new Date() &&
-                  new Date(discount.expirationDate) >= new Date();
-                return (
+              {userDiscounts
+                .filter((discount) => {
+                  const now = new Date();
+                  return (
+                    new Date(discount.startDate) <= now &&
+                    new Date(discount.expirationDate) >= now
+                  );
+                })
+                .map((discount) => (
                   <Badge
                     key={discount.id}
                     variant={
@@ -272,16 +285,12 @@ export default function PricingPlanModal({
                         ? "default"
                         : "outline"
                     }
-                    className={`cursor-pointer ${isActive ? "" : "opacity-50"}`}
-                    onClick={() =>
-                      isActive && handleDiscountSelection(discount)
-                    }
+                    className="cursor-pointer"
+                    onClick={() => handleDiscountSelection(discount)}
                   >
                     {discount.code} - {discount.percentage}% OFF
-                    {!isActive && " (Inactive)"}
                   </Badge>
-                );
-              })}
+                ))}
             </div>
           )}
 
@@ -427,11 +436,14 @@ export default function PricingPlanModal({
                 </p>
               )}
               <PaystackButton
+                propertyIds={selectedProperties}
                 amount={calculateTotalAmount(selectedTier)}
                 email={user.email}
                 name={user.name}
                 phone={user.phone}
-                currency="KES"
+                userId={user.id}
+                onClose={onClose}
+                onSuccess={handlePaymentSuccess}
               />
             </div>
           )}
