@@ -183,7 +183,7 @@ export default function Media({
       toast.success(
         isEdit ? "Property updated successfully" : "Property added successfully"
       );
-      router.push("/agent/properties");
+      router.push("/pay");
     } catch (error: any) {
       toast.error(
         isEdit ? "Failed to update property" : "Failed to create property"

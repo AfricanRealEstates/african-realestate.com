@@ -57,6 +57,9 @@ export default async function AgentDetails({
     where: { id },
     include: {
       properties: {
+        where: {
+          isActive: true, // Only fetch active properties
+        },
         orderBy: {
           updatedAt: "desc",
         },
@@ -248,6 +251,9 @@ export default async function AgentDetails({
                 </h2>
                 <span className="block mt-2 text-neutral-500 dark:text-neutral-400">
                   {agent.role === "AGENCY" ? agent.agentName : agent.name}
+                  {agent.role === "AGENT"
+                    ? agent.agentName
+                    : `${capitalizeWords(agent.name!)}`}
                   &apos;s listings are very rich, and 5-star reviews help them
                   to be more branded.
                 </span>
