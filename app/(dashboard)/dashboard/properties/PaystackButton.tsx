@@ -14,6 +14,7 @@ interface PaystackButtonProps {
   userId: string;
   onClose: () => void;
   onSuccess: (reference: any) => void;
+  onModalOpen: () => void;
 }
 
 export default function PaystackButton({
@@ -25,11 +26,12 @@ export default function PaystackButton({
   userId,
   onClose,
   onSuccess,
+  onModalOpen,
 }: PaystackButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const config = {
-    reference: new Date().getTime().toString(),
+    reference: (new Date()).getTime().toString(),
     email: email,
     amount: Math.round(amount * 100), // Convert to cents
     publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY!,
@@ -126,6 +128,7 @@ export default function PaystackButton({
       setIsLoading(false);
       onClose();
     } else {
+      onModalOpen(); // Call this function when Paystack modal is about to open
       initializePayment({ onSuccess: handleSuccess, onClose: handleClose });
     }
   }, [
@@ -137,6 +140,7 @@ export default function PaystackButton({
     userId,
     onSuccess,
     onClose,
+    onModalOpen,
   ]);
 
   return (
@@ -144,12 +148,11 @@ export default function PaystackButton({
       {isLoading
         ? "Processing..."
         : amount === 0
-        ? `Activate ${propertyIds.length} ${
-            propertyIds.length === 1 ? "Property" : "Properties"
+          ? `Activate ${propertyIds.length} ${propertyIds.length === 1 ? "Property" : "Properties"
           } for Free`
-        : `Pay for ${propertyIds.length} ${
-            propertyIds.length === 1 ? "Property" : "Properties"
+          : `Pay for ${propertyIds.length} ${propertyIds.length === 1 ? "Property" : "Properties"
           }`}
     </Button>
   );
 }
+
