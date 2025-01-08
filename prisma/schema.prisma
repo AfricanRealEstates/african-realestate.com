@@ -229,7 +229,6 @@ model Subscription {
 }
 
 model Order {
-  <<<<<<< HEAD
   id         String    @id @default(dbgenerated("concat('order_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
   pricePaid  Int
   createdAt  DateTime  @default(now())
@@ -239,16 +238,6 @@ model Order {
   propertyId String
   property   Property  @relation(fields: [propertyId], references: [id])
   user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  =======
-  id         String    @id @default(dbgenerated("concat('order_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
-  pricePaid  Int
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  userId     String
-  propertyId String
-  property   Property  @relation(fields: [propertyId], references: [id])
-  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  >>>>>>> f588dfc1d1d2f657f3c33a7620ad863c09c74e3e
 
   @@map("orders")
 }
