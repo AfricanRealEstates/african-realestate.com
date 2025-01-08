@@ -1,0 +1,373 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+  binaryTargets   = ["native", "rhel-openssl-1.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String          @id @default(dbgenerated("concat('user_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
+  name              String?
+  username          String?
+  email             String?         @unique
+  emailVerified     DateTime?
+  image             String?
+  role              UserRole        @default(USER)
+  permissions       String[]
+  password          String?
+  isVerified        Boolean         @default(false)
+  isActive          Boolean         @default(true)
+  token             Int?
+  agentName         String?
+  agentEmail        String?
+  agentLocation     String?
+  officeLine        String?
+  whatsappNumber    String?
+  phoneNumber       String?
+  address           String?
+  postalCode        String?
+  profilePhoto      String?
+  coverPhoto        String?
+  bio               String?
+  xLink             String?
+  tiktokLink        String?
+  facebookLink      String?
+  youtubeLink       String?
+  linkedinLink      String?
+  instagramLink     String?
+  showAgentContact  Boolean?        @default(false)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  isPremium         Boolean         @default(false)
+  favoriteIds       String[]
+  suspensionEndDate DateTime?
+  comments          Comment[]
+  following         Follows[]       @relation("follower")
+  followedBy        Follows[]       @relation("following")
+  likes             Like[]
+  notifications     Notification[]
+  viewedProperties  PropertyView[]
+  ratings           Rating[]
+  saved             SavedProperty[]
+  upvotes           Upvote[]
+  accounts          Account[]
+  orders            Order[]
+  properties        Property[]
+  queries           Query[]
+  sessions          Session[]
+  subscriptions     Subscription[]
+  discounts         Discount[]      @relation("UserDiscounts")
+  likedPosts        BlogPost[]      @relation("UserLikedPosts")
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(dbgenerated("concat('account_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(dbgenerated("concat('session_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model propertyDetail {
+  id   String @id @default(dbgenerated("concat('propertyDetail_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
+  name String @unique
+}
+
+model Property {
+  id                     String          @id @default(dbgenerated("concat('property_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
+  propertyNumber         Int             @unique
+  userId                 String
+  slug                   String?         @unique
+  status                 String
+  title                  String
+  propertyType           String
+  propertyDetails        String
+  description            String
+  price                  Float
+  leastPrice             Float?
+  currency               String
+  country                String
+  county                 String
+  locality               String
+  nearbyTown             String
+  district               String?
+  location               String?
+  bedrooms               Int?
+  bathrooms              Int?
+  yearsLeft              Int?
+  landSize               Float?
+  landUnits              String?
+  plinthArea             Int?
+  videoLink              String?
+  serviceCharge          Int?
+  parkings               String?
+  tenure                 String?
+  appliances             String[]
+  surroundingFeatures    String[]
+  images                 String[]
+  coverPhotos            String[]
+  isAvailableForPurchase Boolean         @default(true)
+  isActive               Boolean         @default(false)
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+  expiryDate             DateTime?
+  comments               Comment[]
+  likes                  Like[]
+  notifications          Notification[]
+  views                  PropertyView[]
+  ratings                Rating[]
+  savedBy                SavedProperty[]
+  upvotes                Upvote[]
+  orders                 Order[]
+  user                   User            @relation(fields: [userId], references: [id])
+  queries                Query[]
+
+  @@map("properties")
+}
+
+model PropertyNumberSequence {
+  id  Int @id @default(1)
+  seq Int @default(6999)
+
+  @@map("property_number_seq")
+}
+
+model PropertyView {
+  id         String   @id @default(cuid())
+  propertyId String
+  userId     String?
+  deviceType String
+  browser    String
+  os         String
+  country    String?
+  city       String?
+  viewedAt   DateTime @default(now())
+  property   Property @relation(fields: [propertyId], references: [id])
+  user       User?    @relation(fields: [userId], references: [id])
+
+  @@index([propertyId])
+  @@index([userId])
+}
+
+model Discount {
+  id             String   @id @default(dbgenerated("concat('discount_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
+  code           String   @unique
+  percentage     Int
+  startDate      DateTime
+  expirationDate DateTime
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  users          User[]   @relation("UserDiscounts")
+
+  @@map("discounts")
+}
+
+model Query {
+  id         String   @id @default(dbgenerated("concat('query_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
+  userId     String
+  propertyId String
+  name       String
+  email      String
+  phone      String
+  amount     Float
+  message    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("queries")
+}
+
+model Subscription {
+  id        String   @id @default(dbgenerated("concat('subscription_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
+  userId    String
+  plan      Json
+  paymentId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}
+
+model Order {
+  id         String    @id @default(dbgenerated("concat('order_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
+  pricePaid  Int
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  expiryDate DateTime?
+  userId     String
+  propertyId String
+  property   Property  @relation(fields: [propertyId], references: [id])
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("orders")
+}
+
+model Blog {
+  id         Int      @id @default(autoincrement())
+  slug       String   @unique
+  title      String
+  category   String
+  view_count Int      @default(1)
+  updatedAt  DateTime @default(now())
+}
+
+model BlogPost {
+  id      String @id @default(cuid())
+  slug    String @unique
+  likes   Int    @default(0)
+  likedBy User[] @relation("UserLikedPosts")
+}
+
+model Subscriber {
+  id            Int     @id @default(autoincrement())
+  email         String  @unique
+  is_subscribed Boolean @default(true)
+}
+
+model Rating {
+  id         Int      @id @default(autoincrement())
+  ratings    Decimal
+  propertyId String
+  userId     String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Like {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  propertyId String
+  userId     String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([propertyId, userId])
+  @@index([userId])
+}
+
+model SavedProperty {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  propertyId String
+  userId     String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([propertyId, userId])
+  @@index([userId])
+}
+
+model Upvote {
+  id         String   @id @default(cuid())
+  propertyId String
+  userId     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model Comment {
+  id             String   @id @default(cuid())
+  profilePicture String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  body           String
+  propertyId     String
+  userId         String
+  property       Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Follows {
+  followerId  String
+  followingId String
+  follower    User   @relation("follower", fields: [followerId], references: [id])
+  following   User   @relation("following", fields: [followingId], references: [id])
+
+  @@id([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+}
+
+model Notification {
+  id             String             @id @default(cuid())
+  userId         String
+  body           String
+  profilePicture String
+  propertyId     String
+  commentId      String?
+  type           NotificationType
+  status         NotificationStatus @default(UNREAD)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  property       Property           @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  user           User               @relation(fields: [userId], references: [id])
+}
+
+enum UserRole {
+  USER
+  AGENT
+  AGENCY
+  ADMIN
+  SUPPORT
+}
+
+enum Status {
+  PENDING
+  ACTIVE
+  REJECTED
+}
+
+enum NotificationStatus {
+  UNREAD
+  READ
+}
+
+enum NotificationType {
+  UPVOTE
+  COMMENT
+  ACTIVATED
+  REJECTED
+}
