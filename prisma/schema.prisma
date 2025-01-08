@@ -110,10 +110,10 @@ model propertyDetail {
 }
 
 model Property {
-  id                     String          @id @default(dbgenerated("concat('property_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
-  propertyNumber         Int             @unique
+  id                     String    @id @default(dbgenerated("concat('property_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
+  propertyNumber         Int       @unique
   userId                 String
-  slug                   String?         @unique
+  slug                   String?   @unique
   status                 String
   title                  String
   propertyType           String
@@ -142,21 +142,22 @@ model Property {
   surroundingFeatures    String[]
   images                 String[]
   coverPhotos            String[]
-  isAvailableForPurchase Boolean         @default(true)
-  isActive               Boolean         @default(false)
-  createdAt              DateTime        @default(now())
-  updatedAt              DateTime        @updatedAt
+  isAvailableForPurchase Boolean   @default(true)
+  isActive               Boolean   @default(false)
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
   expiryDate             DateTime?
-  comments               Comment[]
-  likes                  Like[]
-  notifications          Notification[]
-  views                  PropertyView[]
-  ratings                Rating[]
-  savedBy                SavedProperty[]
-  upvotes                Upvote[]
-  orders                 Order[]
-  user                   User            @relation(fields: [userId], references: [id])
-  queries                Query[]
+
+  comments      Comment[]
+  likes         Like[]
+  notifications Notification[]
+  views         PropertyView[]
+  ratings       Rating[]
+  savedBy       SavedProperty[]
+  upvotes       Upvote[]
+  orders        Order[]
+  user          User            @relation(fields: [userId], references: [id])
+  queries       Query[]
 
   @@map("properties")
 }
@@ -228,6 +229,7 @@ model Subscription {
 }
 
 model Order {
+  <<<<<<< HEAD
   id         String    @id @default(dbgenerated("concat('order_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
   pricePaid  Int
   createdAt  DateTime  @default(now())
@@ -237,6 +239,16 @@ model Order {
   propertyId String
   property   Property  @relation(fields: [propertyId], references: [id])
   user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  =======
+  id         String    @id @default(dbgenerated("concat('order_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
+  pricePaid  Int
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  userId     String
+  propertyId String
+  property   Property  @relation(fields: [propertyId], references: [id])
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  >>>>>>> f588dfc1d1d2f657f3c33a7620ad863c09c74e3e
 
   @@map("orders")
 }

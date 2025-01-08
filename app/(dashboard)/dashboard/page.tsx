@@ -12,7 +12,24 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+<<<<<<< HEAD
 import { Heart, Bookmark, Star, Home, ChevronRight, BarChart2, TrendingUp, Award, MoreVertical, Edit, Copy, Trash, DollarSign, ShoppingCart, CheckCircle, XCircle } from 'lucide-react';
+=======
+import {
+  Heart,
+  Bookmark,
+  Star,
+  Home,
+  ChevronRight,
+  BarChart2,
+  TrendingUp,
+  Award,
+  MoreVertical,
+  Edit,
+  Copy,
+  Trash,
+} from "lucide-react";
+>>>>>>> f588dfc1d1d2f657f3c33a7620ad863c09c74e3e
 import {
   getUserFavorites,
   getUserBookmarks,
@@ -20,8 +37,11 @@ import {
   getUserProperties,
   getUserStats,
   getPropertySummary,
+<<<<<<< HEAD
   getAdminSummary,
   getRecentOrders,
+=======
+>>>>>>> f588dfc1d1d2f657f3c33a7620ad863c09c74e3e
 } from "./data";
 import { auth } from "@/auth";
 import { deleteProperty } from "@/actions/deleteProperty";
@@ -47,6 +67,7 @@ export default async function Component({
   const stats = await getUserStats(user.id);
   const propertySummary = await getPropertySummary(user.id);
 
+<<<<<<< HEAD
   // Fetch admin summary and recent orders if user is an admin
   let adminSummary;
   let recentOrders;
@@ -55,6 +76,8 @@ export default async function Component({
     recentOrders = await getRecentOrders(page);
   }
 
+=======
+>>>>>>> f588dfc1d1d2f657f3c33a7620ad863c09c74e3e
   const currentHour = new Date().getHours();
   let greeting = "Good evening";
   if (currentHour < 12) {
@@ -77,6 +100,7 @@ export default async function Component({
       </header>
 
       <main className="container mx-auto px-4 py-6">
+<<<<<<< HEAD
         {user.role === 'ADMIN' && adminSummary && (
           <Card className="mb-6 bg-white shadow-md">
             <CardHeader className="p-4">
@@ -109,6 +133,8 @@ export default async function Component({
           </Card>
         )}
 
+=======
+>>>>>>> f588dfc1d1d2f657f3c33a7620ad863c09c74e3e
         <Card className="mb-6 bg-white shadow-md">
           <CardHeader className="p-4">
             <CardTitle className="text-lg">Your Property Summary</CardTitle>
@@ -173,6 +199,7 @@ export default async function Component({
                     <Star className="h-4 w-4 mr-1" />
                     <span className="hidden sm:inline">Ratings</span>
                   </TabsTrigger>
+<<<<<<< HEAD
                   {user.role === 'ADMIN' && (
                     <TabsTrigger
                       value="orders"
@@ -182,6 +209,8 @@ export default async function Component({
                       <span className="hidden sm:inline">Orders</span>
                     </TabsTrigger>
                   )}
+=======
+>>>>>>> f588dfc1d1d2f657f3c33a7620ad863c09c74e3e
                 </TabsList>
               </div>
               <div className="flex-grow overflow-y-auto">
@@ -215,6 +244,7 @@ export default async function Component({
                 <TabsContent value="ratings" className="h-full">
                   <RatingsList ratings={ratings} />
                 </TabsContent>
+<<<<<<< HEAD
                 {user.role === 'ADMIN' && recentOrders && (
                   <TabsContent value="orders" className="h-full">
                     <OrdersList
@@ -224,6 +254,8 @@ export default async function Component({
                     />
                   </TabsContent>
                 )}
+=======
+>>>>>>> f588dfc1d1d2f657f3c33a7620ad863c09c74e3e
               </div>
             </Tabs>
           </CardContent>
@@ -434,6 +466,7 @@ function RatingsList({ ratings }: { ratings: any[] }) {
     </div>
   );
 }
+<<<<<<< HEAD
 
 function OrdersList({
   orders,
@@ -486,3 +519,5 @@ function OrdersList({
     </div>
   );
 }
+=======
+>>>>>>> f588dfc1d1d2f657f3c33a7620ad863c09c74e3e

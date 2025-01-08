@@ -1,4 +1,5 @@
 -- -- AlterTable
+<<<<<<< HEAD
 ALTER TABLE "accounts" ALTER COLUMN "id" SET DEFAULT concat('account_', replace(cast(gen_random_uuid() as text), '-', ''));
 
 -- -- AlterTable
@@ -31,3 +32,37 @@ ALTER TABLE "users" ALTER COLUMN "id" SET DEFAULT concat('user_', replace(cast(g
 UPDATE "properties" SET "isActive" = false WHERE "isActive" = true;
 
 -- ALTER TABLE "properties" ALTER COLUMN "isActive" SET DEFAULT false;
+=======
+-- ALTER TABLE "accounts" ALTER COLUMN "id" SET DEFAULT concat('account_', replace(cast(gen_random_uuid() as text), '-', ''));
+
+-- -- AlterTable
+-- ALTER TABLE "discounts" ALTER COLUMN "id" SET DEFAULT concat('discount_', replace(cast(gen_random_uuid() as text), '-', ''));
+
+-- -- AlterTable
+-- ALTER TABLE "orders" ALTER COLUMN "id" SET DEFAULT concat('order_', replace(cast(gen_random_uuid() as text), '-', ''));
+
+-- -- AlterTable
+-- ALTER TABLE "properties" ALTER COLUMN "id" SET DEFAULT concat('property_', replace(cast(gen_random_uuid() as text), '-', '')),
+-- ALTER COLUMN "isActive" SET DEFAULT false;
+
+-- -- AlterTable
+-- ALTER TABLE "propertyDetail" ALTER COLUMN "id" SET DEFAULT concat('propertyDetail_', replace(cast(gen_random_uuid() as text), '-', ''));
+
+-- -- AlterTable
+-- ALTER TABLE "queries" ALTER COLUMN "id" SET DEFAULT concat('query_', replace(cast(gen_random_uuid() as text), '-', ''));
+
+-- -- AlterTable
+-- ALTER TABLE "sessions" ALTER COLUMN "id" SET DEFAULT concat('session_', replace(cast(gen_random_uuid() as text), '-', ''));
+
+-- -- AlterTable
+-- ALTER TABLE "subscriptions" ALTER COLUMN "id" SET DEFAULT concat('subscription_', replace(cast(gen_random_uuid() as text), '-', ''));
+
+-- -- AlterTable
+-- ALTER TABLE "users" ALTER COLUMN "id" SET DEFAULT concat('user_', replace(cast(gen_random_uuid() as text), '-', ''));
+
+
+-- Update existing properties
+-- UPDATE "properties" SET "isActive" = false WHERE "isActive" = true;
+
+ALTER TABLE "properties" ALTER COLUMN "isActive" SET DEFAULT false;
+>>>>>>> f588dfc1d1d2f657f3c33a7620ad863c09c74e3e

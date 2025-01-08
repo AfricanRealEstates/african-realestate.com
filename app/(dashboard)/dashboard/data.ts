@@ -160,64 +160,64 @@ export async function getPropertySummary(userId: string | undefined) {
 
 
 export async function getAdminSummary() {
-  const totalOrders = await prisma.order.count()
-  const totalRevenue = await prisma.order.aggregate({
-    _sum: {
-      pricePaid: true
-    }
-  })
-  const activeProperties = await prisma.property.count({
-    where: {
-      isActive: true
-    }
-  })
-  const expiredProperties = await prisma.property.count({
-    where: {
-      isActive: false,
-      expiryDate: {
-        lt: new Date()
-      }
-    }
-  })
+    const totalOrders = await prisma.order.count()
+    const totalRevenue = await prisma.order.aggregate({
+        _sum: {
+            pricePaid: true
+        }
+    })
+    const activeProperties = await prisma.property.count({
+        where: {
+            isActive: true
+        }
+    })
+    const expiredProperties = await prisma.property.count({
+        where: {
+            isActive: false,
+            expiryDate: {
+                lt: new Date()
+            }
+        }
+    })
 
-  return {
-    totalOrders,
-    totalRevenue: totalRevenue._sum.pricePaid || 0,
-    activeProperties,
-    expiredProperties
-  }
+    return {
+        totalOrders,
+        totalRevenue: totalRevenue._sum.pricePaid || 0,
+        activeProperties,
+        expiredProperties
+    }
 }
 
 export async function getRecentOrders(page: number = 1, pageSize: number = 10) {
-  const skip = (page - 1) * pageSize
-  const orders = await prisma.order.findMany({
-    skip,
-    take: pageSize,
-    orderBy: {
-      createdAt: 'desc'
-    },
-    include: {
-      user: {
-        select: {
-          name: true,
-          email: true
+    const skip = (page - 1) * pageSize
+    const orders = await prisma.order.findMany({
+        skip,
+        take: pageSize,
+        orderBy: {
+            createdAt: 'desc'
+        },
+        include: {
+            user: {
+                select: {
+                    name: true,
+                    email: true
+                }
+            },
+            property: {
+                select: {
+                    title: true,
+                    propertyDetails: true
+                }
+            }
         }
-      },
-      property: {
-        select: {
-          title: true,
-          propertyDetails: true
-        }
-      }
+    })
+
+    const totalOrders = await prisma.order.count()
+
+    return {
+        orders,
+        currentPage: page,
+        totalPages: Math.ceil(totalOrders / pageSize)
     }
-  })
-
-  const totalOrders = await prisma.order.count()
-
-  return {
-    orders,
-    currentPage: page,
-    totalPages: Math.ceil(totalOrders / pageSize)
-  }
 }
 
