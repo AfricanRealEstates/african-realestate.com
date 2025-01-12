@@ -13,6 +13,7 @@ interface PaymentDetails {
     amount: number;
     userId: string;
     reference: string;
+    tierDuration: number;
 }
 
 export async function processPayment(paymentDetails: PaymentDetails) {
@@ -51,12 +52,18 @@ export async function processPayment(paymentDetails: PaymentDetails) {
             }
         }
 
-        // Update the properties status
+        const expiryDate = new Date();
+        expiryDate.setDate(expiryDate.getDate() + paymentDetails.tierDuration);
+
+        // Update the properties status and expiry date
         const updatedProperties = await prisma.$transaction(
             paymentDetails.propertyIds.map((id) =>
                 prisma.property.update({
                     where: { id },
-                    data: { isActive: true }
+                    data: {
+                        isActive: true,
+                        expiryDate: expiryDate
+                    }
                 })
             )
         )
@@ -68,7 +75,8 @@ export async function processPayment(paymentDetails: PaymentDetails) {
                 userId: paymentDetails.userId,
                 propertyId: paymentDetails.propertyIds.length === 1
                     ? paymentDetails.propertyIds[0]
-                    : paymentDetails.propertyIds.join(',') // Store single ID or multiple IDs as comma-separated string
+                    : paymentDetails.propertyIds.join(','), // Store single ID or multiple IDs as comma-separated string
+                expiryDate: expiryDate
             }
         })
 

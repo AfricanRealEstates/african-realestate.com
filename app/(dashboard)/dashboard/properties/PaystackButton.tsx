@@ -7,11 +7,13 @@ import { processPayment } from "./processPayment";
 
 interface PaystackButtonProps {
   propertyIds: string[];
+  propertyNumbers: number[];
   amount: number;
   email: string;
   name: string;
   phone: string;
   userId: string;
+  tierDuration: number;
   onClose: () => void;
   onSuccess: (reference: any) => void;
   onModalOpen: () => void;
@@ -19,11 +21,13 @@ interface PaystackButtonProps {
 
 export default function PaystackButton({
   propertyIds,
+  propertyNumbers,
   amount,
   email,
   name,
   phone,
   userId,
+  tierDuration,
   onClose,
   onSuccess,
   onModalOpen,
@@ -53,9 +57,9 @@ export default function PaystackButton({
           value: userId,
         },
         {
-          display_name: "Property IDs",
-          variable_name: "propertyIds",
-          value: propertyIds.join(","),
+          display_name: "Property Numbers",
+          variable_name: "propertyNumbers",
+          value: propertyNumbers.join(", "),
         },
       ],
     },
@@ -75,6 +79,7 @@ export default function PaystackButton({
           amount,
           userId,
           reference: reference.reference,
+          tierDuration,
         });
 
         if (result.success) {
@@ -92,7 +97,7 @@ export default function PaystackButton({
 
       onClose();
     },
-    [propertyIds, amount, userId, onSuccess, onClose]
+    [propertyIds, amount, userId, tierDuration, onSuccess, onClose]
   );
 
   const handleClose = useCallback(() => {
@@ -111,6 +116,7 @@ export default function PaystackButton({
           amount,
           userId,
           reference: `FREE_${new Date().getTime()}`,
+          tierDuration,
         });
 
         if (result.success) {
@@ -138,6 +144,7 @@ export default function PaystackButton({
     amount,
     propertyIds,
     userId,
+    tierDuration,
     onSuccess,
     onClose,
     onModalOpen,

@@ -1,6 +1,6 @@
 import { Metadata } from "next";
-import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
+import TeamMember from "./TeamMember";
 
 export const metadata: Metadata = {
   title: "About | African Real Estate",
@@ -68,28 +68,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
   </Card>
 );
 
-interface TeamMemberProps {
-  name: string;
-  role: string;
-  imageSrc: string;
-}
 
-const TeamMember: React.FC<TeamMemberProps> = ({ name, role, imageSrc }) => (
-  <div>
-    <div className="rounded-full bg-ui w-32 h-32 border p-0.5 shadow shadow-gray-950/5">
-      <Image
-        className="rounded-full object-cover w-full h-full"
-        src={imageSrc}
-        alt={name}
-        width={80}
-        height={80}
-        loading="lazy"
-      />
-    </div>
-    <span className="text-title mt-2 block text-sm font-medium">{name}</span>
-    <span className="text-caption block text-xs">{role}</span>
-  </div>
-);
 
 export default function About() {
   return (
@@ -109,11 +88,6 @@ export default function About() {
             Vision
           </span>
           <div className="mt-6 bg-gray-50 p-2">
-            {/* <div className="sm:w-1/5">
-              <h2 className="text-title text-3xl font-bold sm:text-4xl">
-                Our vision
-              </h2>
-            </div> */}
             <div className="mt-6 sm:mt-0 ">
               <p className="text-gray-500">
                 To be the premier digital gateway for real estate in Africa,
@@ -123,21 +97,6 @@ export default function About() {
             </div>
           </div>
         </div>
-
-        {/* <div className="grid gap-12 divide-y md:divide-y-0 md:divide-x *:text-center md:grid-cols-3 md:gap-2">
-          <div className="space-y-4">
-            <div className="text-3xl font-bold text-gray-400">+7200</div>
-            <p className="text-lg text-gray-600">Properties posted</p>
-          </div>
-          <div className="space-y-4">
-            <div className="text-3xl font-bold text-gray-400">Over 1000</div>
-            <p className="text-lg text-gray-600">Satisfied customers</p>
-          </div>
-          <div className="space-y-4">
-            <div className="text-3xl font-bold text-gray-400">+2</div>
-            <p className="text-lg text-gray-600">Countries covered</p>
-          </div>
-        </div> */}
       </article>
 
       {/* Team */}
@@ -147,7 +106,6 @@ export default function About() {
         </h2>
 
         <div>
-          {/* <h3 className="mb-6 text-lg font-medium">Leadership</h3> */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 border-t py-6">
             <TeamMember
               name="Mungai Kihara"
@@ -161,22 +119,14 @@ export default function About() {
             />
             <TeamMember
               name="Ken Mwangi"
+              link="https://www.kasukutech.com"
               role="Lead Developer"
               imageSrc="/assets/ken.jpeg"
             />
           </div>
         </div>
-
-        {/* <div className="mt-12">
-          <h3 className="mb-6 text-lg font-medium">Engineering</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 border-t py-6"></div>
-        </div>
-
-        <div className="mt-12">
-          <h3 className="mb-6 text-lg font-medium">Marketing</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 border-t py-6"></div>
-        </div> */}
       </article>
     </section>
   );
 }
+

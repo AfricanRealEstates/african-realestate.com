@@ -100,7 +100,7 @@ export default async function PayPage() {
     <div className="py-24 lg:py-32">
       <div className="max-w-[1200px] w-full mx-auto">
         <p className="text-sm text-gray-600 mb-4">
-          Showing up to 10 properties
+          Showing available <strong className="font-bold text-rose-500">{userProperties.length}</strong> properties
         </p>
         <PropertyPaymentManager
           properties={userProperties}
@@ -111,7 +111,7 @@ export default async function PayPage() {
             phone: user.phoneNumber || "",
           }}
         />
-        <PaymentPricingPlansWrapper properties={properties} isAdmin={isAdmin} />
+        {/* <PaymentPricingPlansWrapper properties={properties} isAdmin={isAdmin} /> */}
         {/* <PaymentForm transactionConfig={config} />  */}
       </div>
     </div>

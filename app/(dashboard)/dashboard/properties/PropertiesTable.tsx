@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Property } from "@prisma/client";
+import { useState, useEffect } from "react";
+import { Property as PrismaProperty } from "@prisma/client";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -12,15 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import {
-  Copy,
-  Eye,
-  MoreVertical,
-  SquarePen,
-  Trash2,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { Copy, Eye, MoreVertical, SquarePen, Trash2 } from 'lucide-react';
 import Link from "next/link";
 import IconMenu from "@/components/globals/icon-menu";
 import { deleteProperty } from "./deleteProperty";
@@ -32,27 +24,68 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { toast } from "sonner";
+
+type Property = Omit<PrismaProperty, 'expiryDate'> & { expiryDate: Date | null };
 
 interface PropertiesTableProps {
   properties: Property[];
   selectedProperties: string[];
-  onPropertySelect: (propertyId: string, isSelected: boolean) => void;
+  onPropertySelect: (propertyId: string, propertyNumber: number, isSelected: boolean) => void;
+  // paymentSuccess: boolean;
 }
 
 export default function PropertiesTable({
   properties,
   selectedProperties,
   onPropertySelect,
+  // paymentSuccess,
 }: PropertiesTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [propertiesPerPage, setPropertiesPerPage] = useState(10);
+  const [localProperties, setLocalProperties] = useState(properties);
 
-  const totalPages = Math.ceil(properties.length / propertiesPerPage);
+  useEffect(() => {
+    setLocalProperties(properties);
+  }, [properties]);
+
+  // useEffect(() => {
+  //   if (paymentSuccess) {
+  //     refreshProperties();
+  //   }
+  // }, [paymentSuccess]);
+
+  // const refreshProperties = async () => {
+  //   try {
+  //     const response = await fetch('/api/properties'); // Adjust this endpoint as needed
+  //     if (response.ok) {
+  //       const updatedProperties = await response.json();
+  //       setLocalProperties(updatedProperties);
+  //       toast.success("Properties updated successfully");
+  //     } else {
+  //       throw new Error('Failed to fetch updated properties');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error refreshing properties:', error);
+  //     toast.error("Failed to refresh properties");
+  //   }
+  // };
+
+  const totalPages = Math.ceil(localProperties.length / propertiesPerPage);
   const indexOfLastProperty = currentPage * propertiesPerPage;
   const indexOfFirstProperty = indexOfLastProperty - propertiesPerPage;
-  const currentProperties = properties.slice(
+  const currentProperties = localProperties.slice(
     indexOfFirstProperty,
-    Math.min(indexOfLastProperty, indexOfFirstProperty + 5)
+    indexOfLastProperty
   );
 
   const handlePageChange = (pageNumber: number) => {
@@ -64,6 +97,13 @@ export default function PropertiesTable({
     setCurrentPage(1);
   };
 
+  const handleSelectAllUnpaid = () => {
+    const unpaidProperties = localProperties.filter((property) => !property.isActive);
+    unpaidProperties.forEach((property) => {
+      onPropertySelect(property.id, property.propertyNumber, true);
+    });
+  };
+
   return (
     <div>
       <div className="overflow-x-auto">
@@ -72,13 +112,16 @@ export default function PropertiesTable({
             <tr>
               <th scope="col" className="p-4">
                 <Checkbox
-                  checked={selectedProperties.length === properties.length}
+                  checked={selectedProperties.length === localProperties.filter((p) => !p.isActive).length}
                   onCheckedChange={(checked) => {
-                    properties.forEach((property) =>
-                      onPropertySelect(property.id, checked === true)
-                    );
+                    if (checked) {
+                      handleSelectAllUnpaid();
+                    } else {
+                      localProperties.forEach((property) =>
+                        onPropertySelect(property.id, property.propertyNumber, false)
+                      );
+                    }
                   }}
-                  disabled={properties.some((property) => property.isActive)} // Disable Select All if any property is active
                 />
               </th>
               <th scope="col" className="px-6 py-3">
@@ -93,14 +136,17 @@ export default function PropertiesTable({
               <th scope="col" className="px-6 py-3">
                 Price
               </th>
-              <th scope="col" className="px-6 py-3">
+              {/* <th scope="col" className="px-6 py-3">
                 Posted on
-              </th>
+              </th> */}
               <th scope="col" className="px-6 py-3">
                 Status
               </th>
               <th scope="col" className="px-6 py-3">
                 Payment Status
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Expiry Date
               </th>
               <th scope="col" className="px-6 py-3">
                 Actions
@@ -117,13 +163,12 @@ export default function PropertiesTable({
                   <Checkbox
                     checked={selectedProperties.includes(property.id)}
                     onCheckedChange={(checked) =>
-                      onPropertySelect(property.id, checked === true)
+                      onPropertySelect(property.id, property.propertyNumber, checked === true)
                     }
-                    disabled={property.isActive} // Disable checkbox if property is active
+                    disabled={property.isActive}
                   />
                 </td>
                 <td className="px-6 py-4">{property.propertyNumber}</td>
-
                 <td
                   scope="row"
                   className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
@@ -133,40 +178,41 @@ export default function PropertiesTable({
                       href={`/properties/${property.propertyDetails}/${property.id}`}
                       className="text-blue-600 hover:underline"
                     >
-                      {property.title.length > 50
-                        ? `${property.title.substring(0, 50)}...`
+                      {property.title.length > 30
+                        ? `${property.title.substring(0, 30)}...`
                         : property.title}
                     </Link>
                   ) : (
                     <span className="text-gray-500 cursor-not-allowed">
-                      {property.title.length > 50
-                        ? `${property.title.substring(0, 50)}...`
+                      {property.title.length > 30
+                        ? `${property.title.substring(0, 30)}...`
                         : property.title}
                     </span>
                   )}
                 </td>
-
                 <td className="px-6 py-4">{property.propertyDetails}</td>
                 <td className="px-6 py-4 inline-flex items-center gap-0.5">
                   <strong>{property.currency}</strong>
                   {property.price.toLocaleString()}
                 </td>
-                <td className="p-4 text-sm text-gray-500 sm:table-cell">
+                {/* <td className="p-4 text-sm text-gray-500 sm:table-cell">
                   {formatDate(property.createdAt, "MMM d, yyyy")}
-                </td>
+                </td> */}
                 <td className="px-6 py-4">{property.status}</td>
                 <td className="px-6 py-4">
                   <Badge
-                    className={
-                      property.isActive
-                        ? "bg-emerald-500 hover:bg-emerald-600 text-green-300"
-                        : "bg-rose-500 hover:bg-red-600 text-rose-100"
-                    }
+                    variant={property.isActive ? "default" : "destructive"}
                   >
-                    {property.isActive ? "Paid" : "Unpaid"}
+                    {property.isActive ? "Published" : "Unpublished"}
                   </Badge>
                 </td>
-
+                <td className="px-6 py-4">
+                  {property.expiryDate ? (
+                    formatDate(property.expiryDate, "MMM d, yyyy")
+                  ) : (
+                    <span className="text-gray-400">Not set</span>
+                  )}
+                </td>
                 <td className="p-4 text-sm font-medium">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -215,7 +261,6 @@ export default function PropertiesTable({
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuSeparator />
                       <DropdownMenuItem>
                         <form action={deleteProperty.bind(null, property.id)}>
                           <button
@@ -239,10 +284,10 @@ export default function PropertiesTable({
       </div>
 
       <div className="flex items-center justify-between px-4 py-3 sm:px-6">
-        <div className="flex items-center">
+        <div className="flex items-center justify-between space-x-2 w-full">
           <Select
             onValueChange={handlePropertiesPerPageChange}
-            defaultValue="10"
+            defaultValue={propertiesPerPage.toString()}
           >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Properties per page" />
@@ -251,94 +296,68 @@ export default function PropertiesTable({
               <SelectItem value="10">10 per page</SelectItem>
               <SelectItem value="20">20 per page</SelectItem>
               <SelectItem value="30">30 per page</SelectItem>
+              <SelectItem value="50">50 per page</SelectItem>
             </SelectContent>
           </Select>
+          <p className="text-sm text-muted-foreground">
+            Showing {indexOfFirstProperty + 1} to {Math.min(indexOfLastProperty, localProperties.length)} of {localProperties.length} results
+          </p>
         </div>
-        <div className="flex flex-1 justify-between sm:hidden">
-          <Button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            variant="outline"
-          >
-            Previous
-          </Button>
-          <Button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            variant="outline"
-          >
-            Next
-          </Button>
-        </div>
-        <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm text-gray-700">
-              Showing{" "}
-              <span className="font-medium">{indexOfFirstProperty + 1}</span> to{" "}
-              <span className="font-medium">
-                {Math.min(indexOfLastProperty, properties.length)}
-              </span>{" "}
-              of <span className="font-medium">{properties.length}</span>{" "}
-              results
-            </p>
-          </div>
-          <div>
-            <nav
-              className="isolate inline-flex -space-x-px rounded-md shadow-sm"
-              aria-label="Pagination"
-            >
-              <Button
-                onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-                variant="outline"
-                className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-              >
-                <span className="sr-only">Previous</span>
-                <ChevronLeft className="h-5 w-5" aria-hidden="true" />
-              </Button>
-              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                const pageNumber =
-                  currentPage <= 3 ? i + 1 : currentPage - 2 + i;
-                return pageNumber <= totalPages ? (
-                  <Button
-                    key={pageNumber}
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              {currentPage > 1 ? (
+                <PaginationPrevious
+                  onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                />
+              ) : (
+                <PaginationPrevious
+                  onClick={() => { }}
+                  className="cursor-not-allowed opacity-50"
+                />
+              )}
+            </PaginationItem>
+            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+              const pageNumber = currentPage <= 3 ? i + 1 : currentPage - 2 + i;
+              return pageNumber <= totalPages ? (
+                <PaginationItem key={pageNumber}>
+                  <PaginationLink
                     onClick={() => handlePageChange(pageNumber)}
-                    variant={currentPage === pageNumber ? "default" : "outline"}
-                    className="relative inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    isActive={currentPage === pageNumber}
                   >
                     {pageNumber}
-                  </Button>
-                ) : null;
-              })}
-              {totalPages > 5 && currentPage < totalPages - 2 && (
-                <>
-                  <span className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0">
-                    ...
-                  </span>
-                  <Button
-                    onClick={() => handlePageChange(totalPages)}
-                    variant="outline"
-                    className="relative inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                  >
+                  </PaginationLink>
+                </PaginationItem>
+              ) : null;
+            })}
+            {totalPages > 5 && currentPage < totalPages - 2 && (
+              <>
+                <PaginationItem>
+                  <PaginationEllipsis />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink onClick={() => handlePageChange(totalPages)}>
                     {totalPages}
-                  </Button>
-                </>
+                  </PaginationLink>
+                </PaginationItem>
+              </>
+            )}
+            <PaginationItem>
+              {currentPage < totalPages ? (
+                <PaginationNext
+                  onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                />
+              ) : (
+                <PaginationNext
+                  onClick={() => { }}
+                  className="cursor-not-allowed opacity-50"
+                />
               )}
-              <Button
-                onClick={() =>
-                  handlePageChange(Math.min(totalPages, currentPage + 1))
-                }
-                disabled={currentPage === totalPages}
-                variant="outline"
-                className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-              >
-                <span className="sr-only">Next</span>
-                <ChevronRight className="h-5 w-5" aria-hidden="true" />
-              </Button>
-            </nav>
-          </div>
-        </div>
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
     </div>
   );
 }
+

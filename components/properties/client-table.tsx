@@ -34,6 +34,7 @@ export default function ClientTable({
     null
   );
   const [loading, setLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const router = useRouter();
   const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
   const [propertyToDelete, setPropertyToDelete] = useState<string | null>(null);
@@ -41,7 +42,7 @@ export default function ClientTable({
   const onDelete = async () => {
     if (!propertyToDelete) return;
     try {
-      setLoading(true);
+      setDeleteLoading(true);
       const res = await deleteProperty(propertyToDelete);
       if (res.error) throw new Error(res.error);
       toast.success("Property deleted successfully");
@@ -50,7 +51,7 @@ export default function ClientTable({
     } catch (error) {
       toast.error("Failed to delete property");
     } finally {
-      setLoading(false);
+      setDeleteLoading(false);
     }
   };
 
@@ -219,9 +220,10 @@ export default function ClientTable({
             >
               Cancel
             </Button>
-            <Button variant="destructive" onClick={onDelete}>
-              Yes, delete
+            <Button variant="destructive" onClick={onDelete} disabled={deleteLoading}>
+              {deleteLoading ? "Deleting..." : "Yes, delete"}
             </Button>
+
           </DialogFooter>
         </DialogContent>
       </Dialog>

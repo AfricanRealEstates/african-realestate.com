@@ -47,6 +47,7 @@ interface PricingPlanModalProps {
   isOpen: boolean;
   onClose: () => void;
   selectedProperties: string[];
+  propertyNumbers: number[];
   user: {
     id: string;
     email: string;
@@ -68,6 +69,7 @@ export default function PricingPlanModal({
   isOpen,
   onClose,
   selectedProperties,
+  propertyNumbers,
   user,
 }: PricingPlanModalProps) {
   const [selectedTier, setSelectedTier] = useState<string | null>(null);
@@ -144,6 +146,7 @@ export default function PricingPlanModal({
       name: "Bronze",
       title: "Intermediate Agent",
       duration: "30 DAYS",
+      durationInDays: 30,
       description: "Perfect for getting started with property listings",
       features: [
         "Basic Listing",
@@ -164,6 +167,7 @@ export default function PricingPlanModal({
       name: "Diamond",
       title: "Advanced Agent",
       duration: "30 DAYS",
+      durationInDays: 30,
       description: "Everything in Bronze, plus enhanced visibility",
       recommended: true,
       features: [
@@ -186,6 +190,7 @@ export default function PricingPlanModal({
       name: "Platinum",
       title: "Super Agent",
       duration: "60 DAYS",
+      durationInDays: 60,
       description: "Everything in Diamond, plus premium features",
       features: [
         "Everything in Diamond, Plus",
@@ -366,10 +371,10 @@ export default function PricingPlanModal({
                   {tier.title}
                   <span
                     className={`ml-2 inline-block px-2 py-1 text-xs font-semibold rounded-full ${index === 0
-                        ? "bg-yellow-100 text-yellow-800"
-                        : index === 1
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-purple-100 text-purple-800"
+                      ? "bg-yellow-100 text-yellow-800"
+                      : index === 1
+                        ? "bg-blue-100 text-blue-800"
+                        : "bg-purple-100 text-purple-800"
                       }`}
                   >
                     {tier.name}
@@ -439,13 +444,27 @@ export default function PricingPlanModal({
                   {calculateSavings(selectedTier).toLocaleString()}
                 </p>
               )}
-              <PaystackButton
+              {/* <PaystackButton
                 propertyIds={selectedProperties}
                 amount={calculateTotalAmount(selectedTier)}
                 email={user.email}
                 name={user.name}
                 phone={user.phone}
                 userId={user.id}
+                onClose={() => setIsPaystackModalOpen(false)}
+                onSuccess={handlePaymentSuccess}
+                onModalOpen={handlePaystackModalOpen}
+              /> */}
+
+              <PaystackButton
+                propertyIds={selectedProperties}
+                propertyNumbers={propertyNumbers}
+                amount={calculateTotalAmount(selectedTier)}
+                email={user.email}
+                name={user.name}
+                phone={user.phone}
+                userId={user.id}
+                tierDuration={tiers.find(tier => tier.name === selectedTier)?.durationInDays || 30}
                 onClose={() => setIsPaystackModalOpen(false)}
                 onSuccess={handlePaymentSuccess}
                 onModalOpen={handlePaystackModalOpen}

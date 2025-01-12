@@ -56,18 +56,20 @@ export default async function PropertiesPage({
               </Button>
             </div>
           </div>
+          <div className="mb-6">
 
-          <Suspense fallback={<Loading />}>
-            <PropertyPaymentManager
-              properties={userProperties}
-              user={{
-                id: user.id || "",
-                email: user.email || "",
-                name: user.name || "",
-                phone: user.phoneNumber || "",
-              }}
-            />
-          </Suspense>
+            <Suspense fallback={<Loading />}>
+              <PropertyPaymentManager
+                properties={userProperties}
+                user={{
+                  id: user.id || "",
+                  email: user.email || "",
+                  name: user.name || "",
+                  phone: user.phoneNumber || "",
+                }}
+              />
+            </Suspense>
+          </div>
         </>
       ) : (
         <EmptyPlaceholder>

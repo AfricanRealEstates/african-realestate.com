@@ -133,9 +133,8 @@ export default function Media({
   const handleFileUpload = async (file: File, isCoverPhoto: boolean) => {
     try {
       const convertedFile = await convertHeicToJpeg(file);
-      const key = `${
-        isCoverPhoto ? "cover-photos" : "property-photos"
-      }/${Date.now()}-${convertedFile.name}`;
+      const key = `${isCoverPhoto ? "cover-photos" : "property-photos"
+        }/${Date.now()}-${convertedFile.name}`;
       const uploadResult = await uploadToS3(convertedFile, key);
 
       if (uploadResult.success) {
@@ -414,7 +413,14 @@ export default function Media({
           disabled={loading}
           className="bg-blue-500 hover:bg-blue-600"
         >
-          {isEdit ? "Update Property" : "Add Property"}
+          {loading ? (
+            <>
+              <Spin className="mr-2" />
+              {isEdit ? "Updating..." : "Creating..."}
+            </>
+          ) : (
+            isEdit ? "Update Property" : "Create Property"
+          )}
         </Button>
       </div>
     </Form>

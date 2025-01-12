@@ -26,11 +26,10 @@ export function PropertyPaymentCTA({
 
   return (
     <div
-      className={`border-l-4 p-4 mb-6 ${
-        allPropertiesPaid
-          ? "bg-green-50 border-green-400"
-          : "bg-yellow-50 border-yellow-400"
-      }`}
+      className={`border-l-4 p-4 mb-6 ${allPropertiesPaid
+        ? "bg-green-50 border-green-400"
+        : "bg-yellow-50 border-yellow-400"
+        }`}
     >
       <div className="flex items-center justify-between">
         <div className="flex items-start">
@@ -60,46 +59,49 @@ export function PropertyPaymentCTA({
                   to pending payment.
                 </p>
                 <p className="text-sm text-yellow-700">
-                  Select properties to pay from below
+                  Pay now to publish them and increase your visibility!
                 </p>
               </>
             )}
           </div>
         </div>
-        <div className="ml-4 flex items-center space-x-2">
+        <div className="flex justify-center mb-4 space-x-2">
           <Button
             onClick={() => onChangeViewMode("unpaid")}
             variant={viewMode === "unpaid" ? "default" : "outline"}
             size="sm"
-            className={`${
-              allPropertiesPaid
+            className={`${viewMode === "unpaid"
+              ? "bg-blue-500 text-white border-2 border-blue-600"
+              : allPropertiesPaid
                 ? "bg-green-50 text-green-700 hover:bg-green-100"
                 : "bg-yellow-50 text-yellow-700 hover:bg-yellow-100"
-            }`}
+              }`}
           >
-            Unpaid ({unpaidPropertiesCount})
+            Unpublished ({unpaidPropertiesCount})
           </Button>
           <Button
             onClick={() => onChangeViewMode("paid")}
             variant={viewMode === "paid" ? "default" : "outline"}
             size="sm"
-            className={`${
-              allPropertiesPaid
+            className={`${viewMode === "paid"
+              ? "bg-blue-500 text-white border-2 border-blue-600"
+              : allPropertiesPaid
                 ? "bg-green-50 text-green-700 hover:bg-green-100"
                 : "bg-yellow-50 text-yellow-700 hover:bg-yellow-100"
-            }`}
+              }`}
           >
-            Paid ({paidPropertiesCount})
+            Published ({paidPropertiesCount})
           </Button>
           <Button
             onClick={() => onChangeViewMode("all")}
             variant={viewMode === "all" ? "default" : "outline"}
             size="sm"
-            className={`${
-              allPropertiesPaid
+            className={`${viewMode === "all"
+              ? "bg-blue-500 text-white border-2 border-blue-600"
+              : allPropertiesPaid
                 ? "bg-green-50 text-green-700 hover:bg-green-100"
                 : "bg-yellow-50 text-yellow-700 hover:bg-yellow-100"
-            }`}
+              }`}
           >
             All ({totalPropertiesCount})
           </Button>

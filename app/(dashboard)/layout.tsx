@@ -63,7 +63,7 @@ export default async function DashboardLayout({
         <div className="bg-white min-h-screen flex flex-col">
           <main className="flex-1">{children}</main>
 
-          <p className="block text-center text-sm text-gray-600 bg-gray-50 my-8">
+          <p className="block text-center text-sm text-gray-600 mt-16 mb-4">
             &copy; African Real Estate, {new Date().getFullYear()}. All Rights
             Reserved.
           </p>
