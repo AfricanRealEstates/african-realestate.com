@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import { Suspense } from "react";
 import { getCurrentUser } from "@/lib/session";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
@@ -34,7 +34,7 @@ export default async function PropertiesPage({
     typeof searchParams.search === "string" ? searchParams.search : undefined;
 
   return (
-    <section className="px-4 sm:px-8 pt-5 flex flex-col">
+    <section className="pt-5 flex flex-col">
       <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl mb-4">
         All properties
       </h1>
@@ -56,8 +56,7 @@ export default async function PropertiesPage({
               </Button>
             </div>
           </div>
-          <div className="mb-6">
-
+          <div className="mb-6 overflow-hidden">
             <Suspense fallback={<Loading />}>
               <PropertyPaymentManager
                 properties={userProperties}

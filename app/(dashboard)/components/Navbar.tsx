@@ -1,6 +1,5 @@
-import { Input } from "@/components/ui/input";
 import Image from "next/image";
-import React from "react";
+import { Input } from "@/components/ui/input";
 import UserAccountNav from "./UserAccountNav";
 import { getCurrentUser } from "@/lib/session";
 import Breadcrumb from "./BreadcrumbDashboard";
@@ -12,30 +11,40 @@ export default async function Navbar() {
   const notifications = await prisma.notification.findMany({});
 
   return (
-    <div className="shadow-sm flex items-center justify-between p-4 sticky top-0 right-0 z-50 bg-white">
-      <Breadcrumb />
-      {/* <div className="hidden md:flex items-center gap-2 text-xs rounded-full px-2 ring-[1.5px] ring-gray-300">
-        <Image src={"/assets/search.png"} alt="" width={14} height={14} />
-        <input
-          type="text"
-          placeholder="Search..."
-          className="focus:ring-0 w-[200px] p-2 bg-transparent outline-none ring-0 border-0 focus:outline-none"
-        />
-      </div> */}
-      <div className="flex items-center gap-6 justify-end w-full">
-        <div className="cursor-pointer bg-white rounded-full size-7 flex items-center justify-center">
-          <Image src="/assets/message.png" width={20} height={20} alt="" />
+    <div className="sticky top-0 right-0 z-40 flex items-center justify-between bg-white p-4 shadow-sm lg:pl-24">
+      <div className="hidden lg:block">
+        <Breadcrumb />
+      </div>
+      <div className="flex w-full items-center justify-end gap-4 lg:gap-6">
+        <div className="relative hidden md:block">
+          <Input
+            type="text"
+            placeholder="Search..."
+            className="w-[200px] pl-8 pr-4"
+          />
+          <Image
+            src="/assets/search.png"
+            alt="Search"
+            width={14}
+            height={14}
+            className="absolute left-2 top-1/2 -translate-y-1/2 transform"
+          />
         </div>
+        <button
+          className="flex size-7 items-center justify-center rounded-full bg-white"
+          aria-label="Messages"
+        >
+          <Image
+            src="/assets/message.png"
+            width={18}
+            height={18}
+            alt="message"
+          />
+        </button>
         <NotificationIcon notifications={notifications} />
-        {/* <div className="relative cursor-pointer bg-white rounded-full size-7 flex items-center justify-center">
-          <Image src="/assets/announcement.png" width={20} height={20} alt="" />
-          <div className="absolute -top-2 -right-2 size-3 flex items-center justify-center bg-[#eb6753] text-white rounded-full text-xs">
-            2
-          </div>
-        </div> */}
-        <div className="flex flex-col">
-          <span className="text-xs leading-3 font-medium">{user?.name}</span>
-          <span className="text-[10px] text-rose-500 text-right">
+        <div className="hidden sm:flex sm:flex-col">
+          <span className="text-xs font-medium leading-3">{user?.name}</span>
+          <span className="text-right text-[10px] text-rose-500">
             {user?.role}
           </span>
         </div>

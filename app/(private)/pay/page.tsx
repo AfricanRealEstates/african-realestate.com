@@ -1,7 +1,5 @@
 import PropertyPaymentManager from "@/app/(dashboard)/dashboard/properties/PropertyPaymentManager";
 import { auth } from "@/auth";
-import PaymentForm from "@/components/payments/PaymentForm";
-import PaymentPricingPlansWrapper from "@/components/properties/properties-form/PaymentPricingPlansWrapper";
 import { prisma } from "@/lib/prisma";
 import { getSEOTags } from "@/lib/seo";
 import { getCurrentUser } from "@/lib/session";
@@ -97,20 +95,26 @@ export default async function PayPage() {
   console.log(userOrders);
 
   return (
-    <div className="py-24 lg:py-32">
+    <div className="py-24 lg:py-32 px-4 sm:px-6 lg:px-8">
       <div className="max-w-[1200px] w-full mx-auto">
         <p className="text-sm text-gray-600 mb-4">
-          Showing available <strong className="font-bold text-rose-500">{userProperties.length}</strong> properties
+          Showing available{" "}
+          <strong className="font-bold text-rose-500">
+            {userProperties.length}
+          </strong>{" "}
+          properties
         </p>
-        <PropertyPaymentManager
-          properties={userProperties}
-          user={{
-            id: user.id || "",
-            email: user.email || "",
-            name: user.name || "",
-            phone: user.phoneNumber || "",
-          }}
-        />
+        <div className="overflow-x-auto">
+          <PropertyPaymentManager
+            properties={userProperties}
+            user={{
+              id: user.id || "",
+              email: user.email || "",
+              name: user.name || "",
+              phone: user.phoneNumber || "",
+            }}
+          />
+        </div>
         {/* <PaymentPricingPlansWrapper properties={properties} isAdmin={isAdmin} /> */}
         {/* <PaymentForm transactionConfig={config} />  */}
       </div>

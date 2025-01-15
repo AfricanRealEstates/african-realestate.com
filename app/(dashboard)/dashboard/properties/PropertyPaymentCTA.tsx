@@ -1,4 +1,3 @@
-import React from "react";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, CheckCircle } from "lucide-react";
 
@@ -26,12 +25,13 @@ export function PropertyPaymentCTA({
 
   return (
     <div
-      className={`border-l-4 p-4 mb-6 ${allPropertiesPaid
-        ? "bg-green-50 border-green-400"
-        : "bg-yellow-50 border-yellow-400"
-        }`}
+      className={`border-l-4 p-4 mb-6 rounded-r-lg ${
+        allPropertiesPaid
+          ? "bg-green-50 border-green-400"
+          : "bg-yellow-50 border-yellow-400"
+      }`}
     >
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
         <div className="flex items-start">
           <div className="flex-shrink-0">
             {allPropertiesPaid ? (
@@ -65,17 +65,18 @@ export function PropertyPaymentCTA({
             )}
           </div>
         </div>
-        <div className="flex justify-center mb-4 space-x-2">
+        <div className="flex flex-wrap justify-center md:justify-end gap-2">
           <Button
             onClick={() => onChangeViewMode("unpaid")}
             variant={viewMode === "unpaid" ? "default" : "outline"}
             size="sm"
-            className={`${viewMode === "unpaid"
-              ? "bg-blue-500 text-white border-2 border-blue-600"
-              : allPropertiesPaid
+            className={`${
+              viewMode === "unpaid"
+                ? "bg-blue-500 text-white border-2 border-blue-600"
+                : allPropertiesPaid
                 ? "bg-green-50 text-green-700 hover:bg-green-100"
                 : "bg-yellow-50 text-yellow-700 hover:bg-yellow-100"
-              }`}
+            }`}
           >
             Unpublished ({unpaidPropertiesCount})
           </Button>
@@ -83,12 +84,13 @@ export function PropertyPaymentCTA({
             onClick={() => onChangeViewMode("paid")}
             variant={viewMode === "paid" ? "default" : "outline"}
             size="sm"
-            className={`${viewMode === "paid"
-              ? "bg-blue-500 text-white border-2 border-blue-600"
-              : allPropertiesPaid
+            className={`${
+              viewMode === "paid"
+                ? "bg-blue-500 text-white border-2 border-blue-600"
+                : allPropertiesPaid
                 ? "bg-green-50 text-green-700 hover:bg-green-100"
                 : "bg-yellow-50 text-yellow-700 hover:bg-yellow-100"
-              }`}
+            }`}
           >
             Published ({paidPropertiesCount})
           </Button>
@@ -96,12 +98,13 @@ export function PropertyPaymentCTA({
             onClick={() => onChangeViewMode("all")}
             variant={viewMode === "all" ? "default" : "outline"}
             size="sm"
-            className={`${viewMode === "all"
-              ? "bg-blue-500 text-white border-2 border-blue-600"
-              : allPropertiesPaid
+            className={`${
+              viewMode === "all"
+                ? "bg-blue-500 text-white border-2 border-blue-600"
+                : allPropertiesPaid
                 ? "bg-green-50 text-green-700 hover:bg-green-100"
                 : "bg-yellow-50 text-yellow-700 hover:bg-yellow-100"
-              }`}
+            }`}
           >
             All ({totalPropertiesCount})
           </Button>

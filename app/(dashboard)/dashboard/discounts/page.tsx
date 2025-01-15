@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function DiscountsPage() {
   return (
-    <div className="container mx-auto py-10 bg-white">
+    <div className="w-full mx-auto pt-6 pb-3 bg-white">
       <h1 className="text-3xl font-bold mb-6 text-blue-400">
         Manage Discounts
       </h1>

@@ -63,7 +63,7 @@ const NotificationIcon: React.FC<NotificationIconProps> = ({
       <Sheet>
         <SheetTrigger>
           <div className="flex items-center">
-            <Bell className="text-gray-600 text-xl" />
+            <Bell className="text-gray-400 mt-2 size-5" />
             {unreadNotifications > 0 && (
               <div
                 className="absolute ml-3 mb-3 bg-red-500

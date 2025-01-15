@@ -20,7 +20,11 @@ export default async function Dashboard() {
   // fetch all users from database
   const users = await prisma.user.findMany({});
   return (
-    <main className="p-2">Main Dashboard</main>
+    <main className="p-2">
+      <p>main dashboard</p>
+      <h2>users</h2>
+    </main>
+
     // <div className="grid h-screen place-content-center">
     //   {users.map((user) => {
     //     return (
