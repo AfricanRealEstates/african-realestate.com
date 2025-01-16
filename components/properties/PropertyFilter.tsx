@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -199,165 +199,173 @@ export default function PropertyFilter({
         <SheetTrigger asChild className="mb-8">
           <Button variant="outline">Filter Properties</Button>
         </SheetTrigger>
-        <SheetContent>
+        <SheetContent className="flex flex-col h-full">
           <SheetHeader>
             <SheetTitle>Filter Properties</SheetTitle>
             <SheetDescription>
               Use the form below to filter properties based on your preferences.
             </SheetDescription>
           </SheetHeader>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-4">
-            {/* Status field */}
-            <div>
-              <Label htmlFor="status">Status</Label>
-              <Controller
-                name="status"
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value || ""}
-                    disabled={pageType === "buy" || pageType === "let"}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="sale">For Sale</SelectItem>
-                      <SelectItem value="let">To Let</SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-            </div>
-            {/* Property Type field */}
-            <div>
-              <Label htmlFor="propertyType">Property Type</Label>
-              <Controller
-                name="propertyType"
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    onValueChange={(value) => {
-                      field.onChange(value);
-                      setSelectedPropertyType(value);
-                    }}
-                    value={field.value}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select property type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {propertyTypes.map((type) => (
-                        <SelectItem key={type.value} value={type.value}>
-                          {type.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-            </div>
-            {/* Property Details field */}
-            {watchPropertyType && (
+          <div className="flex-grow overflow-y-auto">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-4">
+              {/* Status field */}
               <div>
-                <Label htmlFor="propertyDetails">Property Details</Label>
+                <Label htmlFor="status">Status</Label>
                 <Controller
-                  name="propertyDetails"
+                  name="status"
                   control={control}
                   render={({ field }) => (
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value || ""}
+                      disabled={pageType === "buy" || pageType === "let"}
+                    >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select property details" />
+                        <SelectValue placeholder="Select status" />
                       </SelectTrigger>
                       <SelectContent>
-                        {propertyTypes
-                          .find((type) => type.value === watchPropertyType)
-                          ?.subOptions.map((subOption) => (
-                            <SelectItem
-                              key={subOption.value}
-                              value={subOption.value}
-                            >
-                              {subOption.label}
-                            </SelectItem>
-                          ))}
+                        <SelectItem value="sale">For Sale</SelectItem>
+                        <SelectItem value="let">To Let</SelectItem>
                       </SelectContent>
                     </Select>
                   )}
                 />
               </div>
-            )}
-            {/* County field */}
-            <div>
-              <Label htmlFor="county">County</Label>
-              <Controller
-                name="county"
-                control={control}
-                render={({ field }) => (
-                  <Input {...field} placeholder="Enter county" />
-                )}
-              />
-            </div>
-            {/* Locality field */}
-            <div>
-              <Label htmlFor="locality">Locality</Label>
-              <Controller
-                name="locality"
-                control={control}
-                render={({ field }) => (
-                  <Input {...field} placeholder="Enter locality" />
-                )}
-              />
-            </div>
-            {/* Minimum Price field */}
-            <div>
-              <Label htmlFor="minPrice">Minimum Price</Label>
-              <Controller
-                name="minPrice"
-                control={control}
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    type="text"
-                    placeholder="Enter minimum price"
-                    onChange={(e) =>
-                      handlePriceChange("minPrice", e.target.value)
-                    }
+              {/* Property Type field */}
+              <div>
+                <Label htmlFor="propertyType">Property Type</Label>
+                <Controller
+                  name="propertyType"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        setSelectedPropertyType(value);
+                      }}
+                      value={field.value}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select property type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {propertyTypes.map((type) => (
+                          <SelectItem key={type.value} value={type.value}>
+                            {type.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </div>
+              {/* Property Details field */}
+              {watchPropertyType && (
+                <div>
+                  <Label htmlFor="propertyDetails">Property Details</Label>
+                  <Controller
+                    name="propertyDetails"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select property details" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {propertyTypes
+                            .find((type) => type.value === watchPropertyType)
+                            ?.subOptions.map((subOption) => (
+                              <SelectItem
+                                key={subOption.value}
+                                value={subOption.value}
+                              >
+                                {subOption.label}
+                              </SelectItem>
+                            ))}
+                        </SelectContent>
+                      </Select>
+                    )}
                   />
-                )}
-              />
-              <span className="text-xs text-green-600 focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
-                {formatPrice(watchMinPrice || "")}
-              </span>
-            </div>
-            {/* Maximum Price field */}
-            <div>
-              <Label htmlFor="maxPrice">Maximum Price</Label>
-              <Controller
-                name="maxPrice"
-                control={control}
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    type="text"
-                    placeholder="Enter maximum price"
-                    onChange={(e) =>
-                      handlePriceChange("maxPrice", e.target.value)
-                    }
-                  />
-                )}
-              />
-              <span className="text-xs text-green-600 focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
-                {formatPrice(watchMaxPrice || "")}
-              </span>
-            </div>
+                </div>
+              )}
+              {/* County field */}
+              <div>
+                <Label htmlFor="county">County</Label>
+                <Controller
+                  name="county"
+                  control={control}
+                  render={({ field }) => (
+                    <Input {...field} placeholder="Enter county" />
+                  )}
+                />
+              </div>
+              {/* Locality field */}
+              <div>
+                <Label htmlFor="locality">Locality</Label>
+                <Controller
+                  name="locality"
+                  control={control}
+                  render={({ field }) => (
+                    <Input {...field} placeholder="Enter locality" />
+                  )}
+                />
+              </div>
+              {/* Minimum Price field */}
+              <div>
+                <Label htmlFor="minPrice">Minimum Price</Label>
+                <Controller
+                  name="minPrice"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      type="text"
+                      placeholder="Enter minimum price"
+                      onChange={(e) =>
+                        handlePriceChange("minPrice", e.target.value)
+                      }
+                    />
+                  )}
+                />
+                <span className="text-xs text-green-600 focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
+                  {formatPrice(watchMinPrice || "")}
+                </span>
+              </div>
+              {/* Maximum Price field */}
+              <div>
+                <Label htmlFor="maxPrice">Maximum Price</Label>
+                <Controller
+                  name="maxPrice"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      type="text"
+                      placeholder="Enter maximum price"
+                      onChange={(e) =>
+                        handlePriceChange("maxPrice", e.target.value)
+                      }
+                    />
+                  )}
+                />
+                <span className="text-xs text-green-600 focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
+                  {formatPrice(watchMaxPrice || "")}
+                </span>
+              </div>
+            </form>
+          </div>
+          <div className="mt-auto pt-4">
             <Button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-600 transition-colors"
+              className="w-full bg-blue-500 hover:bg-blue-600 transition-colors"
+              onClick={handleSubmit(onSubmit)}
             >
               Apply Filters
             </Button>
-          </form>
+          </div>
         </SheetContent>
       </Sheet>
     </div>

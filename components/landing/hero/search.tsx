@@ -126,124 +126,128 @@ function AdvancedSearch({
       <SheetTrigger asChild>
         <SlidersHorizontal className="h-4 w-4" />
       </SheetTrigger>
-      <SheetContent>
+      <SheetContent className="flex flex-col h-full">
         <SheetHeader>
           <SheetTitle>Advanced Search</SheetTitle>
           <SheetDescription>
             Refine your property search with advanced filters.
           </SheetDescription>
         </SheetHeader>
-        <div className="grid gap-4 py-4">
-          {/* Location input */}
-          <div className="space-y-2">
-            <Label>Location</Label>
-            <Input
-              type="text"
-              placeholder="County, Nearby Town or Locality"
-              value={params.location || ""}
-              onChange={(e) => handleChange("location", e.target.value)}
-            />
-          </div>
-          {/* Status select */}
-          <div className="space-y-2">
-            <Label>Status</Label>
-            <Select
-              value={params.status}
-              onValueChange={(value) => handleChange("status", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="sale">For Sale</SelectItem>
-                <SelectItem value="let">To Let</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          {/* Price range inputs */}
-          <div className="space-y-2">
-            <Label>
-              {params.status === "let" ? "Rent Range" : "Price Range"}
-            </Label>
-            <div className="flex space-x-2">
-              <div className="flex-1">
-                <Input
-                  type="text"
-                  placeholder="Min"
-                  value={minPriceInput}
-                  onChange={(e) =>
-                    handlePriceChange("minPrice", e.target.value)
-                  }
-                />
-                <span className="text-xs text-green-600 px-1 rounded">
-                  {formatPrice(minPriceInput)}
-                </span>
-              </div>
-              <div className="flex-1">
-                <Input
-                  type="text"
-                  placeholder="Max"
-                  value={maxPriceInput}
-                  onChange={(e) =>
-                    handlePriceChange("maxPrice", e.target.value)
-                  }
-                />
-                <span className="text-xs text-green-600 px-1 rounded">
-                  {formatPrice(maxPriceInput)}
-                </span>
-              </div>
-            </div>
-          </div>
-          {/* Property Type select */}
-          <div className="space-y-2">
-            <Label>Property Type</Label>
-            <Select
-              value={selectedPropertyType}
-              onValueChange={(value) => {
-                setSelectedPropertyType(value);
-                handleChange("propertyType", value);
-                handleChange("propertyDetails", undefined);
-              }}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select property type" />
-              </SelectTrigger>
-              <SelectContent>
-                {propertyTypes.map((type) => (
-                  <SelectItem key={type.value} value={type.value}>
-                    {type.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          {/* Property Details select */}
-          {selectedPropertyType && (
+        <div className="flex-grow overflow-y-auto">
+          <div className="grid gap-4 py-4">
+            {/* Location input */}
             <div className="space-y-2">
-              <Label>Property Details</Label>
+              <Label>Location</Label>
+              <Input
+                type="text"
+                placeholder="County, Nearby Town or Locality"
+                value={params.location || ""}
+                onChange={(e) => handleChange("location", e.target.value)}
+              />
+            </div>
+            {/* Status select */}
+            <div className="space-y-2">
+              <Label>Status</Label>
               <Select
-                value={params.propertyDetails}
-                onValueChange={(value) =>
-                  handleChange("propertyDetails", value)
-                }
+                value={params.status}
+                onValueChange={(value) => handleChange("status", value)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select property details" />
+                  <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
-                  {getPropertyDetails(selectedPropertyType).map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
+                  <SelectItem value="sale">For Sale</SelectItem>
+                  <SelectItem value="let">To Let</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            {/* Price range inputs */}
+            <div className="space-y-2">
+              <Label>
+                {params.status === "let" ? "Rent Range" : "Price Range"}
+              </Label>
+              <div className="flex space-x-2">
+                <div className="flex-1">
+                  <Input
+                    type="text"
+                    placeholder="Min"
+                    value={minPriceInput}
+                    onChange={(e) =>
+                      handlePriceChange("minPrice", e.target.value)
+                    }
+                  />
+                  <span className="text-xs text-green-600 px-1 rounded">
+                    {formatPrice(minPriceInput)}
+                  </span>
+                </div>
+                <div className="flex-1">
+                  <Input
+                    type="text"
+                    placeholder="Max"
+                    value={maxPriceInput}
+                    onChange={(e) =>
+                      handlePriceChange("maxPrice", e.target.value)
+                    }
+                  />
+                  <span className="text-xs text-green-600 px-1 rounded">
+                    {formatPrice(maxPriceInput)}
+                  </span>
+                </div>
+              </div>
+            </div>
+            {/* Property Type select */}
+            <div className="space-y-2">
+              <Label>Property Type</Label>
+              <Select
+                value={selectedPropertyType}
+                onValueChange={(value) => {
+                  setSelectedPropertyType(value);
+                  handleChange("propertyType", value);
+                  handleChange("propertyDetails", undefined);
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select property type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {propertyTypes.map((type) => (
+                    <SelectItem key={type.value} value={type.value}>
+                      {type.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-          )}
+            {/* Property Details select */}
+            {selectedPropertyType && (
+              <div className="space-y-2">
+                <Label>Property Details</Label>
+                <Select
+                  value={params.propertyDetails}
+                  onValueChange={(value) =>
+                    handleChange("propertyDetails", value)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select property details" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {getPropertyDetails(selectedPropertyType).map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="mt-auto pt-4">
           <SheetClose asChild>
             <Button
               onClick={handleApplyFilters}
-              className="bg-blue-500 hover:bg-blue-600 transition-colors"
+              className="bg-blue-500 hover:bg-blue-600 transition-colors w-full"
             >
               Apply Filters
             </Button>
