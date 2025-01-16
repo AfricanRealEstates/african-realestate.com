@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { Property as PrismaProperty } from "@prisma/client";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -16,7 +15,6 @@ import { Copy, Eye, MoreVertical, SquarePen, Trash2 } from "lucide-react";
 import Link from "next/link";
 import IconMenu from "@/components/globals/icon-menu";
 import { deleteProperty } from "./deleteProperty";
-import { formatDate } from "date-fns";
 import {
   Select,
   SelectContent,
@@ -27,11 +25,11 @@ import {
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
+  PaginationEllipsis,
 } from "@/components/ui/pagination";
 
 type Property = Omit<PrismaProperty, "expiryDate"> & {
@@ -119,20 +117,11 @@ export default function PropertiesTable({
             <th scope="col" className="px-4 py-3">
               Name
             </th>
-            <th scope="col" className="px-4 py-3 hidden md:table-cell">
-              Details
-            </th>
             <th scope="col" className="px-4 py-3 hidden sm:table-cell">
               Price
             </th>
             <th scope="col" className="px-4 py-3 hidden sm:table-cell">
               Status
-            </th>
-            <th scope="col" className="px-4 py-3 hidden lg:table-cell">
-              Payment
-            </th>
-            <th scope="col" className="px-4 py-3 hidden xl:table-cell">
-              Expiry
             </th>
             <th scope="col" className="px-4 py-3">
               Actions
@@ -177,9 +166,6 @@ export default function PropertiesTable({
                   </span>
                 )}
               </td>
-              <td className="px-4 py-4 hidden md:table-cell">
-                {property.propertyDetails}
-              </td>
               <td className="px-4 py-4 hidden sm:table-cell">
                 <span className="whitespace-nowrap">
                   <strong>{property.currency}</strong>
@@ -187,19 +173,9 @@ export default function PropertiesTable({
                 </span>
               </td>
               <td className="px-4 py-4 hidden sm:table-cell">
-                {property.status}
-              </td>
-              <td className="px-4 py-4 hidden lg:table-cell">
                 <Badge variant={property.isActive ? "default" : "destructive"}>
                   {property.isActive ? "Published" : "Unpublished"}
                 </Badge>
-              </td>
-              <td className="px-4 py-4 hidden xl:table-cell">
-                {property.expiryDate ? (
-                  formatDate(property.expiryDate, "MMM d, yyyy")
-                ) : (
-                  <span className="text-gray-400">Not set</span>
-                )}
               </td>
               <td className="p-4 text-sm font-medium">
                 <DropdownMenu>
@@ -268,7 +244,7 @@ export default function PropertiesTable({
       </table>
 
       <div className="mt-4 flex flex-col items-center justify-between gap-4 sm:flex-row">
-        <div className="flex items-center gap-2 justify-between">
+        <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
           <Select
             onValueChange={handlePropertiesPerPageChange}
             defaultValue={propertiesPerPage.toString()}
@@ -283,13 +259,13 @@ export default function PropertiesTable({
               <SelectItem value="50">50 per page</SelectItem>
             </SelectContent>
           </Select>
-          <p className="text-sm text-muted-foreground">
-            {indexOfFirstProperty + 1}-
+          <p className="text-sm text-muted-foreground text-center sm:text-left">
+            Showing {indexOfFirstProperty + 1}-
             {Math.min(indexOfLastProperty, localProperties.length)} of{" "}
-            {localProperties.length}
+            {localProperties.length} properties
           </p>
         </div>
-        <div>
+        <div className="w-full sm:w-auto">
           <Pagination>
             <PaginationContent>
               <PaginationItem>

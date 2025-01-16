@@ -1,9 +1,9 @@
 "use client";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -22,6 +22,7 @@ import {
   Edit,
   Copy,
   Trash,
+  ChevronDown,
 } from "lucide-react";
 
 import { deleteProperty } from "@/actions/deleteProperty";
@@ -45,96 +46,119 @@ export default function DashboardTabs({
   stats,
   isAdmin,
 }: DashboardTabsProps) {
+  const [activeTab, setActiveTab] = useState("properties");
+
+  const tabs = [
+    {
+      id: "properties",
+      label: "Properties",
+      icon: Home,
+      count: stats.propertiesCount,
+    },
+    { id: "favorites", label: "Favorites", icon: Heart },
+    { id: "bookmarks", label: "Bookmarks", icon: Bookmark },
+    { id: "ratings", label: "Ratings", icon: Star },
+    ...(isAdmin ? [{ id: "orders", label: "Orders", icon: ShoppingCart }] : []),
+  ];
+
   return (
     <Card className="bg-white shadow-md flex flex-col h-[calc(100vh-200px)]">
       <CardContent className="p-0 flex flex-col h-full">
-        <Tabs defaultValue="properties" className="w-full h-full flex flex-col">
-          <div className="border-b overflow-x-auto">
-            <TabsList className="flex w-full justify-start">
-              <TabsTrigger
-                value="properties"
-                className="flex-shrink-0 px-3 py-2 flex items-center text-sm"
-              >
-                <Home className="h-4 w-4 mr-1" />
-                <span className="sm:inline">Properties</span>
-                <span className="ml-1 bg-primary text-primary-foreground rounded-full px-1.5 py-0.5 text-xs">
-                  {stats.propertiesCount}
-                </span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="favorites"
-                className="flex-shrink-0 px-3 py-2 flex items-center text-sm"
-              >
-                <Heart className="h-4 w-4 mr-1" />
-                <span className="sm:inline">Favorites</span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="bookmarks"
-                className="flex-shrink-0 px-3 py-2 flex items-center text-sm"
-              >
-                <Bookmark className="h-4 w-4 mr-1" />
-                <span className="sm:inline">Bookmarks</span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="ratings"
-                className="flex-shrink-0 px-3 py-2 flex items-center text-sm"
-              >
-                <Star className="h-4 w-4 mr-1" />
-                <span className="sm:inline">Ratings</span>
-              </TabsTrigger>
-              {isAdmin && (
-                <TabsTrigger
-                  value="orders"
-                  className="flex-shrink-0 px-3 py-2 flex items-center text-sm"
-                >
-                  <ShoppingCart className="h-4 w-4 mr-1" />
-                  <span className="sm:inline">Orders</span>
-                </TabsTrigger>
-              )}
-            </TabsList>
+        <div className="border-b p-2 md:p-4">
+          <div className="md:hidden">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="w-full justify-between">
+                  <span className="flex items-center">
+                    {(() => {
+                      const activeTabObj = tabs.find(
+                        (tab) => tab.id === activeTab
+                      );
+                      return (
+                        activeTabObj?.icon && (
+                          <activeTabObj.icon className="h-4 w-4 mr-2" />
+                        )
+                      );
+                    })()}
+                    {tabs.find((tab) => tab.id === activeTab)?.label}
+                  </span>
+                  <ChevronDown className="h-4 w-4 ml-2" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-full">
+                {tabs.map((tab) => (
+                  <DropdownMenuItem
+                    key={tab.id}
+                    onSelect={() => setActiveTab(tab.id)}
+                  >
+                    <tab.icon className="h-4 w-4 mr-2" />
+                    <span>{tab.label}</span>
+                    {tab.count && (
+                      <span className="ml-auto bg-primary text-primary-foreground rounded-full px-1.5 py-0.5 text-xs">
+                        {tab.count}
+                      </span>
+                    )}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-          <div className="flex-grow overflow-y-auto">
-            <TabsContent value="properties" className="h-full">
-              <PropertyList
-                properties={properties.items}
-                currentPage={properties.currentPage}
-                totalPages={properties.totalPages}
-                emptyMessage="You haven't posted any properties yet."
-                showActions={true}
-              />
-            </TabsContent>
-            <TabsContent value="favorites" className="h-full">
-              <PropertyList
-                properties={favorites.items}
-                currentPage={favorites.currentPage}
-                totalPages={favorites.totalPages}
-                emptyMessage="You haven't favorited any properties yet."
-                showActions={false}
-              />
-            </TabsContent>
-            <TabsContent value="bookmarks" className="h-full">
-              <PropertyList
-                properties={bookmarks.items}
-                currentPage={bookmarks.currentPage}
-                totalPages={bookmarks.totalPages}
-                emptyMessage="You haven't bookmarked any properties yet."
-                showActions={false}
-              />
-            </TabsContent>
-            <TabsContent value="ratings" className="h-full">
-              <RatingsList ratings={ratings} />
-            </TabsContent>
-            {isAdmin && recentOrders && (
-              <TabsContent value="orders" className="h-full">
-                <OrdersList
-                  orders={recentOrders.orders}
-                  currentPage={recentOrders.currentPage}
-                  totalPages={recentOrders.totalPages}
-                />
-              </TabsContent>
-            )}
+          <div className="hidden md:flex space-x-2 overflow-x-auto">
+            {tabs.map((tab) => (
+              <Button
+                key={tab.id}
+                variant={activeTab === tab.id ? "default" : "ghost"}
+                className="flex-shrink-0"
+                onClick={() => setActiveTab(tab.id)}
+              >
+                <tab.icon className="h-4 w-4 mr-2" />
+                <span>{tab.label}</span>
+                {tab.count && (
+                  <span className="ml-1 bg-primary text-primary-foreground rounded-full px-1.5 py-0.5 text-xs">
+                    {tab.count}
+                  </span>
+                )}
+              </Button>
+            ))}
           </div>
-        </Tabs>
+        </div>
+        <div className="flex-grow overflow-y-auto">
+          {activeTab === "properties" && (
+            <PropertyList
+              properties={properties.items}
+              currentPage={properties.currentPage}
+              totalPages={properties.totalPages}
+              emptyMessage="You haven't posted any properties yet."
+              showActions={true}
+            />
+          )}
+          {activeTab === "favorites" && (
+            <PropertyList
+              properties={favorites.items}
+              currentPage={favorites.currentPage}
+              totalPages={favorites.totalPages}
+              emptyMessage="You haven't favorited any properties yet."
+              showActions={false}
+            />
+          )}
+          {activeTab === "bookmarks" && (
+            <PropertyList
+              properties={bookmarks.items}
+              currentPage={bookmarks.currentPage}
+              totalPages={bookmarks.totalPages}
+              emptyMessage="You haven't bookmarked any properties yet."
+              showActions={false}
+            />
+          )}
+          {activeTab === "ratings" && <RatingsList ratings={ratings} />}
+          {isAdmin && activeTab === "orders" && recentOrders && (
+            <OrdersList
+              orders={recentOrders.orders}
+              currentPage={recentOrders.currentPage}
+              totalPages={recentOrders.totalPages}
+            />
+          )}
+        </div>
       </CardContent>
     </Card>
   );
@@ -254,11 +278,11 @@ function Pagination({
   totalPages: number;
 }) {
   return (
-    <div className="flex justify-center space-x-2">
+    <div className="flex flex-col sm:flex-row justify-center items-center space-y-2 sm:space-y-0 sm:space-x-2">
       <Button variant="outline" size="sm" disabled={currentPage === 1} asChild>
         <Link href={`?page=${currentPage - 1}`}>Previous</Link>
       </Button>
-      <span className="flex items-center text-sm">
+      <span className="text-sm">
         Page {currentPage} of {totalPages}
       </span>
       <Button
@@ -341,12 +365,12 @@ function OrdersList({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4">
       <div className="grid gap-6">
         {orders.map((order) => (
           <div
             key={order.id}
-            className="bg-white rounded-lg border border-gray-200 p-6"
+            className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6"
           >
             <div className="flex flex-wrap justify-between items-center mb-4">
               <h3 className="font-semibold text-lg">Order #{order.id}</h3>

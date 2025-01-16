@@ -55,27 +55,28 @@ export function PropertyPaymentCTA({
               <>
                 <p className="text-sm text-yellow-700">
                   You have {unpaidPropertiesCount} unpublished{" "}
-                  {unpaidPropertiesCount === 1 ? "property" : "properties"} due
-                  to pending payment.
+                  {unpaidPropertiesCount === 1 ? "property" : "properties"}.
                 </p>
                 <p className="text-sm text-yellow-700">
-                  Pay now to publish them and increase your visibility!
+                  Pay NOW for{" "}
+                  {unpaidPropertiesCount === 1 ? "property" : "properties"} to
+                  go live
                 </p>
               </>
             )}
           </div>
         </div>
-        <div className="flex flex-wrap justify-center md:justify-end gap-2">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
           <Button
             onClick={() => onChangeViewMode("unpaid")}
             variant={viewMode === "unpaid" ? "default" : "outline"}
             size="sm"
             className={`${
               viewMode === "unpaid"
-                ? "bg-blue-500 text-white border-2 border-blue-600"
+                ? "bg-blue-500 text-white border-2 border-blue-600 w-full"
                 : allPropertiesPaid
-                ? "bg-green-50 text-green-700 hover:bg-green-100"
-                : "bg-yellow-50 text-yellow-700 hover:bg-yellow-100"
+                ? "bg-green-50 text-green-700 hover:bg-green-100 w-full"
+                : "bg-yellow-50 text-yellow-700 hover:bg-yellow-100 w-full"
             }`}
           >
             Unpublished ({unpaidPropertiesCount})
@@ -86,10 +87,10 @@ export function PropertyPaymentCTA({
             size="sm"
             className={`${
               viewMode === "paid"
-                ? "bg-blue-500 text-white border-2 border-blue-600"
+                ? "bg-blue-500 text-white border-2 border-blue-600 w-full"
                 : allPropertiesPaid
-                ? "bg-green-50 text-green-700 hover:bg-green-100"
-                : "bg-yellow-50 text-yellow-700 hover:bg-yellow-100"
+                ? "bg-green-50 text-green-700 hover:bg-green-100 w-full"
+                : "bg-yellow-50 text-yellow-700 hover:bg-yellow-100 w-full"
             }`}
           >
             Published ({paidPropertiesCount})
@@ -100,10 +101,10 @@ export function PropertyPaymentCTA({
             size="sm"
             className={`${
               viewMode === "all"
-                ? "bg-blue-500 text-white border-2 border-blue-600"
+                ? "bg-blue-500 text-white border-2 border-blue-600 w-full"
                 : allPropertiesPaid
-                ? "bg-green-50 text-green-700 hover:bg-green-100"
-                : "bg-yellow-50 text-yellow-700 hover:bg-yellow-100"
+                ? "bg-green-50 text-green-700 hover:bg-green-100 w-full"
+                : "bg-yellow-50 text-yellow-700 hover:bg-yellow-100 w-full"
             }`}
           >
             All ({totalPropertiesCount})
