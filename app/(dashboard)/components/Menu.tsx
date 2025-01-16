@@ -144,12 +144,11 @@ export default function Menu() {
   const { data: session } = useSession();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(true);
-  //const [isMobile, setIsMobile] = useState(false); //Removed as per update 2
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 1024;
-      //setIsMobile(mobile); //Removed as per update 2
       setIsOpen(!mobile);
     };
     handleResize();
@@ -166,7 +165,7 @@ export default function Menu() {
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
-  const MenuContent = () => (
+  const MenuContent = ({ onItemClick }: { onItemClick?: () => void }) => (
     <ScrollArea className="h-full">
       <div className="px-4 py-6">
         <Link href="/" className="flex items-center gap-2 no-underline mb-6">
@@ -194,6 +193,7 @@ export default function Menu() {
                     {item.url ? (
                       <Link
                         href={item.url}
+                        onClick={onItemClick}
                         className={`flex items-center space-x-3 px-3 py-2 rounded-md transition-colors duration-200 ${
                           isActive
                             ? "bg-blue-100 text-blue-600"
@@ -205,7 +205,10 @@ export default function Menu() {
                       </Link>
                     ) : (
                       <button
-                        onClick={item.action}
+                        onClick={() => {
+                          item.action?.();
+                          onItemClick?.();
+                        }}
                         className="flex items-center space-x-3 px-3 py-2 rounded-md transition-colors duration-200 text-gray-700 hover:bg-gray-100 w-full"
                       >
                         <item.icon className="h-5 w-5" />
@@ -225,18 +228,22 @@ export default function Menu() {
 
   return (
     <>
-      <Sheet>
+      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <SheetTrigger asChild>
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden fixed top-4 left-4 z-50"
+            className="lg:hidden fixed top-4 left-4 z-50 size-12 bg-neutral-50"
+            onClick={() => setIsSheetOpen(true)}
           >
-            <MenuIcon className="size-8" />
+            <MenuIcon className="size-16" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="p-0 w-64">
-          <MenuContent />
+        <SheetContent
+          side="left"
+          className="p-0 w-64 transition-transform duration-300 ease-in-out"
+        >
+          <MenuContent onItemClick={() => setIsSheetOpen(false)} />
         </SheetContent>
       </Sheet>
       <nav
