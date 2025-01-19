@@ -15,11 +15,19 @@ async function getProperties() {
       where: {
         isActive: true, // Filter for active properties only
       },
+      include: {
+        orders: {
+          select: {
+            tierName: true,
+          },
+        },
+      },
       orderBy: {
         updatedAt: "desc",
       },
       take: 6, // Limit to 6 properties for featured section
     });
+    console.log("Properties fetched:", properties);
     return properties;
   } catch (error) {
     console.error("Error fetching properties:", error);
@@ -41,7 +49,13 @@ function PropertyList({ properties }: any) {
   return (
     <article className="mx-auto mb-8 gap-8 grid w-full max-w-screen-xl grid-cols-[repeat(auto-fill,_minmax(335px,1fr))] justify-center">
       {properties.map((property: any) => (
-        <PropertyCard key={property.id} data={property} />
+        <PropertyCard
+          key={property.id}
+          data={property}
+          tierName={
+            property.orders.length > 0 ? property.orders[0].tierName : undefined
+          } // Assuming you want the first tierName from the orders
+        />
       ))}
     </article>
   );

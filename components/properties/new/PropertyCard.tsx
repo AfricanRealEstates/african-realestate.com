@@ -1,27 +1,18 @@
 import GallerySlider from "@/components/animations/gallery-slider";
-import { Property } from "@prisma/client";
-import React from "react";
-import StatusBadge from "./StatusBadge";
-import { MapPinIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import {
   Bath,
   Bed,
-  Car,
   CircleParking,
   ExpandIcon,
   Eye,
-  Heart,
   MapPinned,
 } from "lucide-react";
 
-import { Josefin_Sans, Raleway } from "next/font/google";
+import { Raleway } from "next/font/google";
 import { calculatePercentageSavings, formatNumber } from "@/lib/utils";
 
 import { PropertyData } from "@/lib/types";
-import { useSession } from "next-auth/react";
-import { auth } from "@/auth";
-import HeartButton from "./HeartButton";
 import LikeCounter from "./LikesCounter";
 
 const josefin = Raleway({
@@ -34,6 +25,7 @@ export interface PropertyCardProps {
   ratioClass?: string;
   data: PropertyData;
   size?: "default" | "small";
+  tierName?: string;
 }
 
 export default async function PropertyCard({
@@ -41,6 +33,7 @@ export default async function PropertyCard({
   className = "",
   data,
   ratioClass = "aspect-w-3 aspect-h-3",
+  tierName,
 }: PropertyCardProps) {
   const {
     id,
@@ -82,7 +75,7 @@ export default async function PropertyCard({
         <div className="left-4 right-4 top-4 flex justify-between absolute items-start gap-2 flex-wrap">
           <ul className="flex gap-2">
             <li className="text-white bg-[#198754] font-semibold text-[12px] leading-5 uppercase text-center inline-block px-2 rounded transition-all cursor-pointer">
-              Featured
+              {tierName || "Featured"} {/* Modified this line */}
             </li>
             {/* <li className="text-white bg-[rgba(11,33,50,.4)] font-semibold text-[12px] leading-5 uppercase text-center inline-block px-2 rounded transition-all cursor-pointer">
               {status === "let" ? "To" : "For"} {status}
