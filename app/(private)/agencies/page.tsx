@@ -1,16 +1,48 @@
-import React from "react";
 import { Raleway } from "next/font/google";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import Image from "next/image";
-import { BadgeCheck } from "lucide-react";
-import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/20/solid";
+import { EnvelopeIcon } from "@heroicons/react/20/solid";
 import { UserRole } from "@prisma/client";
+
 const raleway = Raleway({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-nunitosans",
 });
+
+export async function generateMetadata() {
+  return {
+    title: "Agencies | Discover Expert Agents - Your Real Estate Partner",
+    description:
+      "Explore our network of expert real estate agencies offering tailored solutions to your property needs. Connect with professionals and find your dream property today.",
+    openGraph: {
+      title: "Agencies | Expert Real Estate Professionals",
+      description:
+        "Discover our trusted network of real estate agencies with expert agents to guide you through your property journey.",
+      url: "https://www.african-realestate.com/agencies",
+      images: [
+        {
+          url: "https://www.african-realestate.com/assets/house-1.jpg", // Update with a relevant image
+          width: 1200,
+          height: 630,
+          alt: "Agencies Page",
+        },
+      ],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Agencies | Expert Real Estate Professionals",
+      description:
+        "Explore trusted real estate agencies to find tailored property solutions.",
+      images: ["https://www.african-realestate.com/assets/house-1.jpg"], // Update
+    },
+    alternates: {
+      canonical: "https://www.african-realestate.com/agencies", // Update with your canonical URL
+    },
+  };
+}
 
 export default async function Agencies() {
   const agents = await prisma.user.findMany({
@@ -39,8 +71,6 @@ export default async function Agencies() {
         </h1>
         <p className="font-medium capitalize mb-8 mt-4 text-center text-sm text-[#636363] sm:text-base md:mb-12 lg:mb-16 lg:text-left">
           Discover our network of expert agents
-          {/* offering diverse array of
-          properties tailored to meet your unique needs */}
         </p>
 
         <ul
@@ -94,10 +124,6 @@ export default async function Agencies() {
                       href={`/agencies/${agent.id}`}
                       className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold"
                     >
-                      {/* <PhoneIcon
-                        className="h-5 w-5 text-gray-400"
-                        aria-hidden="true"
-                      /> */}
                       View Listings
                     </Link>
                   </div>
