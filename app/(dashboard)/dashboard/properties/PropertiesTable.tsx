@@ -31,6 +31,7 @@ import {
   PaginationPrevious,
   PaginationEllipsis,
 } from "@/components/ui/pagination";
+import { useToast } from "@/components/ui/use-toast";
 
 type Property = Omit<PrismaProperty, "expiryDate"> & {
   expiryDate: Date | null;
@@ -54,6 +55,7 @@ export default function PropertiesTable({
   const [currentPage, setCurrentPage] = useState(1);
   const [propertiesPerPage, setPropertiesPerPage] = useState(10);
   const [localProperties, setLocalProperties] = useState(properties);
+  const { toast } = useToast();
 
   useEffect(() => {
     setLocalProperties(properties);
@@ -83,6 +85,30 @@ export default function PropertiesTable({
     unpaidProperties.forEach((property) => {
       onPropertySelect(property.id, property.propertyNumber, true);
     });
+  };
+
+  const handleDeleteProperty = async (propertyId: string) => {
+    try {
+      const result = await deleteProperty(propertyId);
+      if (result.success) {
+        setLocalProperties((prevProperties) =>
+          prevProperties.filter((p) => p.id !== propertyId)
+        );
+        toast({
+          title: "Property deleted",
+          description: "The property has been successfully deleted.",
+          variant: "default",
+        });
+      }
+    } catch (error: any) {
+      console.error("Failed to delete property:", error);
+      toast({
+        title: "Error",
+        description:
+          error.message || "Failed to delete the property. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -222,18 +248,18 @@ export default function PropertiesTable({
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>
-                      <form action={deleteProperty.bind(null, property.id)}>
-                        <button
-                          type="submit"
-                          className="flex w-full items-center text-red-500"
-                        >
-                          <IconMenu
-                            text="Delete"
-                            icon={<Trash2 className="mr-2 h-4 w-4" />}
-                          />
-                        </button>
-                      </form>
+                    <DropdownMenuItem
+                      onSelect={() => handleDeleteProperty(property.id)}
+                    >
+                      <button
+                        type="button"
+                        className="flex w-full items-center text-red-500"
+                      >
+                        <IconMenu
+                          text="Delete"
+                          icon={<Trash2 className="mr-2 h-4 w-4" />}
+                        />
+                      </button>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

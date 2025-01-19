@@ -22,10 +22,36 @@ export async function deleteProperty(propertyId: string) {
         throw new Error("You do not have permission to delete this property.");
     }
 
-    await prisma.property.delete({
-        where: { id: propertyId },
-    });
+    try {
+        // Use a transaction to ensure all operations succeed or fail together
+        await prisma.$transaction(async (tx) => {
+            // Delete all associated PropertyView records
+            await tx.propertyView.deleteMany({
+                where: {
+                    propertyId: propertyId,
+                },
+            });
 
-    return { success: true };
+            // Delete all associated Order records
+            await tx.order.deleteMany({
+                where: {
+                    propertyId: propertyId,
+                },
+            });
+
+            // Delete the property
+            await tx.property.delete({
+                where: { id: propertyId },
+            });
+        });
+
+        return { success: true };
+    } catch (error:any) {
+        console.error("Error deleting property:", error);
+        if (error.code === 'P2003') {
+            throw new Error("Unable to delete property due to existing references. Please remove all associated data first.");
+        }
+        throw new Error("Failed to delete the property. Please try again later.");
+    }
 }
 

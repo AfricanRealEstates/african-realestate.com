@@ -11,9 +11,14 @@ const lexend = Lexend({
 
 async function getProperties() {
   try {
-    const properties = await prisma.property.findMany({
+    const platinumProperties = await prisma.property.findMany({
       where: {
-        isActive: true, // Filter for active properties only
+        isActive: true,
+        orders: {
+          some: {
+            tierName: "Platinum", // Only Platinum properties
+          },
+        },
       },
       include: {
         orders: {
@@ -23,10 +28,76 @@ async function getProperties() {
         },
       },
       orderBy: {
-        updatedAt: "desc",
+        updatedAt: "desc", // Sort by most recently updated
       },
-      take: 6, // Limit to 6 properties for featured section
+      take: 3, // Limit to the first 3 Platinum properties
     });
+
+    const diamondProperties = await prisma.property.findMany({
+      where: {
+        isActive: true,
+        orders: {
+          some: {
+            tierName: "Diamond", // Only Diamond properties
+          },
+        },
+      },
+      include: {
+        orders: {
+          select: {
+            tierName: true,
+          },
+        },
+      },
+      orderBy: {
+        updatedAt: "desc", // Sort by most recently updated
+      },
+      take: 2, // Limit to the first 2 Diamond properties
+    });
+
+    const bronzeProperties = await prisma.property.findMany({
+      where: {
+        isActive: true,
+        orders: {
+          some: {
+            tierName: "Bronze", // Only Bronze properties
+          },
+        },
+      },
+      include: {
+        orders: {
+          select: {
+            tierName: true,
+          },
+        },
+      },
+      orderBy: {
+        updatedAt: "desc", // Sort by most recently updated
+      },
+      take: 1, // Limit to the first Bronze property
+    });
+
+    // Combine the properties from each tier
+    let properties: any = [
+      ...platinumProperties,
+      ...diamondProperties,
+      ...bronzeProperties,
+    ];
+
+    // If less than 6 properties, fill the remaining spots with placeholders
+    const placeholderProperties = await prisma.property.findMany({
+      where: {
+        isActive: true,
+      },
+      orderBy: {
+        updatedAt: "desc", // Get other featured properties
+      },
+      take: 6 - properties.length, // Only take the remaining required properties
+    });
+
+    // Add the placeholder properties
+    properties = [...properties, ...placeholderProperties];
+
     console.log("Properties fetched:", properties);
     return properties;
   } catch (error) {
@@ -53,8 +124,10 @@ function PropertyList({ properties }: any) {
           key={property.id}
           data={property}
           tierName={
-            property.orders.length > 0 ? property.orders[0].tierName : undefined
-          } // Assuming you want the first tierName from the orders
+            property.orders && property.orders.length > 0
+              ? property.orders[0].tierName
+              : undefined
+          }
         />
       ))}
     </article>

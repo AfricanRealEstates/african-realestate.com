@@ -43,9 +43,39 @@ export default function Media({
   const { id }: { id: string } = useParams();
   const router = useRouter();
 
+  // useEffect(() => {
+  //   if (isEdit) {
+  //     const isCloning = !id;
+  //     const initialCoverPhotos = (finalValues.media?.coverPhotos || []).map(
+  //       (url: string) => ({
+  //         file: url,
+  //         preview: isCloning ? "" : url,
+  //       })
+  //     );
+  //     const initialTempFiles = (finalValues.media?.images || []).map(
+  //       (url: string) => ({
+  //         file: url,
+  //         preview: isCloning ? "" : url,
+  //       })
+  //     );
+
+  //     setCoverPhotos(initialCoverPhotos);
+  //     setTempFiles(initialTempFiles);
+
+  //     if (isCloning) {
+  //       loadImagePreviews(initialCoverPhotos, initialTempFiles);
+  //     } else {
+  //       setPreviewsLoaded(true);
+  //     }
+  //   } else {
+  //     setPreviewsLoaded(true);
+  //   }
+  // }, [isEdit, id, finalValues]);
+
   useEffect(() => {
     if (isEdit) {
       const isCloning = !id;
+
       const initialCoverPhotos = (finalValues.media?.coverPhotos || []).map(
         (url: string) => ({
           file: url,
@@ -62,6 +92,7 @@ export default function Media({
       setCoverPhotos(initialCoverPhotos);
       setTempFiles(initialTempFiles);
 
+      // Trigger loading of previews for cloning properties
       if (isCloning) {
         loadImagePreviews(initialCoverPhotos, initialTempFiles);
       } else {
