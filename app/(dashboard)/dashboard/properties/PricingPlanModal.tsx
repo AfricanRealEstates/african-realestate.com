@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
-import { Check, X } from 'lucide-react';
+import { useState, useEffect, useCallback } from "react";
+import { Check, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -102,14 +102,14 @@ export default function PricingPlanModal({
     propertyCount <= 3
       ? "1-3"
       : propertyCount <= 5
-        ? "4-5"
-        : propertyCount <= 10
-          ? "6-10"
-          : propertyCount <= 20
-            ? "11-20"
-            : propertyCount <= 40
-              ? "21-40"
-              : ">40";
+      ? "4-5"
+      : propertyCount <= 10
+      ? "6-10"
+      : propertyCount <= 20
+      ? "11-20"
+      : propertyCount <= 40
+      ? "21-40"
+      : ">40";
 
   const handleTierSelection = (tierName: string) => {
     setSelectedTier(tierName);
@@ -355,11 +355,13 @@ export default function PricingPlanModal({
           {tiers.map((tier, index) => (
             <Card
               key={tier.name}
-              className={`flex flex-col w-full relative ${selectedTier === tier.name ? "ring-2 ring-blue-500" : ""
-                } ${tier.recommended
+              className={`flex flex-col w-full relative ${
+                selectedTier === tier.name ? "ring-2 ring-blue-500" : ""
+              } ${
+                tier.recommended
                   ? "shadow-lg transform hover:scale-105 transition-transform duration-300"
                   : ""
-                }`}
+              }`}
             >
               {tier.recommended && (
                 <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-blue-500 text-white text-xs font-semibold py-1 px-3 rounded-full">
@@ -370,12 +372,13 @@ export default function PricingPlanModal({
                 <CardTitle className="text-xl text-blue-800">
                   {tier.title}
                   <span
-                    className={`ml-2 inline-block px-2 py-1 text-xs font-semibold rounded-full ${index === 0
-                      ? "bg-yellow-100 text-yellow-800"
-                      : index === 1
+                    className={`ml-2 inline-block px-2 py-1 text-xs font-semibold rounded-full ${
+                      index === 0
+                        ? "bg-yellow-100 text-yellow-800"
+                        : index === 1
                         ? "bg-blue-100 text-blue-800"
                         : "bg-purple-100 text-purple-800"
-                      }`}
+                    }`}
                   >
                     {tier.name}
                   </span>
@@ -414,8 +417,8 @@ export default function PricingPlanModal({
                       selectedTier === tier.name
                         ? "#3b82f6"
                         : tier.recommended
-                          ? "#3b82f6"
-                          : "transparent",
+                        ? "#3b82f6"
+                        : "transparent",
                     color:
                       selectedTier === tier.name || tier.recommended
                         ? "white"
@@ -464,7 +467,11 @@ export default function PricingPlanModal({
                 name={user.name}
                 phone={user.phone}
                 userId={user.id}
-                tierDuration={tiers.find(tier => tier.name === selectedTier)?.durationInDays || 30}
+                tierDuration={
+                  tiers.find((tier) => tier.name === selectedTier)
+                    ?.durationInDays || 30
+                }
+                tierName={selectedTier || ""}
                 onClose={() => setIsPaystackModalOpen(false)}
                 onSuccess={handlePaymentSuccess}
                 onModalOpen={handlePaystackModalOpen}
@@ -476,4 +483,3 @@ export default function PricingPlanModal({
     </Dialog>
   );
 }
-

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { PropertiesFormStepProps } from "./index";
 import { Form, Input, Modal, Upload, Spin, Checkbox } from "antd";
 import Image from "next/image";
@@ -40,7 +40,7 @@ export default function Media({
   const [otherPhotosLoading, setOtherPhotosLoading] = useState(false);
   const [previewsLoaded, setPreviewsLoaded] = useState(false);
 
-  const { id }: { id?: string } = useParams();
+  const { id }: { id: string } = useParams();
   const router = useRouter();
 
   useEffect(() => {
@@ -133,8 +133,9 @@ export default function Media({
   const handleFileUpload = async (file: File, isCoverPhoto: boolean) => {
     try {
       const convertedFile = await convertHeicToJpeg(file);
-      const key = `${isCoverPhoto ? "cover-photos" : "property-photos"
-        }/${Date.now()}-${convertedFile.name}`;
+      const key = `${
+        isCoverPhoto ? "cover-photos" : "property-photos"
+      }/${Date.now()}-${convertedFile.name}`;
       const uploadResult = await uploadToS3(convertedFile, key);
 
       if (uploadResult.success) {
@@ -418,8 +419,10 @@ export default function Media({
               <Spin className="mr-2" />
               {isEdit ? "Updating..." : "Creating..."}
             </>
+          ) : isEdit ? (
+            "Update Property"
           ) : (
-            isEdit ? "Update Property" : "Create Property"
+            "Create Property"
           )}
         </Button>
       </div>
