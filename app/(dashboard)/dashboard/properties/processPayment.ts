@@ -1,6 +1,6 @@
 'use server'
 
-import { prisma } from '@/lib/prisma'
+import { prisma } from '@/lib/prisma';
 
 const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY
 
@@ -14,6 +14,7 @@ interface PaymentDetails {
     userId: string;
     reference: string;
     tierDuration: number;
+    tierName: string;
 }
 
 export async function processPayment(paymentDetails: PaymentDetails) {
@@ -76,7 +77,8 @@ export async function processPayment(paymentDetails: PaymentDetails) {
                 propertyId: paymentDetails.propertyIds.length === 1
                     ? paymentDetails.propertyIds[0]
                     : paymentDetails.propertyIds.join(','), // Store single ID or multiple IDs as comma-separated string
-                expiryDate: expiryDate
+                expiryDate: expiryDate,
+                tierName: paymentDetails.tierName,
             }
         })
 

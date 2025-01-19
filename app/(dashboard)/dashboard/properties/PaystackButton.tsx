@@ -14,6 +14,7 @@ interface PaystackButtonProps {
   phone: string;
   userId: string;
   tierDuration: number;
+  tierName: string;
   onClose: () => void;
   onSuccess: (reference: any) => void;
   onModalOpen: () => void;
@@ -28,6 +29,7 @@ export default function PaystackButton({
   phone,
   userId,
   tierDuration,
+  tierName,
   onClose,
   onSuccess,
   onModalOpen,
@@ -35,7 +37,7 @@ export default function PaystackButton({
   const [isLoading, setIsLoading] = useState(false);
 
   const config = {
-    reference: (new Date()).getTime().toString(),
+    reference: new Date().getTime().toString(),
     email: email,
     amount: Math.round(amount * 100), // Convert to cents
     publicKey: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY!,
@@ -61,6 +63,11 @@ export default function PaystackButton({
           variable_name: "propertyNumbers",
           value: propertyNumbers.join(", "),
         },
+        {
+          display_name: "Tier Name",
+          variable_name: "tierName",
+          value: tierName,
+        },
       ],
     },
     currency: "KES",
@@ -80,6 +87,7 @@ export default function PaystackButton({
           userId,
           reference: reference.reference,
           tierDuration,
+          tierName,
         });
 
         if (result.success) {
@@ -97,7 +105,7 @@ export default function PaystackButton({
 
       onClose();
     },
-    [propertyIds, amount, userId, tierDuration, onSuccess, onClose]
+    [propertyIds, amount, userId, tierDuration, tierName, onSuccess, onClose]
   );
 
   const handleClose = useCallback(() => {
@@ -106,60 +114,28 @@ export default function PaystackButton({
     onClose();
   }, [onClose]);
 
-  const handlePayment = useCallback(async () => {
+  const handlePayment = useCallback(() => {
     setIsLoading(true);
     if (amount === 0) {
       // For zero amount, bypass Paystack and directly call processPayment
-      try {
-        const result = await processPayment({
-          propertyIds,
-          amount,
-          userId,
-          reference: `FREE_${new Date().getTime()}`,
-          tierDuration,
-        });
-
-        if (result.success) {
-          console.log("Properties activated:", result.properties);
-          console.log("Order created:", result.order);
-          onSuccess({ reference: result.order?.id });
-        } else {
-          console.error("Failed to process free payment:", result.error);
-          // Handle the error (e.g., show an error message to the user)
-        }
-      } catch (error) {
-        console.error("Error processing free payment:", error);
-        // Handle the error (e.g., show an error message to the user)
-      }
-      setIsLoading(false);
-      onClose();
+      handleSuccess({ reference: `FREE_${new Date().getTime()}` });
     } else {
       onModalOpen(); // Call this function when Paystack modal is about to open
       initializePayment({ onSuccess: handleSuccess, onClose: handleClose });
     }
-  }, [
-    initializePayment,
-    handleSuccess,
-    handleClose,
-    amount,
-    propertyIds,
-    userId,
-    tierDuration,
-    onSuccess,
-    onClose,
-    onModalOpen,
-  ]);
+  }, [initializePayment, handleSuccess, handleClose, amount, onModalOpen]);
 
   return (
     <Button onClick={handlePayment} disabled={isLoading}>
       {isLoading
         ? "Processing..."
         : amount === 0
-          ? `Activate ${propertyIds.length} ${propertyIds.length === 1 ? "Property" : "Properties"
+        ? `Activate ${propertyIds.length} ${
+            propertyIds.length === 1 ? "Property" : "Properties"
           } for Free`
-          : `Pay for ${propertyIds.length} ${propertyIds.length === 1 ? "Property" : "Properties"
+        : `Pay for ${propertyIds.length} ${
+            propertyIds.length === 1 ? "Property" : "Properties"
           }`}
     </Button>
   );
 }
-

@@ -448,6 +448,7 @@ export default function PricingPlanSection({
                   tiers.find((tier) => tier.name === selectedTier)
                     ?.durationInDays || 30
                 }
+                tierName={selectedTier || ""}
                 onClose={() => setIsPaystackModalOpen(false)}
                 onSuccess={handlePaymentSuccess}
                 onModalOpen={handlePaystackModalOpen}

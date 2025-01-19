@@ -236,6 +236,7 @@ model Order {
   expiryDate DateTime?
   userId     String
   propertyId String
+  tierName   String?
   property   Property  @relation(fields: [propertyId], references: [id])
   user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 

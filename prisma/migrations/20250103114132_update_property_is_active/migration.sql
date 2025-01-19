@@ -1,5 +1,5 @@
 -- -- AlterTable
-<<<<<<< HEAD
+
 ALTER TABLE "accounts" ALTER COLUMN "id" SET DEFAULT concat('account_', replace(cast(gen_random_uuid() as text), '-', ''));
 
 -- -- AlterTable
@@ -32,7 +32,7 @@ ALTER TABLE "users" ALTER COLUMN "id" SET DEFAULT concat('user_', replace(cast(g
 UPDATE "properties" SET "isActive" = false WHERE "isActive" = true;
 
 -- ALTER TABLE "properties" ALTER COLUMN "isActive" SET DEFAULT false;
-=======
+
 -- ALTER TABLE "accounts" ALTER COLUMN "id" SET DEFAULT concat('account_', replace(cast(gen_random_uuid() as text), '-', ''));
 
 -- -- AlterTable
@@ -64,5 +64,5 @@ UPDATE "properties" SET "isActive" = false WHERE "isActive" = true;
 -- Update existing properties
 -- UPDATE "properties" SET "isActive" = false WHERE "isActive" = true;
 
-ALTER TABLE "properties" ALTER COLUMN "isActive" SET DEFAULT false;
->>>>>>> f588dfc1d1d2f657f3c33a7620ad863c09c74e3e
+-- ALTER TABLE "properties" ALTER COLUMN "isActive" SET DEFAULT false;
+
