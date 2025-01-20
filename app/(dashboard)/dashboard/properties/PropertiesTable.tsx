@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Property as PrismaProperty } from "@prisma/client";
+import type { Property as PrismaProperty } from "@prisma/client";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -32,6 +32,17 @@ import {
   PaginationEllipsis,
 } from "@/components/ui/pagination";
 import { useToast } from "@/components/ui/use-toast";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
+import { useRouter } from "next/navigation";
 
 type Property = Omit<PrismaProperty, "expiryDate"> & {
   expiryDate: Date | null;
@@ -55,6 +66,10 @@ export default function PropertiesTable({
   const [currentPage, setCurrentPage] = useState(1);
   const [propertiesPerPage, setPropertiesPerPage] = useState(10);
   const [localProperties, setLocalProperties] = useState(properties);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [propertyToDelete, setPropertyToDelete] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -87,28 +102,45 @@ export default function PropertiesTable({
     });
   };
 
-  const handleDeleteProperty = async (propertyId: string) => {
-    try {
-      const result = await deleteProperty(propertyId);
-      if (result.success) {
-        setLocalProperties((prevProperties) =>
-          prevProperties.filter((p) => p.id !== propertyId)
-        );
+  const handleDeleteProperty = (propertyId: string) => {
+    setPropertyToDelete(propertyId);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setPropertyToDelete(null);
+  };
+
+  const confirmDeleteProperty = async () => {
+    if (propertyToDelete) {
+      try {
+        setIsLoading(true);
+        const result = await deleteProperty(propertyToDelete);
+        if (result.success) {
+          setLocalProperties((prevProperties) =>
+            prevProperties.filter((p) => p.id !== propertyToDelete)
+          );
+          router.refresh();
+          toast({
+            title: "Property deleted",
+            description: "The property has been successfully deleted.",
+            variant: "default",
+          });
+        }
+      } catch (error: any) {
+        console.error("Failed to delete property:", error);
         toast({
-          title: "Property deleted",
-          description: "The property has been successfully deleted.",
-          variant: "default",
+          title: "Error",
+          description:
+            error.message || "Failed to delete the property. Please try again.",
+          variant: "destructive",
         });
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error: any) {
-      console.error("Failed to delete property:", error);
-      toast({
-        title: "Error",
-        description:
-          error.message || "Failed to delete the property. Please try again.",
-        variant: "destructive",
-      });
     }
+    handleCloseDeleteModal();
   };
 
   return (
@@ -249,7 +281,9 @@ export default function PropertiesTable({
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
-                      onSelect={() => handleDeleteProperty(property.id)}
+                      onSelect={() => {
+                        handleDeleteProperty(property.id);
+                      }}
                     >
                       <button
                         type="button"
@@ -390,6 +424,33 @@ export default function PropertiesTable({
           </Pagination>
         </div>
       </div>
+      <AlertDialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Are you sure you want to delete this property?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the
+              property from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={handleCloseDeleteModal}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDeleteProperty}
+              className={`bg-rose-500 hover:bg-rose-400 transition-all ${
+                isLoading ? "opacity-50 pointer-events-none" : ""
+              }`}
+              disabled={isLoading} // Disable the button when loading
+            >
+              {isLoading ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
