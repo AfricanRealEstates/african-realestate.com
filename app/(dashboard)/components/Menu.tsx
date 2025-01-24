@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -21,7 +20,6 @@ import {
   LogOut,
   MenuIcon,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -230,14 +228,12 @@ export default function Menu() {
     <>
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <SheetTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="lg:hidden fixed top-4 left-4 z-50 size-12 bg-neutral-50"
+          <button
+            className="rounded-full lg:hidden fixed top-4 left-4 z-50 h-10 w-10 flex items-center justify-center hover:bg-neutral-50"
             onClick={() => setIsSheetOpen(true)}
           >
-            <MenuIcon className="size-16" />
-          </Button>
+            <MenuIcon className="w-6 h-6 text-gray-400" />
+          </button>
         </SheetTrigger>
         <SheetContent
           side="left"
@@ -246,6 +242,7 @@ export default function Menu() {
           <MenuContent onItemClick={() => setIsSheetOpen(false)} />
         </SheetContent>
       </Sheet>
+
       <nav
         className={`bg-white border-r border-gray-200 transition-all duration-300 ease-in-out ${
           isOpen ? "w-64" : "w-20"

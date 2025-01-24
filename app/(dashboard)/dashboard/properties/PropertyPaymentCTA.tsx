@@ -66,7 +66,7 @@ export function PropertyPaymentCTA({
             )}
           </div>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 lg:grid-cols-3 gap-2">
           <Button
             onClick={() => onChangeViewMode("unpaid")}
             variant={viewMode === "unpaid" ? "default" : "outline"}

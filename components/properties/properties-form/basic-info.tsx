@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { PropertiesFormStepProps } from "./index";
 import {
   Button,
@@ -11,12 +11,10 @@ import {
 } from "antd";
 import {
   currencyOptions,
-  propertyStatuses,
   propertyTypes,
   appliances,
   commercialAppliances,
   landUnits,
-  countries,
   industrialAppliances,
   vacationalAppliances,
   landAppliances,
@@ -97,10 +95,10 @@ export default function BasicInfo({
       return field === "price"
         ? status === "let"
           ? "Asking Rent/Day"
-          : "Asking Price/Day"
+          : "Asking Price"
         : status === "let"
         ? "Discounted Rent/Day (optional)"
-        : "Discounted Price/Day (optional)";
+        : "Discounted Price (optional)";
     } else {
       return field === "price"
         ? status === "let"

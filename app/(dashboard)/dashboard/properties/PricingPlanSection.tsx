@@ -19,11 +19,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import PaystackButton from "./PaystackButton";
 import { FeatureList } from "./FeatureList";
 import { applyDiscountCode, getUserDiscounts } from "./discountActions";
 import { toast } from "sonner";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 export type PropertyCountRange =
   | "1-3"
@@ -205,7 +212,8 @@ export default function PricingPlanSection({
   const calculateTotalAmount = (tierName: string) => {
     const tier = tiers.find((t) => t.name === tierName);
     if (!tier) return 0;
-    const baseAmount = parseInt(tier.pricing[propertyRange]) * propertyCount;
+    const baseAmount =
+      Number.parseInt(tier.pricing[propertyRange]) * propertyCount;
     if (discountPercentage) {
       const discountedAmount = baseAmount * (1 - discountPercentage / 100);
       return Math.round(discountedAmount);
@@ -216,7 +224,8 @@ export default function PricingPlanSection({
   const calculateSavings = (tierName: string) => {
     const tier = tiers.find((t) => t.name === tierName);
     if (!tier || !discountPercentage) return 0;
-    const baseAmount = parseInt(tier.pricing[propertyRange]) * propertyCount;
+    const baseAmount =
+      Number.parseInt(tier.pricing[propertyRange]) * propertyCount;
     const discountedAmount = calculateTotalAmount(tierName);
     return Math.round(baseAmount - discountedAmount);
   };
@@ -233,6 +242,8 @@ export default function PricingPlanSection({
     },
     [onClose]
   );
+
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
     <div className="mt-8 w-full mx-auto px-4">
@@ -262,73 +273,158 @@ export default function PricingPlanSection({
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {tiers.map((tier, index) => (
-          <Card
-            key={tier.name}
-            className={`mt-4 flex flex-col w-full relative transition-all duration-300 ${
-              selectedTier === tier.name ? "ring-2 ring-blue-500" : ""
-            } ${
-              tier.recommended
-                ? "shadow-lg transform hover:scale-105"
-                : "hover:shadow-md"
-            }`}
-          >
-            {tier.recommended && (
-              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-semibold py-1 px-4 rounded-full shadow-md">
-                Recommended
-              </div>
-            )}
-            <CardHeader>
-              <CardTitle className="text-xl text-blue-800 flex items-center justify-between">
-                {tier.title}
-                <span
-                  className={`ml-2 inline-block px-3 py-1 text-xs font-semibold rounded-full ${
-                    index === 0
-                      ? "bg-yellow-100 text-yellow-800"
-                      : index === 1
-                      ? "bg-blue-100 text-blue-800"
-                      : "bg-purple-100 text-purple-800"
+      {isMobile ? (
+        <Carousel className="w-full max-w-[400px] mx-auto">
+          <CarouselContent>
+            {tiers.map((tier, index) => (
+              <CarouselItem key={tier.name}>
+                <Card
+                  className={`mt-4 flex flex-col w-full relative transition-all duration-300 ${
+                    selectedTier === tier.name ? "ring-2 ring-blue-500" : ""
+                  } ${
+                    tier.recommended
+                      ? "shadow-lg transform hover:scale-95 bg-gradient-to-b from-blue-50 to-white"
+                      : "hover:shadow-md"
                   }`}
                 >
-                  {tier.name}
-                </span>
-              </CardTitle>
-              <CardDescription>{tier.description}</CardDescription>
-            </CardHeader>
-            <CardContent className="flex-grow">
-              <div className="mb-6">
-                <span className="text-3xl font-bold">
-                  KES {parseInt(tier.pricing[propertyRange]).toLocaleString()}
-                </span>
-                <span className="text-muted-foreground ml-1">per listing</span>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {tier.duration}
-                </p>
-                {discountPercentage && (
-                  <p className="text-sm text-green-600 mt-1">
-                    You save: KES {calculateSavings(tier.name).toLocaleString()}
+                  <CardHeader>
+                    <CardTitle className="text-xl text-blue-800 flex items-center justify-between">
+                      {tier.title}
+                      <span
+                        className={`ml-2 inline-block px-2 py-1 text-xs font-semibold rounded-full ${
+                          index === 0
+                            ? "bg-yellow-100 text-yellow-800"
+                            : index === 1
+                            ? "bg-blue-100 text-blue-800"
+                            : "bg-purple-100 text-purple-800"
+                        }`}
+                      >
+                        {tier.name}
+                      </span>
+                    </CardTitle>
+                    <CardDescription>{tier.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex-grow">
+                    <div className="mb-6">
+                      <span className="text-3xl font-bold">
+                        KES{" "}
+                        {Number.parseInt(
+                          tier.pricing[propertyRange]
+                        ).toLocaleString()}
+                      </span>
+                      <span className="text-muted-foreground ml-1">
+                        per listing
+                      </span>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {tier.duration}
+                      </p>
+                      {discountPercentage && (
+                        <p className="text-sm text-green-600 mt-1">
+                          You save: KES{" "}
+                          {calculateSavings(tier.name).toLocaleString()}
+                        </p>
+                      )}
+                    </div>
+                    <FeatureList
+                      features={tier.features}
+                      initialVisibleCount={tier.name === "Platinum" ? 5 : 4}
+                    />
+                  </CardContent>
+                  <CardFooter>
+                    <Button
+                      className="w-full transition-colors duration-300"
+                      variant={
+                        selectedTier === tier.name ? "default" : "outline"
+                      }
+                      onClick={() => handleTierSelection(tier.name)}
+                      disabled={selectedProperties.length === 0}
+                    >
+                      {selectedTier === tier.name ? "Selected" : "Select Plan"}
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
+      ) : (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-6">
+          {tiers.map((tier, index) => (
+            <Card
+              key={tier.name}
+              className={`mt-4 flex flex-col w-full relative transition-all duration-300 ${
+                selectedTier === tier.name ? "ring-2 ring-blue-500" : ""
+              } ${
+                tier.recommended
+                  ? "shadow-lg transform hover:scale-105 bg-gradient-to-b from-blue-50 to-white"
+                  : "hover:shadow-md"
+              }`}
+            >
+              {/* Add a badge for "Recommended" */}
+              {tier.recommended && (
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-semibold py-1 px-4 rounded-full shadow-md">
+                  Recommended
+                </div>
+              )}
+              <CardHeader>
+                <CardTitle className="text-xl text-blue-800 flex items-center justify-between">
+                  {tier.title}
+                  <span
+                    className={`ml-2 inline-block px-3 py-1 text-xs font-semibold rounded-full ${
+                      index === 0
+                        ? "bg-yellow-100 text-yellow-800"
+                        : index === 1
+                        ? "bg-blue-100 text-blue-800"
+                        : "bg-purple-100 text-purple-800"
+                    }`}
+                  >
+                    {tier.name}
+                  </span>
+                </CardTitle>
+                <CardDescription>{tier.description}</CardDescription>
+              </CardHeader>
+              <CardContent className="flex-grow">
+                <div className="mb-6">
+                  <span className="text-3xl font-bold">
+                    KES{" "}
+                    {Number.parseInt(
+                      tier.pricing[propertyRange]
+                    ).toLocaleString()}
+                  </span>
+                  <span className="text-muted-foreground ml-1">
+                    per listing
+                  </span>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {tier.duration}
                   </p>
-                )}
-              </div>
-              <FeatureList
-                features={tier.features}
-                initialVisibleCount={tier.name === "Platinum" ? 5 : 4}
-              />
-            </CardContent>
-            <CardFooter>
-              <Button
-                className="w-full transition-colors duration-300"
-                variant={selectedTier === tier.name ? "default" : "outline"}
-                onClick={() => handleTierSelection(tier.name)}
-                disabled={selectedProperties.length === 0}
-              >
-                {selectedTier === tier.name ? "Selected" : "Select Plan"}
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
+                  {discountPercentage && (
+                    <p className="text-sm text-green-600 mt-1">
+                      You save: KES{" "}
+                      {calculateSavings(tier.name).toLocaleString()}
+                    </p>
+                  )}
+                </div>
+                <FeatureList
+                  features={tier.features}
+                  initialVisibleCount={tier.name === "Platinum" ? 5 : 4}
+                />
+              </CardContent>
+              <CardFooter>
+                <Button
+                  className="w-full transition-colors duration-300"
+                  variant={selectedTier === tier.name ? "default" : "outline"}
+                  onClick={() => handleTierSelection(tier.name)}
+                  disabled={selectedProperties.length === 0}
+                >
+                  {selectedTier === tier.name ? "Selected" : "Select Plan"}
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      )}
 
       {selectedTier && (
         <div className="w-full mt-12">
@@ -351,11 +447,11 @@ export default function PricingPlanSection({
                       .map((discount) => (
                         <div
                           key={discount.id}
-                          className={`flex items-center justify-between p-3 rounded-lg transition-colors duration-300 cursor-pointer ${
+                          className={`flex items-center justify-between p-4 rounded-lg transition-all duration-300 cursor-pointer border ${
                             selectedDiscount?.id === discount.id
-                              ? "bg-blue-100 border-blue-300"
-                              : "bg-white border-gray-200"
-                          } border`}
+                              ? "bg-green-100 border-green-300 shadow-md"
+                              : "bg-white border-gray-200 hover:bg-gray-100"
+                          }`}
                           onClick={() => handleDiscountSelection(discount)}
                         >
                           <div>
@@ -370,18 +466,18 @@ export default function PricingPlanSection({
                             </p>
                           </div>
                           <div className="flex items-center">
-                            <span className="text-lg font-bold text-blue-600 mr-2">
+                            <span className="text-lg font-bold text-green-600 mr-2">
                               {discount.percentage}% OFF
                             </span>
                             {selectedDiscount?.id === discount.id && (
-                              <Check className="h-5 w-5 text-blue-500" />
+                              <Check className="h-5 w-5 text-green-500" />
                             )}
                           </div>
                         </div>
                       ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground mb-4">
+                  <p className="text-sm text-gray-500 mb-4">
                     No discounts available
                   </p>
                 )}
@@ -400,25 +496,27 @@ export default function PricingPlanSection({
                     <Button
                       onClick={handleApplyDiscount}
                       disabled={isApplyingDiscount}
-                      className="bg-blue-500 hover:bg-blue-600 text-white"
+                      className="bg-green-500 hover:bg-green-600 text-white"
                     >
                       Apply
                     </Button>
                   </div>
                 </div>
                 {discountPercentage && discountPercentage > 0 && (
-                  <Alert className="bg-green-50 border-green-200 text-green-800 mt-4">
-                    <Check className="h-5 w-5 text-green-600" />
-                    <AlertTitle className="text-lg font-semibold">
-                      Discount Applied!
-                    </AlertTitle>
-                    <AlertDescription className="mt-2">
-                      <span className="text-xl font-bold">
-                        {discountPercentage}% OFF
-                      </span>
-                      <span className="ml-2">on your entire order!</span>
-                    </AlertDescription>
-                  </Alert>
+                  <div className="bg-green-50 border-green-200 text-green-800 mt-4 p-4 rounded-lg flex items-start gap-3">
+                    <Check className="h-6 w-6 text-green-600" />
+                    <div>
+                      <h4 className="text-lg font-semibold">
+                        Discount Applied!
+                      </h4>
+                      <p className="mt-1">
+                        <span className="text-xl font-bold">
+                          {discountPercentage}% OFF
+                        </span>{" "}
+                        on your entire order!
+                      </p>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>

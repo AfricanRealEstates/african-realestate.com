@@ -104,6 +104,7 @@ export default function PropertiesTable({
 
   const handleDeleteProperty = (propertyId: string) => {
     setPropertyToDelete(propertyId);
+    router.refresh();
     setIsDeleteModalOpen(true);
   };
 
@@ -181,6 +182,9 @@ export default function PropertiesTable({
             <th scope="col" className="px-4 py-3 hidden sm:table-cell">
               Status
             </th>
+            <th scope="col" className="px-4 py-3 hidden sm:table-cell">
+              Expiry
+            </th>
             <th scope="col" className="px-4 py-3">
               Actions
             </th>
@@ -234,6 +238,11 @@ export default function PropertiesTable({
                 <Badge variant={property.isActive ? "default" : "destructive"}>
                   {property.isActive ? "Published" : "Unpublished"}
                 </Badge>
+              </td>
+              <td className="px-4 py-4 hidden sm:table-cell">
+                {property.expiryDate
+                  ? new Date(property.expiryDate).toLocaleDateString("en-US")
+                  : "No Expiry"}
               </td>
               <td className="p-4 text-sm font-medium">
                 <DropdownMenu>
