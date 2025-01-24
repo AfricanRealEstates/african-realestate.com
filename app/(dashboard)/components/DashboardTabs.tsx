@@ -1,34 +1,17 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Heart,
-  Bookmark,
-  Star,
-  Home,
-  ChevronRight,
-  ShoppingCart,
-  MoreVertical,
-  Edit,
-  Copy,
-  Trash,
-  ChevronDown,
-} from "lucide-react";
-
-import { deleteProperty } from "@/actions/deleteProperty";
+import { Heart, Bookmark, Star, ShoppingCart, ChevronDown } from "lucide-react";
 
 interface DashboardTabsProps {
-  properties: any;
   favorites: any;
   bookmarks: any;
   ratings: any[];
@@ -38,7 +21,6 @@ interface DashboardTabsProps {
 }
 
 export default function DashboardTabs({
-  properties,
   favorites,
   bookmarks,
   ratings,
@@ -46,15 +28,9 @@ export default function DashboardTabs({
   stats,
   isAdmin,
 }: DashboardTabsProps) {
-  const [activeTab, setActiveTab] = useState("properties");
+  const [activeTab, setActiveTab] = useState("favorites");
 
   const tabs = [
-    {
-      id: "properties",
-      label: "Properties",
-      icon: Home,
-      count: stats.propertiesCount,
-    },
     { id: "favorites", label: "Favorites", icon: Heart },
     { id: "bookmarks", label: "Bookmarks", icon: Bookmark },
     { id: "ratings", label: "Ratings", icon: Star },
@@ -93,11 +69,6 @@ export default function DashboardTabs({
                   >
                     <tab.icon className="h-4 w-4 mr-2" />
                     <span>{tab.label}</span>
-                    {tab.count && (
-                      <span className="ml-auto bg-primary text-primary-foreground rounded-full px-1.5 py-0.5 text-xs">
-                        {tab.count}
-                      </span>
-                    )}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
@@ -113,25 +84,11 @@ export default function DashboardTabs({
               >
                 <tab.icon className="h-4 w-4 mr-2" />
                 <span>{tab.label}</span>
-                {tab.count && (
-                  <span className="ml-1 bg-primary text-primary-foreground rounded-full px-1.5 py-0.5 text-xs">
-                    {tab.count}
-                  </span>
-                )}
               </Button>
             ))}
           </div>
         </div>
         <div className="flex-grow overflow-y-auto">
-          {activeTab === "properties" && (
-            <PropertyList
-              properties={properties.items}
-              currentPage={properties.currentPage}
-              totalPages={properties.totalPages}
-              emptyMessage="You haven't posted any properties yet."
-              showActions={true}
-            />
-          )}
           {activeTab === "favorites" && (
             <PropertyList
               properties={favorites.items}
@@ -186,81 +143,20 @@ function PropertyList({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {properties.map((property) => (
           <Card key={property.id} className="bg-white shadow-sm flex flex-col">
-            <div className="relative h-40">
-              <Image
-                src={property.coverPhotos[0] || "/placeholder.svg"}
-                alt={property.title}
-                layout="fill"
-                objectFit="cover"
-              />
-            </div>
             <CardContent className="p-3 flex-grow flex flex-col">
               <h3 className="font-semibold text-base mb-1 line-clamp-1">
                 {property.title}
               </h3>
-              <p className="text-gray-600 text-sm mb-1 line-clamp-1">
-                {property.locality}, {property.county}
-              </p>
               <p className="font-bold text-base mb-2">
                 {property.currency} {property.price.toLocaleString()}
               </p>
-              <div className="flex justify-between items-center mt-auto">
-                <Button
-                  asChild
-                  size="sm"
-                  className="bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white transition-colors"
-                >
-                  <Link
-                    href={`/properties/${property.propertyDetails}/${property.id}`}
-                  >
-                    View Details
-                  </Link>
-                </Button>
-                {showActions && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open menu</span>
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/agent/properties/edit-property/${property.id}`}
-                        >
-                          <Edit className="mr-2 h-4 w-4" />
-                          Edit
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/agent/properties/create-property?cloneFrom=${property.id}`}
-                        >
-                          <Copy className="mr-2 h-4 w-4" />
-                          Duplicate
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <form action={deleteProperty}>
-                          <input
-                            type="hidden"
-                            name="propertyId"
-                            value={property.id}
-                          />
-                          <button
-                            type="submit"
-                            className="flex items-center w-full"
-                          >
-                            <Trash className="mr-2 h-4 w-4" />
-                            Delete
-                          </button>
-                        </form>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )}
-              </div>
+              <Button
+                asChild
+                size="sm"
+                className="bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white transition-colors"
+              >
+                <Link href={`/properties/${property.id}`}>View Details</Link>
+              </Button>
             </CardContent>
           </Card>
         ))}
@@ -311,13 +207,6 @@ function RatingsList({ ratings }: { ratings: any[] }) {
       {ratings.map((rating) => (
         <Card key={rating.id} className="bg-white shadow-sm">
           <CardContent className="p-3 flex items-center space-x-3">
-            <Avatar className="h-10 w-10 flex-shrink-0">
-              <AvatarImage
-                src={rating.property.coverPhotos[0]}
-                alt={rating.property.title}
-              />
-              <AvatarFallback>{rating.property.title[0]}</AvatarFallback>
-            </Avatar>
             <div className="flex-1 min-w-0">
               <h3 className="font-semibold text-sm truncate">
                 {rating.property.title}
@@ -326,24 +215,6 @@ function RatingsList({ ratings }: { ratings: any[] }) {
                 {rating.property.locality}, {rating.property.county}
               </p>
             </div>
-            <div className="flex items-center flex-shrink-0">
-              <Star className="h-4 w-4 text-yellow-500 mr-1" />
-              <span className="font-bold text-sm">
-                {rating.ratings.toFixed(1)}
-              </span>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="p-1 flex-shrink-0"
-              asChild
-            >
-              <Link
-                href={`/properties/${rating.property.propertyDetails}/${rating.property.id}`}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Link>
-            </Button>
           </CardContent>
         </Card>
       ))}
@@ -378,34 +249,9 @@ function OrdersList({
                 {new Date(order.createdAt).toLocaleDateString()}
               </span>
             </div>
-            <div className="space-y-2 mb-4">
-              <p className="text-sm text-gray-600">
-                <span className="font-medium">User:</span> {order.user.name} (
-                {order.user.email})
-              </p>
-              <p className="text-sm text-gray-600">
-                <span className="font-medium">Property:</span>{" "}
-                {order.property.title}
-              </p>
-              <p className="text-lg font-bold">
-                Amount: KES {order.pricePaid.toLocaleString()}
-              </p>
-            </div>
-            <Button
-              asChild
-              size="sm"
-              className="bg-blue-500 hover:bg-blue-600 text-white transition-colors"
-            >
-              <Link
-                href={`/properties/${order.property.propertyDetails}/${order.property.id}`}
-              >
-                View Property
-              </Link>
-            </Button>
           </div>
         ))}
       </div>
-      <Pagination currentPage={currentPage} totalPages={totalPages} />
     </div>
   );
 }
