@@ -132,7 +132,6 @@ export default async function DashboardPage({
         </Card>
 
         <DashboardTabs
-          properties={properties}
           favorites={favorites}
           bookmarks={bookmarks}
           ratings={ratings}
