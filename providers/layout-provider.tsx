@@ -1,16 +1,12 @@
 "use client";
-
 import Loader from "@/components/globals/loader";
 import Footer from "@/components/landing/footer";
 // import Header from "@/components/landing/header";
 import { Container } from "@/components/globals/container";
 
 import { User } from "@prisma/client";
-import { Button, Dropdown } from "antd";
 import { Button as StyledButton } from "@/components/utils/Button";
-import { ArrowRight, HomeIcon, Menu, X } from "lucide-react";
 import { Raleway } from "next/font/google";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Header from "@/components/landing/header/Header";
@@ -161,7 +157,8 @@ export default function LayoutProvider({ children }: Props) {
       pathname.includes("/register") ||
       pathname.includes("/login") ||
       pathname.includes("/verify-token") ||
-      pathname.includes("/blog") ? (
+      pathname.includes("/blog") ||
+      pathname.includes("/posts") ? (
         <>{children}</>
       ) : (
         <>

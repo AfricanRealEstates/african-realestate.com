@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import Image from "next/image";
 import { Metadata } from "next";
 import { baseUrl } from "@/app/sitemap";
 
@@ -122,7 +121,7 @@ export default async function NearbyTownsPage() {
               className="border rounded-lg"
             >
               <div className="relative rounded-lg overflow-hidden m-2">
-                <Image
+                <img
                   src={town.coverPhoto || "/assets/kitengela.webp"} // Use the coverPhoto or fallback to a default image
                   alt={`Properties in ${town.nearbyTown}`}
                   width={700}

@@ -253,6 +253,7 @@ model Post {
   content    String
   topics     String[]
   imageUrls  String[]
+  coverPhoto String?
   author     User     @relation(fields: [authorId], references: [id])
   authorId   String
   published  Boolean  @default(false)

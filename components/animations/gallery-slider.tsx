@@ -1,6 +1,6 @@
 "use client";
 import { Route } from "@/types/types";
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import { useSwipeable } from "react-swipeable";
 import React, { useState, useEffect } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
@@ -46,32 +46,68 @@ export default function GallerySlider({
         images.map(async (image) => {
           if (image.toLowerCase().endsWith(".heic")) {
             try {
+              console.log(`Converting HEIC: ${image}`);
               const response = await fetch(image);
               const blob = await response.blob();
 
-              // Perform the conversion
               const result = await heic2any({ blob, toType: "image/jpeg" });
 
-              // Handle the case where result could be a Blob or Blob[]
               const convertedBlob = Array.isArray(result) ? result[0] : result;
+              const objectURL = URL.createObjectURL(convertedBlob as Blob);
 
-              return URL.createObjectURL(convertedBlob as Blob);
+              console.log(`Converted URL: ${objectURL}`);
+              return objectURL;
             } catch (error) {
               console.error("Error converting HEIC image", error);
-              return image; // Return the original image if conversion fails
+              return image; // Fallback to original image if conversion fails
             }
           } else {
-            return image; // If not HEIC, return the original image
+            return image;
           }
         })
       );
       setImages(converted);
     };
 
-    // Convert coverPhotos and galleryImgs
     convertHeicImages(coverPhotos, setConvertedCovers);
     convertHeicImages(galleryImgs, setConvertedImages);
   }, [coverPhotos, galleryImgs]);
+
+  // useEffect(() => {
+  //   const convertHeicImages = async (
+  //     images: string[],
+  //     setImages: React.Dispatch<React.SetStateAction<string[]>>
+  //   ) => {
+  //     const converted = await Promise.all(
+  //       images.map(async (image) => {
+  //         if (image.toLowerCase().endsWith(".heic")) {
+  //           try {
+  //             const response = await fetch(image);
+  //             const blob = await response.blob();
+
+  //             // Perform the conversion
+  //             const result = await heic2any({ blob, toType: "image/jpeg" });
+
+  //             // Handle the case where result could be a Blob or Blob[]
+  //             const convertedBlob = Array.isArray(result) ? result[0] : result;
+
+  //             return URL.createObjectURL(convertedBlob as Blob);
+  //           } catch (error) {
+  //             console.error("Error converting HEIC image", error);
+  //             return image; // Return the original image if conversion fails
+  //           }
+  //         } else {
+  //           return image; // If not HEIC, return the original image
+  //         }
+  //       })
+  //     );
+  //     setImages(converted);
+  //   };
+
+  //   // Convert coverPhotos and galleryImgs
+  //   convertHeicImages(coverPhotos, setConvertedCovers);
+  //   convertHeicImages(galleryImgs, setConvertedImages);
+  // }, [coverPhotos, galleryImgs]);
 
   function changePhotoId(newVal: number) {
     if (newVal > index) {
@@ -126,12 +162,20 @@ export default function GallerySlider({
                     key={image}
                     className="flex-shrink-0 w-full h-full relative"
                   >
-                    <Image
-                      src={image}
-                      layout="fill"
-                      className="object-cover w-full h-full transition duration-300 ease-in-out hover:scale-110 hover:opacity-50"
-                      alt="Property Image"
-                    />
+                    {image.startsWith("blob:") ? (
+                      <img
+                        src={image}
+                        className="object-cover w-full h-full transition duration-300 ease-in-out hover:scale-110 hover:opacity-50"
+                        alt="Property Image"
+                      />
+                    ) : (
+                      <Image
+                        src={image}
+                        layout="fill"
+                        className="object-cover w-full h-full transition duration-300 ease-in-out hover:scale-110 hover:opacity-50"
+                        alt="Property Image"
+                      />
+                    )}
                   </div>
                 ))}
               </motion.div>

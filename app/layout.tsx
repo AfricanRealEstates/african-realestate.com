@@ -4,6 +4,7 @@ import LayoutProvider from "@/providers/layout-provider";
 import { Analytics } from "@vercel/analytics/react";
 import { getSEOTags } from "@/lib/seo";
 import { Toaster } from "@/components/ui/sonner";
+import { Toaster as ShadcnUIToaster } from "@/components/ui/toaster";
 import ModalProvider from "@/providers/modal-provider";
 import { auth } from "@/auth";
 import { GeistSans } from "geist/font/sans";
@@ -54,6 +55,7 @@ export default async function RootLayout({
             <LayoutProvider>{children}</LayoutProvider>
             <Analytics />
             <Toaster richColors position="bottom-right" />
+            <ShadcnUIToaster />
           </SessionProvider>
         </ThemeProvider>
       </body>
