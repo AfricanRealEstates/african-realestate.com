@@ -1,8 +1,10 @@
+"use server";
+
 import sharp from "sharp";
 
-async function compressImage(file: File): Promise<Buffer> {
+export async function compressImage(file: File): Promise<Buffer> {
   const buffer = await file.arrayBuffer();
-  const sharpImage = sharp(buffer);
+  const sharpImage = sharp(Buffer.from(buffer));
   const metadata = await sharpImage.metadata();
 
   // Resize if the image is larger than 2000x2000
@@ -14,4 +16,3 @@ async function compressImage(file: File): Promise<Buffer> {
     .webp({ quality: 80 }) // Convert to WebP format with 80% quality
     .toBuffer();
 }
-export { compressImage };

@@ -14,9 +14,10 @@ import {
 import { addProperty, editProperty } from "@/actions/properties";
 import { toast } from "sonner";
 import { surroundingFeatures } from "@/constants";
-import { TrashIcon } from "lucide-react";
+import { Loader2, TrashIcon } from "lucide-react";
 import heic2any from "heic2any";
 import { Button } from "@/components/ui/button";
+import imageCompression from "browser-image-compression";
 
 interface ImageFile {
   file: File | string;
@@ -104,6 +105,24 @@ export default function Media({
     }
   }, [isEdit, id, finalValues]);
 
+  const compressImage = async (file: File): Promise<File> => {
+    const options = {
+      maxSizeMB: 1, // Maximum file size in MB
+      maxWidthOrHeight: 2000, // Resize if larger than 2000px
+      useWebWorker: true,
+      fileType: "image/webp", // Convert to WebP format
+    };
+    try {
+      const compressedBlob = await imageCompression(file, options);
+      return new File([compressedBlob], file.name.replace(/\.\w+$/, ".webp"), {
+        type: "image/webp",
+      });
+    } catch (error) {
+      console.error("Compression error:", error);
+      return file; // Fallback to original file if compression fails
+    }
+  };
+
   const loadImagePreviews = async (
     initialCoverPhotos: ImageFile[],
     initialTempFiles: ImageFile[]
@@ -162,13 +181,45 @@ export default function Media({
     return file;
   };
 
+  // const handleFileUpload = async (file: File, isCoverPhoto: boolean) => {
+  //   try {
+  //     const convertedFile = await convertHeicToJpeg(file);
+  //     const key = `${
+  //       isCoverPhoto ? "cover-photos" : "property-photos"
+  //     }/${Date.now()}-${convertedFile.name}`;
+  //     const uploadResult = await uploadToS3(convertedFile, key);
+
+  //     if (uploadResult.success) {
+  //       const signedUrlResult = await getSignedDownloadUrl(key);
+  //       const preview = signedUrlResult.success ? signedUrlResult.data.url : "";
+  //       const newImageFile: ImageFile = {
+  //         file: uploadResult.data.fileUrl,
+  //         preview,
+  //       };
+
+  //       if (isCoverPhoto) {
+  //         setCoverPhotos((prev) => [...prev, newImageFile]);
+  //       } else {
+  //         setTempFiles((prev) => [...prev, newImageFile]);
+  //       }
+  //     } else {
+  //       throw new Error(uploadResult.message);
+  //     }
+  //   } catch (error) {
+  //     console.error("Failed to process the image:", error);
+  //     toast.error(`Failed to process the image: ${(error as Error).message}`);
+  //   }
+  // };
+
   const handleFileUpload = async (file: File, isCoverPhoto: boolean) => {
     try {
       const convertedFile = await convertHeicToJpeg(file);
+      const compressedFile = await compressImage(convertedFile);
+
       const key = `${
         isCoverPhoto ? "cover-photos" : "property-photos"
-      }/${Date.now()}-${convertedFile.name}`;
-      const uploadResult = await uploadToS3(convertedFile, key);
+      }/${Date.now()}-${compressedFile.name}`;
+      const uploadResult = await uploadToS3(compressedFile, key);
 
       if (uploadResult.success) {
         const signedUrlResult = await getSignedDownloadUrl(key);
@@ -448,7 +499,7 @@ export default function Media({
         >
           {loading ? (
             <>
-              <Spin className="mr-2" />
+              <Loader2 className="mr-2 text-white" />
               {isEdit ? "Updating..." : "Creating..."}
             </>
           ) : isEdit ? (
