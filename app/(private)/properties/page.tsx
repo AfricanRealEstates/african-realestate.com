@@ -1,16 +1,13 @@
-import Filter from "@/components/globals/filters";
-import Loader from "@/components/globals/loader";
-import AllProperties from "@/components/properties/all-properties";
-import { getSEOTags } from "@/lib/seo";
+import { Suspense } from "react";
+import type { Metadata } from "next";
 import { Raleway } from "next/font/google";
-import React, { Suspense } from "react";
-import { Metadata } from "next";
-import { baseUrl } from "@/app/sitemap";
 import PropertyFilter from "@/components/properties/PropertyFilter";
 import SortingOptions from "@/app/search/SortingOptions";
 import { getProperties } from "@/lib/getProperties";
 import PropertyCard from "@/components/properties/new/PropertyCard";
-import { PropertyData } from "@/lib/types";
+import type { PropertyData } from "@/lib/types";
+import { baseUrl } from "@/app/sitemap";
+import Pagination from "@/components/globals/Pagination";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -61,11 +58,17 @@ export default async function Properties({
   const sort = (searchParams.sort as string) || "createdAt";
   const order = (searchParams.order as string) || "desc";
   const status = (searchParams.status as string) || "sale";
+  const page = Number.parseInt(searchParams.page as string) || 1;
+  const pageSize = 12;
 
-  // Ensure status is either "sale" or "let"
   const validStatus = status === "let" ? "let" : "sale";
 
-  const properties = await getProperties(searchParams, validStatus);
+  const { properties, totalCount, totalPages } = await getProperties(
+    searchParams,
+    validStatus,
+    page,
+    pageSize
+  );
 
   const isFiltered = Object.keys(searchParams).some((key) =>
     [
@@ -134,7 +137,6 @@ export default async function Properties({
           <div className="mb-8">
             <PropertyFilter pageType="properties" />
           </div>
-
           <SortingOptions
             currentSort={sort}
             currentOrder={order}
@@ -142,21 +144,24 @@ export default async function Properties({
             isActive={isFiltered || properties.length > 0}
           />
         </article>
-        <Suspense fallback={<Loader />}>
+        <Suspense fallback={<div>Loading...</div>}>
           {properties.length === 0 ? (
             <div className="flex h-full items-center justify-center mt-8">
               No properties matched your search query. Please try again with a
               different term.
             </div>
           ) : (
-            <section className="mx-auto mb-8 gap-8 grid w-full grid-cols-[repeat(auto-fill,minmax(335px,1fr))] justify-center">
-              {properties.map((property) => (
-                <PropertyCard
-                  key={property.id}
-                  data={property as PropertyData}
-                />
-              ))}
-            </section>
+            <>
+              <section className="mx-auto mb-8 gap-8 grid w-full grid-cols-[repeat(auto-fill,minmax(335px,1fr))] justify-center">
+                {properties.map((property) => (
+                  <PropertyCard
+                    key={property.id}
+                    data={property as PropertyData}
+                  />
+                ))}
+              </section>
+              <Pagination currentPage={page} totalPages={totalPages} />
+            </>
           )}
         </Suspense>
       </div>

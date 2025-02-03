@@ -9,10 +9,12 @@ import shiki from "shiki";
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   pageExtensions: ["js", "jsx", "ts", "tsx", "mdx"],
+  swcMinify: true,
   images: {
-    // unoptimized: true,
-    domains: ["african-real-estate-photos.s3.amazonaws.com"],
     remotePatterns: [
+      {
+        hostname: "dw1utqy4bbv8r.cloudfront.net",
+      },
       {
         hostname: "4muw4qkgpimyciou.public.blob.vercel-storage.com",
       },

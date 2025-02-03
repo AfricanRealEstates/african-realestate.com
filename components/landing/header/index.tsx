@@ -1,21 +1,17 @@
 "use client";
-
 import { Button } from "@/components/utils/Button";
-import { UserButton } from "@clerk/nextjs";
 import { User } from "@prisma/client";
 import { Dropdown } from "antd";
-import { ArrowRight, HomeIcon, Menu, X } from "lucide-react";
+import { ArrowRight, Menu, X } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { Nunito_Sans } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { v4 as uuidv4 } from "uuid";
 import Resources from "./resources";
-import UserAccountNav from "@/app/(dashboard)/components/UserAccountNav";
 
 const nunitoSans = Nunito_Sans({
   subsets: ["latin"],

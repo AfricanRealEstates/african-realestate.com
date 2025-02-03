@@ -1,4 +1,3 @@
-import { Home, LucideIcon } from "lucide-react";
 import { Raleway } from "next/font/google";
 
 const raleway = Raleway({

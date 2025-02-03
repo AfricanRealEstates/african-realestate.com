@@ -18,7 +18,7 @@ const footerLinks = [
 
 export default function BlogFooter() {
   return (
-    <footer className="flex flex-col sm:flex-row justify-between mt-32 pb-8 sm:py-14 sm:border-t w-full max-w-[1440px] mx-auto px-6 lg:px-20">
+    <footer className="flex flex-col sm:flex-row justify-between mt-20 pb-8 sm:py-14 sm:border-t w-full max-w-[1440px] mx-auto px-6 lg:px-20">
       <section className="flex flex-col max-sm:items-center sm:mb-0 mb-1">
         <div className="mb-6">
           <div className="flex flex-col gap-1.5">

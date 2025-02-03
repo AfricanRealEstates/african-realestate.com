@@ -1,11 +1,8 @@
 "use client";
 import { Button } from "@/components/utils/Button";
-import { ArrowRight } from "lucide-react";
 import { Raleway } from "next/font/google";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React from "react";
 const raleway = Raleway({
   subsets: ["latin"],
   display: "swap",

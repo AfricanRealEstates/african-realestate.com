@@ -6,17 +6,10 @@ import { Container } from "@/components/globals/container";
 
 import { User } from "@prisma/client";
 import { Button as StyledButton } from "@/components/utils/Button";
-import { Raleway } from "next/font/google";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Header from "@/components/landing/header/Header";
 import { useSession } from "next-auth/react";
-
-const nunitoSans = Raleway({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-nunitosans",
-});
 
 const navLinks = [
   {

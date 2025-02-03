@@ -1,12 +1,5 @@
 import { getSEOTags } from "@/lib/seo";
-import { Raleway } from "next/font/google";
-import React from "react";
 import FAQItem from "./_components/FAQItem";
-const raleway = Raleway({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-nunitosans",
-});
 
 export const metadata = getSEOTags({
   title: "FAQs | African Real Estate",

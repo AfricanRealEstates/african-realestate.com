@@ -68,7 +68,7 @@ export default async function BlogPost({
       id: {
         not: post.id,
       },
-      published: true,
+      published: false,
     },
     take: 3,
     include: { author: true },
@@ -139,7 +139,7 @@ export default async function BlogPost({
             ))}
           </div>
         </div>
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 mb-4">
           <LikeButton
             postId={post.id}
             initialLikeCount={post.likes.length}
@@ -149,12 +149,16 @@ export default async function BlogPost({
           <span>{post.viewCount} views</span>
         </div>
         {relatedPosts.length > 0 && (
-          <div>
+          <div className="mt-6">
             <h2 className="text-2xl font-bold mb-4">Related Posts</h2>
-            <div className="grid gap-6 md:grid-cols-3">
+            <article className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-12 w-full">
               {relatedPosts.map((relatedPost) => (
-                <Link href={`/blog/${relatedPost.slug}`} key={relatedPost.id}>
-                  <div className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                <Link
+                  href={`/posts/${relatedPost.slug}`}
+                  key={relatedPost.id}
+                  className="group flex flex-col hover:scale-[1.01] transition-transform duration-300 ease-in-out"
+                >
+                  {/* <div className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                     <img
                       src={relatedPost.coverPhoto || "/placeholder.svg"}
                       alt={relatedPost.title}
@@ -168,10 +172,56 @@ export default async function BlogPost({
                         By {relatedPost.author.name}
                       </p>
                     </div>
+                  </div> */}
+
+                  <div className="mb-4 rounded-lg aspect-[16/9] w-full relative overflow-hidden">
+                    <img
+                      src={relatedPost.coverPhoto || "/assets/blog.svg"}
+                      alt={relatedPost.title}
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="px-1 flex flex-col gap-2">
+                    {/* <div className="flex flex-wrap gap-2">
+                      {relatedPost.topics.map((topic) => (
+                        <span
+                          key={topic}
+                          className="text-sm text-muted-foreground"
+                        >
+                          {topic.charAt(0).toUpperCase() + topic.slice(1)}
+                        </span>
+                      ))}
+                    </div> */}
+                    <h2
+                      className={`text-2xl font-bold line-clamp-2 ${jakarta.className}`}
+                    >
+                      {relatedPost.title}
+                    </h2>
+
+                    {/* <div
+                      className="prose max-w-none text-muted-foreground text-sm line-clamp-2"
+                      dangerouslySetInnerHTML={{
+                        __html: relatedPost.content.slice(0, 100),
+                      }}
+                    /> */}
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mt-2">
+                      <span className="">{relatedPost.author.name}</span>
+                      <span>•</span>
+                      <time>
+                        {new Date(relatedPost.createdAt).toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "long",
+                            day: "numeric",
+                            year: "numeric",
+                          }
+                        )}
+                      </time>
+                    </div>
                   </div>
                 </Link>
               ))}
-            </div>
+            </article>
           </div>
         )}
       </div>
