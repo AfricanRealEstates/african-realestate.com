@@ -18,25 +18,23 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
-
 import slugify from "slugify";
-import { createBlog, getPresignedUrl } from "../post";
-import { BlogEditor } from "../components/PostEditor";
 import Image from "next/image";
+import { createBlog } from "../post";
+import { BlogEditor } from "../components/PostEditor";
+import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
   title: z
     .string()
     .min(5, "Title must be at least 5 characters")
     .max(100, "Title must not exceed 100 characters"),
-  slug: z
-    .string()
-    .min(1, "Enter title above to generate slug")
-    .max(100, "Slug must not exceed 100 characters"),
+  slug: z.string(),
   content: z.string().min(100, "Content must be at least 100 characters"),
   topics: z.array(z.string()).min(1, "Select at least one topic"),
   coverPhoto: z.string().url("Please upload a cover photo"),
   published: z.boolean().default(false),
+  imageUrls: z.array(z.string().url()).default([]),
 });
 
 const topics = [
@@ -45,7 +43,6 @@ const topics = [
   { label: "Finance", value: "finance" },
   { label: "Investing", value: "investing" },
   { label: "Home Decor", value: "home-decor" },
-  // Add more topics as needed
 ];
 
 export default function CreateBlogPage() {
@@ -60,6 +57,7 @@ export default function CreateBlogPage() {
       topics: [],
       coverPhoto: "",
       published: false,
+      imageUrls: [],
     },
   });
 
@@ -74,49 +72,43 @@ export default function CreateBlogPage() {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
-    const result = await createBlog(values);
-    setIsSubmitting(false);
-
-    if ("error" in result) {
-      console.error(result.error);
-      toast({
-        title: "Error",
-        description:
-          typeof result.error === "string"
-            ? result.error
-            : "Failed to create blog. Please try again.",
-        variant: "destructive",
-      });
-    } else {
+    try {
+      const result = await createBlog(values);
+      if ("error" in result) {
+        throw new Error(result.error as any);
+      }
       toast({
         title: "Success",
         description: "Blog post created successfully!",
       });
       router.push(`/posts/${result.post.slug}`);
+    } catch (error) {
+      console.error("Failed to create blog:", error);
+      toast({
+        title: "Error",
+        description: "Failed to create blog. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleImageUpload = async (file: File) => {
-    const fileName = `${Date.now()}-${file.name}`;
-    const result = await getPresignedUrl(fileName);
+  const handleImageUpload = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("file", file);
 
-    if ("error" in result) {
-      throw new Error(result.error);
-    }
-
-    const response = await fetch(result.url, {
-      method: "PUT",
-      body: file,
-      headers: {
-        "Content-Type": file.type,
-      },
+    const response = await fetch("/api/upload-media", {
+      method: "POST",
+      body: formData,
     });
 
     if (!response.ok) {
       throw new Error("Failed to upload image");
     }
 
-    return `https://${process.env.NEXT_PUBLIC_S3_BUCKET_NAME}.s3.amazonaws.com/blog/${fileName}`;
+    const data = await response.json();
+    return data.url;
   };
 
   return (
@@ -140,18 +132,58 @@ export default function CreateBlogPage() {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
-            name="slug"
+            name="coverPhoto"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Slug</FormLabel>
+                <FormLabel>Cover Photo</FormLabel>
                 <FormControl>
-                  <Input placeholder="blog-post-slug" {...field} />
+                  <div className="flex items-center space-x-4">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          try {
+                            const url = await handleImageUpload(file);
+                            field.onChange(url);
+                          } catch (error) {
+                            console.error(
+                              "Failed to upload cover photo:",
+                              error
+                            );
+                            toast({
+                              title: "Error",
+                              description:
+                                "Failed to upload cover photo. Please try again.",
+                              variant: "destructive",
+                            });
+                          }
+                        }
+                      }}
+                    />
+                    {field.value && (
+                      <Button
+                        variant="destructive"
+                        onClick={() => field.onChange("")}
+                      >
+                        Remove
+                      </Button>
+                    )}
+                  </div>
                 </FormControl>
-                <FormDescription>
-                  The URL-friendly version of the title.
-                </FormDescription>
+                {field.value && (
+                  <Image
+                    src={field.value || "/placeholder.svg"}
+                    alt="Cover preview"
+                    width={200}
+                    height={100}
+                    className="mt-2 rounded-md object-cover"
+                  />
+                )}
                 <FormMessage />
               </FormItem>
             )}
@@ -167,8 +199,53 @@ export default function CreateBlogPage() {
                     content={field.value}
                     onChange={field.onChange}
                     onImageUpload={handleImageUpload}
+                    onImageUrlsChange={(urls) =>
+                      form.setValue("imageUrls", urls)
+                    }
                   />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="imageUrls"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Inline Images</FormLabel>
+                <FormControl>
+                  <div className="flex flex-wrap gap-2">
+                    {field.value.map((url, index) => (
+                      <div key={index} className="relative">
+                        <Image
+                          src={url || "/placeholder.svg"}
+                          alt={`Inline image ${index + 1}`}
+                          width={50}
+                          height={50}
+                          className="rounded-md object-cover"
+                        />
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          className="absolute top-0 right-0"
+                          onClick={() => {
+                            const newUrls = field.value.filter(
+                              (_, i) => i !== index
+                            );
+                            form.setValue("imageUrls", newUrls);
+                          }}
+                        >
+                          X
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </FormControl>
+                <FormDescription>
+                  These are the images inserted in your content. You can remove
+                  them here if needed.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -206,56 +283,7 @@ export default function CreateBlogPage() {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="coverPhoto"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Cover Photo</FormLabel>
-                <FormControl>
-                  <div className="flex items-center space-x-4">
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          try {
-                            const url = await handleImageUpload(file);
-                            field.onChange(url);
-                          } catch (error) {
-                            console.error(
-                              "Failed to upload cover photo:",
-                              error
-                            );
-                            // Handle error (e.g., show error message to user)
-                          }
-                        }
-                      }}
-                    />
-                    {field.value && (
-                      <Button
-                        variant="destructive"
-                        onClick={() => field.onChange("")}
-                      >
-                        Remove
-                      </Button>
-                    )}
-                  </div>
-                </FormControl>
-                {field.value && (
-                  <Image
-                    height={100}
-                    width={100}
-                    src={field.value || "/placeholder.svg"}
-                    alt="Cover preview"
-                    className="mt-2 max-w-xs rounded-md"
-                  />
-                )}
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+
           <FormField
             control={form.control}
             name="published"
@@ -277,8 +305,15 @@ export default function CreateBlogPage() {
               </FormItem>
             )}
           />
+
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Creating..." : "Create Blog Post"}
+            {isSubmitting ? (
+              <>
+                <Loader2 className="animate-spin mr-1" /> Creating...
+              </>
+            ) : (
+              "Create Blog Post"
+            )}
           </Button>
         </form>
       </Form>

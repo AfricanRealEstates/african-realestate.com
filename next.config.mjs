@@ -16,6 +16,9 @@ const nextConfig = {
         hostname: "dw1utqy4bbv8r.cloudfront.net",
       },
       {
+        hostname: "african-real-estate-photos.s3.amazonaws.com",
+      },
+      {
         hostname: "4muw4qkgpimyciou.public.blob.vercel-storage.com",
       },
       {

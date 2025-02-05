@@ -179,13 +179,19 @@ export default function BlogNav() {
                     <DropdownMenuContent align="end" className="w-48">
                       <DropdownMenuItem>
                         <User className="mr-2 h-4 w-4" />
-                        <Link href="/profile" className="w-full">
+                        <Link href="/dashboard/profile" className="w-full">
                           Profile
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem>
                         <Settings className="mr-2 h-4 w-4" />
-                        <Link href="/settings" className="w-full">
+                        <Link href="/dashboard/blogs" className="w-full">
+                          Blogs
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <Settings className="mr-2 h-4 w-4" />
+                        <Link href="/dashboard/settings" className="w-full">
                           Settings
                         </Link>
                       </DropdownMenuItem>

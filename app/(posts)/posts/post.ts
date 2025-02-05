@@ -1,27 +1,22 @@
 "use server";
-
-import { revalidatePath } from "next/cache";
-import { prisma } from "@/lib/prisma";
-import { z } from "zod";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import slugify from "slugify";
 import { auth } from "@/auth";
-
-const s3Client = new S3Client({
-  region: process.env.AWS_REGION!,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-  },
-});
+import { prisma } from "@/lib/prisma";
+import { s3Client } from "@/lib/utils/s3-client";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { revalidatePath } from "next/cache";
+import slugify from "slugify";
+import * as z from "zod";
 
 const blogSchema = z.object({
-  title: z.string().min(5).max(100),
-  content: z.string().min(100),
-  topics: z.array(z.string()),
-  coverPhoto: z.string().url(),
-  published: z.boolean().default(false),
+  title: z.string().min(1, { message: "Title is required" }),
+  content: z.string().min(1, { message: "Content is required" }),
+  topics: z
+    .array(z.string())
+    .min(1, { message: "At least one topic is required" }),
+  coverPhoto: z.string().url().optional(),
+  published: z.boolean().optional(),
+  imageUrls: z.array(z.string().url()).optional(),
 });
 
 export async function createBlog(data: z.infer<typeof blogSchema>) {
@@ -31,7 +26,8 @@ export async function createBlog(data: z.infer<typeof blogSchema>) {
     return { error: result.error.flatten() };
   }
 
-  const { title, content, topics, coverPhoto, published } = result.data;
+  const { title, content, topics, coverPhoto, published, imageUrls } =
+    result.data;
   const slug = slugify(title, { lower: true, strict: true });
 
   try {
@@ -57,6 +53,7 @@ export async function createBlog(data: z.infer<typeof blogSchema>) {
         topics,
         coverPhoto,
         published,
+        imageUrls,
         authorId: user.id,
       },
     });

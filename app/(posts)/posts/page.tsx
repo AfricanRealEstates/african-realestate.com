@@ -1,10 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import Link from "next/link";
+import Image from "next/image";
 import { Suspense } from "react";
-import { BlogPostSkeleton } from "./components/BlogSkeleton";
+
 import { metadata } from "./metadata";
 import { auth } from "@/auth";
+import { BlogPostSkeleton } from "./components/BlogSkeleton";
 
 const jakarta = Plus_Jakarta_Sans({
   weight: "400",
@@ -32,12 +34,13 @@ function BlogPostSkeletons() {
 export const generateMetadata = async () => {
   return metadata;
 };
+
 export default async function Blogs() {
   const session = await auth();
   const userRole = session?.user?.role;
   const isAdminOrSupport = userRole === "ADMIN" || userRole === "SUPPORT";
   const posts = await prisma.post.findMany({
-    where: { published: false },
+    where: { published: true },
     orderBy: { createdAt: "desc" },
     include: { author: true },
   });
@@ -65,8 +68,8 @@ export default async function Blogs() {
                 >
                   {topics.map((topic) => (
                     <Link
-                      key={topic.label}
-                      href="#"
+                      key={topic.value}
+                      href={`/posts/${encodeURIComponent(topic.value)}`}
                       className="text-muted-foreground hover:text-foreground transition-colors text-sm"
                     >
                       {topic.label}
@@ -90,14 +93,15 @@ export default async function Blogs() {
               <Suspense fallback={<BlogPostSkeletons />}>
                 {posts.map((post) => (
                   <Link
-                    href={`posts/${post.slug}`}
+                    href={`/posts/${encodeURIComponent(post.topics[0])}/${post.slug}`}
                     key={post.id}
                     className="group flex flex-col hover:scale-[1.01] transition-transform duration-300 ease-in-out"
                   >
                     <div className="mb-4 rounded-lg aspect-[16/9] w-full relative overflow-hidden">
-                      <img
+                      <Image
                         src={post.coverPhoto || "/assets/blog.svg"}
                         alt={post.title}
+                        fill
                         className="object-cover"
                       />
                     </div>
@@ -127,7 +131,7 @@ export default async function Blogs() {
                       <div className="flex items-center gap-2 text-xs text-muted-foreground mt-2">
                         <span className="">{post.author.name}</span>
                         <span>•</span>
-                        <time>
+                        <time dateTime={post.createdAt.toISOString()}>
                           {new Date(post.createdAt).toLocaleDateString(
                             "en-US",
                             {

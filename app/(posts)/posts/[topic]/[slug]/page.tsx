@@ -68,7 +68,7 @@ export default async function BlogPost({
       id: {
         not: post.id,
       },
-      published: false,
+      published: true,
     },
     take: 3,
     include: { author: true },
@@ -126,16 +126,17 @@ export default async function BlogPost({
           className="prose max-w-none mb-8 mt-4"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-4">Topics</h2>
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold mb-4 font-jakarta">Topics</h2>
           <div className="flex flex-wrap gap-2">
             {post.topics.map((topic) => (
-              <span
+              <Link
                 key={topic}
-                className="bg-gray-200 px-3 py-1 rounded-full text-sm"
+                href={`/posts/${encodeURIComponent(topic)}`}
+                className="bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full text-sm transition-colors duration-200"
               >
                 {topic}
-              </span>
+              </Link>
             ))}
           </div>
         </div>

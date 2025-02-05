@@ -19,6 +19,7 @@ import {
   Settings,
   LogOut,
   MenuIcon,
+  Book,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -91,6 +92,12 @@ const menuItems = [
         icon: Bell,
         title: "Announcements",
         url: "/dashboard/announcements",
+        visible: [UserRole.ADMIN, UserRole.SUPPORT],
+      },
+      {
+        icon: Book,
+        title: "Blogs",
+        url: "/dashboard/blogs",
         visible: [UserRole.ADMIN, UserRole.SUPPORT],
       },
     ],
