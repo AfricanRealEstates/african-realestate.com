@@ -68,8 +68,6 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
   </Card>
 );
 
-
-
 export default function About() {
   return (
     <section className="py-24 lg:py-32">
@@ -120,7 +118,7 @@ export default function About() {
             <TeamMember
               name="Ken Mwangi"
               link="https://www.kasukutech.com"
-              role="Lead Developer"
+              role="Full stack Engineer"
               imageSrc="/assets/ken.jpeg"
             />
           </div>
@@ -129,4 +127,3 @@ export default function About() {
     </section>
   );
 }
-
