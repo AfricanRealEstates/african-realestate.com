@@ -51,7 +51,7 @@ export default async function BuyPage({
 
   return (
     <div
-      className={`${raleway.className} w-[95%] lg:max-w-7xl mx-auto py-[90px] lg:py-[120px]`}
+      className={`${raleway.className} w-[95%] lg:max-w-7xl mx-auto py-[90px] lg:py-[120px] px-4 sm:px-6 lg:px-8 `}
     >
       <h1 className="text-3xl font-semibold mb-8">Properties for Sale</h1>
       <article className="flex flex-col md:flex-row md:items-center justify-between w-full mb-8">

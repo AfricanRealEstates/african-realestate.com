@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { POSTS } from "./constants";
-import Image from "next/image";
+import { prisma } from "@/lib/prisma";
 
 export interface BlogPostMetadata {
   title: string;
@@ -18,12 +17,46 @@ export interface BlogPost {
 }
 
 export interface RecommendedTopicsProps {
-  relatedCategoryPosts?: any;
+  relatedCategoryPosts: BlogPost[];
 }
 
-export default function RecommendedTopics({
-  relatedCategoryPosts,
-}: RecommendedTopicsProps) {
+async function getTopics() {
+  const topics = await prisma.post.findMany({
+    where: { published: true },
+    select: { topics: true },
+    distinct: ["topics"],
+  });
+
+  // Flatten the array of arrays and remove duplicates
+  return Array.from(new Set(topics.flatMap((post) => post.topics)));
+}
+
+async function getRelatedPosts(category: string) {
+  return await prisma.post.findMany({
+    where: {
+      published: true,
+      topics: { has: category },
+    },
+    select: {
+      slug: true,
+      title: true,
+      coverPhoto: true,
+      topics: true,
+      createdAt: true,
+      author: {
+        select: { name: true },
+      },
+    },
+    take: 3,
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+export default async function RecommendedTopics() {
+  const topics = await getTopics();
+  const category = topics[0];
+  const relatedPosts = await getRelatedPosts(category);
+
   return (
     <section className="sticky top-36">
       <h3 id="sidebar-label" className="sr-only">
@@ -34,40 +67,40 @@ export default function RecommendedTopics({
           Recommended topics
         </h4>
         <div className="flex flex-wrap">
-          {POSTS.map((post) => (
+          {topics.map((topic) => (
             <Link
-              href={post.href}
-              key={post.href}
+              href={`/blog/${topic}`}
+              key={topic}
               className="bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded hover:bg-blue-200 mb-2"
             >
-              {post.title}
+              {topic}
             </Link>
           ))}
         </div>
       </div>
-      <h4 className="my-4 font-semibold text-gray-900 uppercase">
+      {/* <h4 className="my-4 font-semibold text-gray-900 uppercase">
         Related Articles
       </h4>
       <div className="space-y-4">
-        {" "}
-        {/* Increase spacing between items */}
-        {relatedCategoryPosts && relatedCategoryPosts.length > 0 && (
+        {relatedPosts.length > 0 && (
           <section className="space-y-4">
-            {relatedCategoryPosts.slice(0, 3).map((post: any) => (
+            {relatedPosts.map((post) => (
               <Link
                 key={post.slug}
-                href={`/blog/${post.metadata.category}/${post.slug}`}
+                href={`/blog/${post.topics[0]}/${post.slug}`}
                 className="flex group flex-col p-4 bg-white border border-gray-200 rounded-lg hover:border-ken-primary/10  hover:shadow-2xl hover:shadow-gray-600/10"
               >
-                <Image
-                  height={150}
-                  width={300}
-                  src={post.metadata.cover}
-                  alt={post.metadata.title}
-                  className="rounded-lg flex-1 max-h-[200px] h-full"
-                />
+                {post.coverPhoto && (
+                  <Image
+                    height={150}
+                    width={300}
+                    src={post.coverPhoto || "/placeholder.svg"}
+                    alt={post.title}
+                    className="rounded-lg flex-1 max-h-[200px] h-full"
+                  />
+                )}
                 <h5 className="line-clamp-2 text-base font-medium text-blue-400 hover:text-blue-500 transition group-hover:text-gray-700">
-                  {post.metadata.title}
+                  {post.title}
                 </h5>
                 <p className="flex items justify-between group-hover:text-ken-primary mt-2 flex-1">
                   <span className="text-sm">Read more</span>
@@ -88,7 +121,7 @@ export default function RecommendedTopics({
             ))}
           </section>
         )}
-      </div>
+      </div> */}
     </section>
   );
 }

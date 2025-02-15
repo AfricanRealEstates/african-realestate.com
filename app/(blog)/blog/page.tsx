@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import React from "react";
 import LatestPosts from "../LatestPosts";
 import { getBlogPosts } from "@/lib/blog";
 import { Raleway } from "next/font/google";
@@ -25,10 +24,13 @@ export default async function Blog() {
     await redis.mget<number[]>(
       ...allPosts.map((p) => ["pageviews", "posts", p.slug].join(":"))
     )
-  ).reduce((acc, v, i) => {
-    acc[allPosts[i].slug] = v ?? 0;
-    return acc;
-  }, {} as Record<string, number>);
+  ).reduce(
+    (acc, v, i) => {
+      acc[allPosts[i].slug] = v ?? 0;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
 
   if (Object.keys(views).length < 1) {
     return null;

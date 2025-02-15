@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { Metadata } from "next";
 import { baseUrl } from "@/app/sitemap";
+import Image from "next/image";
 
 export async function generateMetadata(): Promise<Metadata> {
   const title = "Properties Near You | African Real Estate";
@@ -108,7 +109,9 @@ export default async function NearbyTownsPage() {
           }),
         }}
       />
-      <div className={`w-[95%] lg:max-w-7xl mx-auto py-[100px] lg:py-[160px]`}>
+      <div
+        className={`w-[95%] lg:max-w-7xl mx-auto py-[100px] lg:py-[160px] px-4 sm:px-6 lg:px-8`}
+      >
         <h1 className="text-xl lg:text-3xl font-bold my-4 lg:mb-8 text-gray-600">
           Browse Properties by{" "}
           <span className="text-blue-500">Town Near You</span>
@@ -121,7 +124,7 @@ export default async function NearbyTownsPage() {
               className="border rounded-lg"
             >
               <div className="relative rounded-lg overflow-hidden m-2">
-                <img
+                <Image
                   src={town.coverPhoto || "/assets/kitengela.webp"} // Use the coverPhoto or fallback to a default image
                   alt={`Properties in ${town.nearbyTown}`}
                   width={700}

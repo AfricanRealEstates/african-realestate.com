@@ -146,7 +146,9 @@ export default async function NearbyTownPropertiesPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
-      <div className={`w-[95%] lg:max-w-7xl mx-auto py-[100px] lg:py-[160px]`}>
+      <div
+        className={`w-[95%] lg:max-w-7xl mx-auto py-[100px] lg:py-[160px] px-4 sm:px-6 lg:px-8 `}
+      >
         <article className="flex flex-col md:flex-row md:items-end md:justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold mb-4">

@@ -46,6 +46,7 @@ export async function uploadToS3(
       Body: buffer,
       ContentType: file.type,
       ACL: "public-read",
+      StorageClass: "STANDARD", // 👈 Ensures it's not stored in Glacier
     });
 
     await s3Client.send(command);
