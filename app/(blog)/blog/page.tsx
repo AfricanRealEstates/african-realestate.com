@@ -43,7 +43,7 @@ export default async function Blog() {
           Real Estate News
         </h2>
         <p className="text-gray-600 lg:mx-auto lg:w-6/12">
-          Discover more topics about real estate news, property guides and
+          Discover more topics about Real estate news, Property guides and
           investing opportunities.
         </p>
       </div>
