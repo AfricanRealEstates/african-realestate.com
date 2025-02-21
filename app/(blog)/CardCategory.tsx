@@ -1,12 +1,12 @@
-import { formatBlogDate } from "@/lib/utils";
 import Image from "next/image";
-import Link from "next/link";
-import React from "react";
+import { format } from "date-fns";
 interface CardCategoryProps {
   cover: string;
   title: string;
   summary: string;
-  date: string;
+  date: Date;
+  viewCount: number;
+  // likes: number;
 }
 
 export default function CardCategory({
@@ -14,6 +14,8 @@ export default function CardCategory({
   title,
   summary,
   date,
+  viewCount,
+  // likes,
 }: CardCategoryProps) {
   return (
     <article className="group p-6 sm:p-8 rounded-3xl bg-white border border-gray-100 bg-opacity-50 shadow-2xl shadow-gray-600/10">
@@ -30,9 +32,16 @@ export default function CardCategory({
         <h3 className="text-2xl font-semibold text-gray-800 line-clamp-2">
           {title}
         </h3>
-        <p className="mt-2 text-base text-gray-600">
-          Published on: {formatBlogDate(date)}
-        </p>
+        <div className="flex items-center gap-x-4 text-sm text-muted-foreground mt-3">
+          <time dateTime={date.toISOString()}>
+            {format(date, "MMMM dd, yyyy")}
+          </time>
+          <div className="flex items-center gap-2">
+            <span>{viewCount} views</span>
+            <span>•</span>
+            {/* <span>{likes} likes</span> */}
+          </div>
+        </div>
         <p className="leading-relaxed mt-4 text-gray-600 line-clamp-3">
           {summary}
         </p>

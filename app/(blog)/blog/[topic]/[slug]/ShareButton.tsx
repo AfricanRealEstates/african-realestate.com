@@ -12,6 +12,8 @@ import {
 import {
   Share,
   Facebook,
+  Twitter,
+  Linkedin,
   PhoneIcon as WhatsApp,
   Copy,
   Share2,
@@ -21,9 +23,13 @@ import { toast } from "@/components/ui/use-toast";
 export default function ShareButton({
   postId,
   initialShareCount,
+  title,
+  description,
 }: {
   postId: string;
   initialShareCount: number;
+  title: string;
+  description: string;
 }) {
   const [shareCount, setShareCount] = useState(initialShareCount);
 
@@ -31,12 +37,16 @@ export default function ShareButton({
     try {
       let shared = false;
       const url = window.location.href;
-      const title = document.title;
+      const shareText = `${title}\n\n${description}\n\n`;
 
       switch (method) {
         case "native":
           if (navigator.share) {
-            await navigator.share({ title, url });
+            await navigator.share({
+              title,
+              text: description,
+              url,
+            });
             shared = true;
           }
           break;
@@ -44,15 +54,33 @@ export default function ShareButton({
           window.open(
             `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
               url
-            )}`,
-            "_blank"
+            )}&quote=${encodeURIComponent(shareText)}`,
+            "_blank",
+            "noopener,noreferrer"
+          );
+          shared = true;
+          break;
+        case "twitter":
+          window.open(
+            `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareText)}`,
+            "_blank",
+            "noopener,noreferrer"
+          );
+          shared = true;
+          break;
+        case "linkedin":
+          window.open(
+            `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+            "_blank",
+            "noopener,noreferrer"
           );
           shared = true;
           break;
         case "whatsapp":
           window.open(
-            `https://wa.me/?text=${encodeURIComponent(title + " " + url)}`,
-            "_blank"
+            `https://wa.me/?text=${encodeURIComponent(shareText + url)}`,
+            "_blank",
+            "noopener,noreferrer"
           );
           shared = true;
           break;
@@ -73,7 +101,7 @@ export default function ShareButton({
     } catch (error) {
       console.error("Error sharing:", error);
       toast({
-        title: "Error",
+        title: "Error sharing",
         description: "There was an error while sharing. Please try again.",
         variant: "destructive",
       });
@@ -83,19 +111,28 @@ export default function ShareButton({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost">
+        <Button variant="ghost" aria-label="Share this article">
           <Share2 className="mr-2 h-4 w-4" />
-          {shareCount}
+          <span aria-label="Share count">{shareCount}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
+      <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => handleShare("native")}>
           <Share className="mr-2 h-4 w-4" />
           Share
         </DropdownMenuItem>
+
         <DropdownMenuItem onClick={() => handleShare("facebook")}>
           <Facebook className="mr-2 h-4 w-4" />
           Facebook
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleShare("twitter")}>
+          <Twitter className="mr-2 h-4 w-4" />
+          Twitter
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleShare("linkedin")}>
+          <Linkedin className="mr-2 h-4 w-4" />
+          LinkedIn
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => handleShare("whatsapp")}>
           <WhatsApp className="mr-2 h-4 w-4" />

@@ -56,8 +56,8 @@ export async function createPost(formData: FormData) {
     },
   });
 
-  revalidatePath("/admin/posts");
-  redirect("/admin/posts");
+  revalidatePath("/dashboard/blogs");
+  redirect("/dashboard/blogs");
 }
 
 export async function editPost(postId: string, formData: FormData) {
@@ -114,8 +114,8 @@ export async function editPost(postId: string, formData: FormData) {
     },
   });
 
-  revalidatePath("/admin/posts");
-  redirect("/admin/posts");
+  revalidatePath("/dashboard/blogs");
+  redirect("/dashboard/blogs");
 }
 
 export async function deletePost(postId: string) {
@@ -148,7 +148,7 @@ export async function deletePost(postId: string) {
     where: { id: postId },
   });
 
-  revalidatePath("/admin/posts");
+  revalidatePath("/dashboard/blogs");
 }
 
 export async function likePost(postId: string) {
@@ -168,7 +168,7 @@ export async function likePost(postId: string) {
     include: { likes: true },
   });
 
-  revalidatePath(`/posts/${post.slug}`);
+  revalidatePath(`/blog/${post.slug}`);
   return post.likes.length;
 }
 
@@ -189,7 +189,7 @@ export async function unlikePost(postId: string) {
     include: { likes: true },
   });
 
-  revalidatePath(`/posts/${post.slug}`);
+  revalidatePath(`/blog/${post.slug}`);
   return post.likes.length;
 }
 
@@ -198,7 +198,7 @@ export const incrementViewCount = cache(async (postId: string) => {
   const referer = headersList.get("referer");
 
   // Only increment if the referer is not from the same post
-  if (!referer || !referer.includes(`/posts/${postId}`)) {
+  if (!referer || !referer.includes(`/blog/${postId}`)) {
     await prisma.post.update({
       where: { id: postId },
       data: { viewCount: { increment: 1 } },
@@ -217,6 +217,6 @@ export async function incrementShareCount(postId: string) {
     select: { shareCount: true },
   });
 
-  revalidatePath(`/posts/${postId}`);
+  revalidatePath(`/blog/${postId}`);
   return post?.shareCount;
 }

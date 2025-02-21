@@ -40,10 +40,10 @@ export function ActionCell({ post }: { post: Post }) {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem>
-            <Link href={`/posts/${post.topics[0]}/${post.slug}`}>View</Link>
+            <Link href={`/blog/${post.topics[0]}/${post.slug}`}>View</Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link href={`/posts/create?id=${post.id}`}>Edit</Link>
+            <Link href={`/blog/create?id=${post.id}`}>Edit</Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => togglePublishStatus(post.id)}>

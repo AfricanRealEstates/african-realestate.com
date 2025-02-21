@@ -39,6 +39,10 @@ export default async function Blogs() {
   const session = await auth();
   const userRole = session?.user?.role;
   const isAdminOrSupport = userRole === "ADMIN" || userRole === "SUPPORT";
+
+  if (!isAdminOrSupport) {
+    <p>Not authorized</p>;
+  }
   const posts = await prisma.post.findMany({
     where: { published: true },
     orderBy: { createdAt: "desc" },
@@ -69,7 +73,7 @@ export default async function Blogs() {
                   {topics.map((topic) => (
                     <Link
                       key={topic.value}
-                      href={`/posts/${encodeURIComponent(topic.value)}`}
+                      href={`/blog/${encodeURIComponent(topic.value)}`}
                       className="text-muted-foreground hover:text-foreground transition-colors text-sm"
                     >
                       {topic.label}
@@ -78,7 +82,7 @@ export default async function Blogs() {
 
                   {isAdminOrSupport && (
                     <Link
-                      href="/posts/create"
+                      href="/blog/create"
                       className="text-primary hover:text-primary-dark transition-colors font-semibold"
                     >
                       Create Post

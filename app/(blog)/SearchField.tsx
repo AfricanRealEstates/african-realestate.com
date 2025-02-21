@@ -1,46 +1,66 @@
 "use client";
 
+import type React from "react";
 import { Input } from "@/components/ui/input";
 import { SearchIcon } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 
 export default function SearchField() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const [searchTerm, setSearchTerm] = useState(
+    searchParams.get("q")?.toString() || ""
+  );
 
-  const handleSearch = (searchTerm: string) => {
-    const param = new URLSearchParams(searchParams);
-    if (searchParams) {
-      param.set("search", searchTerm);
-    } else {
-      param.delete("search");
-    }
+  // Debounced search function
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      const params = new URLSearchParams(searchParams);
 
-    router.replace(`${pathname}?${param.toString()}`);
-  };
+      if (searchTerm.trim()) {
+        params.set("q", searchTerm.trim());
+      } else {
+        params.delete("q");
+      }
+
+      // Only update URL if we're on the search page
+      if (pathname === "/blog/search") {
+        router.replace(`/blog/search?${params.toString()}`);
+      }
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm, router, searchParams, pathname]);
+
+  const handleSearch = useCallback((value: string) => {
+    setSearchTerm(value);
+  }, []);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const form = e.currentTarget;
-    const q = (form.q as HTMLInputElement).value.trim();
-    if (!q) return;
-    router.push(`/search?q=${encodeURIComponent(q)}`);
+    if (!searchTerm.trim()) return;
+
+    const params = new URLSearchParams();
+    params.set("q", searchTerm.trim());
+    router.push(`/blog/search?${params.toString()}`);
   }
 
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <div className="relative">
         <Input
           name="search"
           id="search"
           type="text"
-          defaultValue={searchParams.get("search")?.toString()}
-          placeholder="Search"
+          value={searchTerm}
+          placeholder="Search posts..."
           onChange={(e) => handleSearch(e.target.value)}
           className="pe-10 border border-stone-300 placeholder:text-stone-400"
+          aria-label="Search posts"
         />
-        <SearchIcon className="text-gray-500 absolute right-3 top-1/2 size-5 -translate-y-1/2 transform text-muted-foreground" />
+        <SearchIcon className="absolute right-3 top-1/2 size-5 -translate-y-1/2 transform text-muted-foreground" />
       </div>
     </form>
   );

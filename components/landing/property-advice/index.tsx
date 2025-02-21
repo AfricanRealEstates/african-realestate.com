@@ -1,100 +1,132 @@
-import { getBlogPosts } from "@/lib/blog";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 import { Josefin_Sans } from "next/font/google";
-import { formatBlogDate } from "@/lib/utils";
-import { ArrowRight, CalendarDays, Eye } from "lucide-react";
+import { ArrowRight, CalendarDays, Eye, Share2 } from "lucide-react";
+import { prisma } from "@/lib/prisma";
 
 const josefin = Josefin_Sans({
   subsets: ["latin"],
   weight: ["600"],
 });
 
+export function formatBlogDate(date: Date) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).format(new Date(date));
+}
+
+export async function getBlogPosts() {
+  const posts = await prisma.post.findMany({
+    where: {
+      published: true,
+    },
+    orderBy: [
+      {
+        viewCount: "desc",
+      },
+      {
+        shareCount: "desc",
+      },
+    ],
+    include: {
+      likes: true,
+      author: true,
+    },
+    take: 3,
+  });
+
+  return posts.map((post) => ({
+    slug: post.slug,
+    views: post.viewCount,
+    shares: post.shareCount, // Add shareCount to the returned data
+    metadata: {
+      title: post.title,
+      publishedAt: post.createdAt,
+      category: post.topics[0] || "uncategorized",
+      cover: post.coverPhoto || "/placeholder.svg",
+      summary: post.metaDescription,
+    },
+  }));
+}
+
 export default async function PropertyAdvice() {
-  let latestPosts = await getBlogPosts();
+  const latestPosts = await getBlogPosts();
   return (
     <section className={`py-12 leading-relaxed`}>
-      <div className=" w-[95%] max-w-7xl m-auto px-6 text-gray-600 md:px-12 xl:px-6">
-        <p className={`text-xl text-gray-900 md:mb-4 ${josefin.className}`}>
-          Property Insights & Tips
+      <div className="w-[95%] max-w-7xl m-auto px-6 text-gray-600 md:px-12 xl:px-6">
+        <div className="flex items-center justify-between mb-8">
+          <p className={`text-xl text-gray-900 ${josefin.className}`}>
+            Property Insights & Tips
+          </p>
           <Link
             href="/blog"
-            className="inline-flex font-light items-center ml-2 text-ken-primary md:ml-2 hover:underline group"
+            className="inline-flex items-center text-ken-primary hover:underline group"
           >
             View all
-            <svg
-              className="size-3 ml-1.5 text-blue-600 dark:text-blue-500  transition-transform duration-300  group-hover:translate-x-[2px]"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 14 10"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M1 5h12m0 0L9 1m4 4L9 9"
-              ></path>
-            </svg>
+            <ArrowRight className="size-4 ml-1.5 transition-transform duration-300 group-hover:translate-x-[2px]" />
           </Link>
-        </p>
+        </div>
+
         <div className="grid gap-12 md:gap-6 md:grid-cols-3 lg:gap-12">
-          {latestPosts
-            .sort((a, b) => {
-              if (
-                new Date(a.metadata.publishedAt) >
-                new Date(b.metadata.publishedAt)
-              ) {
-                return -1;
-              }
-              return 1;
-            })
-            .slice(0, 3)
-            .map((post) => (
-              <Link
-                href={`/blog/${post.metadata.category}/${post.slug}`}
-                key={post.slug}
-                className="group space-y-2 flex flex-col"
-              >
+          {latestPosts.map((post) => (
+            <Link
+              href={`/blog/${post.metadata.category}/${post.slug}`}
+              key={post.slug}
+              className="group space-y-2 flex flex-col"
+            >
+              <div className="relative aspect-[3/2] overflow-hidden rounded-lg">
                 <Image
-                  height={667}
-                  width={1000}
+                  fill
                   alt={post.metadata.title}
-                  src={post.metadata.cover}
-                  className="h-60 w-full rounded-lg object-cover object-top transition-all duration-500 group-hover:rounded-xl"
+                  src={post.metadata.cover || "/placeholder.svg"}
+                  className="object-cover object-center transition-all duration-500 group-hover:scale-105"
                 />
-                <div className="py-6">
-                  <div className="flex items-center justify-between">
+              </div>
+              <div className="py-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <CalendarDays className="text-red-400 size-4" />
+                    <span className="text-sm text-gray-700">
+                      {formatBlogDate(post.metadata.publishedAt)}
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-4">
                     <div className="flex items-center space-x-2">
-                      <CalendarDays className="text-rose-400" />
-                      <span className="text-sm text-gray-700">
-                        {formatBlogDate(post.metadata.publishedAt)}
-                      </span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Eye className="text-rose-400" />
+                      <Eye className="text-red-400 size-4" />
                       <span className="text-sm text-gray-700">
                         {Intl.NumberFormat("en-US", {
                           notation: "compact",
                         }).format(post.views)}
                       </span>
                     </div>
-                  </div>
-                  <h2 className="mt-6 font-bold hover:underline cursor-pointer mb-2 text-lg text-gray-700 line-clamp-2">
-                    {post.metadata.title}
-                  </h2>
-                  <p className="text-gray-500 text-base line-clamp-2">
-                    {post.metadata.summary}
-                  </p>
-                  <div className="mt-4 flex items-center space-x-2 hover:text-rose-400 cursor-pointer">
-                    <span className="font-semibold">Read more</span>
-                    <ArrowRight className="size-4" />
+                    <div className="flex items-center space-x-2">
+                      <Share2 className="text-red-400 size-4" />
+                      <span className="text-sm text-gray-700">
+                        {Intl.NumberFormat("en-US", {
+                          notation: "compact",
+                        }).format(post.shares)}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </Link>
-            ))}
+                <h2 className="mt-6 font-bold group-hover:text-red-400 transition-colors duration-200 text-lg text-gray-700 line-clamp-2 min-h-[48px] leading-tight">
+                  {post.metadata.title}
+                </h2>
+
+                <p className="text-gray-500 text-base line-clamp-2 min-h-[48px]">
+                  {post.metadata.summary ||
+                    "Learn more about this topic by reading the full article. Click to explore detailed insights and expert opinions."}
+                </p>
+
+                <div className="mt-4 flex items-center space-x-2 text-red-400 group-hover:text-red-500 transition-colors duration-200">
+                  <span className="font-semibold">Read more</span>
+                  <ArrowRight className="size-4" />
+                </div>
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
     </section>

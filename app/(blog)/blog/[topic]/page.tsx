@@ -81,7 +81,10 @@ export default async function Page({ params }: { params: { topic: string } }) {
       content: true,
       topics: true,
       coverPhoto: true,
+      metaDescription: true,
       createdAt: true,
+      viewCount: true,
+      likes: true,
       author: {
         select: { name: true },
       },
@@ -159,9 +162,14 @@ export default async function Page({ params }: { params: { topic: string } }) {
             <Link href={`/blog/${params.topic}/${post.slug}`} key={post.slug}>
               <CardCategory
                 title={post.title}
-                summary={post.content.substring(0, 150) + "..."} // Creating a summary from content
-                date={post.createdAt.toISOString()}
+                summary={
+                  post.metaDescription ||
+                  "Learn more about this topic by reading the full article. Click to explore detailed insights and expert opinions."
+                } // Creating a summary from content
+                date={post.createdAt}
                 cover={post.coverPhoto || "/placeholder.svg"}
+                viewCount={post.viewCount}
+                // likes={post.likes}
               />
             </Link>
           ))}

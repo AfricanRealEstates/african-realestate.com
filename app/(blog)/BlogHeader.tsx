@@ -1,9 +1,18 @@
 "use client";
-import { HomeIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState, type SVGProps } from "react";
 import SearchField from "./SearchField";
-import Image from "next/image";
+import { useSession } from "next-auth/react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { logout } from "@/actions/logout";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export const navItems = [
   {
@@ -47,6 +56,10 @@ export default function BlogHeader() {
       window.removeEventListener("scroll", handleStickyMenu);
     };
   }, []);
+
+  const session = useSession();
+  const user = session.data?.user;
+
   return (
     <header className="sticky top-0 z-40 flex-none mx-auto w-full bg-white">
       <div
@@ -86,11 +99,7 @@ export default function BlogHeader() {
         </div>
       </div>
       <div
-        className={`w-full py-3 ${
-          stickyMenu
-            ? "shadow-2xl shadow-gray-600/10"
-            : "border-b border-gray-100"
-        }`}
+        className={`w-full py-3 ${stickyMenu ? "shadow-2xl shadow-gray-600/10" : "border-b border-gray-100"}`}
       >
         <nav
           className={`space-y-3 w-full px-3 py-3 mx-auto lg:flex lg:justify-between max-w-7xl lg:px-3`}
@@ -104,9 +113,6 @@ export default function BlogHeader() {
                 alt="ARE"
                 className="object-cover"
               />
-              {/* <span className="bg-[#eb6753] text-white py-1 px-2 rounded-lg">
-                <HomeIcon />
-              </span> */}
               <span className={`lg:text-xl tracking-tight font-bold`}>
                 African Real Estate.
               </span>
@@ -129,6 +135,7 @@ export default function BlogHeader() {
               })}
             </ul>
             <div className="lg:self-center flex items-center mb-4 lg:mb-0">
+              {/* 
               <div className="items-center flex mr-3 gap-4">
                 <Link
                   href={
@@ -160,7 +167,51 @@ export default function BlogHeader() {
                 >
                   <Instagram />
                 </Link>
-              </div>
+              </div> */}
+              {user && (
+                <>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      {/* <Button
+                        variant="ghost"
+                        className="relative h-8 w-8 rounded-full"
+                      >
+                        {user?.name?.charAt(0) as string}
+                      </Button> */}
+
+                      <Avatar>
+                        <AvatarImage
+                          src={user?.image || "/assets/placeholder.jpg"}
+                        />
+                        <AvatarFallback>
+                          {user?.name?.charAt(0) as string}
+                        </AvatarFallback>
+                      </Avatar>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      className="w-56"
+                      align="end"
+                      forceMount
+                    >
+                      <DropdownMenuItem>
+                        <Link href="/dashboard">Dashboard</Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <Link href="/dashboard/blogs">My Blogs</Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={logout}>
+                        Log out
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  {(user.role === "SUPPORT" || user.role === "ADMIN") && (
+                    <Button variant="outline" className="ml-4">
+                      <Link href="/blog/create">Create Blog</Link>
+                    </Button>
+                  )}
+                </>
+              )}
             </div>
           </div>
         </nav>

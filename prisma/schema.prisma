@@ -247,21 +247,23 @@ model Order {
 
 // New Blogs
 model Post {
-  id         String   @id @default(cuid())
-  title      String
-  slug       String   @unique
-  content    String
-  topics     String[]
-  imageUrls  String[]
-  coverPhoto String?
-  author     User     @relation(fields: [authorId], references: [id])
-  authorId   String
-  published  Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  likes      User[]   @relation("UserLikes")
-  viewCount  Int      @default(0)
-  shareCount Int      @default(0)
+  id              String   @id @default(cuid())
+  title           String
+  slug            String   @unique
+  content         String
+  topics          String[]
+  imageUrls       String[]
+  coverPhoto      String?
+  author          User     @relation(fields: [authorId], references: [id])
+  authorId        String
+  published       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  likes           User[]   @relation("UserLikes")
+  viewCount       Int      @default(0)
+  shareCount      Int      @default(0)
+  metaDescription String?  @default("")
+  metaKeywords    String?  @default("")
 }
 
 model Blog {

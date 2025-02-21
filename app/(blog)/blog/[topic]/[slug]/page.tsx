@@ -11,6 +11,7 @@ import LikeButton from "./LikeButton";
 import ShareButton from "./ShareButton";
 import { incrementViewCount } from "@/actions/blog";
 import { auth } from "@/auth";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -174,7 +175,13 @@ export default async function Page({
 
             <div className="flex justify-between gap-2 items-center mt-2 mb-4 text-sm md:w-max">
               <p className="">
-                Author: <span className="font-bold">{post.author.name}</span>
+                Author:{" "}
+                <Link
+                  href={`/blog/author/${post.authorId}`}
+                  className="font-bold hover:underline cappitalize"
+                >
+                  {post.author.name}
+                </Link>
               </p>
               <div className="border-r border-ken-primary/10" />
               <p className="text-sm text-neutral-600">
@@ -194,8 +201,14 @@ export default async function Page({
             <article className="prose w-full max-w-2xl mx-auto">
               <div
                 className="prose max-w-none mb-8 mt-4"
-                dangerouslySetInnerHTML={{ __html: post.content }}
+                dangerouslySetInnerHTML={{
+                  __html: post.content.replace(
+                    /<img /g,
+                    '<img class="w-full max-w-full h-[500px] object-cover rounded-lg mx-auto border p-1" '
+                  ),
+                }}
               />
+
               <div className="flex items-center space-x-4 mb-4">
                 <LikeButton
                   postId={post.id}
@@ -205,6 +218,8 @@ export default async function Page({
                 <ShareButton
                   postId={post.id}
                   initialShareCount={post.shareCount}
+                  title={post.title}
+                  description={post.metaDescription!}
                 />
                 <span>{post.viewCount} views</span>
               </div>

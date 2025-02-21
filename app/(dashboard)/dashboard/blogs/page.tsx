@@ -44,7 +44,7 @@ export default async function BlogDashboard({
     <div className="container mx-auto py-10">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Blog Posts</h1>
-        <Link href="/posts/create">
+        <Link href="/blog/create">
           <Button>Create New Post</Button>
         </Link>
       </div>

@@ -130,7 +130,7 @@ export default async function Properties({
         }}
       />
       <div
-        className={`${raleway.className} w-[95%] lg:max-w-7xl mx-auto py-[90px] lg:py-[120px]`}
+        className={`${raleway.className} w-full px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto py-[90px] lg:py-[120px]`}
       >
         <h1 className="text-3xl font-bold mb-8">Explore Our Properties</h1>
         <article className="flex items-center justify-between w-full">
