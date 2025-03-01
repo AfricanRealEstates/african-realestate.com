@@ -1,8 +1,6 @@
-import { Metadata } from "next";
-import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import PropertyCard from "@/components/properties/new/PropertyCard";
-import { PropertyData } from "@/lib/types";
 import SortingOptions from "./SortingOptions";
 import { Badge } from "@/components/ui/badge";
 import PropertyFilter from "@/components/properties/PropertyFilter";
@@ -40,9 +38,7 @@ export async function generateMetadata({
 
   if (status) {
     title += ` | ${status === "sale" ? "For Sale" : "For Rent"}`;
-    description += ` Properties ${
-      status === "sale" ? "for sale" : "for rent"
-    }.`;
+    description += ` Properties ${status === "sale" ? "for sale" : "for rent"}.`;
   }
 
   if (propertyType) {
@@ -60,8 +56,8 @@ export async function generateMetadata({
       minPrice && maxPrice
         ? `${minPrice} - ${maxPrice}`
         : minPrice
-        ? `from ${minPrice}`
-        : `up to ${maxPrice}`;
+          ? `from ${minPrice}`
+          : `up to ${maxPrice}`;
     description += ` Price range: ${priceRange}.`;
   }
 
@@ -79,6 +75,7 @@ export async function generateMetadata({
         { county: { contains: query, mode: "insensitive" } },
         { nearbyTown: { contains: query, mode: "insensitive" } },
         { user: { name: { contains: query, mode: "insensitive" } } },
+        { propertyNumber: { equals: Number.parseInt(query) } },
       ],
       isActive: true,
       isAvailableForPurchase: true,
@@ -94,7 +91,19 @@ export async function generateMetadata({
             ],
           }
         : {}),
-      ...(propertyNumber ? { propertyNumber: parseInt(propertyNumber) } : {}),
+      ...(propertyNumber
+        ? {
+            OR: [
+              { propertyNumber: Number.parseInt(propertyNumber) },
+              {
+                propertyNumber: {
+                  gte: Number.parseInt(propertyNumber),
+                  lt: Number.parseInt(propertyNumber) + 1,
+                },
+              },
+            ],
+          }
+        : {}),
     },
     select: {
       coverPhotos: true,
@@ -157,6 +166,7 @@ async function getSearchResults(
         { county: { contains: query, mode: "insensitive" } },
         { nearbyTown: { contains: query, mode: "insensitive" } },
         { user: { name: { contains: query, mode: "insensitive" } } },
+        { propertyNumber: { equals: Number.parseInt(query) } },
       ],
       isActive: true,
       isAvailableForPurchase: true,
@@ -180,7 +190,16 @@ async function getSearchResults(
             ],
           }
         : {}),
-      ...(propertyNumber ? { propertyNumber: propertyNumber } : {}),
+      ...(propertyNumber
+        ? {
+            OR: [
+              { propertyNumber: propertyNumber },
+              {
+                propertyNumber: { gte: propertyNumber, lt: propertyNumber + 1 },
+              },
+            ],
+          }
+        : {}),
     },
     include: {
       user: true,
@@ -215,17 +234,17 @@ export default async function SearchPage({
 
   const advancedParams: AdvancedSearchParams = {
     minPrice: searchParams.minPrice
-      ? parseInt(searchParams.minPrice)
+      ? Number.parseInt(searchParams.minPrice)
       : undefined,
     maxPrice: searchParams.maxPrice
-      ? parseInt(searchParams.maxPrice)
+      ? Number.parseInt(searchParams.maxPrice)
       : undefined,
     propertyType: searchParams.propertyType,
     propertyDetails: searchParams.propertyDetails,
     status: searchParams.status,
     location: searchParams.location,
     propertyNumber: searchParams.propertyNumber
-      ? parseInt(searchParams.propertyNumber)
+      ? Number.parseInt(searchParams.propertyNumber)
       : undefined,
   };
 
@@ -252,9 +271,7 @@ export default async function SearchPage({
 
   const priceRangeDisplay = (() => {
     if (advancedParams.minPrice && advancedParams.maxPrice) {
-      return `${formatPrice(advancedParams.minPrice)} - ${formatPrice(
-        advancedParams.maxPrice
-      )}`;
+      return `${formatPrice(advancedParams.minPrice)} - ${formatPrice(advancedParams.maxPrice)}`;
     } else if (advancedParams.minPrice) {
       return `From ${formatPrice(advancedParams.minPrice)}`;
     } else if (advancedParams.maxPrice) {
@@ -264,7 +281,7 @@ export default async function SearchPage({
   })();
 
   return (
-    <div className="w-[95%] lg:max-w-7xl mx-auto py-[100px] lg:py-[160px]">
+    <div className="w-[95%] lg:max-w-7xl mx-auto py-[100px] lg:py-[160px] px-8">
       <div>
         <h1 className="text-3xl font-bold mb-4">
           {query ? `Search Results for "${query}"` : "All Properties"}

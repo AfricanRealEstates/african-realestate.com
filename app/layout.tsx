@@ -54,7 +54,7 @@ export default async function RootLayout({
             <ModalProvider />
             <LayoutProvider>{children}</LayoutProvider>
             <Analytics />
-            <Toaster richColors position="bottom-right" />
+            <Toaster richColors position="top-right" />
             <ShadcnUIToaster />
           </SessionProvider>
         </ThemeProvider>

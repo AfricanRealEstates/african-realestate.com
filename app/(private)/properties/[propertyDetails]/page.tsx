@@ -119,7 +119,7 @@ export default async function PropertyDetails({
 
   return (
     <div
-      className={`${raleway.className} w-[95%] lg:max-w-7xl mx-auto py-[90px] lg:py-[120px]`}
+      className={`${raleway.className} w-[95%] lg:max-w-7xl mx-auto py-[90px] lg:py-[120px] px-8`}
     >
       <article className="flex flex-col md:flex-row justify-between items-start md:items-center my-8 space-y-4 md:space-y-0">
         <div className="w-full md:w-2/3">

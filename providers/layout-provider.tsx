@@ -150,6 +150,7 @@ export default function LayoutProvider({ children }: Props) {
       pathname.includes("/register") ||
       pathname.includes("/login") ||
       pathname.includes("/verify-token") ||
+      pathname.includes("/forgot-password") ||
       pathname.includes("/blog") ||
       pathname.includes("/posts") ? (
         <>{children}</>

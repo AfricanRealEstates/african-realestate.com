@@ -28,13 +28,13 @@ export default function DashboardTabs({
   stats,
   isAdmin,
 }: DashboardTabsProps) {
-  const [activeTab, setActiveTab] = useState("favorites");
+  const [activeTab, setActiveTab] = useState("orders");
 
   const tabs = [
+    ...(isAdmin ? [{ id: "orders", label: "Orders", icon: ShoppingCart }] : []),
     { id: "favorites", label: "Favorites", icon: Heart },
     { id: "bookmarks", label: "Bookmarks", icon: Bookmark },
     { id: "ratings", label: "Ratings", icon: Star },
-    ...(isAdmin ? [{ id: "orders", label: "Orders", icon: ShoppingCart }] : []),
   ];
 
   return (
@@ -239,19 +239,59 @@ function OrdersList({
     <div className="space-y-6 p-4">
       <div className="grid gap-6">
         {orders.map((order) => (
-          <div
-            key={order.id}
-            className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6"
-          >
-            <div className="flex flex-wrap justify-between items-center mb-4">
-              <h3 className="font-semibold text-lg">Order #{order.id}</h3>
-              <span className="text-sm text-gray-500">
-                {new Date(order.createdAt).toLocaleDateString()}
-              </span>
-            </div>
-          </div>
+          <Card key={order.id} className="bg-white shadow-sm">
+            <CardContent className="p-4">
+              <div className="mb-4">
+                {/* <img
+                  src={
+                    order.property.coverPhotos[0] ||
+                    "/placeholder.svg?height=100&width=100"
+                  }
+                  alt={order.property.title}
+                  className="w-full h-40 object-cover rounded-md"
+                /> */}
+              </div>
+              <div className="flex flex-wrap justify-between items-center mb-4">
+                <h3 className="font-semibold text-lg">
+                  Order #{order.id.split("_")[1]}
+                </h3>
+                <span className="text-sm text-gray-500">
+                  {new Date(order.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+              <div className="space-y-2">
+                <p>
+                  <span className="font-medium">Property:</span>
+                  <Link
+                    href={`/properties/${order.propertyDetails}/${order.propertyId}`}
+                    className="text-blue-600 hover:underline"
+                  >
+                    View Property
+                  </Link>
+                </p>
+                <p>
+                  <span className="font-medium">Price Paid:</span>{" "}
+                  {order.property.currency} {order.pricePaid.toLocaleString()}
+                </p>
+                <p>
+                  <span className="font-medium">Tier:</span>{" "}
+                  {order.tierName || "N/A"}
+                </p>
+                <p>
+                  <span className="font-medium">Expiry Date:</span>{" "}
+                  {order.expiryDate
+                    ? new Date(order.expiryDate).toLocaleDateString()
+                    : "N/A"}
+                </p>
+                <p>
+                  <span className="font-medium">User:</span> {order.user.name}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
+      <Pagination currentPage={currentPage} totalPages={totalPages} />
     </div>
   );
 }

@@ -21,6 +21,7 @@ import Image from "next/image";
 import { createBlog } from "./post";
 import { Loader2 } from "lucide-react";
 import { BlogEditor } from "./PostEditor";
+import { useSession } from "next-auth/react";
 
 const formSchema = z.object({
   title: z.string().min(3, {
@@ -42,6 +43,11 @@ const formSchema = z.object({
 export default function CreateBlogPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const session = useSession();
+  if (!session) {
+    router.push("/login");
+  }
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -122,7 +128,9 @@ export default function CreateBlogPage() {
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Title</FormLabel>
+                  <FormLabel className="text-lg font-semibold text-blue-600 mb-1 block transition-colors duration-150 ease-in-out focus-within:text-blue-600">
+                    Title
+                  </FormLabel>
                   <FormControl>
                     <Input placeholder="My Awesome Blog Post" {...field} />
                   </FormControl>
@@ -167,7 +175,9 @@ export default function CreateBlogPage() {
               name="coverPhoto"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Cover Photo</FormLabel>
+                  <FormLabel className="text-lg font-semibold text-blue-600 mb-1 block transition-colors duration-150 ease-in-out focus-within:text-blue-600">
+                    Cover Photo
+                  </FormLabel>
                   <FormControl>
                     <div className="flex items-center space-x-4">
                       <Input
@@ -242,7 +252,9 @@ export default function CreateBlogPage() {
               name="metaKeywords"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Meta Keywords</FormLabel>
+                  <FormLabel className="text-lg font-semibold text-blue-600 mb-1 block transition-colors duration-150 ease-in-out focus-within:text-blue-600">
+                    Meta keywords
+                  </FormLabel>
                   <FormControl>
                     <Input
                       placeholder="e.g. housing, real estate, trending"
@@ -262,7 +274,9 @@ export default function CreateBlogPage() {
               name="metaDescription"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Summary Description</FormLabel>
+                  <FormLabel className="text-lg font-semibold text-blue-600 mb-1 block transition-colors duration-150 ease-in-out focus-within:text-blue-600">
+                    Summary Description
+                  </FormLabel>
                   <FormControl>
                     <Input
                       placeholder="A brief description of your blog post"
@@ -282,7 +296,9 @@ export default function CreateBlogPage() {
               name="content"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Content</FormLabel>
+                  <FormLabel className="text-lg font-semibold text-blue-600 mb-1 block transition-colors duration-150 ease-in-out focus-within:text-blue-600">
+                    Content
+                  </FormLabel>
                   <FormControl>
                     <BlogEditor
                       content={field.value}
@@ -304,7 +320,9 @@ export default function CreateBlogPage() {
               name="imageUrls"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Inline Images</FormLabel>
+                  <FormLabel className="text-lg font-semibold text-blue-600 mb-1 block transition-colors duration-150 ease-in-out focus-within:text-blue-600">
+                    Inserted Images
+                  </FormLabel>
                   <FormControl>
                     <div className="flex flex-wrap gap-2">
                       {field.value.map((url, index) => (
@@ -361,13 +379,20 @@ export default function CreateBlogPage() {
               name="topics"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Topics</FormLabel>
+                  <FormLabel className="text-lg font-semibold text-blue-600 mb-1 block transition-colors duration-150 ease-in-out focus-within:text-blue-600">
+                    Topics
+                  </FormLabel>
                   <FormControl>
                     <div className="flex flex-wrap gap-2 hover:cursor-pointer">
                       <Badge
                         variant={
-                          field.value.includes("tips") ? "secondary" : "outline"
+                          field.value.includes("tips") ? "default" : "outline"
                         }
+                        className={`cursor-pointer ${
+                          field.value.includes("tips")
+                            ? "bg-blue-500 hover:bg-blue-600 text-white"
+                            : ""
+                        }`}
                         onClick={() => {
                           if (field.value.includes("tips")) {
                             field.onChange(
@@ -385,9 +410,14 @@ export default function CreateBlogPage() {
                       <Badge
                         variant={
                           field.value.includes("finance")
-                            ? "secondary"
+                            ? "default"
                             : "outline"
                         }
+                        className={`cursor-pointer ${
+                          field.value.includes("finance")
+                            ? "bg-blue-500 hover:bg-blue-600 text-white"
+                            : ""
+                        }`}
                         onClick={() => {
                           if (field.value.includes("finance")) {
                             field.onChange(
@@ -405,9 +435,14 @@ export default function CreateBlogPage() {
                       <Badge
                         variant={
                           field.value.includes("investing")
-                            ? "secondary"
+                            ? "default"
                             : "outline"
                         }
+                        className={`cursor-pointer ${
+                          field.value.includes("investing")
+                            ? "bg-blue-500 hover:bg-blue-600 text-white"
+                            : ""
+                        }`}
                         onClick={() => {
                           if (field.value.includes("investing")) {
                             field.onChange(
@@ -425,9 +460,14 @@ export default function CreateBlogPage() {
                       <Badge
                         variant={
                           field.value.includes("home-decor")
-                            ? "secondary"
+                            ? "default"
                             : "outline"
                         }
+                        className={`cursor-pointer ${
+                          field.value.includes("home-decor")
+                            ? "bg-blue-500 hover:bg-blue-600 text-white"
+                            : ""
+                        }`}
                         onClick={() => {
                           if (field.value.includes("home-decor")) {
                             field.onChange(
@@ -445,9 +485,14 @@ export default function CreateBlogPage() {
                       <Badge
                         variant={
                           field.value.includes("housing")
-                            ? "secondary"
+                            ? "default"
                             : "outline"
                         }
+                        className={`cursor-pointer ${
+                          field.value.includes("housing")
+                            ? "bg-blue-500 hover:bg-blue-600 text-white"
+                            : ""
+                        }`}
                         onClick={() => {
                           if (field.value.includes("housing")) {
                             field.onChange(

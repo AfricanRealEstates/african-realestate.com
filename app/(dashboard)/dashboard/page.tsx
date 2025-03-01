@@ -98,8 +98,8 @@ export default async function DashboardPage({
                 />
                 <StatCard
                   icon={<XCircle className="h-5 w-5 text-red-500" />}
-                  title="Expired Properties"
-                  value={adminSummary.expiredProperties}
+                  title="Inactive Properties"
+                  value={adminSummary.inActiveProperties}
                 />
               </div>
             </CardContent>

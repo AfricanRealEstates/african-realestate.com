@@ -3,7 +3,6 @@ import RecommendedTopics from "@/app/(blog)/RecommendedTopics";
 import { baseUrl } from "@/app/sitemap";
 import { notFound } from "next/navigation";
 import { Redis } from "@upstash/redis";
-import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import type { Metadata } from "next";
 import { format } from "date-fns";
@@ -95,7 +94,7 @@ export default async function Page({
   params: { topic: string; slug: string };
 }) {
   const post = await prisma.post.findUnique({
-    where: { slug: params.slug },
+    where: { slug: params.slug, published: true },
     include: { author: true, likes: true },
   });
 
@@ -112,11 +111,7 @@ export default async function Page({
     take: 3,
   });
 
-  const user = await getCurrentUser();
-
   const url = `${baseUrl}/blog/${params.topic}/${post.slug}`;
-
-  const views = (await redis.get<number>(`pageviews:posts:${post.slug}`)) ?? 0;
 
   const session = await auth();
 
@@ -170,7 +165,11 @@ export default async function Page({
         <div className="xl:container m-auto px-6 text-gray-600 md:px-12 xl:px-16">
           <div className="lg:p-10 rounded-[4rem] space-y-6 md:flex flex-col md:gap-6 justify-center md:space-y-0 lg:items-center border-b border-gray-50">
             <h1 className="font-semibold text-2xl lg:text-4xl tracking-tighter">
-              {post.title}
+              {post.title
+                .split(" ") // Split into words
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
+                .join(" ")}{" "}
+              {/* Join words back together */}
             </h1>
 
             <div className="flex justify-between gap-2 items-center mt-2 mb-4 text-sm md:w-max">
@@ -199,6 +198,15 @@ export default async function Page({
             </div>
 
             <article className="prose w-full max-w-2xl mx-auto">
+              {/* Cover Photo */}
+              {post.coverPhoto && (
+                <img
+                  src={post.coverPhoto}
+                  alt={post.title}
+                  className="w-full h-[400px] object-cover rounded-lg mx-auto border p-1 mb-6"
+                />
+              )}
+
               <div
                 className="prose max-w-none mb-8 mt-4"
                 dangerouslySetInnerHTML={{
