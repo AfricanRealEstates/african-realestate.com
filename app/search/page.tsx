@@ -4,6 +4,7 @@ import PropertyCard from "@/components/properties/new/PropertyCard";
 import SortingOptions from "./SortingOptions";
 import { Badge } from "@/components/ui/badge";
 import PropertyFilter from "@/components/properties/PropertyFilter";
+import Pagination from "@/components/globals/Pagination";
 
 export async function generateMetadata({
   searchParams,
@@ -17,6 +18,7 @@ export async function generateMetadata({
     minPrice?: string;
     maxPrice?: string;
     propertyNumber?: string;
+    page?: string;
   };
 }): Promise<Metadata> {
   const query = searchParams.q || "";
@@ -75,7 +77,9 @@ export async function generateMetadata({
         { county: { contains: query, mode: "insensitive" } },
         { nearbyTown: { contains: query, mode: "insensitive" } },
         { user: { name: { contains: query, mode: "insensitive" } } },
-        { propertyNumber: { equals: Number.parseInt(query) } },
+        ...(isNaN(Number.parseInt(query))
+          ? []
+          : [{ propertyNumber: Number.parseInt(query) }]),
       ],
       isActive: true,
       isAvailableForPurchase: true,
@@ -146,7 +150,9 @@ async function getSearchResults(
   query: string,
   sortBy: string,
   sortOrder: "asc" | "desc",
-  advancedParams: AdvancedSearchParams
+  advancedParams: AdvancedSearchParams,
+  page: number,
+  pageSize: number
 ) {
   const {
     minPrice,
@@ -158,58 +164,118 @@ async function getSearchResults(
     propertyNumber,
   } = advancedParams;
 
-  const properties = await prisma.property.findMany({
-    where: {
-      OR: [
-        { title: { contains: query, mode: "insensitive" } },
-        { description: { contains: query, mode: "insensitive" } },
-        { county: { contains: query, mode: "insensitive" } },
-        { nearbyTown: { contains: query, mode: "insensitive" } },
-        { user: { name: { contains: query, mode: "insensitive" } } },
-        { propertyNumber: { equals: Number.parseInt(query) } },
-      ],
-      isActive: true,
-      isAvailableForPurchase: true,
-      ...(status ? { status: status } : {}),
-      ...(minPrice || maxPrice
-        ? {
-            price: {
-              ...(minPrice ? { gte: minPrice } : {}),
-              ...(maxPrice ? { lte: maxPrice } : {}),
-            },
-          }
-        : {}),
-      ...(propertyType ? { propertyType: propertyType } : {}),
-      ...(propertyDetails ? { propertyDetails: propertyDetails } : {}),
-      ...(location
-        ? {
-            OR: [
-              { locality: { contains: location, mode: "insensitive" } },
-              { nearbyTown: { contains: location, mode: "insensitive" } },
-              { county: { contains: location, mode: "insensitive" } },
-            ],
-          }
-        : {}),
-      ...(propertyNumber
-        ? {
-            OR: [
-              { propertyNumber: propertyNumber },
-              {
-                propertyNumber: { gte: propertyNumber, lt: propertyNumber + 1 },
-              },
-            ],
-          }
-        : {}),
-    },
-    include: {
-      user: true,
-    },
-    orderBy: {
-      [sortBy]: sortOrder,
-    },
-  });
+  const skip = (page - 1) * pageSize;
 
-  return properties;
+  const [properties, totalCount] = await Promise.all([
+    prisma.property.findMany({
+      where: {
+        OR: [
+          { title: { contains: query, mode: "insensitive" } },
+          { description: { contains: query, mode: "insensitive" } },
+          { county: { contains: query, mode: "insensitive" } },
+          { nearbyTown: { contains: query, mode: "insensitive" } },
+          { user: { name: { contains: query, mode: "insensitive" } } },
+          ...(isNaN(Number.parseInt(query))
+            ? []
+            : [{ propertyNumber: Number.parseInt(query) }]),
+        ],
+        isActive: true,
+        isAvailableForPurchase: true,
+        ...(status ? { status: status } : {}),
+        ...(minPrice || maxPrice
+          ? {
+              price: {
+                ...(minPrice ? { gte: minPrice } : {}),
+                ...(maxPrice ? { lte: maxPrice } : {}),
+              },
+            }
+          : {}),
+        ...(propertyType ? { propertyType: propertyType } : {}),
+        ...(propertyDetails ? { propertyDetails: propertyDetails } : {}),
+        ...(location
+          ? {
+              OR: [
+                { locality: { contains: location, mode: "insensitive" } },
+                { nearbyTown: { contains: location, mode: "insensitive" } },
+                { county: { contains: location, mode: "insensitive" } },
+              ],
+            }
+          : {}),
+        ...(propertyNumber
+          ? {
+              OR: [
+                { propertyNumber: propertyNumber },
+                {
+                  propertyNumber: {
+                    gte: propertyNumber,
+                    lt: propertyNumber + 1,
+                  },
+                },
+              ],
+            }
+          : {}),
+      },
+      include: {
+        user: true,
+      },
+      orderBy: {
+        [sortBy]: sortOrder,
+      },
+      skip,
+      take: pageSize,
+    }),
+    prisma.property.count({
+      where: {
+        OR: [
+          { title: { contains: query, mode: "insensitive" } },
+          { description: { contains: query, mode: "insensitive" } },
+          { county: { contains: query, mode: "insensitive" } },
+          { nearbyTown: { contains: query, mode: "insensitive" } },
+          { user: { name: { contains: query, mode: "insensitive" } } },
+          ...(isNaN(Number.parseInt(query))
+            ? []
+            : [{ propertyNumber: Number.parseInt(query) }]),
+        ],
+        isActive: true,
+        isAvailableForPurchase: true,
+        ...(status ? { status: status } : {}),
+        ...(minPrice || maxPrice
+          ? {
+              price: {
+                ...(minPrice ? { gte: minPrice } : {}),
+                ...(maxPrice ? { lte: maxPrice } : {}),
+              },
+            }
+          : {}),
+        ...(propertyType ? { propertyType: propertyType } : {}),
+        ...(propertyDetails ? { propertyDetails: propertyDetails } : {}),
+        ...(location
+          ? {
+              OR: [
+                { locality: { contains: location, mode: "insensitive" } },
+                { nearbyTown: { contains: location, mode: "insensitive" } },
+                { county: { contains: location, mode: "insensitive" } },
+              ],
+            }
+          : {}),
+        ...(propertyNumber
+          ? {
+              OR: [
+                { propertyNumber: propertyNumber },
+                {
+                  propertyNumber: {
+                    gte: propertyNumber,
+                    lt: propertyNumber + 1,
+                  },
+                },
+              ],
+            }
+          : {}),
+      },
+    }),
+  ]);
+
+  return { properties, totalCount };
 }
 
 export default async function SearchPage({
@@ -226,11 +292,14 @@ export default async function SearchPage({
     propertyDetails?: string;
     location?: string;
     propertyNumber?: string;
+    page?: string;
   };
 }) {
   const query = searchParams.q || "";
   const sortBy = searchParams.sort || "createdAt";
   const sortOrder = searchParams.order || "desc";
+  const page = Number(searchParams.page) || 1;
+  const pageSize = 9; // Number of items per page
 
   const advancedParams: AdvancedSearchParams = {
     minPrice: searchParams.minPrice
@@ -248,12 +317,16 @@ export default async function SearchPage({
       : undefined,
   };
 
-  const searchResults = await getSearchResults(
+  const { properties: searchResults, totalCount } = await getSearchResults(
     query,
     sortBy,
     sortOrder,
-    advancedParams
+    advancedParams,
+    page,
+    pageSize
   );
+
+  const totalPages = Math.ceil(totalCount / pageSize);
 
   const activeFilters = Object.entries(advancedParams).filter(
     ([_, value]) => value !== undefined
@@ -292,10 +365,10 @@ export default async function SearchPage({
         <p className="mb-4 md:mb-0 inline-flex items-center justify-center rounded px-[15px] text-sm leading-none h-[35px] bg-green-50 text-green-500 focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
           Showing
           <span className="font-semibold text-green-600 mx-1">
-            {searchResults.length}
+            {totalCount}
           </span>{" "}
           matched result
-          {searchResults.length !== 1 ? "s" : ""}
+          {totalCount !== 1 ? "s" : ""}
         </p>
       </div>
       <div className="mb-8 flex flex-col md:flex-row justify-between">
@@ -326,11 +399,14 @@ export default async function SearchPage({
         </div>
       )}
       {searchResults.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {searchResults.map((property) => (
-            <PropertyCard key={property.id} data={property as any} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {searchResults.map((property) => (
+              <PropertyCard key={property.id} data={property as any} />
+            ))}
+          </div>
+          <Pagination currentPage={page} totalPages={totalPages} />
+        </>
       ) : (
         <div className="text-center py-12">
           <p className="text-xl text-gray-600 mb-4">
