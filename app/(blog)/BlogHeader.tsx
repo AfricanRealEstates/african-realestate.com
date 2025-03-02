@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { logout } from "@/actions/logout";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Menu } from "lucide-react";
 
 export const navItems = [
   {
@@ -39,6 +40,7 @@ export const navItems = [
 
 export default function BlogHeader() {
   const [stickyMenu, setStickyMenu] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleStickyMenu = () => {
     if (window.scrollY >= 80) {
@@ -65,11 +67,11 @@ export default function BlogHeader() {
       <div
         id="banner"
         tabIndex={-1}
-        className="z-50 hidden lg:flex justify-center w-full px-4 py-3 border border-gray-100 bg-neutral-50 lg:py-4"
+        className="z-50 hidden sm:flex justify-center w-full px-4 py-3 border border-gray-100 bg-neutral-50 lg:py-4"
       >
-        <div className="md:flex items-center">
-          <p className="text-sm font-medium text-gray-900 md:my-0">
-            <span className="bg-blue-100 text-ken-primary text-xs font-semibold mr-2 px-2.5 py-0.5 rounded hidden md:inline">
+        <div className="flex flex-col sm:flex-row items-center">
+          <p className="text-sm font-medium text-gray-900 text-center sm:text-left my-2 sm:my-0">
+            <span className="bg-blue-100 text-ken-primary text-xs font-semibold mr-2 px-2.5 py-0.5 rounded inline-block">
               New
             </span>
             We have posted new properties in addition to over 10,000+ that we
@@ -104,7 +106,7 @@ export default function BlogHeader() {
         <nav
           className={`space-y-3 w-full px-3 py-3 mx-auto lg:flex lg:justify-between max-w-7xl lg:px-3`}
         >
-          <div className="flex justify-between">
+          <div className="flex items-center justify-between">
             <Link href="/" className={`flex items-center gap-2 no-underline`}>
               <img
                 src="/assets/logo.png"
@@ -113,105 +115,82 @@ export default function BlogHeader() {
                 alt="ARE"
                 className="object-cover"
               />
-              <span className={`lg:text-xl tracking-tight font-bold`}>
+              <span className={`text-lg lg:text-xl tracking-tight font-bold`}>
                 African Real Estate.
               </span>
             </Link>
+            <button
+              className="lg:hidden"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              <Menu className="h-6 w-6" />
+            </button>
           </div>
-          <SearchField />
-          <div className="flex items-center w-full gap-4 lg:w-auto">
-            <ul className="flex py-2 lg:py-0 lg:self-center gap-x-4  w-full lg:w-auto">
-              {navItems.map((item) => {
-                return (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className="block py-2 text-sm font-medium text-gray-800 lg:px-3 lg:py-0 hover:text-ken-primary transition"
-                    >
-                      {item.label}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-            <div className="lg:self-center flex items-center mb-4 lg:mb-0">
-              {/* 
-              <div className="items-center flex mr-3 gap-4">
-                <Link
-                  href={
-                    "https://web.facebook.com/AfricanRealEstateMungaiKihara"
-                  }
-                  target="_blank"
-                  rel="noopener norefferer"
-                >
-                  <Facebook />
-                </Link>
-                <Link
-                  href={"https://www.tiktok.com/@africanrealestate"}
-                  target="_blank"
-                  rel="noopener norefferer"
-                >
-                  <TikTok />
-                </Link>
-                <Link
-                  href={"https://www.youtube.com/c/AfricanRealEstate"}
-                  target="_blank"
-                  rel="noopener norefferer"
-                >
-                  <YouTube />
-                </Link>
-                <Link
-                  href={"https://www.instagram.com/africanrealestate_/"}
-                  target="_blank"
-                  rel="noopener norefferer"
-                >
-                  <Instagram />
-                </Link>
-              </div> */}
-              {user && (
-                <>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      {/* <Button
-                        variant="ghost"
-                        className="relative h-8 w-8 rounded-full"
-                      >
-                        {user?.name?.charAt(0) as string}
-                      </Button> */}
 
-                      <Avatar>
-                        <AvatarImage
-                          src={user?.image || "/assets/placeholder.jpg"}
-                        />
-                        <AvatarFallback>
-                          {user?.name?.charAt(0) as string}
-                        </AvatarFallback>
-                      </Avatar>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      className="w-56"
-                      align="end"
-                      forceMount
-                    >
-                      <DropdownMenuItem>
-                        <Link href="/dashboard">Dashboard</Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Link href="/dashboard/blogs">My Blogs</Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={logout}>
-                        Log out
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                  {(user.role === "SUPPORT" || user.role === "ADMIN") && (
-                    <Button variant="outline" className="ml-4">
-                      <Link href="/blog/create">Create Blog</Link>
-                    </Button>
-                  )}
-                </>
-              )}
+          <div
+            className={`${mobileMenuOpen ? "block" : "hidden"} lg:flex lg:items-center lg:justify-between w-full flex-col lg:flex-row mt-4 lg:mt-0`}
+          >
+            <div className="w-full lg:max-w-xs mb-4 lg:mb-0 lg:mr-4">
+              <SearchField />
+            </div>
+
+            <div className="flex flex-col lg:flex-row items-start lg:items-center w-full lg:w-auto">
+              <ul className="flex flex-col lg:flex-row py-2 lg:py-0 lg:self-center gap-y-2 gap-x-4 w-full lg:w-auto">
+                {navItems.map((item) => {
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        className="block py-2 text-sm font-medium text-gray-800 lg:px-3 lg:py-0 hover:text-ken-primary transition"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+
+              <div className="lg:self-center flex items-center mt-4 lg:mt-0 lg:ml-4">
+                {user && (
+                  <>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Avatar className="cursor-pointer">
+                          <AvatarImage
+                            src={user?.image || "/assets/placeholder.jpg"}
+                          />
+                          <AvatarFallback>
+                            {user?.name?.charAt(0) as string}
+                          </AvatarFallback>
+                        </Avatar>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        className="w-56"
+                        align="end"
+                        forceMount
+                      >
+                        <DropdownMenuItem>
+                          <Link href="/dashboard">Dashboard</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Link href="/dashboard/blogs">My Blogs</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={logout}>
+                          Log out
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    {(user.role === "SUPPORT" || user.role === "ADMIN") && (
+                      <Button variant="outline" className="ml-4">
+                        <Link href="/blog/create">Create Blog</Link>
+                      </Button>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </nav>
@@ -292,7 +271,7 @@ export const Instagram = (props: SVGProps<SVGSVGElement>) => (
   >
     <path
       fill="#0A0A08"
-      d="M128 23.064c34.177 0 38.225.13 51.722.745 12.48.57 19.258 2.655 23.769 4.408 5.974 2.322 10.238 5.096 14.717 9.575 4.48 4.479 7.253 8.743 9.575 14.717 1.753 4.511 3.838 11.289 4.408 23.768.615 13.498.745 17.546.745 51.723 0 34.178-.13 38.226-.745 51.723-.57 12.48-2.655 19.257-4.408 23.768-2.322 5.974-5.096 10.239-9.575 14.718-4.479 4.479-8.743 7.253-14.717 9.574-4.511 1.753-11.289 3.839-23.769 4.408-13.495.616-17.543.746-51.722.746-34.18 0-38.228-.13-51.723-.746-12.48-.57-19.257-2.655-23.768-4.408-5.974-2.321-10.239-5.095-14.718-9.574-4.479-4.48-7.253-8.744-9.574-14.718-1.753-4.51-3.839-11.288-4.408-23.768-.616-13.497-.746-17.545-.746-51.723 0-34.177.13-38.225.746-51.722.57-12.48 2.655-19.258 4.408-23.769 2.321-5.974 5.095-10.238 9.574-14.717 4.48-4.48 8.744-7.253 14.718-9.575 4.51-1.753 11.288-3.838 23.768-4.408 13.497-.615 17.545-.745 51.723-.745M128 0C93.237 0 88.878.147 75.226.77c-13.625.622-22.93 2.786-31.071 5.95-8.418 3.271-15.556 7.648-22.672 14.764C14.367 28.6 9.991 35.738 6.72 44.155 3.555 52.297 1.392 61.602.77 75.226.147 88.878 0 93.237 0 128c0 34.763.147 39.122.77 52.774.622 13.625 2.785 22.93 5.95 31.071 3.27 8.417 7.647 15.556 14.763 22.672 7.116 7.116 14.254 11.492 22.672 14.763 8.142 3.165 17.446 5.328 31.07 5.95 13.653.623 18.012.77 52.775.77s39.122-.147 52.774-.77c13.624-.622 22.929-2.785 31.07-5.95 8.418-3.27 15.556-7.647 22.672-14.763 7.116-7.116 11.493-14.254 14.764-22.672 3.164-8.142 5.328-17.446 5.95-31.07.623-13.653.77-18.012.77-52.775s-.147-39.122-.77-52.774c-.622-13.624-2.786-22.929-5.95-31.07-3.271-8.418-7.648-15.556-14.764-22.672C227.4 14.368 220.262 9.99 211.845 6.72c-8.142-3.164-17.447-5.328-31.071-5.95C167.122.147 162.763 0 128 0Zm0 62.27C91.698 62.27 62.27 91.7 62.27 128c0 36.302 29.428 65.73 65.73 65.73 36.301 0 65.73-29.428 65.73-65.73 0-36.301-29.429-65.73-65.73-65.73Zm0 108.397c-23.564 0-42.667-19.103-42.667-42.667S104.436 85.333 128 85.333s42.667 19.103 42.667 42.667-19.103 42.667-42.667 42.667Zm83.686-110.994c0 8.484-6.876 15.36-15.36 15.36-8.483 0-15.36-6.876-15.36-15.36 0-8.483 6.877-15.36 15.36-15.36 8.484 0 15.36 6.877 15.36 15.36Z"
+      d="M128 23.064c34.177 0 38.225.13 51.722.745 12.48.57 19.258 2.655 23.769 4.408 5.974 2.322 10.238 5.096 14.717 9.575 4.48 4.479 7.253 8.743 9.575 14.717 4.511 1.753 11.289 3.838 23.769 4.408 13.498.615 17.546.745 51.723.745 34.178 0 38.226-.13 51.723-.745 12.48-.57 19.257-2.655 23.768-4.408 5.974-2.321 10.239-5.095 14.718-9.574 4.479-4.48 7.253-8.744 9.574-14.718 1.753-4.51 3.839-11.288 4.408-23.768.616-13.497.746-17.545.746-51.723 0-34.177-.13-38.225-.746-51.722-.57-12.48-2.655-19.258-4.408-23.769-2.321-5.974-5.095-10.238-9.574-14.717-4.48-4.48-8.744-7.253-14.718-9.575-4.51-1.753-11.288-3.838-23.768-4.408-13.497-.615-17.545-.745-51.723-.745M128 0C93.237 0 88.878.147 75.226.77c-13.625.622-22.93 2.786-31.071 5.95-8.418 3.271-15.556 7.648-22.672 14.764C14.367 28.6 9.991 35.738 6.72 44.155 3.555 52.297 1.392 61.602.77 75.226.147 88.878 0 93.237 0 128c0 34.763.147 39.122.77 52.774.622 13.625 2.785 22.93 5.95 31.071 3.27 8.417 7.647 15.556 14.763 22.672 7.116 7.116 14.254 11.492 22.672 14.763 8.142 3.165 17.446 5.328 31.07 5.95 13.653.623 18.012.77 52.775.77s39.122-.147 52.774-.77c13.624-.622 22.929-2.785 31.07-5.95 8.418-3.27 15.556-7.647 22.672-14.763 7.116-7.116 11.493-14.254 14.764-22.672 3.164-8.142 5.328-17.446 5.95-31.07.623-13.653.77-18.012.77-52.775s-.147-39.122-.77-52.774c-.622-13.624-2.786-22.929-5.95-31.07-3.271-8.418-7.648-15.556-14.764-22.672C227.4 14.368 220.262 9.99 211.845 6.72c-8.142-3.164-17.447-5.328-31.071-5.95C167.122.147 162.763 0 128 0Zm0 62.27C91.698 62.27 62.27 91.7 62.27 128c0 36.302 29.428 65.73 65.73 65.73 36.301 0 65.73-29.428 65.73-65.73 0-36.301-29.429-65.73-65.73-65.73Zm0 108.397c-23.564 0-42.667-19.103-42.667-42.667S104.436 85.333 128 85.333s42.667 19.103 42.667 42.667-19.103 42.667-42.667 42.667Zm83.686-110.994c0 8.484-6.876 15.36-15.36 15.36-8.483 0-15.36-6.876-15.36-15.36 0-8.483 6.877-15.36 15.36-15.36 8.484 0 15.36 6.877 15.36 15.36Z"
     />
   </svg>
 );

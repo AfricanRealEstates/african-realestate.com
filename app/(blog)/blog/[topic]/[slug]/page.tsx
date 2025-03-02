@@ -172,7 +172,7 @@ export default async function Page({
               {/* Join words back together */}
             </h1>
 
-            <div className="flex justify-between gap-2 items-center mt-2 mb-4 text-sm md:w-max">
+            <div className="flex justify-between flex-col lg:flex-row gap-2 lg:items-center mt-2 mb-4 text-sm md:w-max">
               <p className="">
                 Author:{" "}
                 <Link
