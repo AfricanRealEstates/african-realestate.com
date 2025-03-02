@@ -18,11 +18,7 @@ interface BlogShareProps {
 }
 
 const BlogShare: React.FC<BlogShareProps> = ({ url, title, summary }) => {
-  const shareData = {
-    title: title,
-    text: summary,
-    url: url,
-  };
+  const shareData = { title, text: summary, url };
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -32,7 +28,7 @@ const BlogShare: React.FC<BlogShareProps> = ({ url, title, summary }) => {
         console.error("Error sharing:", err);
         toast({
           title: "Sharing failed",
-          description: "Please try another sharing method.",
+          description: "Please try another method.",
           variant: "destructive",
         });
       }
@@ -41,45 +37,40 @@ const BlogShare: React.FC<BlogShareProps> = ({ url, title, summary }) => {
     }
   };
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(url).then(
-      () => {
-        toast({
-          title: "Link copied!",
-          description: "The blog post link has been copied to your clipboard.",
-        });
-      },
-      (err) => {
-        console.error("Could not copy text: ", err);
-        toast({
-          title: "Copy failed",
-          description: "Please try again or use another sharing method.",
-          variant: "destructive",
-        });
-      }
-    );
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(url);
+      toast({
+        title: "Link copied!",
+        description: "The blog post link has been copied to your clipboard.",
+      });
+    } catch (err) {
+      console.error("Could not copy text: ", err);
+      toast({
+        title: "Copy failed",
+        description: "Try again or use another sharing method.",
+        variant: "destructive",
+      });
+    }
   };
 
-  const shareOnFacebook = () => {
-    const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-      url
-    )}`;
-    window.open(facebookShareUrl, "_blank", "noopener,noreferrer");
-  };
-
-  const shareOnTwitter = () => {
-    const twitterShareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(
-      url
-    )}&text=${encodeURIComponent(title)}`;
-    window.open(twitterShareUrl, "_blank", "noopener,noreferrer");
-  };
-
-  const shareOnLinkedIn = () => {
-    const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
-      url
-    )}`;
-    window.open(linkedInShareUrl, "_blank", "noopener,noreferrer");
-  };
+  const socialPlatforms = [
+    {
+      name: "Facebook",
+      url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+      icon: Facebook,
+    },
+    {
+      name: "Twitter",
+      url: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
+      icon: Twitter,
+    },
+    {
+      name: "LinkedIn",
+      url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+      icon: Linkedin,
+    },
+  ];
 
   const shareByEmail = () => {
     const subject = encodeURIComponent(title);
@@ -98,18 +89,16 @@ const BlogShare: React.FC<BlogShareProps> = ({ url, title, summary }) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuItem onClick={shareOnFacebook} className="cursor-pointer">
-          <Facebook className="mr-2 h-4 w-4" />
-          <span>Facebook</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={shareOnTwitter} className="cursor-pointer">
-          <Twitter className="mr-2 h-4 w-4" />
-          <span>Twitter</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={shareOnLinkedIn} className="cursor-pointer">
-          <Linkedin className="mr-2 h-4 w-4" />
-          <span>LinkedIn</span>
-        </DropdownMenuItem>
+        {socialPlatforms.map(({ name, url, icon: Icon }) => (
+          <DropdownMenuItem
+            key={name}
+            onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
+            className="cursor-pointer"
+          >
+            <Icon className="mr-2 h-4 w-4" />
+            <span>{name}</span>
+          </DropdownMenuItem>
+        ))}
         <DropdownMenuItem onClick={shareByEmail} className="cursor-pointer">
           <Mail className="mr-2 h-4 w-4" />
           <span>Email</span>

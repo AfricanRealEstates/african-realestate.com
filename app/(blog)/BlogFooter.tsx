@@ -1,9 +1,6 @@
 "use client";
-import { HomeIcon } from "lucide-react";
 import Link from "next/link";
-import React from "react";
 import { Facebook, Instagram, navItems, TikTok, YouTube } from "./BlogHeader";
-import Image from "next/image";
 
 export default function BlogFooter() {
   return (
@@ -18,9 +15,6 @@ export default function BlogFooter() {
               alt="ARE"
               className="object-cover"
             />
-            {/* <span className="bg-[#eb6753] text-white py-1 px-2 rounded-lg">
-              <HomeIcon />
-            </span> */}
             <span className={`lg:text-xl tracking-tight font-bold`}>
               African Real Estate.
             </span>

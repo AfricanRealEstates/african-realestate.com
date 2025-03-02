@@ -5,9 +5,48 @@ import Link from "next/link";
 import { format } from "date-fns";
 import PopularBlogs from "../../../PopularBlogs";
 import RecommendedTopics from "../../../RecommendedTopics";
+import { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { id: string };
+}): Promise<Metadata> {
+  const author = await prisma.user.findUnique({
+    where: { id: params.id },
+    include: { posts: { where: { published: true } } },
+  });
+
+  if (!author) {
+    return {
+      title: "Author Not Found",
+      description: "This author does not exist.",
+    };
+  }
+
+  return {
+    title: `Posts by ${author.name} - African Real Estate`,
+    description: `Explore blog posts by ${author.name} on African Real Estate. Read insights, guides, and updates on the latest trends in real estate.`,
+    openGraph: {
+      title: `Posts by ${author.name} - African Real Estate`,
+      description: `Explore blog posts by ${author.name} on African Real Estate.`,
+      type: "website",
+      url: `https://www.african-realestate.com/author/${params.id}`,
+      images: author.posts[0]?.coverPhoto
+        ? [{ url: author.posts[0].coverPhoto, width: 1200, height: 630 }]
+        : [
+            {
+              url: author.image || "/assets/placeholder.jpg",
+              width: 1200,
+              height: 630,
+            },
+          ],
+    },
+  };
+}
 
 export default async function AuthorPostsPage({
   params,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { incrementShareCount } from "@/actions/blog";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,80 +33,92 @@ export default function ShareButton({
 }) {
   const [shareCount, setShareCount] = useState(initialShareCount);
 
-  const handleShare = async (method: string) => {
-    try {
-      let shared = false;
-      const url = window.location.href;
-      const shareText = `${title}\n\n${description}\n\n`;
+  const handleShare = useCallback(
+    async (method: string) => {
+      try {
+        let shared = false;
+        const url = window.location.href;
+        const shareText = `${title}\n\n${description}\n\n`;
 
-      switch (method) {
-        case "native":
-          if (navigator.share) {
-            await navigator.share({
-              title,
-              text: description,
-              url,
+        const shareMethods: Record<string, () => void> = {
+          native: async () => {
+            if (navigator.share) {
+              await navigator.share({ title, text: description, url });
+              shared = true;
+            } else {
+              toast({
+                title: "Sharing not supported",
+                description: "Your browser does not support native sharing.",
+              });
+            }
+          },
+          facebook: () => {
+            window.open(
+              `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+                url
+              )}&quote=${encodeURIComponent(shareText)}`,
+              "_blank",
+              "noopener,noreferrer"
+            );
+            shared = true;
+          },
+          twitter: () => {
+            window.open(
+              `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+                url
+              )}&text=${encodeURIComponent(shareText)}`,
+              "_blank",
+              "noopener,noreferrer"
+            );
+            shared = true;
+          },
+          linkedin: () => {
+            window.open(
+              `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+                url
+              )}`,
+              "_blank",
+              "noopener,noreferrer"
+            );
+            shared = true;
+          },
+          whatsapp: () => {
+            window.open(
+              `https://wa.me/?text=${encodeURIComponent(shareText + url)}`,
+              "_blank",
+              "noopener,noreferrer"
+            );
+            shared = true;
+          },
+          copy: async () => {
+            await navigator.clipboard.writeText(url);
+            toast({
+              title: "Link copied",
+              description: "The URL has been copied to your clipboard.",
             });
             shared = true;
-          }
-          break;
-        case "facebook":
-          window.open(
-            `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-              url
-            )}&quote=${encodeURIComponent(shareText)}`,
-            "_blank",
-            "noopener,noreferrer"
-          );
-          shared = true;
-          break;
-        case "twitter":
-          window.open(
-            `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareText)}`,
-            "_blank",
-            "noopener,noreferrer"
-          );
-          shared = true;
-          break;
-        case "linkedin":
-          window.open(
-            `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
-            "_blank",
-            "noopener,noreferrer"
-          );
-          shared = true;
-          break;
-        case "whatsapp":
-          window.open(
-            `https://wa.me/?text=${encodeURIComponent(shareText + url)}`,
-            "_blank",
-            "noopener,noreferrer"
-          );
-          shared = true;
-          break;
-        case "copy":
-          await navigator.clipboard.writeText(url);
-          toast({
-            title: "Link copied",
-            description: "The URL has been copied to your clipboard.",
-          });
-          shared = true;
-          break;
-      }
+          },
+        };
 
-      if (shared) {
-        const newShareCount = await incrementShareCount(postId);
-        setShareCount(newShareCount || shareCount + 1);
+        if (shareMethods[method]) {
+          await shareMethods[method]();
+        }
+
+        if (shared) {
+          const newShareCount = await incrementShareCount(postId);
+          setShareCount(newShareCount || shareCount + 1);
+        }
+      } catch (error) {
+        console.error("Error sharing:", error);
+        toast({
+          title: "Error sharing",
+          description: "There was an error while sharing. Please try again.",
+          variant: "destructive",
+        });
       }
-    } catch (error) {
-      console.error("Error sharing:", error);
-      toast({
-        title: "Error sharing",
-        description: "There was an error while sharing. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
+    },
+    [postId, title, description, shareCount]
+  );
 
   return (
     <DropdownMenu>
@@ -118,29 +130,22 @@ export default function ShareButton({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => handleShare("native")}>
-          <Share className="mr-2 h-4 w-4" />
-          Share
+          <Share className="mr-2 h-4 w-4" /> Share
         </DropdownMenuItem>
-
         <DropdownMenuItem onClick={() => handleShare("facebook")}>
-          <Facebook className="mr-2 h-4 w-4" />
-          Facebook
+          <Facebook className="mr-2 h-4 w-4" /> Facebook
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => handleShare("twitter")}>
-          <Twitter className="mr-2 h-4 w-4" />
-          Twitter
+          <Twitter className="mr-2 h-4 w-4" /> Twitter
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => handleShare("linkedin")}>
-          <Linkedin className="mr-2 h-4 w-4" />
-          LinkedIn
+          <Linkedin className="mr-2 h-4 w-4" /> LinkedIn
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => handleShare("whatsapp")}>
-          <WhatsApp className="mr-2 h-4 w-4" />
-          WhatsApp
+          <WhatsApp className="mr-2 h-4 w-4" /> WhatsApp
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => handleShare("copy")}>
-          <Copy className="mr-2 h-4 w-4" />
-          Copy Link
+          <Copy className="mr-2 h-4 w-4" /> Copy Link
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

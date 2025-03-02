@@ -162,9 +162,9 @@ export default async function Page({
       {/* <ReportViews topic={params.topic} title={post.title} slug={post.slug} /> */}
 
       <div className="">
-        <div className="xl:container m-auto px-6 text-gray-600 md:px-12 xl:px-16">
-          <div className="lg:p-10 rounded-[4rem] space-y-6 md:flex flex-col md:gap-6 justify-center md:space-y-0 lg:items-center border-b border-gray-50">
-            <h1 className="font-semibold text-2xl lg:text-4xl tracking-tighter">
+        <div className="xl:container m-aut0 text-gray-600 md:px-12 xl:px-16">
+          <div className="lg:p-10 px-4 rounded-[4rem] space-y-6 md:flex flex-col md:gap-6 justify-center md:space-y-0 lg:items-center border-b border-gray-50">
+            <h1 className="font-semibold text-xl md:text-2xl lg:text-4xl tracking-tighter">
               {post.title
                 .split(" ") // Split into words
                 .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
@@ -177,7 +177,7 @@ export default async function Page({
                 Author:{" "}
                 <Link
                   href={`/blog/author/${post.authorId}`}
-                  className="font-bold hover:underline cappitalize"
+                  className="sm:text-sm font-bold hover:underline cappitalize"
                 >
                   {post.author.name}
                 </Link>
@@ -203,7 +203,7 @@ export default async function Page({
                 <img
                   src={post.coverPhoto}
                   alt={post.title}
-                  className="w-full h-[400px] object-cover rounded-lg mx-auto border p-1 mb-6"
+                  className="w-full h-[300px] lg:h-[400px] object-cover rounded-lg mx-auto border p-1 mb-6"
                 />
               )}
 
@@ -212,7 +212,7 @@ export default async function Page({
                 dangerouslySetInnerHTML={{
                   __html: post.content.replace(
                     /<img /g,
-                    '<img class="w-full max-w-full h-[500px] object-cover rounded-lg mx-auto border p-1" '
+                    '<img class="w-full max-w-full h-[300px] lg:h-[500px] object-cover rounded-lg mx-auto border p-1" '
                   ),
                 }}
               />

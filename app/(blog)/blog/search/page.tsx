@@ -1,12 +1,38 @@
+import { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import Image from "next/image";
 import Link from "next/link";
-import { format } from "date-fns";
 import PopularBlogs from "@/app/(blog)/PopularBlogs";
 import RecommendedTopics from "@/app/(blog)/RecommendedTopics";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: { q?: string };
+}): Promise<Metadata> {
+  const query = searchParams.q?.trim();
+
+  if (!query) {
+    return {
+      title: "Search Blog Posts",
+      description: "Find articles and blog posts on various topics.",
+    };
+  }
+
+  return {
+    title: `Search results for "${query}" - Blog`,
+    description: `Find blog posts related to "${query}".`,
+    openGraph: {
+      title: `Search results for "${query}" - Blog`,
+      description: `Explore blog posts matching your search query: "${query}".`,
+      type: "website",
+      url: `/blog/search?q=${query}`,
+    },
+  };
+}
 
 export default async function SearchPage({
   searchParams,
@@ -26,13 +52,8 @@ export default async function SearchPage({
             { author: { name: { contains: query, mode: "insensitive" } } },
           ],
         },
-        include: {
-          author: true,
-          likes: true,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
+        include: { author: true, likes: true },
+        orderBy: { createdAt: "desc" },
       })
     : [];
 
@@ -40,9 +61,6 @@ export default async function SearchPage({
     <div className="">
       <div className="xl:container m-auto px-6 text-gray-600 md:px-12 xl:px-16">
         <div className="lg:p-10 rounded-[4rem] space-y-6 md:flex flex-col md:gap-6 justify-center md:space-y-0 lg:items-center border-b border-gray-50">
-          {/* <div className="max-w-xl mx-auto w-full">
-            <SearchField />
-          </div> */}
           <div className="text-center mt-4">
             {query ? (
               <p className="text-sm text-muted-foreground">
@@ -90,24 +108,10 @@ export default async function SearchPage({
                           {post.title}
                         </h2>
                         <p className="text-sm text-muted-foreground line-clamp-2">
-                          {post.content.substring(0, 150)}...
+                          {post?.metaDescription?.substring(0, 150) ||
+                            "Learn more about this topic by reading the full article. Click to explore detailed insights and expert opinions."}
+                          ...
                         </p>
-                        <div className="flex items-center gap-x-4 text-sm text-muted-foreground">
-                          <Link
-                            href={`/blog/author/${post.authorId}`}
-                            className="hover:underline"
-                          >
-                            By {post.author.name}
-                          </Link>
-                          <time dateTime={post.createdAt.toISOString()}>
-                            {format(post.createdAt, "MMMM dd, yyyy")}
-                          </time>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <span>{post.viewCount} views</span>
-                          <span>•</span>
-                          <span>{post.likes.length} likes</span>
-                        </div>
                       </div>
                     </Link>
                   </article>
@@ -117,9 +121,6 @@ export default async function SearchPage({
               <div className="text-center py-12">
                 <p className="text-lg text-muted-foreground">
                   No posts found for &ldquo;{query}&rdquo;
-                </p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Try searching for something else
                 </p>
               </div>
             ) : null}

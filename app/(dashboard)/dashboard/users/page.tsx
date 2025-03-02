@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import Loading from "./loading";
 import UsersContent from "./UserContent";
+import { UserRole } from "@prisma/client";
 
 export default async function UsersPage({
   searchParams,
@@ -15,15 +16,31 @@ export default async function UsersPage({
   const search =
     typeof searchParams.search === "string" ? searchParams.search : undefined;
 
-  const perPage = 10;
+  // Get role filter from searchParams and validate it's a valid UserRole
+  const roleFilter =
+    typeof searchParams.role === "string"
+      ? Object.values(UserRole).includes(searchParams.role as UserRole)
+        ? (searchParams.role as UserRole)
+        : undefined
+      : undefined;
 
-  // Get total users count
-  const totalUsers = await prisma.user.count({
-    where: {
+  const perPage = 5;
+
+  // Build where clause for Prisma query
+  const whereClause = {
+    ...(search && {
       name: {
         contains: search,
       },
-    },
+    }),
+    ...(roleFilter && {
+      role: roleFilter,
+    }),
+  };
+
+  // Get total users count with filters
+  const totalUsers = await prisma.user.count({
+    where: whereClause,
   });
 
   const totalPages = Math.ceil(totalUsers / perPage);
@@ -35,22 +52,18 @@ export default async function UsersPage({
       ? +searchParams.page
       : 1;
 
-  // Fetch users
+  // Fetch users with filters
   const users = await prisma.user.findMany({
     take: perPage,
     skip: (page - 1) * perPage,
-    where: {
-      name: {
-        contains: search,
-      },
-    },
+    where: whereClause,
     orderBy: {
       createdAt: "desc",
     },
   });
 
   return (
-    <section className="px-4 sm:px-8 pt-5 flex flex-col">
+    <section className="px-4 sm:px-8 pt-5 flex flex-col h-full overflow-hidden">
       <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl mb-4">
         All users
       </h1>
@@ -81,6 +94,7 @@ export default async function UsersPage({
           perPage={perPage}
           searchParams={searchParams}
           isAdmin={isAdmin}
+          roleFilter={roleFilter}
         />
       </Suspense>
     </section>

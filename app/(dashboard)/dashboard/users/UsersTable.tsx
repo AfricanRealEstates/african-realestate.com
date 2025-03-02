@@ -3,6 +3,15 @@ import Image from "next/image";
 import { formatDate } from "date-fns";
 import { useRouter, useSearchParams } from "next/navigation";
 import UserActions from "./UserActions";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import type { User } from "@prisma/client";
 
 interface UsersTableProps {
@@ -27,19 +36,106 @@ export default function UsersTable({
   const router = useRouter();
   const search = useSearchParams();
 
-  const currentSearchParams = new URLSearchParams(search?.toString());
+  const createPageURL = (pageNumber: number | string) => {
+    const params = new URLSearchParams(search?.toString());
+    if (pageNumber === 1) {
+      params.delete("page");
+    } else {
+      params.set("page", pageNumber.toString());
+    }
+    return `/dashboard/users?${params.toString()}`;
+  };
 
-  if (currentPage > 1) {
-    currentSearchParams.set("page", `${currentPage}`);
-  }
+  // Generate pagination items
+  const generatePaginationItems = () => {
+    const items = [];
+    const maxVisiblePages = 5;
+
+    // Always show first page
+    items.push(
+      <PaginationItem key="1">
+        <PaginationLink href={createPageURL(1)} isActive={currentPage === 1}>
+          1
+        </PaginationLink>
+      </PaginationItem>
+    );
+
+    if (totalPages <= maxVisiblePages) {
+      // Show all pages if total is less than max visible
+      for (let i = 2; i <= totalPages; i++) {
+        items.push(
+          <PaginationItem key={i}>
+            <PaginationLink
+              href={createPageURL(i)}
+              isActive={currentPage === i}
+            >
+              {i}
+            </PaginationLink>
+          </PaginationItem>
+        );
+      }
+    } else {
+      // Show ellipsis and surrounding pages
+      if (currentPage > 3) {
+        items.push(
+          <PaginationItem key="start-ellipsis">
+            <PaginationEllipsis />
+          </PaginationItem>
+        );
+      }
+
+      // Show current page and surrounding pages
+      for (
+        let i = Math.max(2, currentPage - 1);
+        i <= Math.min(totalPages - 1, currentPage + 1);
+        i++
+      ) {
+        items.push(
+          <PaginationItem key={i}>
+            <PaginationLink
+              href={createPageURL(i)}
+              isActive={currentPage === i}
+            >
+              {i}
+            </PaginationLink>
+          </PaginationItem>
+        );
+      }
+
+      if (currentPage < totalPages - 2) {
+        items.push(
+          <PaginationItem key="end-ellipsis">
+            <PaginationEllipsis />
+          </PaginationItem>
+        );
+      }
+
+      // Always show last page
+      if (totalPages > 1) {
+        items.push(
+          <PaginationItem key={totalPages}>
+            <PaginationLink
+              href={createPageURL(totalPages)}
+              isActive={currentPage === totalPages}
+            >
+              {totalPages}
+            </PaginationLink>
+          </PaginationItem>
+        );
+      }
+    }
+
+    return items;
+  };
 
   return (
     <>
       <div className="mt-8 flow-root">
-        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+        <div className="overflow-x-auto">
+          <div className="inline-block min-w-full align-middle">
             <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
               <table className="min-w-full divide-y divide-gray-300">
+                {/* ... table header and body remain the same ... */}
                 <thead className="bg-gray-50 uppercase">
                   <tr>
                     <th className="py-3.5 pl-4 pr-3 text-left text-xs font-medium text-gray-500 sm:pl-6">
@@ -131,8 +227,8 @@ export default function UsersTable({
           </div>
         </div>
       </div>
-      <div className="mt-4 flex flex-col sm:flex-row items-center justify-between">
-        <p className="text-sm text-gray-700 mb-4 sm:mb-0">
+      <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p className="text-sm text-gray-700">
           Showing{" "}
           <span className="font-semibold">
             {(currentPage - 1) * perPage + 1}
@@ -143,72 +239,27 @@ export default function UsersTable({
           </span>{" "}
           of <span className="font-semibold">{totalUsers}</span> users
         </p>
-        <div className="space-x-2">
-          <PaginationButton
-            direction="previous"
-            currentPage={currentPage}
-            totalPages={totalPages}
-            currentSearchParams={currentSearchParams}
-          />
-          <PaginationButton
-            direction="next"
-            currentPage={currentPage}
-            totalPages={totalPages}
-            currentSearchParams={currentSearchParams}
-          />
-        </div>
+
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                href={createPageURL(currentPage - 1)}
+                aria-disabled={currentPage <= 1}
+              />
+            </PaginationItem>
+
+            {generatePaginationItems()}
+
+            <PaginationItem>
+              <PaginationNext
+                href={createPageURL(currentPage + 1)}
+                aria-disabled={currentPage >= totalPages}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
     </>
-  );
-}
-
-interface PaginationButtonProps {
-  direction: "previous" | "next";
-  currentPage: number;
-  totalPages: number;
-  currentSearchParams: URLSearchParams;
-}
-
-function PaginationButton({
-  direction,
-  currentPage,
-  totalPages,
-  currentSearchParams,
-}: PaginationButtonProps) {
-  const router = useRouter();
-  const newSearchParams = new URLSearchParams(currentSearchParams);
-
-  if (direction === "previous") {
-    if (currentPage > 2) {
-      newSearchParams.set("page", `${currentPage - 1}`);
-    } else {
-      newSearchParams.delete("page");
-    }
-  } else {
-    newSearchParams.set("page", `${currentPage + 1}`);
-  }
-
-  const handleClick = () => {
-    router.push(`/dashboard/users?${newSearchParams.toString()}`);
-  };
-
-  const isDisabled =
-    direction === "previous" ? currentPage <= 1 : currentPage >= totalPages;
-  const buttonText = direction === "previous" ? "Previous" : "Next";
-
-  return isDisabled ? (
-    <button
-      disabled
-      className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-900 opacity-50"
-    >
-      {buttonText}
-    </button>
-  ) : (
-    <button
-      onClick={handleClick}
-      className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-50"
-    >
-      {buttonText}
-    </button>
   );
 }

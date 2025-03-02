@@ -16,14 +16,43 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { MoreVertical, SquarePen, Trash2, CalendarIcon } from "lucide-react";
 import IconMenu from "@/components/globals/icon-menu";
 import { toggleUserBlock, suspendUser, unsuspendUser } from "./user-management";
-import { User } from "@prisma/client";
+import { User, UserRole } from "@prisma/client";
+import { updateUserRole } from "./updateUserRole";
+import { toast } from "sonner";
+
+interface UserActionsProps {
+  user: {
+    id: string;
+    role: UserRole;
+  };
+}
 
 export default function UserActions({ user }: { user: User }) {
   const [isPending, startTransition] = useTransition();
   const [showSuspendCalendar, setShowSuspendCalendar] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const handleRoleChange = async (newRole: UserRole) => {
+    setIsUpdating(true);
+    const result = await updateUserRole(user.id, newRole);
+    setIsUpdating(false);
+
+    if (result.success) {
+      toast.success(`User role has been updated to ${newRole}`);
+    } else {
+      toast.error(result.error || "Failed to update user role");
+    }
+  };
 
   const handleToggleBlock = () => {
     startTransition(() => toggleUserBlock(user.id));
@@ -54,6 +83,24 @@ export default function UserActions({ user }: { user: User }) {
           <IconMenu text="Edit" icon={<SquarePen className="size-4" />} />
         </DropdownMenuItem>
         <DropdownMenuSeparator />
+        <DropdownMenuItem>
+          <Select
+            disabled={isUpdating}
+            onValueChange={(value) => handleRoleChange(value as UserRole)}
+            defaultValue={user.role}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select role" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="USER">User</SelectItem>
+              <SelectItem value="AGENT">Agent</SelectItem>
+              <SelectItem value="AGENCY">Agency</SelectItem>
+              <SelectItem value="ADMIN">Admin</SelectItem>
+              <SelectItem value="SUPPORT">Support</SelectItem>
+            </SelectContent>
+          </Select>
+        </DropdownMenuItem>
         <DropdownMenuItem
           className="cursor-pointer text-red-500"
           onClick={handleToggleBlock}

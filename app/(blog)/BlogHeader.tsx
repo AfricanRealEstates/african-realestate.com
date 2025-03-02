@@ -57,7 +57,7 @@ export default function BlogHeader() {
     return () => {
       window.removeEventListener("scroll", handleStickyMenu);
     };
-  }, []);
+  }, [handleStickyMenu]); // Added handleStickyMenu to dependencies
 
   const session = useSession();
   const user = session.data?.user;
@@ -104,18 +104,18 @@ export default function BlogHeader() {
         className={`w-full py-3 ${stickyMenu ? "shadow-2xl shadow-gray-600/10" : "border-b border-gray-100"}`}
       >
         <nav
-          className={`space-y-3 w-full px-3 py-3 mx-auto lg:flex lg:justify-between max-w-7xl lg:px-3`}
+          className={`space-y-3 w-full px-3 py-3 mx-auto lg:flex lg:items-center lg:space-x-4 max-w-7xl lg:px-3`}
         >
-          <div className="flex items-center justify-between">
-            <Link href="/" className={`flex items-center gap-2 no-underline`}>
+          <div className="flex items-center justify-between lg:w-1/3">
+            <Link href="/" className="flex items-center gap-2 no-underline">
               <img
                 src="/assets/logo.png"
                 width={40}
                 height={40}
                 alt="ARE"
-                className="object-cover"
+                className="object-cover w-8 h-8 sm:w-10 sm:h-10"
               />
-              <span className={`text-lg lg:text-xl tracking-tight font-bold`}>
+              <span className="text-sm sm:text-base lg:text-lg tracking-tight font-bold whitespace-nowrap">
                 African Real Estate.
               </span>
             </Link>
@@ -131,11 +131,11 @@ export default function BlogHeader() {
           <div
             className={`${mobileMenuOpen ? "block" : "hidden"} lg:flex lg:items-center lg:justify-between w-full flex-col lg:flex-row mt-4 lg:mt-0`}
           >
-            <div className="w-full lg:max-w-xs mb-4 lg:mb-0 lg:mr-4">
+            <div className="w-full lg:w-1/3 mb-4 lg:mb-0">
               <SearchField />
             </div>
 
-            <div className="flex flex-col lg:flex-row items-start lg:items-center w-full lg:w-auto">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center w-full lg:w-1/3 lg:justify-end">
               <ul className="flex flex-col lg:flex-row py-2 lg:py-0 lg:self-center gap-y-2 gap-x-4 w-full lg:w-auto">
                 {navItems.map((item) => {
                   return (
