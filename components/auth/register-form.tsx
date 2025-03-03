@@ -133,12 +133,12 @@ export default function RegisterForm({
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
-        <Card className="px-6 py-12 shadow sm:rounded-lg sm:px-12 bg-white">
+        <Card className="px-3 py-6 shadow sm:rounded-lg sm:px-6 bg-white">
           <CardContent className="p-0">
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-6"
+                className="space-y-3"
               >
                 <FormField
                   control={form.control}
@@ -248,7 +248,7 @@ export default function RegisterForm({
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-indigo-600 hover:bg-indigo-500"
+                  className="w-full bg-indigo-600 hover:bg-indigo-500 mt-4"
                 >
                   {isLoading ? (
                     <div className="flex items-center">
@@ -264,14 +264,14 @@ export default function RegisterForm({
 
             {!token && (
               <>
-                <div className="relative mt-10">
+                <div className="relative mt-2">
                   <div
                     className="absolute inset-0 flex items-center"
                     aria-hidden="true"
                   >
                     <div className="w-full border-t border-gray-200" />
                   </div>
-                  <div className="relative flex justify-center text-sm font-medium leading-6">
+                  <div className="relative flex justify-center text-xs font-medium leading-6">
                     <span className="bg-white px-6 text-gray-900">
                       Or continue with
                     </span>
@@ -322,7 +322,7 @@ export default function RegisterForm({
           Already a member?{" "}
           <Link
             href="/login"
-            className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+            className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 hover:underline"
           >
             Sign in
           </Link>

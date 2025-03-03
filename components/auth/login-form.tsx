@@ -95,13 +95,13 @@ export default function LoginForm() {
             African Real Estate.
           </span>
         </Link>
-        <h2 className="mt-2 text-center text-sm font-medium leading-9 tracking-tight text-gray-600">
+        <h2 className="mt-1 text-center text-sm font-medium text-gray-600">
           Sign in to your account
         </h2>
       </div>
 
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-[480px]">
-        <Card className="px-6 py-9 sm:rounded-lg sm:px-12 bg-white">
+        <Card className="px-4 py-4 sm:rounded-lg sm:px-12 bg-white border-neutral-50 shadow-none">
           <CardContent className="p-0">
             <Form {...form}>
               <form
@@ -160,7 +160,7 @@ export default function LoginForm() {
                   <div className="text-sm">
                     <Link
                       href="/forgot-password"
-                      className="font-semibold text-indigo-600 hover:text-indigo-500"
+                      className="font-semibold text-indigo-600 hover:text-indigo-500 hover:underline"
                     >
                       Forgot your password?
                     </Link>
@@ -181,14 +181,14 @@ export default function LoginForm() {
             </Form>
 
             <div>
-              <div className="relative mt-6">
+              <div className="relative mt-3">
                 <div
                   className="absolute inset-0 flex items-center"
                   aria-hidden="true"
                 >
                   <div className="w-full border-t border-gray-200" />
                 </div>
-                <div className="relative flex justify-center text-sm font-medium leading-6">
+                <div className="relative flex justify-center text-xs font-medium leading-6">
                   <span className="bg-white px-6 text-gray-900">
                     Or continue with
                   </span>
@@ -243,11 +243,11 @@ export default function LoginForm() {
           </CardContent>
         </Card>
 
-        <p className="mt-4 text-center text-sm text-gray-500">
+        <p className="mt-1 mb-3 text-center text-sm text-gray-500">
           Not a member?{" "}
           <Link
             href="/register"
-            className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+            className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 hover:underline"
           >
             Get started for free
           </Link>

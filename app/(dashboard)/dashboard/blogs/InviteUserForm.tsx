@@ -43,9 +43,9 @@ export function InviteUserForm() {
     <Card className="mb-8 shadow-sm">
       <Tabs defaultValue="invite">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <CardTitle>User Management</CardTitle>
-            <TabsList>
+            <TabsList className="self-start sm:self-auto">
               <TabsTrigger value="invite">Invite User</TabsTrigger>
               <TabsTrigger value="pending">Pending Invitations</TabsTrigger>
             </TabsList>
@@ -60,7 +60,7 @@ export function InviteUserForm() {
             <form onSubmit={handleInvite} className="space-y-4">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email address</Label>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <Input
                     id="email"
                     type="email"
@@ -69,7 +69,11 @@ export function InviteUserForm() {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
-                  <Button type="submit" disabled={isLoading}>
+                  <Button
+                    type="submit"
+                    disabled={isLoading}
+                    className="sm:w-auto w-full"
+                  >
                     {isLoading ? "Sending..." : "Send Invitation"}
                   </Button>
                 </div>

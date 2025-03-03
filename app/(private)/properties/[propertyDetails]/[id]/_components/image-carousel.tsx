@@ -243,7 +243,7 @@ export default function Component({
                   animate={{ opacity: 0.7 }}
                   exit={{ opacity: 0, pointerEvents: "none" }}
                   whileHover={{ opacity: 1 }}
-                  className="absolute left-2 top-1/2 -mt-4 flex h-8 w-8 items-center justify-center rounded-full bg-white"
+                  className="absolute left-2 top-1/2 -mt-4 hidden md:flex h-8 w-8 items-center justify-center rounded-full bg-white"
                   onClick={() => handleChangeIndex(index - 1)}
                 >
                   <ChevronLeftIcon className="h-6 w-6" />
@@ -258,7 +258,7 @@ export default function Component({
                   animate={{ opacity: 0.7 }}
                   exit={{ opacity: 0, pointerEvents: "none" }}
                   whileHover={{ opacity: 1 }}
-                  className="absolute right-2 top-1/2 -mt-4 flex h-8 w-8 items-center justify-center rounded-full bg-white"
+                  className="absolute right-2 top-1/2 -mt-4 hidden md:flex h-8 w-8 items-center justify-center rounded-full bg-white"
                   onClick={() => handleChangeIndex(index + 1)}
                 >
                   <ChevronRightIcon className="h-6 w-6" />
