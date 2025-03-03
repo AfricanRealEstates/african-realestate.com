@@ -111,7 +111,9 @@ export default async function AuthorPostsPage({
                         {post.title}
                       </h2>
                       <p className="text-sm text-muted-foreground line-clamp-2">
-                        {post.content.substring(0, 150)}...
+                        {post.metaDescription!.substring(0, 150) ||
+                          "Learn more about this topic by reading the full article. Click to explore detailed insights and expert opinions."}
+                        ...
                       </p>
                       <div className="flex items-center gap-x-4 text-sm text-muted-foreground">
                         <time dateTime={post.createdAt.toISOString()}>

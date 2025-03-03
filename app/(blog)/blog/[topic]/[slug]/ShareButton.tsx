@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { incrementShareCount } from "@/actions/blog";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,33 +17,73 @@ import {
   PhoneIcon as WhatsApp,
   Copy,
   Share2,
+  Mail,
+  MessageCircle,
 } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
+
+declare global {
+  interface Window {
+    gtag: (command: string, action: string, params: object) => void;
+  }
+}
+
+interface ShareButtonProps {
+  postId: string;
+  initialShareCount: number;
+  title: string;
+  description: string;
+  coverPhoto?: string | null;
+}
 
 export default function ShareButton({
   postId,
   initialShareCount,
   title,
   description,
-}: {
-  postId: string;
-  initialShareCount: number;
-  title: string;
-  description: string;
-}) {
+  coverPhoto,
+}: ShareButtonProps) {
   const [shareCount, setShareCount] = useState(initialShareCount);
+  const [isSharing, setIsSharing] = useState(false);
+
+  useEffect(() => {
+    if (!coverPhoto) {
+      const ogImage = document
+        .querySelector('meta[property="og:image"]')
+        ?.getAttribute("content");
+      if (ogImage) {
+        coverPhoto = ogImage;
+      }
+    }
+  }, [coverPhoto]);
 
   const handleShare = useCallback(
     async (method: string) => {
+      if (isSharing) return;
+
+      setIsSharing(true);
       try {
         let shared = false;
         const url = window.location.href;
         const shareText = `${title}\n\n${description}\n\n`;
+        const encodedTitle = encodeURIComponent(title);
+        const encodedDesc = encodeURIComponent(description);
+        const encodedUrl = encodeURIComponent(url);
 
-        const shareMethods: Record<string, () => void> = {
+        // Create a shortened description for sharing
+        const shortDesc =
+          description.length > 100
+            ? description.substring(0, 100) + "..."
+            : description;
+
+        const shareMethods: Record<string, () => Promise<void>> = {
           native: async () => {
             if (navigator.share) {
-              await navigator.share({ title, text: description, url });
+              await navigator.share({
+                title,
+                text: shortDesc,
+                url,
+              });
               shared = true;
             } else {
               toast({
@@ -52,42 +92,50 @@ export default function ShareButton({
               });
             }
           },
-          facebook: () => {
+          facebook: async () => {
             window.open(
-              `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-                url
-              )}&quote=${encodeURIComponent(shareText)}`,
+              `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
+              "_blank",
+              "width=600,height=400,noopener,noreferrer"
+            );
+            shared = true;
+          },
+          twitter: async () => {
+            window.open(
+              `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
+              "_blank",
+              "width=600,height=400,noopener,noreferrer"
+            );
+            shared = true;
+          },
+          linkedin: async () => {
+            window.open(
+              `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
+              "_blank",
+              "width=600,height=400,noopener,noreferrer"
+            );
+            shared = true;
+          },
+          whatsapp: async () => {
+            window.open(
+              `https://wa.me/?text=${encodeURIComponent(`${title}\n\n${shortDesc}\n\n${url}`)}`,
               "_blank",
               "noopener,noreferrer"
             );
             shared = true;
           },
-          twitter: () => {
+          telegram: async () => {
             window.open(
-              `https://twitter.com/intent/tweet?url=${encodeURIComponent(
-                url
-              )}&text=${encodeURIComponent(shareText)}`,
+              `https://t.me/share/url?url=${encodedUrl}&text=${encodeURIComponent(`${title}\n\n${shortDesc}`)}`,
               "_blank",
-              "noopener,noreferrer"
+              "width=600,height=400,noopener,noreferrer"
             );
             shared = true;
           },
-          linkedin: () => {
-            window.open(
-              `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
-                url
-              )}`,
-              "_blank",
-              "noopener,noreferrer"
-            );
-            shared = true;
-          },
-          whatsapp: () => {
-            window.open(
-              `https://wa.me/?text=${encodeURIComponent(shareText + url)}`,
-              "_blank",
-              "noopener,noreferrer"
-            );
+          email: async () => {
+            window.location.href = `mailto:?subject=${encodedTitle}&body=${encodeURIComponent(
+              `${shortDesc}\n\nRead more: ${url}`
+            )}`;
             shared = true;
           },
           copy: async () => {
@@ -107,6 +155,16 @@ export default function ShareButton({
         if (shared) {
           const newShareCount = await incrementShareCount(postId);
           setShareCount(newShareCount || shareCount + 1);
+
+          if (typeof window !== "undefined" && window.gtag) {
+            window.gtag("event", "share", {
+              method: method,
+              content_type: "blog",
+              item_id: postId,
+              title: title,
+              url: url,
+            });
+          }
         }
       } catch (error) {
         console.error("Error sharing:", error);
@@ -115,36 +173,72 @@ export default function ShareButton({
           description: "There was an error while sharing. Please try again.",
           variant: "destructive",
         });
+      } finally {
+        setIsSharing(false);
       }
     },
-    [postId, title, description, shareCount]
+    [postId, title, description, shareCount, isSharing]
   );
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" aria-label="Share this article">
-          <Share2 className="mr-2 h-4 w-4" />
+        <Button
+          variant="ghost"
+          aria-label="Share this article"
+          className="flex items-center gap-2 transition-colors hover:text-primary"
+        >
+          <Share2 className="h-4 w-4" />
           <span aria-label="Share count">{shareCount}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => handleShare("native")}>
+      <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuItem
+          onClick={() => handleShare("native")}
+          disabled={isSharing}
+        >
           <Share className="mr-2 h-4 w-4" /> Share
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleShare("facebook")}>
-          <Facebook className="mr-2 h-4 w-4" /> Facebook
+        <DropdownMenuItem
+          onClick={() => handleShare("facebook")}
+          disabled={isSharing}
+        >
+          <Facebook className="mr-2 h-4 w-4 text-blue-600" /> Facebook
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleShare("twitter")}>
-          <Twitter className="mr-2 h-4 w-4" /> Twitter
+        <DropdownMenuItem
+          onClick={() => handleShare("twitter")}
+          disabled={isSharing}
+        >
+          <Twitter className="mr-2 h-4 w-4 text-sky-500" /> Twitter
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleShare("linkedin")}>
-          <Linkedin className="mr-2 h-4 w-4" /> LinkedIn
+        <DropdownMenuItem
+          onClick={() => handleShare("linkedin")}
+          disabled={isSharing}
+        >
+          <Linkedin className="mr-2 h-4 w-4 text-blue-700" /> LinkedIn
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleShare("whatsapp")}>
-          <WhatsApp className="mr-2 h-4 w-4" /> WhatsApp
+        <DropdownMenuItem
+          onClick={() => handleShare("whatsapp")}
+          disabled={isSharing}
+        >
+          <WhatsApp className="mr-2 h-4 w-4 text-green-500" /> WhatsApp
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleShare("copy")}>
+        <DropdownMenuItem
+          onClick={() => handleShare("telegram")}
+          disabled={isSharing}
+        >
+          <MessageCircle className="mr-2 h-4 w-4 text-blue-500" /> Telegram
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => handleShare("email")}
+          disabled={isSharing}
+        >
+          <Mail className="mr-2 h-4 w-4" /> Email
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => handleShare("copy")}
+          disabled={isSharing}
+        >
           <Copy className="mr-2 h-4 w-4" /> Copy Link
         </DropdownMenuItem>
       </DropdownMenuContent>

@@ -52,7 +52,15 @@ export async function generateMetadata({
     coverPhoto,
     author,
     topics,
+    metaDescription,
   } = post;
+
+  // Create a clean description without HTML tags
+  const plainTextContent = content.replace(/<[^>]*>/g, "");
+  const description =
+    metaDescription ||
+    plainTextContent.substring(0, 200) +
+      (plainTextContent.length > 200 ? "..." : "");
 
   const ogImage = coverPhoto
     ? `${baseUrl}${coverPhoto}`
@@ -62,28 +70,48 @@ export async function generateMetadata({
 
   return {
     title,
-    description: content.substring(0, 200),
+    description,
     authors: [{ name: author.name! }],
+    keywords: topics,
     openGraph: {
       title,
-      description: content.substring(0, 200),
+      description,
       type: "article",
       publishedTime: publishedTime.toISOString(),
       url,
-      images: [{ url: ogImage, alt: title }],
+      images: [
+        {
+          url: ogImage,
+          alt: title,
+          width: 1200,
+          height: 630,
+        },
+      ],
       siteName: "African Real Estate Blog",
       locale: "en_US",
       authors: [author.name!],
+      tags: topics,
     },
     twitter: {
       card: "summary_large_image",
       title,
-      description: content.substring(0, 200),
+      description,
       images: [ogImage],
       creator: "@AfricanRealEstate",
+      site: "@AfricanRealEstate",
     },
     alternates: {
       canonical: url,
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
     },
   };
 }
@@ -122,6 +150,12 @@ export default async function Page({
     ? post.likes.some((like: any) => like.id === session.user.id)
     : false;
 
+  // Create a clean description without HTML tags
+  const plainTextContent = post.content.replace(/<[^>]*>/g, "");
+  const description =
+    plainTextContent.substring(0, 200) +
+    (plainTextContent.length > 200 ? "..." : "");
+
   return (
     <>
       <script
@@ -134,7 +168,7 @@ export default async function Page({
             headline: post.title,
             datePublished: post.createdAt.toISOString(),
             dateModified: post.updatedAt.toISOString(),
-            description: post.content.substring(0, 200),
+            description: post.metaDescription || description,
             image: post.coverPhoto
               ? `${baseUrl}${post.coverPhoto}`
               : `${baseUrl}/og?title=${encodeURIComponent(post.title)}`,
@@ -155,6 +189,9 @@ export default async function Page({
               "@type": "WebPage",
               "@id": url,
             },
+            keywords: post.topics.join(", "),
+            articleSection: params.topic,
+            wordCount: plainTextContent.split(/\s+/).length,
           }),
         }}
       />
@@ -197,18 +234,36 @@ export default async function Page({
               <PopularBlogs />
             </div>
 
-            <article className="prose w-full max-w-2xl mx-auto">
+            <article
+              className="prose w-full max-w-2xl mx-auto"
+              itemScope
+              itemType="https://schema.org/BlogPosting"
+            >
+              {/* Hidden metadata for structured data */}
+              <meta itemProp="headline" content={post.title} />
+              <meta itemProp="author" content={post.author.name!} />
+              <meta
+                itemProp="datePublished"
+                content={post.createdAt.toISOString()}
+              />
+              <meta
+                itemProp="dateModified"
+                content={post.updatedAt.toISOString()}
+              />
+
               {/* Cover Photo */}
               {post.coverPhoto && (
                 <img
-                  src={post.coverPhoto}
+                  src={post.coverPhoto || "/placeholder.svg"}
                   alt={post.title}
                   className="w-full h-[300px] lg:h-[400px] object-cover rounded-lg mx-auto border p-1 mb-6"
+                  itemProp="image"
                 />
               )}
 
               <div
                 className="prose max-w-none mb-8 mt-4"
+                itemProp="articleBody"
                 dangerouslySetInnerHTML={{
                   __html: post.content.replace(
                     /<img /g,
@@ -227,7 +282,11 @@ export default async function Page({
                   postId={post.id}
                   initialShareCount={post.shareCount}
                   title={post.title}
-                  description={post.metaDescription!}
+                  description={
+                    post.metaDescription ||
+                    description.substring(0, 150) + "..."
+                  }
+                  coverPhoto={post.coverPhoto || null}
                 />
                 <span>{post.viewCount} views</span>
               </div>
