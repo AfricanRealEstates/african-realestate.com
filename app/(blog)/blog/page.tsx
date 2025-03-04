@@ -49,8 +49,11 @@ export const metadata: Metadata = {
     canonical: `${baseUrl}/blog`,
   },
 };
-
-export default async function Blog() {
+export default async function Blog({
+  searchParams,
+}: {
+  searchParams?: { page?: string };
+}) {
   const allPosts = await getBlogPosts();
   const views = (
     await redis.mget<number[]>(
@@ -114,7 +117,7 @@ export default async function Blog() {
           <PopularBlogs />
         </div>
         <div className="w-full max-w-[800px] mx-auto">
-          <LatestPosts />
+          <LatestPosts searchParams={searchParams} />
         </div>
         <aside className="hidden lg:block lg:w-60">
           <RecommendedTopics />

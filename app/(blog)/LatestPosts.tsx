@@ -2,9 +2,17 @@ import { formatBlogDate } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import Pagination from "./Pagination"; // Import your Pagination component
 
-async function getLatestPosts() {
-  return await prisma.post.findMany({
+// Define the number of posts per page
+const POSTS_PER_PAGE = 5;
+
+async function getPaginatedPosts(page = 1, pageSize: number = POSTS_PER_PAGE) {
+  // Calculate how many posts to skip
+  const skip = (page - 1) * pageSize;
+
+  // Get the posts for the current page
+  const posts = await prisma.post.findMany({
     where: {
       published: true,
     },
@@ -24,12 +32,44 @@ async function getLatestPosts() {
     orderBy: {
       createdAt: "desc",
     },
-    take: 5,
+    skip,
+    take: pageSize,
   });
+
+  // Get the total count of posts for pagination
+  const totalPosts = await prisma.post.count({
+    where: {
+      published: true,
+    },
+  });
+
+  // Calculate total pages
+  const totalPages = Math.ceil(totalPosts / pageSize);
+
+  return {
+    posts,
+    pagination: {
+      totalPosts,
+      totalPages,
+      currentPage: page,
+      pageSize,
+    },
+  };
 }
 
-export default async function LatestPosts() {
-  const latestPosts = await getLatestPosts();
+export default async function LatestPosts({
+  searchParams,
+}: {
+  searchParams?: { page?: string };
+}) {
+  // Get the current page from the URL query parameters or default to page 1
+  const currentPage = searchParams?.page
+    ? Number.parseInt(searchParams.page)
+    : 1;
+
+  // Fetch paginated posts
+  const { posts: latestPosts, pagination } =
+    await getPaginatedPosts(currentPage);
 
   return (
     <>
@@ -76,6 +116,21 @@ export default async function LatestPosts() {
             </div>
           </Link>
         ))}
+
+        {/* Pagination Info */}
+        <div className="text-center text-sm text-gray-500 mt-4">
+          Showing {(currentPage - 1) * POSTS_PER_PAGE + 1} to{" "}
+          {Math.min(currentPage * POSTS_PER_PAGE, pagination.totalPosts)} of{" "}
+          {pagination.totalPosts} posts
+        </div>
+
+        {/* Use the client-side Pagination component */}
+        {pagination.totalPages > 1 && (
+          <Pagination
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+          />
+        )}
       </section>
     </>
   );

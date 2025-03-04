@@ -104,7 +104,8 @@ export default function CreateBlogPage() {
         title: "Success",
         description: "Blog post created successfully!",
       });
-      router.push(`/blog/${result.post.topics[0]}/${result.post.slug}`);
+      // router.push(`/blog/${result.post.topics[0]}/${result.post.slug}`);
+      router.push("/dashboard/blogs");
     } catch (error) {
       console.error("Failed to create blog:", error);
       toast({
