@@ -45,17 +45,20 @@ export default function ShareButton({
 }: ShareButtonProps) {
   const [shareCount, setShareCount] = useState(initialShareCount);
   const [isSharing, setIsSharing] = useState(false);
+  const [shareImage, setShareImage] = useState<string | null | undefined>(
+    coverPhoto
+  );
 
   useEffect(() => {
-    if (!coverPhoto) {
+    if (!shareImage) {
       const ogImage = document
         .querySelector('meta[property="og:image"]')
         ?.getAttribute("content");
       if (ogImage) {
-        coverPhoto = ogImage;
+        setShareImage(ogImage);
       }
     }
-  }, [coverPhoto]);
+  }, [shareImage]);
 
   const handleShare = useCallback(
     async (method: string) => {
@@ -93,6 +96,7 @@ export default function ShareButton({
             }
           },
           facebook: async () => {
+            // Facebook will use the Open Graph meta tags from the page
             window.open(
               `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
               "_blank",
@@ -101,6 +105,7 @@ export default function ShareButton({
             shared = true;
           },
           twitter: async () => {
+            // Twitter will use the Twitter card meta tags from the page
             window.open(
               `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`,
               "_blank",
@@ -117,6 +122,7 @@ export default function ShareButton({
             shared = true;
           },
           whatsapp: async () => {
+            // WhatsApp doesn't support image previews via URL parameters, but we can include the text
             window.open(
               `https://wa.me/?text=${encodeURIComponent(`${title}\n\n${shortDesc}\n\n${url}`)}`,
               "_blank",
