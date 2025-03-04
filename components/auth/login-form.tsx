@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -10,7 +10,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
 import { Icons } from "../globals/icons";
-import { getUserStatus } from "./user-status";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -22,6 +21,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Card, CardContent } from "@/components/ui/card";
+import { checkUserStatus } from "./auth-actions";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -31,6 +31,19 @@ export default function LoginForm() {
 
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const error = searchParams.get("error");
+
+  // Use useEffect instead of useState for side effects
+  useEffect(() => {
+    if (error) {
+      // Handle specific error codes if needed
+      if (error === "OAuthAccountNotLinked") {
+        toast.error("Email already in use with a different provider");
+      } else {
+        toast.error(decodeURIComponent(error));
+      }
+    }
+  }, [error]);
 
   const form = useForm<LoginUserInput>({
     resolver: zodResolver(loginUserSchema),
@@ -43,6 +56,26 @@ export default function LoginForm() {
   const onSubmit = async (values: LoginUserInput) => {
     try {
       setIsLoading(true);
+
+      // First check if the user is active before completing sign-in
+      const userStatus = await checkUserStatus(values.email);
+
+      if (userStatus.exists && !userStatus.isActive) {
+        if (userStatus.suspensionEndDate) {
+          const endDate = new Date(userStatus.suspensionEndDate);
+          toast.error(
+            `Your account is suspended until ${endDate.toLocaleDateString()}.`
+          );
+        } else {
+          toast.error(
+            "Your account has been blocked. Please contact support for assistance."
+          );
+        }
+        setIsLoading(false);
+        return; // Stop the login process here
+      }
+
+      // Proceed with sign-in only if user doesn't exist or is active
       const res = await signIn("credentials", {
         redirect: false,
         email: values.email,
@@ -51,23 +84,8 @@ export default function LoginForm() {
       });
 
       if (!res?.error) {
-        const userData = await getUserStatus();
-
-        if (userData.isActive) {
-          toast.success("Successfully logged in");
-          router.push(callbackUrl);
-        } else {
-          if (userData.suspensionEndDate) {
-            const endDate = new Date(userData.suspensionEndDate);
-            toast.error(
-              `Your account is suspended until ${endDate.toLocaleDateString()}.`
-            );
-          } else {
-            toast.error(
-              "Your account has been blocked. Please contact support for assistance."
-            );
-          }
-        }
+        toast.success("Successfully logged in");
+        router.push(callbackUrl);
       } else {
         toast.error("Invalid email or password");
         form.reset({ password: "" });
@@ -77,6 +95,20 @@ export default function LoginForm() {
       console.error(error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      setIsGoogleLoading(true);
+      // For Google sign-in, we'll need to check the user status after they're authenticated
+      // This is handled by the callback URL or in a useEffect after login
+      await signIn("google", { callbackUrl });
+      setIsGoogleLoading(false);
+    } catch (error) {
+      toast.error("An error occurred with Google sign-in. Please try again.");
+      console.error(error);
+      setIsGoogleLoading(false);
     }
   };
 
@@ -200,10 +232,7 @@ export default function LoginForm() {
                   variant="outline"
                   className="flex items-center gap-4"
                   disabled={isLoading || isGoogleLoading}
-                  onClick={() => {
-                    setIsGoogleLoading(true);
-                    signIn("google", { callbackUrl });
-                  }}
+                  onClick={handleGoogleSignIn}
                 >
                   {isGoogleLoading ? (
                     <Icons.spinner className="mr-2 size-4 animate-spin" />

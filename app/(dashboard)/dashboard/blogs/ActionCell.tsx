@@ -69,7 +69,10 @@ export function ActionCell({ post }: { post: Post }) {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => deleteBlog(post.id)}>
+            <AlertDialogAction
+              onClick={() => deleteBlog(post.id)}
+              className="bg-red-500 hover:bg-red-600"
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

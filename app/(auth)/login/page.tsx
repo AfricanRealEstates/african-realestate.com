@@ -1,6 +1,6 @@
 import LoginForm from "@/components/auth/login-form";
 import { getSEOTags } from "@/lib/seo";
-import React, { Suspense } from "react";
+import { Suspense } from "react";
 
 export const metadata = getSEOTags({
   title: "Login | African Real Estate",
