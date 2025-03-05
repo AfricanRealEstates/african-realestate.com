@@ -1,11 +1,10 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Sheet,
   SheetClose,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -151,14 +150,14 @@ export default function Header() {
         stickyMenu
           ? "bg-white !py-3 shadow-sm transition duration-100 text-gray-600"
           : isHomePage
-          ? "text-white hover:text-gray-100"
-          : "text-gray-600"
+            ? "text-white hover:text-gray-100"
+            : "text-gray-600"
       }`}
     >
       <div className="top-0 w-full z-30 will-change-auto duration-200 bg-transparent translate-y-0 transition-colors">
         <nav
           aria-label="Global"
-          className="mx-auto flex max-w-7xl items-center justify-between py-2 px-4 lg:px-8"
+          className="mx-auto flex max-w-7xl items-center justify-between py-2 px-2"
         >
           <div className="flex lg:flex-1">
             <Link

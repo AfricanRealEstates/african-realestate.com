@@ -149,14 +149,14 @@ export default async function NearbyTownPropertiesPage({
       <div
         className={`w-[95%] lg:max-w-7xl mx-auto py-[100px] lg:py-[160px] px-4 sm:px-6 lg:px-8 `}
       >
-        <article className="flex flex-col md:flex-row md:items-end md:justify-between mb-8">
+        <article className="flex flex-col lg:flex-row lg:items-end lg:justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold mb-4">
               Properties in{" "}
               <span className="text-rose-500 capitalize">{town}</span>
             </h1>
             <p className="mb-4 md:mb-0 inline-flex items-center justify-center rounded px-[15px] text-sm leading-none h-[35px] bg-green-50 text-green-500 focus:shadow-[0_0_0_2px] focus:shadow-green-600 outline-none cursor-default">
-              Explore our selection of{" "}
+              <span className="hidden lg:flex">Explore our selection of </span>
               <span className="font-semibold text-green-600 mx-1">
                 {totalCount || allProperties.length}
               </span>{" "}

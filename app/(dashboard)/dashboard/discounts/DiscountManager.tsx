@@ -1,23 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { TableHeader } from "@/components/ui/table";
+
+import { useState, useEffect, useCallback } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format, addDays, startOfMonth, endOfMonth } from "date-fns";
 import { toast } from "sonner";
-import { Check, ChevronsUpDown, X } from "lucide-react";
+import { Check, ChevronsUpDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from "@/components/ui/card";
 import {
   Popover,
@@ -29,7 +30,6 @@ import {
   TableBody,
   TableCell,
   TableHead,
-  TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import {
@@ -71,9 +71,9 @@ import {
   deleteRevokedDiscount,
   getAllAgencyAndAgentUsers,
   getNewSignups,
-  User,
-  DiscountSummary,
-  Discount,
+  type User,
+  type DiscountSummary,
+  type Discount,
 } from "./actions";
 
 const createDiscountSchema = z
@@ -143,28 +143,7 @@ export default function DiscountsManager() {
     },
   });
 
-  useEffect(() => {
-    fetchDiscountSummary();
-    fetchDiscounts();
-  }, [currentPage, filter]);
-
-  useEffect(() => {
-    if (userCategory === "all") {
-      fetchAllAgencyAndAgentUsers();
-    } else if (userCategory === "new") {
-      const startDate = form.getValues("newSignupStartDate");
-      const endDate = form.getValues("newSignupEndDate");
-      if (startDate && endDate) {
-        fetchNewSignups(startDate, endDate);
-      }
-    }
-  }, [
-    userCategory,
-    form.watch("newSignupStartDate"),
-    form.watch("newSignupEndDate"),
-  ]);
-
-  const fetchDiscountSummary = async () => {
+  const fetchDiscountSummary = useCallback(async () => {
     try {
       const summaryData = await getDiscountSummary();
       setSummary(summaryData);
@@ -172,9 +151,9 @@ export default function DiscountsManager() {
       console.error("Error fetching discount summary:", error);
       toast.error("Failed to fetch discount summary");
     }
-  };
+  }, []);
 
-  const fetchDiscounts = async () => {
+  const fetchDiscounts = useCallback(async () => {
     try {
       const { discounts, totalPages } = await getDiscounts(
         currentPage,
@@ -187,23 +166,12 @@ export default function DiscountsManager() {
       console.error("Error fetching discounts:", error);
       toast.error("Failed to fetch discounts");
     }
-  };
+  }, [currentPage, filter]);
 
-  const handleSearch = async (value: string) => {
-    setSearchQuery(value);
-    if (value.length > 2) {
-      try {
-        const results = await searchUsers(value);
-        setUsers(results);
-      } catch (error) {
-        console.error("Error searching users:", error);
-        toast.error("Failed to search users");
-        setUsers([]);
-      }
-    } else {
-      setUsers([]);
-    }
-  };
+  useEffect(() => {
+    fetchDiscountSummary();
+    fetchDiscounts();
+  }, [fetchDiscountSummary, fetchDiscounts]);
 
   const fetchAllAgencyAndAgentUsers = async () => {
     try {
@@ -230,6 +198,39 @@ export default function DiscountsManager() {
     } catch (error) {
       console.error("Error fetching new signups:", error);
       toast.error("Failed to fetch new signups");
+    }
+  };
+
+  useEffect(() => {
+    if (userCategory === "all") {
+      fetchAllAgencyAndAgentUsers();
+    } else if (userCategory === "new") {
+      const startDate = form.getValues("newSignupStartDate");
+      const endDate = form.getValues("newSignupEndDate");
+      if (startDate && endDate) {
+        fetchNewSignups(startDate, endDate);
+      }
+    }
+  }, [
+    userCategory,
+    form.getValues,
+    fetchAllAgencyAndAgentUsers,
+    fetchNewSignups,
+  ]); // Added missing dependencies
+
+  const handleSearch = async (value: string) => {
+    setSearchQuery(value);
+    if (value.length > 2) {
+      try {
+        const results = await searchUsers(value);
+        setUsers(results);
+      } catch (error) {
+        console.error("Error searching users:", error);
+        toast.error("Failed to search users");
+        setUsers([]);
+      }
+    } else {
+      setUsers([]);
     }
   };
 
@@ -279,8 +280,11 @@ export default function DiscountsManager() {
         setSelectedUsers([]);
         form.reset();
         setEditingDiscountId(null);
-        fetchDiscountSummary();
-        fetchDiscounts();
+        await fetchDiscountSummary();
+        await fetchDiscounts();
+        setCurrentPage(1); // Reset to first page after creating/editing
+      } else {
+        toast.error(result.message);
       }
     } catch (error) {
       console.error("Error creating/editing discount:", error);
@@ -301,10 +305,15 @@ export default function DiscountsManager() {
 
   const handleRevokeDiscount = async (discountId: string) => {
     try {
-      await revokeDiscount(discountId);
-      toast.success("Discount code revoked successfully");
-      fetchDiscountSummary();
-      fetchDiscounts();
+      const result = await revokeDiscount(discountId);
+      if (result.success) {
+        toast.success(result.message);
+        await fetchDiscountSummary();
+        await fetchDiscounts();
+        setCurrentPage(1); // Reset to first page after revoking
+      } else {
+        toast.error(result.message);
+      }
     } catch (error) {
       console.error("Error revoking discount:", error);
       toast.error("Failed to revoke discount code");
@@ -313,10 +322,15 @@ export default function DiscountsManager() {
 
   const handleDeleteRevokedDiscount = async (discountId: string) => {
     try {
-      await deleteRevokedDiscount(discountId);
-      toast.success("Revoked discount deleted successfully");
-      fetchDiscountSummary();
-      fetchDiscounts();
+      const result = await deleteRevokedDiscount(discountId);
+      if (result.success) {
+        toast.success(result.message);
+        await fetchDiscountSummary();
+        await fetchDiscounts();
+        setCurrentPage(1); // Reset to first page after deleting
+      } else {
+        toast.error(result.message);
+      }
     } catch (error) {
       console.error("Error deleting revoked discount:", error);
       toast.error("Failed to delete revoked discount");
@@ -686,9 +700,11 @@ export default function DiscountsManager() {
             <TableHeader>
               <TableRow>
                 <TableHead>Code</TableHead>
-                <TableHead>Users</TableHead>
+                <TableHead className="hidden md:table-cell">Users</TableHead>
                 <TableHead>Percentage</TableHead>
-                <TableHead>Start Date</TableHead>
+                <TableHead className="hidden md:table-cell">
+                  Start Date
+                </TableHead>
                 <TableHead>Expiration Date</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Actions</TableHead>
@@ -698,11 +714,11 @@ export default function DiscountsManager() {
               {discounts.map((discount) => (
                 <TableRow key={discount.id}>
                   <TableCell>{discount.code}</TableCell>
-                  <TableCell>
+                  <TableCell className="hidden md:table-cell">
                     {discount.users.map((user) => user.email).join(", ")}
                   </TableCell>
                   <TableCell>{discount.percentage}%</TableCell>
-                  <TableCell>
+                  <TableCell className="hidden md:table-cell">
                     {format(new Date(discount.startDate), "PPP")}
                   </TableCell>
                   <TableCell>
@@ -733,54 +749,59 @@ export default function DiscountsManager() {
                     </span>
                   </TableCell>
                   <TableCell>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleEditDiscount(discount)}
-                      disabled={new Date(discount.expirationDate) <= new Date()}
-                      className="mr-2"
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleRevokeDiscount(discount.id)}
-                      disabled={new Date(discount.expirationDate) <= new Date()}
-                    >
-                      Revoke
-                    </Button>
-                    {new Date(discount.expirationDate) <= new Date() && (
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="outline" size="sm" className="ml-2">
-                            Delete
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Are you absolutely sure?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This action cannot be undone. This will
-                              permanently delete the discount code and remove it
-                              from our servers.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() =>
-                                handleDeleteRevokedDiscount(discount.id)
-                              }
-                            >
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEditDiscount(discount)}
+                        disabled={
+                          new Date(discount.expirationDate) <= new Date()
+                        }
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleRevokeDiscount(discount.id)}
+                        disabled={
+                          new Date(discount.expirationDate) <= new Date()
+                        }
+                      >
+                        Revoke
+                      </Button>
+                      {new Date(discount.expirationDate) <= new Date() && (
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="outline" size="sm">
                               Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    )}
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Are you absolutely sure?
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This will
+                                permanently delete the discount code and remove
+                                it from our servers.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() =>
+                                  handleDeleteRevokedDiscount(discount.id)
+                                }
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      )}
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

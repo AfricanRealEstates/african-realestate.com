@@ -44,7 +44,9 @@ export function AcceptedInvitationsList({
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-4">Accepted Invitations</h2>
+      <h2 className="text-xl sm:text-2xl font-bold mb-4">
+        Accepted Invitations
+      </h2>
 
       {/* Mobile card view (visible on small screens) */}
       <div className="md:hidden space-y-4">
@@ -52,10 +54,14 @@ export function AcceptedInvitationsList({
           <div key={invitation.id} className="border rounded-md p-4 space-y-2">
             <div className="grid grid-cols-2 gap-1">
               <span className="font-medium">Email:</span>
-              <span>{invitation.email}</span>
+              <span className="break-words overflow-hidden">
+                {invitation.email}
+              </span>
 
               <span className="font-medium">Name:</span>
-              <span>{invitation.user?.name || "N/A"}</span>
+              <span className="break-words overflow-hidden">
+                {invitation.user?.name || "N/A"}
+              </span>
 
               <span className="font-medium">Accepted At:</span>
               <span>
@@ -81,17 +87,28 @@ export function AcceptedInvitationsList({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Email</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Accepted At</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead className="w-[40%]">Email</TableHead>
+              <TableHead className="w-[25%]">Name</TableHead>
+              <TableHead className="w-[25%]">Accepted At</TableHead>
+              <TableHead className="w-[10%]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {localInvitations.map((invitation) => (
               <TableRow key={invitation.id}>
-                <TableCell>{invitation.email}</TableCell>
-                <TableCell>{invitation.user?.name || "N/A"}</TableCell>
+                <TableCell className="max-w-[250px] break-words">
+                  <div className="truncate" title={invitation.email}>
+                    {invitation.email}
+                  </div>
+                </TableCell>
+                <TableCell className="max-w-[150px] break-words">
+                  <div
+                    className="truncate"
+                    title={invitation.user?.name || "N/A"}
+                  >
+                    {invitation.user?.name || "N/A"}
+                  </div>
+                </TableCell>
                 <TableCell>
                   {invitation.acceptedAt
                     ? new Date(invitation.acceptedAt).toLocaleString()
@@ -100,6 +117,7 @@ export function AcceptedInvitationsList({
                 <TableCell>
                   <Button
                     variant="destructive"
+                    size="sm"
                     onClick={() => handleRevoke(invitation.id)}
                   >
                     Revoke

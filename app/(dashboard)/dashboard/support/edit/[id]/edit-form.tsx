@@ -85,7 +85,7 @@ export function EditSupportUserForm({ user }: { user: SupportUser }) {
   };
 
   return (
-    <Card>
+    <Card className="shadow-none">
       <CardHeader>
         <CardTitle>Edit Support User</CardTitle>
         <CardDescription>

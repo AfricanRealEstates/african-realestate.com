@@ -49,12 +49,12 @@ export default async function Support() {
     isAdmin || hasPermission(user.permissions, "support:respond");
 
   return (
-    <section className="px-4 pt-6 space-y-6">
-      <div className="mb-4 col-span-full xl:mb-2">
-        <h1 className="text-2xl font-semibold text-blue-600 sm:text-2xl">
+    <section className="px-2 sm:px-4 pt-4 sm:pt-6 space-y-4 sm:space-y-6 max-w-full">
+      <div className="mb-2 sm:mb-4 col-span-full">
+        <h1 className="text-xl sm:text-2xl font-semibold text-blue-600">
           {isAdmin ? "Support Management" : "Support Dashboard"}
         </h1>
-        <p className="text-base text-muted-foreground mt-1">
+        <p className="text-sm sm:text-base text-muted-foreground mt-1">
           {isAdmin
             ? "Manage support users, their permissions, and related functionalities."
             : `Welcome, ${user.name}. Manage your support activities based on your permissions.`}
@@ -66,11 +66,19 @@ export default async function Support() {
       {isAdmin ? (
         // Admin view with full management capabilities
         <Tabs defaultValue="users" className="w-full">
-          <TabsList className="mb-4">
-            <TabsTrigger value="users">Support Users</TabsTrigger>
-            <TabsTrigger value="create">Create User</TabsTrigger>
-            <TabsTrigger value="permissions">Manage Permissions</TabsTrigger>
-          </TabsList>
+          <div className="overflow-x-auto pb-1">
+            <TabsList className="mb-4 flex-wrap sm:flex-nowrap">
+              <TabsTrigger value="users" className="flex-1 min-w-[120px]">
+                Supports
+              </TabsTrigger>
+              <TabsTrigger value="create" className="flex-1 min-w-[120px]">
+                Create User
+              </TabsTrigger>
+              <TabsTrigger value="permissions" className="flex-1 min-w-[120px]">
+                Manage Permissions
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="users" className="space-y-4">
             <Suspense fallback={<UsersListSkeleton />}>
