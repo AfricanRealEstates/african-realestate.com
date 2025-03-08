@@ -13,6 +13,8 @@ import SessionProvider from "@/providers/session-provider";
 import { cn } from "@/lib/utils";
 import Script from "next/script";
 
+// Add this component to your layout
+
 export const metadata = getSEOTags();
 
 export default async function RootLayout({

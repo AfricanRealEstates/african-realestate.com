@@ -93,6 +93,13 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
+  userAgent    String? // Store browser and OS info
+  ipAddress    String? // Store IP address
+  deviceType   String? // Store device type (mobile, tablet, desktop)
+  browser      String? // Store browser name
+  os           String? // Store operating system
+  lastActive   DateTime @default(now()) // Track last activity
+  createdAt    DateTime @default(now()) // When session was created
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
