@@ -8,6 +8,7 @@ import { InviteUserForm } from "./InviteUserForm";
 import { Separator } from "@/components/ui/separator";
 import { getAcceptedInvitations } from "./actions";
 import { AcceptedInvitationsList } from "./AcceptedInvitationsList";
+import { PaginationControls } from "./pagination-controls";
 
 export default async function BlogDashboard({
   searchParams,
@@ -64,6 +65,9 @@ export default async function BlogDashboard({
     topics: post.topics,
   }));
 
+  // Calculate page count
+  const pageCount = Math.ceil(totalPosts / perPage);
+
   // Fetch accepted invitations if user is admin
   const acceptedInvitations = isAdmin ? await getAcceptedInvitations() : [];
 
@@ -93,8 +97,15 @@ export default async function BlogDashboard({
         <DataTable
           columns={columns}
           data={formattedPosts}
-          pageCount={Math.ceil(totalPosts / perPage)}
+          pageCount={pageCount}
+          currentPage={page}
+          pageSize={perPage}
         />
+
+        {/* Alternative pagination UI with page numbers */}
+        <div className="mt-4">
+          <PaginationControls pageCount={pageCount} currentPage={page} />
+        </div>
       </div>
     </>
   );
