@@ -220,12 +220,29 @@ export default async function Page({
                 </Link>
               </p>
               <div className="border-r border-ken-primary/10" />
-              <p className="text-sm text-neutral-600">
-                Published on:{" "}
-                <span className="font-bold">
-                  {format(post.createdAt, "MMMM dd, yyyy")}
-                </span>
-              </p>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <p className="text-sm text-neutral-600">
+                  Published on:{" "}
+                  <span className="font-bold">
+                    {format(post.createdAt, "MMMM dd, yyyy")}
+                  </span>
+                </p>
+
+                {/* Show update date if the post has been modified */}
+                {post.updatedAt &&
+                  post.updatedAt.getTime() >
+                    post.createdAt.getTime() + 60000 && (
+                    <>
+                      <div className="hidden sm:block border-r border-ken-primary/10 h-4" />
+                      <p className="text-sm text-neutral-600">
+                        Updated on:{" "}
+                        <span className="font-bold">
+                          {format(post.updatedAt, "MMMM dd, yyyy")}
+                        </span>
+                      </p>
+                    </>
+                  )}
+              </div>
             </div>
           </div>
 
