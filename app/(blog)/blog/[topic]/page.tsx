@@ -147,7 +147,7 @@ export default async function Page({ params }: { params: { topic: string } }) {
 
   return (
     <section className="py-12">
-      <div className="xl:container m-auto px-6 text-gray-600 md:px-12 xl:px-6">
+      <div className="xl:container m-auto px-6 text-gray-600 md:px-12 xl:px-16">
         <div className="mb-12 space-y-2 text-center">
           <h2 className="text-3xl font-bold text-gray-800 md:text-4xl capitalize">
             {params.topic}

@@ -130,11 +130,23 @@ export default async function Page({
     notFound();
   }
 
-  const relatedTopicPosts = await prisma.post.findMany({
+  // Fetch related posts based on topics
+  const relatedPosts = await prisma.post.findMany({
     where: {
       published: true,
-      topics: { has: params.topic },
+      topics: { hasSome: post.topics },
       NOT: { id: post.id },
+    },
+    include: {
+      author: {
+        select: {
+          name: true,
+          image: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
     },
     take: 3,
   });
@@ -309,8 +321,76 @@ export default async function Page({
               </div>
             </article>
 
-            <aside className="hidden lg:block lg:w-60">
+            <aside className="hidden lg:block lg:w-60 sticky top-36">
               <RecommendedTopics />
+
+              {/* Related Posts Section */}
+              {relatedPosts.length > 0 && (
+                <section className="">
+                  <div className="">
+                    <h2 className="text-2xl font-bold mb-6 text-gray-800">
+                      Related Articles
+                    </h2>
+                    <div className="grid grid-cols-1 gap-6">
+                      {relatedPosts.slice(0, 5).map((relatedPost) => (
+                        <Link
+                          key={relatedPost.id}
+                          href={`/blog/${relatedPost.topics[0]}/${relatedPost.slug}`}
+                          className="group"
+                        >
+                          <div className="border rounded-lg overflow-hidden transition-all duration-300 hover:shadow-md h-full flex flex-col">
+                            <div className="relative h-48 overflow-hidden">
+                              <img
+                                src={
+                                  relatedPost.coverPhoto || "/placeholder.svg"
+                                }
+                                alt={relatedPost.title}
+                                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                              />
+                              <div className="absolute top-2 left-2">
+                                <span className="bg-white/90 text-gray-800 text-xs px-2 py-1 rounded-full">
+                                  {relatedPost.topics[0]
+                                    .charAt(0)
+                                    .toUpperCase() +
+                                    relatedPost.topics[0].slice(1)}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="p-4 flex-1 flex flex-col">
+                              <h3 className="font-semibold text-lg mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                                {relatedPost.title}
+                              </h3>
+                              <div className="mt-auto flex items-center justify-between text-sm text-gray-500">
+                                <div className="flex items-center">
+                                  {relatedPost.author.image ? (
+                                    <img
+                                      src={
+                                        relatedPost.author.image ||
+                                        "/placeholder.svg"
+                                      }
+                                      alt={relatedPost.author.name || "Author"}
+                                      className="w-6 h-6 rounded-full mr-2"
+                                    />
+                                  ) : (
+                                    <div className="w-6 h-6 rounded-full bg-gray-200 mr-2"></div>
+                                  )}
+                                  <span>{relatedPost.author.name}</span>
+                                </div>
+                                <span>
+                                  {format(
+                                    new Date(relatedPost.createdAt),
+                                    "MMM d, yyyy"
+                                  )}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </section>
+              )}
             </aside>
           </section>
         </div>

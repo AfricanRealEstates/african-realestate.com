@@ -68,7 +68,7 @@ export default async function RecommendedTopics() {
   const postsByTopic = await getRelatedPosts();
 
   return (
-    <section className="sticky top-36">
+    <section className="">
       <h3 id="sidebar-label" className="sr-only">
         Recommended Topics
       </h3>
