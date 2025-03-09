@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import LatestPosts from "../LatestPosts";
-import { getBlogPosts } from "@/lib/blog";
 import { Raleway } from "next/font/google";
 import PopularBlogs from "../PopularBlogs";
 import RecommendedTopics from "../RecommendedTopics";
@@ -54,23 +53,6 @@ export default async function Blog({
 }: {
   searchParams?: { page?: string };
 }) {
-  const allPosts = await getBlogPosts();
-  const views = (
-    await redis.mget<number[]>(
-      ...allPosts.map((p) => ["pageviews", "posts", p.slug].join(":"))
-    )
-  ).reduce(
-    (acc, v, i) => {
-      acc[allPosts[i].slug] = v ?? 0;
-      return acc;
-    },
-    {} as Record<string, number>
-  );
-
-  if (Object.keys(views).length < 1) {
-    return null;
-  }
-
   return (
     <main className={`pt-6 pb-8 bg-white lg:pb-16 ${raleway.className}`}>
       <script
