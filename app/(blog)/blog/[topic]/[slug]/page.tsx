@@ -179,7 +179,10 @@ export default async function Page({
             "@type": "BlogPosting",
             headline: post.title,
             datePublished: post.createdAt.toISOString(),
-            dateModified: post.updatedAt.toISOString(),
+            dateModified:
+              post.updatedAt.getTime() > post.createdAt.getTime() + 60000
+                ? post.updatedAt.toISOString()
+                : post.createdAt.toISOString(),
             description: post.metaDescription || description,
             image: post.coverPhoto
               ? `${baseUrl}${post.coverPhoto}`
@@ -233,27 +236,22 @@ export default async function Page({
               </p>
               <div className="border-r border-ken-primary/10" />
               <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                {/* {post.updatedAt &&
+              post.updatedAt.getTime() > post.createdAt.getTime() + 60000 ? (
+                <p className="text-sm text-neutral-600">
+                  Updated on:{" "}
+                  <span className="font-bold">
+                    {format(post.updatedAt, "MMMM dd, yyyy")}
+                  </span>
+                </p>
+              ) : (
+                )} */}
                 <p className="text-sm text-neutral-600">
                   Published on:{" "}
                   <span className="font-bold">
                     {format(post.createdAt, "MMMM dd, yyyy")}
                   </span>
                 </p>
-
-                {/* Show update date if the post has been modified */}
-                {post.updatedAt &&
-                  post.updatedAt.getTime() >
-                    post.createdAt.getTime() + 60000 && (
-                    <>
-                      <div className="hidden sm:block border-r border-ken-primary/10 h-4" />
-                      <p className="text-sm text-neutral-600">
-                        Updated on:{" "}
-                        <span className="font-bold">
-                          {format(post.updatedAt, "MMMM dd, yyyy")}
-                        </span>
-                      </p>
-                    </>
-                  )}
               </div>
             </div>
           </div>
@@ -277,7 +275,11 @@ export default async function Page({
               />
               <meta
                 itemProp="dateModified"
-                content={post.updatedAt.toISOString()}
+                content={
+                  post.updatedAt.getTime() > post.createdAt.getTime() + 60000
+                    ? post.updatedAt.toISOString()
+                    : post.createdAt.toISOString()
+                }
               />
 
               {/* Cover Photo */}
@@ -366,6 +368,7 @@ export default async function Page({
                                     <img
                                       src={
                                         relatedPost.author.image ||
+                                        "/placeholder.svg" ||
                                         "/placeholder.svg"
                                       }
                                       alt={relatedPost.author.name || "Author"}

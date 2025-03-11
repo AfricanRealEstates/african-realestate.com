@@ -2,6 +2,7 @@ import CityProperties from "@/components/landing/CityProperties";
 import Facts from "@/components/landing/facts";
 import FeaturedProperties from "@/components/landing/featured-properties";
 import PropertyAdvice from "@/components/landing/property-advice";
+import RecentlyViewed from "@/components/landing/recently-reviewed";
 import Reviews from "@/components/landing/reviews";
 import OurServices from "@/components/landing/services/OurServices";
 import Testing from "@/components/landing/testing";
@@ -20,6 +21,8 @@ export default async function Home() {
       <Testing />
       <FeaturedProperties />
       <OurServices />
+      {/* <RecommendedProperties /> */}
+      <RecentlyViewed />
       <Facts />
       <CityProperties />
       <PropertyAdvice />
