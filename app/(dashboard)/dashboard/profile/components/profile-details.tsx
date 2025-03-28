@@ -41,13 +41,36 @@ export default function ProfileDetails({ form }: { form: UseFormReturn<any> }) {
                     value={field.value || ""}
                   />
                 </FormControl>
-                <FormDescription>Optional</FormDescription>
+                {/* <FormDescription>Optional</FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
           />
 
           <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input
+                    disabled
+                    type="email"
+                    placeholder="john.doe@example.com"
+                    {...field}
+                    value={field.value || ""}
+                  />
+                </FormControl>
+                <FormDescription>
+                  This is your verified email address
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* <FormField
             control={form.control}
             name="username"
             render={({ field }) => (
@@ -64,30 +87,8 @@ export default function ProfileDetails({ form }: { form: UseFormReturn<any> }) {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
         </div>
-
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input
-                  type="email"
-                  placeholder="john.doe@example.com"
-                  {...field}
-                  value={field.value || ""}
-                />
-              </FormControl>
-              <FormDescription>
-                This is your verified email address
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
 
         <FormField
           control={form.control}
@@ -105,7 +106,6 @@ export default function ProfileDetails({ form }: { form: UseFormReturn<any> }) {
               </FormControl>
               <FormDescription>
                 Brief description for your profile. Max 500 characters.
-                Optional.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -121,19 +121,19 @@ export default function ProfileDetails({ form }: { form: UseFormReturn<any> }) {
                 <FormLabel>Phone Number</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="+1 (555) 000-0000"
+                    placeholder="+25400000000"
                     {...field}
                     value={field.value || ""}
                   />
                 </FormControl>
-                <FormDescription>Optional</FormDescription>
+                {/* <FormDescription>Optional</FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
 
-        <FormField
+        {/* <FormField
           control={form.control}
           name="address"
           render={({ field }) => (
@@ -169,7 +169,7 @@ export default function ProfileDetails({ form }: { form: UseFormReturn<any> }) {
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
       </CardContent>
     </Card>
   );

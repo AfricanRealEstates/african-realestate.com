@@ -132,29 +132,32 @@ export default function ProfileForm({ user }: { user: User }) {
                 <TabsTrigger value="social">Social Links</TabsTrigger>
                 <TabsTrigger value="security">Security</TabsTrigger>
               </TabsList>
+              <div className="relative">
+                <TabsContent value="profile" className="space-y-6">
+                  <ProfileDetails form={form} />
 
-              <TabsContent value="profile" className="space-y-6">
-                <ProfileDetails form={form} />
+                  {(user.role === "AGENCY" ||
+                    user.role === "AGENT" ||
+                    user.role === "ADMIN") && (
+                    <RoleSpecificFields form={form} role={user.role} />
+                  )}
+                </TabsContent>
 
-                {(user.role === "AGENCY" || user.role === "ADMIN") && (
-                  <RoleSpecificFields form={form} role={user.role} />
-                )}
-              </TabsContent>
+                <TabsContent value="social" className="space-y-6">
+                  <SocialLinks form={form} />
+                </TabsContent>
 
-              <TabsContent value="social" className="space-y-6">
-                <SocialLinks form={form} />
-              </TabsContent>
-
-              <TabsContent value="security" className="space-y-6">
-                <SecuritySettings
-                  userId={user.id}
-                  hasPassword={!!user.password}
-                />
-              </TabsContent>
+                <TabsContent value="security" className="space-y-6">
+                  <SecuritySettings
+                    userId={user.id}
+                    hasPassword={!!user.password}
+                  />
+                </TabsContent>
+              </div>
             </Tabs>
 
-            <Card>
-              <CardFooter className="border-t px-6 py-4">
+            <Card className="shadow-none">
+              <CardFooter className="px-6 py-4 ">
                 <Button type="submit" disabled={isLoading}>
                   {isLoading && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

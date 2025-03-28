@@ -3,6 +3,7 @@ import { Lexend } from "next/font/google";
 import { Button } from "@/components/utils/Button";
 import PropertyCard from "@/components/properties/new/PropertyCard";
 import { prisma } from "@/lib/prisma";
+import { PropertySkeletonGrid } from "./PropertySkeletonGrid";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -154,7 +155,7 @@ export default async function FeaturedProperties() {
             </h2>
           </div>
 
-          <Suspense fallback={<div>Loading properties...</div>}>
+          <Suspense fallback={<PropertySkeletonGrid count={6} />}>
             <PropertyList properties={properties} />
           </Suspense>
 

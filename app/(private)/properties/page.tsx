@@ -8,6 +8,7 @@ import PropertyCard from "@/components/properties/new/PropertyCard";
 import type { PropertyData } from "@/lib/types";
 import { baseUrl } from "@/app/sitemap";
 import Pagination from "@/components/globals/Pagination";
+import { PropertySkeleton } from "@/components/globals/PropertySkeleton";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -144,7 +145,7 @@ export default async function Properties({
             isActive={isFiltered || properties.length > 0}
           />
         </article>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<PropertySkeletonGrid />}>
           {properties.length === 0 ? (
             <div className="flex h-full items-center justify-center mt-8">
               No properties matched your search query. Please try again with a
@@ -166,5 +167,16 @@ export default async function Properties({
         </Suspense>
       </div>
     </>
+  );
+}
+
+// Grid of property skeletons for loading state
+function PropertySkeletonGrid() {
+  return (
+    <section className="mx-auto mb-8 gap-8 grid w-full grid-cols-[repeat(auto-fill,minmax(335px,1fr))] justify-center">
+      {Array.from({ length: 9 }).map((_, index) => (
+        <PropertySkeleton key={index} />
+      ))}
+    </section>
   );
 }

@@ -155,6 +155,19 @@ export default async function Page({
 
   const session = await auth();
 
+  // Get total number of published blogs
+  const totalPublishedBlogs = await prisma.post.count({
+    where: { published: true },
+  });
+
+  // Get position of current blog (by creation date)
+  const blogPosition = await prisma.post.count({
+    where: {
+      published: true,
+      createdAt: { lte: post.createdAt },
+    },
+  });
+
   // Increment view count
   await incrementViewCount(post.id);
 
@@ -237,15 +250,15 @@ export default async function Page({
               <div className="border-r border-ken-primary/10" />
               <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                 {/* {post.updatedAt &&
-              post.updatedAt.getTime() > post.createdAt.getTime() + 60000 ? (
-                <p className="text-sm text-neutral-600">
-                  Updated on:{" "}
-                  <span className="font-bold">
-                    {format(post.updatedAt, "MMMM dd, yyyy")}
-                  </span>
-                </p>
-              ) : (
-                )} */}
+          post.updatedAt.getTime() > post.createdAt.getTime() + 60000 ? (
+            <p className="text-sm text-neutral-600">
+              Updated on:{" "}
+              <span className="font-bold">
+                {format(post.updatedAt, "MMMM dd, yyyy")}
+              </span>
+            </p>
+          ) : (
+            )} */}
                 <p className="text-sm text-neutral-600">
                   Published on:{" "}
                   <span className="font-bold">
@@ -302,24 +315,28 @@ export default async function Page({
                   ),
                 }}
               />
-
-              <div className="flex items-center space-x-4 mb-4">
-                <LikeButton
-                  postId={post.id}
-                  initialLikeCount={post.likes.length}
-                  initialIsLiked={isLiked}
-                />
-                <ShareButton
-                  postId={post.id}
-                  initialShareCount={post.shareCount}
-                  title={post.title}
-                  description={
-                    post.metaDescription ||
-                    description.substring(0, 150) + "..."
-                  }
-                  coverPhoto={post.coverPhoto || null}
-                />
-                <span>{post.viewCount} views</span>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4 mb-4">
+                  <LikeButton
+                    postId={post.id}
+                    initialLikeCount={post.likes.length}
+                    initialIsLiked={isLiked}
+                  />
+                  <ShareButton
+                    postId={post.id}
+                    initialShareCount={post.shareCount}
+                    title={post.title}
+                    description={
+                      post.metaDescription ||
+                      description.substring(0, 150) + "..."
+                    }
+                    coverPhoto={post.coverPhoto || null}
+                  />
+                  <span>{post.viewCount} views</span>
+                </div>
+                <span className="ml-4 px-2 py-1 bg-gray-100 rounded-md text-sm font-medium">
+                  {blogPosition}/{totalPublishedBlogs}
+                </span>
               </div>
             </article>
 

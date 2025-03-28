@@ -1,4 +1,3 @@
-import React from "react";
 import { prisma } from "@/lib/prisma";
 import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/20/solid";
 import {
@@ -46,7 +45,8 @@ import { PropertyData, PropertyWithExtras } from "@/lib/types";
 import PropertyActions from "./_components/PropertyActions";
 import { getCurrentUser } from "@/lib/session";
 import { recordPropertyView } from "@/actions/recordPropertyView";
-import PropertyViewsStats from "./_components/PropertyViewsStats";
+import { PropertySkeleton } from "@/components/globals/PropertySkeleton";
+import { Suspense } from "react";
 
 const amenityIcons: { [key: string]: JSX.Element } = {
   mosque: <FaMosque className="size-4 text-neutral-600" />,
@@ -371,6 +371,8 @@ export default async function PropertyDetails({
   if (property.landSize && property.landUnits) {
     convertedLandSize = convertToAcres(property.landSize, property.landUnits);
   }
+
+  const propertyUrl = `https://www.african-real-estate.com/properties/${property.propertyDetails}/${property.id}`;
 
   const renderSection1 = () => {
     return (
@@ -834,7 +836,16 @@ export default async function PropertyDetails({
           </section>
         </main>
 
-        <MessageWidget />
+        <MessageWidget
+          propertyTitle={property.title}
+          propertyId={property.id}
+          propertyUrl={propertyUrl}
+          propertyNumber={property.propertyNumber}
+          whatsappNumber={agent.whatsappNumber}
+          price={property.price}
+          currency={property.currency}
+          location={`${property.locality}, ${property.county}`}
+        />
         <section className="mx-auto mt-12 max-w-2xl sm:mt-12 lg:max-w-none">
           <div className="flex items-center justify-between space-x-4">
             <h2 className="text-lg lg:text-xl font-medium text-gray-950">
@@ -850,12 +861,14 @@ export default async function PropertyDetails({
           </div>
           {relatedProperties.length > 0 ? (
             <div className="mt-6 grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 sm:gap-y-10 lg:grid-cols-3">
-              {relatedProperties.map((property) => (
-                <PropertyCard
-                  key={property.id}
-                  data={property as PropertyData}
-                />
-              ))}
+              <Suspense fallback={<RelatedPropertiesSkeleton />}>
+                {relatedProperties.map((property) => (
+                  <PropertyCard
+                    key={property.id}
+                    data={property as PropertyData}
+                  />
+                ))}
+              </Suspense>
             </div>
           ) : (
             <Link
@@ -871,6 +884,17 @@ export default async function PropertyDetails({
           )}
         </section>
       </div>
+    </div>
+  );
+}
+
+// Loading skeleton for related properties
+function RelatedPropertiesSkeleton() {
+  return (
+    <div className="mt-6 grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 sm:gap-y-10 lg:grid-cols-3">
+      {Array.from({ length: 3 }).map((_, index) => (
+        <PropertySkeleton key={index} />
+      ))}
     </div>
   );
 }

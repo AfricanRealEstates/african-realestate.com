@@ -1,13 +1,13 @@
 import { Suspense } from "react";
 import { Raleway } from "next/font/google";
 import { getSEOTags } from "@/lib/seo";
-import Loader from "@/components/globals/loader";
 import type { PropertyData } from "@/lib/types";
 import SortingOptions from "@/app/search/SortingOptions";
 import PropertyFilter from "@/components/properties/PropertyFilter";
 import { getProperties } from "@/lib/getProperties";
 import PropertyCard from "@/components/properties/new/PropertyCard";
 import Pagination from "@/components/globals/Pagination";
+import { PropertySkeleton } from "@/components/globals/PropertySkeleton";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -66,7 +66,7 @@ export default async function BuyPage({
           isActive={isFiltered || properties.length > 0}
         />
       </article>
-      <Suspense fallback={<Loader />}>
+      <Suspense fallback={<PropertySkeletonGrid />}>
         {properties.length === 0 ? (
           <div className="flex h-full items-center justify-center mt-8">
             No properties matched your search query. Please try again with
@@ -87,5 +87,16 @@ export default async function BuyPage({
         )}
       </Suspense>
     </div>
+  );
+}
+
+// Grid of property skeletons for loading state
+function PropertySkeletonGrid() {
+  return (
+    <section className="mx-auto mb-8 gap-8 grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-center">
+      {Array.from({ length: 6 }).map((_, index) => (
+        <PropertySkeleton key={index} />
+      ))}
+    </section>
   );
 }

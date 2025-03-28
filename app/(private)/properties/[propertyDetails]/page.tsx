@@ -2,13 +2,13 @@ import { Suspense } from "react";
 import { Raleway } from "next/font/google";
 import type { Metadata } from "next";
 import SortingOptions from "@/app/search/SortingOptions";
-import Loader from "@/components/globals/loader";
 import PropertyCard from "@/components/properties/new/PropertyCard";
 import { prisma } from "@/lib/prisma";
 import type { PropertyData } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import Pagination from "@/components/globals/Pagination";
+import { PropertySkeleton } from "@/components/globals/PropertySkeleton";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -146,7 +146,7 @@ export default async function PropertyDetails({
           />
         </div>
       </article>
-      <Suspense fallback={<Loader />} key={key}>
+      <Suspense fallback={<PropertySkeletonGrid />} key={key}>
         {searchProperties.length === 0 ? (
           <div className="flex h-full items-center justify-center mt-8 text-gray-600 text-lg">
             No properties matched your search query. Please try again with a
@@ -167,5 +167,16 @@ export default async function PropertyDetails({
         )}
       </Suspense>
     </div>
+  );
+}
+
+// Grid of property skeletons for loading state
+function PropertySkeletonGrid() {
+  return (
+    <section className="mx-auto mb-8 gap-8 grid w-full grid-cols-[repeat(auto-fill,minmax(335px,1fr))] justify-center">
+      {Array.from({ length: 9 }).map((_, index) => (
+        <PropertySkeleton key={index} />
+      ))}
+    </section>
   );
 }

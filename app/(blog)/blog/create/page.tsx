@@ -81,8 +81,6 @@ export default function CreateBlogPage() {
     { id: "investing", label: "Investing" },
     { id: "home-decor", label: "Home Decor" },
     { id: "housing", label: "Housing" },
-    // { id: "technology", label: "Technology" },
-    // { id: "lifestyle", label: "Lifestyle" },
   ]);
 
   const searchParams = useSearchParams();

@@ -56,7 +56,7 @@ export default function RoleSpecificFields({
                         value={field.value || ""}
                       />
                     </FormControl>
-                    <FormDescription>Optional</FormDescription>
+                    {/* <FormDescription>Optional</FormDescription> */}
                     <FormMessage />
                   </FormItem>
                 )}
@@ -75,7 +75,7 @@ export default function RoleSpecificFields({
                         value={field.value || ""}
                       />
                     </FormControl>
-                    <FormDescription>Optional</FormDescription>
+                    {/* <FormDescription>Optional</FormDescription> */}
                     <FormMessage />
                   </FormItem>
                 )}
@@ -95,7 +95,7 @@ export default function RoleSpecificFields({
                       value={field.value || ""}
                     />
                   </FormControl>
-                  <FormDescription>Optional</FormDescription>
+                  {/* <FormDescription>Optional</FormDescription> */}
                   <FormMessage />
                 </FormItem>
               )}
@@ -110,12 +110,12 @@ export default function RoleSpecificFields({
                     <FormLabel>Office Phone</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="+1 (555) 000-0000"
+                        placeholder="+25400000000"
                         {...field}
                         value={field.value || ""}
                       />
                     </FormControl>
-                    <FormDescription>Optional</FormDescription>
+                    {/* <FormDescription>Optional</FormDescription> */}
                     <FormMessage />
                   </FormItem>
                 )}
@@ -129,12 +129,12 @@ export default function RoleSpecificFields({
                     <FormLabel>WhatsApp Number</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="+1 (555) 000-0000"
+                        placeholder="+25400000000"
                         {...field}
                         value={field.value || ""}
                       />
                     </FormControl>
-                    <FormDescription>Optional</FormDescription>
+                    {/* <FormDescription>Optional</FormDescription> */}
                     <FormMessage />
                   </FormItem>
                 )}

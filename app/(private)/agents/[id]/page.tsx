@@ -4,7 +4,7 @@ import NotFound from "@/app/not-found";
 import { formatDate } from "date-fns";
 import Avatar from "@/components/globals/avatar";
 import { Raleway } from "next/font/google";
-import { Mail } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
 import {
   FaFacebook,
   FaInstagram,
@@ -19,13 +19,13 @@ import { Suspense } from "react";
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
+  PaginationEllipsis,
 } from "@/components/ui/pagination";
-import { PropertySkeleton } from "../_components/PropertySkeleton";
+import { PropertySkeleton } from "../../agencies/_components/PropertySkeleton";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -35,60 +35,57 @@ const raleway = Raleway({
 // Number of properties to show per page
 const PROPERTIES_PER_PAGE = 6;
 
-interface AgencyDetailsProps {
+interface AgentDetailsProps {
   params: {
     id: string;
   };
   searchParams: {
     page?: string;
-    status: string;
+    status?: string;
   };
 }
 
 export async function generateMetadata({
   params: { id },
-}: AgencyDetailsProps): Promise<Metadata> {
-  const agency = await prisma.user.findUnique({
+}: AgentDetailsProps): Promise<Metadata> {
+  const agent = await prisma.user.findUnique({
     where: { id },
     select: {
       name: true,
-      agentName: true,
       bio: true,
-      role: true,
       image: true,
+      phoneNumber: true,
     },
   });
 
-  if (!agency) return { title: "Agency Not Found" };
-
-  const displayName = agency.role === "AGENCY" ? agency.agentName : agency.name;
+  if (!agent) return { title: "Agent Not Found" };
 
   return {
-    title: `${displayName || "Agency"} Properties | African Real Estate`,
+    title: `${agent.name || "Agent"} | Real Estate Agent - African Real Estate`,
     description:
-      agency.bio?.substring(0, 160) ||
-      `Browse properties listed by ${displayName} on African Real Estate.`,
+      agent.bio?.substring(0, 160) ||
+      `Browse properties listed by ${agent.name} on African Real Estate.`,
     openGraph: {
-      title: `${displayName} - Real Estate Agency`,
+      title: `${agent.name} - Real Estate Agent`,
       description:
-        agency.bio?.substring(0, 160) ||
-        `Browse properties listed by ${displayName} on African Real Estate.`,
-      images: agency.image ? [{ url: agency.image }] : undefined,
+        agent.bio?.substring(0, 160) ||
+        `Browse properties listed by ${agent.name} on African Real Estate.`,
+      images: agent.image ? [{ url: agent.image }] : undefined,
       type: "profile",
     },
     twitter: {
       card: "summary_large_image",
-      title: `${displayName} - Real Estate Agency`,
+      title: `${agent.name} - Real Estate Agent`,
       description:
-        agency.bio?.substring(0, 160) ||
-        `Browse properties listed by ${displayName} on African Real Estate.`,
-      images: agency.image ? [agency.image] : undefined,
+        agent.bio?.substring(0, 160) ||
+        `Browse properties listed by ${agent.name} on African Real Estate.`,
+      images: agent.image ? [agent.image] : undefined,
     },
   };
 }
 
 // Separate component for the sidebar to avoid re-rendering
-function AgencySidebar({ agency }: { agency: any }) {
+function AgentSidebar({ agent }: { agent: any }) {
   return (
     <div
       className={`${raleway.className} w-full flex flex-col items-center text-center sm:rounded-2xl sm:border border-neutral-200 dark:border-neutral-700 space-y-6 sm:space-y-7 px-0 sm:p-6 xl:p-8`}
@@ -97,33 +94,28 @@ function AgencySidebar({ agency }: { agency: any }) {
         hasChecked
         hasCheckedClass="w-6 h-6 -top-0.5 right-2"
         sizeClass="w-28 h-28"
-        imgUrl={agency.image}
+        imgUrl={agent.image}
       />
 
-      {agency?.name ? (
+      {agent?.name ? (
         <div className="space-y-3 text-center flex flex-col items-center">
           <h2 className="text-xl text-indigo-500 font-semibold">
-            {agency.role === "AGENCY" ? (
-              <>
-                {agency?.name} - {agency.agentName}
-              </>
-            ) : (
-              <>{agency?.name}</>
-            )}
+            {agent.name}
           </h2>
+          <p className="text-sm text-neutral-500">Real Estate Agent</p>
         </div>
       ) : (
-        <p className="text-neutral-500">No agency yet</p>
+        <p className="text-neutral-500">No agent yet</p>
       )}
 
       <div className="border-b border-neutral-50 w-full"></div>
 
       <p className="text-neutral-500 font-semibold">Bio</p>
-      {agency?.bio ? (
+      {agent?.bio ? (
         <p className={`text-neutral-500 text-left text-sm`}>
-          {agency.bio.length > 250
-            ? `${agency.bio.substring(0, 250)}...`
-            : agency.bio}
+          {agent.bio.length > 250
+            ? `${agent.bio.substring(0, 250)}...`
+            : agent.bio}
         </p>
       ) : (
         <p className="text-neutral-500">No bio yet</p>
@@ -132,9 +124,9 @@ function AgencySidebar({ agency }: { agency: any }) {
       <div className="border-b border-neutral-50 w-full"></div>
 
       <div className="!space-x-3 flex items-center justify-center">
-        {agency.facebookLink && (
+        {agent.facebookLink && (
           <Link
-            href={agency.facebookLink}
+            href={agent.facebookLink}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -143,9 +135,9 @@ function AgencySidebar({ agency }: { agency: any }) {
             </p>
           </Link>
         )}
-        {agency.tiktokLink && (
+        {agent.tiktokLink && (
           <Link
-            href={agency.tiktokLink}
+            href={agent.tiktokLink}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -154,9 +146,9 @@ function AgencySidebar({ agency }: { agency: any }) {
             </p>
           </Link>
         )}
-        {agency.youtubeLink && (
+        {agent.youtubeLink && (
           <Link
-            href={agency.youtubeLink}
+            href={agent.youtubeLink}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -165,9 +157,9 @@ function AgencySidebar({ agency }: { agency: any }) {
             </p>
           </Link>
         )}
-        {agency.instagramLink && (
+        {agent.instagramLink && (
           <Link
-            href={agency.instagramLink}
+            href={agent.instagramLink}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -176,9 +168,9 @@ function AgencySidebar({ agency }: { agency: any }) {
             </p>
           </Link>
         )}
-        {agency.linkedinLink && (
+        {agent.linkedinLink && (
           <Link
-            href={agency.linkedinLink}
+            href={agent.linkedinLink}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -195,12 +187,25 @@ function AgencySidebar({ agency }: { agency: any }) {
         <div className="flex items-center space-x-4">
           <Mail className="h-6 w-6 text-neutral-400" />
           <Link
-            href={`mailto:${agency.email}`}
+            href={`mailto:${agent.email}`}
             className="text-neutral-600 hover:text-indigo-500 transition-colors"
           >
-            Talk to {agency.role === "AGENCY" ? "Agency" : "Agent"}
+            Email Agent
           </Link>
         </div>
+
+        {agent.phoneNumber && (
+          <div className="flex items-center space-x-4">
+            <Phone className="h-6 w-6 text-neutral-400" />
+            <Link
+              href={`tel:${agent.phoneNumber}`}
+              className="text-neutral-600 hover:text-indigo-500 transition-colors"
+            >
+              {agent.phoneNumber}
+            </Link>
+          </div>
+        )}
+
         <div className="flex items-center space-x-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -235,7 +240,7 @@ function AgencySidebar({ agency }: { agency: any }) {
             />
           </svg>
           <span className="text-neutral-600">
-            Member since {formatDate(agency.createdAt, "MMM d, yyyy")}
+            Member since {formatDate(agent.createdAt, "MMM d, yyyy")}
           </span>
         </div>
       </div>
@@ -245,11 +250,11 @@ function AgencySidebar({ agency }: { agency: any }) {
 
 // Separate component for property listings with pagination
 async function PropertyListings({
-  agencyId,
+  agentId,
   status,
   page = 1,
 }: {
-  agencyId: string;
+  agentId: string;
   status: "sale" | "let";
   page?: number;
 }) {
@@ -259,7 +264,7 @@ async function PropertyListings({
   // Fetch only the properties needed for this page
   const properties = await prisma.property.findMany({
     where: {
-      userId: agencyId,
+      userId: agentId,
       status: status,
       isActive: true,
     },
@@ -273,7 +278,7 @@ async function PropertyListings({
   // Get total count for pagination
   const totalCount = await prisma.property.count({
     where: {
-      userId: agencyId,
+      userId: agentId,
       status: status,
       isActive: true,
     },
@@ -395,15 +400,15 @@ function PaginationWithStatus({
 }
 
 // Main component with optimized data fetching
-export default async function AgencyDetails({
+export default async function AgentDetails({
   params: { id },
   searchParams,
-}: AgencyDetailsProps) {
+}: AgentDetailsProps) {
   const page = searchParams.page ? Number.parseInt(searchParams.page) : 1;
   const status = searchParams.status || "sale";
 
-  // Fetch only the agency data without properties initially
-  const agency = await prisma.user.findUnique({
+  // Fetch only the agent data without properties initially
+  const agent = await prisma.user.findUnique({
     where: { id },
     select: {
       id: true,
@@ -411,8 +416,7 @@ export default async function AgencyDetails({
       email: true,
       image: true,
       bio: true,
-      role: true,
-      agentName: true,
+      phoneNumber: true,
       createdAt: true,
       facebookLink: true,
       tiktokLink: true,
@@ -423,7 +427,7 @@ export default async function AgencyDetails({
     },
   });
 
-  if (!agency) {
+  if (!agent) {
     return <NotFound />;
   }
 
@@ -453,20 +457,18 @@ export default async function AgencyDetails({
         <div className="mt-12 mb-24 lg:mb-32 flex flex-col lg:flex-row">
           <div className="block flex-grow mb-24 lg:mb-0 lg:w-2/5 xl:w-1/3">
             <div className="lg:sticky lg:top-24">
-              <AgencySidebar agency={agency} />
+              <AgentSidebar agent={agent} />
             </div>
           </div>
           <div className="w-full lg:w-3/5 xl:w-2/3 space-y-8 lg:space-y-10 lg:pl-10 flex-shrink-0">
             <div className="w-full flex flex-col sm:rounded-2xl border-b sm:border-t sm:border-l sm:border-r border-neutral-200 dark:border-neutral-700 space-y-6 sm:space-y-8 pb-10 px-0 sm:p-4 xl:p-8">
               <div>
                 <h2 className="text-2xl text-indigo-500 font-semibold">
-                  {agency.role === "AGENCY" ? agency.agentName : agency.name}{" "}
-                  listings
+                  {agent.name} listings
                 </h2>
                 <span className="block mt-2 text-neutral-500 dark:text-neutral-400">
-                  {agency.role === "AGENCY" ? agency.agentName : agency.name}
-                  &apos;s listings are very rich, and 5-star reviews help them
-                  to be more branded.
+                  {agent.name}&apos;s listings are very rich, and 5-star reviews
+                  help them to be more branded.
                 </span>
               </div>
 
@@ -483,12 +485,12 @@ export default async function AgencyDetails({
                 </TabsList>
                 <TabsContent value="sale" className="mt-8">
                   <Suspense fallback={<PropertySkeletons />}>
-                    <PropertyListings agencyId={id} status="sale" page={page} />
+                    <PropertyListings agentId={id} status="sale" page={page} />
                   </Suspense>
                 </TabsContent>
                 <TabsContent value="let" className="mt-8">
                   <Suspense fallback={<PropertySkeletons />}>
-                    <PropertyListings agencyId={id} status="let" page={page} />
+                    <PropertyListings agentId={id} status="let" page={page} />
                   </Suspense>
                 </TabsContent>
               </Tabs>

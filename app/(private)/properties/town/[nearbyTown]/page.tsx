@@ -8,6 +8,7 @@ import { baseUrl } from "@/app/sitemap";
 import { Suspense } from "react";
 import SortingOptions from "@/app/search/SortingOptions";
 import Pagination from "@/components/globals/Pagination";
+import { PropertySkeleton } from "@/components/globals/PropertySkeleton";
 
 type Props = {
   params: { nearbyTown: string };
@@ -198,6 +199,7 @@ export default async function NearbyTownPropertiesPage({
               </Link>
             </div>
             <section className="mx-auto mb-8 gap-8 grid w-full grid-cols-[repeat(auto-fill,minmax(335px,1fr))] justify-center">
+              {/* <Suspense fallback={<PropertySkeletonGrid />}></Suspense> */}
               {allProperties.map((property) => (
                 <PropertyCard
                   key={property.id}
@@ -209,6 +211,7 @@ export default async function NearbyTownPropertiesPage({
         ) : (
           <>
             <section className="mx-auto mb-8 gap-8 grid w-full grid-cols-[repeat(auto-fill,minmax(335px,1fr))] justify-center">
+              {/* <Suspense fallback={<PropertySkeletonGrid />}></Suspense> */}
               {properties.map((property) => (
                 <PropertyCard
                   key={property.id}
@@ -233,4 +236,15 @@ export async function generateStaticParams() {
   return towns.map((town) => ({
     nearbyTown: town.nearbyTown,
   }));
+}
+
+// Grid of property skeletons for loading state
+function PropertySkeletonGrid() {
+  return (
+    <section className="mx-auto mb-8 gap-8 grid w-full grid-cols-[repeat(auto-fill,minmax(335px,1fr))] justify-center">
+      {Array.from({ length: 9 }).map((_, index) => (
+        <PropertySkeleton key={index} />
+      ))}
+    </section>
+  );
 }
