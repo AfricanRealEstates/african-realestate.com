@@ -227,7 +227,7 @@ export default function UsersTable({
           </div>
         </div>
       </div>
-      <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 lg:px-16">
         <p className="text-sm text-gray-700">
           Showing{" "}
           <span className="font-semibold">
@@ -239,26 +239,27 @@ export default function UsersTable({
           </span>{" "}
           of <span className="font-semibold">{totalUsers}</span> users
         </p>
+        <div className="flex-end">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href={createPageURL(currentPage - 1)}
+                  aria-disabled={currentPage <= 1}
+                />
+              </PaginationItem>
 
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                href={createPageURL(currentPage - 1)}
-                aria-disabled={currentPage <= 1}
-              />
-            </PaginationItem>
+              {generatePaginationItems()}
 
-            {generatePaginationItems()}
-
-            <PaginationItem>
-              <PaginationNext
-                href={createPageURL(currentPage + 1)}
-                aria-disabled={currentPage >= totalPages}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+              <PaginationItem>
+                <PaginationNext
+                  href={createPageURL(currentPage + 1)}
+                  aria-disabled={currentPage >= totalPages}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
       </div>
     </>
   );

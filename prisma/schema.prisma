@@ -402,6 +402,19 @@ model Notification {
   user           User               @relation(fields: [userId], references: [id])
 }
 
+model EmailLog {
+  id         String   @id @default(cuid())
+  propertyId String
+  userId     String
+  emailType  String // "expiring-soon-7", "expiring-soon-3", "expiring-soon-1", "expired"
+  sentAt     DateTime @default(now())
+
+  @@unique([propertyId, userId, emailType])
+  @@index([userId])
+  @@index([propertyId])
+  @@map("email_logs")
+}
+
 enum UserRole {
   USER
   AGENT

@@ -312,7 +312,7 @@ export default function PropertiesTable({
         </tbody>
       </table>
 
-      <div className="mt-4 flex flex-col items-center justify-between gap-4 sm:flex-row">
+      <div className="mt-4 flex items-center justify-between gap-4 sm:flex-row">
         <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
           <Select
             onValueChange={handlePropertiesPerPageChange}
@@ -328,7 +328,7 @@ export default function PropertiesTable({
               <SelectItem value="50">50 per page</SelectItem>
             </SelectContent>
           </Select>
-          <p className="text-sm text-muted-foreground text-center sm:text-left">
+          <p className="text-sm text-muted-foreground text-center sm:text-left hidden lg:block">
             Showing {indexOfFirstProperty + 1}-
             {Math.min(indexOfLastProperty, localProperties.length)} of{" "}
             {localProperties.length} properties

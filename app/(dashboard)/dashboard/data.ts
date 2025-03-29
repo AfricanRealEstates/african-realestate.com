@@ -246,3 +246,39 @@ export async function getRecentOrders(page: number = 1, pageSize: number = 10) {
     totalPages: Math.ceil(totalOrders / pageSize),
   };
 }
+
+export async function getInactiveProperties(page = 1, pageSize = 5) {
+  const skip = (page - 1) * pageSize;
+  const [inactiveProperties, totalCount] = await Promise.all([
+    prisma.property.findMany({
+      where: {
+        isActive: false,
+      },
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true,
+            phoneNumber: true,
+          },
+        },
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+      skip,
+      take: pageSize,
+    }),
+    prisma.property.count({
+      where: {
+        isActive: false,
+      },
+    }),
+  ]);
+
+  return {
+    properties: inactiveProperties,
+    currentPage: page,
+    totalPages: Math.ceil(totalCount / pageSize),
+  };
+}

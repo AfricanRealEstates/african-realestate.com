@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import { Suspense } from "react";
 import Link from "next/link";
 import { formatDate } from "date-fns";
 import IconMenu from "@/components/globals/icon-menu";
@@ -55,7 +55,7 @@ async function AgentsTable({
   const search =
     typeof searchParams.search === "string" ? searchParams.search : undefined;
 
-  const perPage = 5;
+  const perPage = 10;
   const totalAgents = await prisma.user.count({
     where: {
       name: {
@@ -96,7 +96,7 @@ async function AgentsTable({
   }
 
   return (
-    <>
+    <div className="relative">
       <div className="flex items-center mb-4 text-lg font-medium text-blue-600">
         <svg
           className="size-6 mr-2"
@@ -220,7 +220,7 @@ async function AgentsTable({
           />
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

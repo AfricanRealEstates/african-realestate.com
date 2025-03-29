@@ -97,14 +97,14 @@ export default function PricingPlanSection({
     propertyCount <= 3
       ? "1-3"
       : propertyCount <= 5
-      ? "4-5"
-      : propertyCount <= 10
-      ? "6-10"
-      : propertyCount <= 20
-      ? "11-20"
-      : propertyCount <= 40
-      ? "21-40"
-      : ">40";
+        ? "4-5"
+        : propertyCount <= 10
+          ? "6-10"
+          : propertyCount <= 20
+            ? "11-20"
+            : propertyCount <= 40
+              ? "21-40"
+              : ">40";
 
   const handleTierSelection = (tierName: string) => {
     setSelectedTier(tierName);
@@ -239,6 +239,10 @@ export default function PricingPlanSection({
       toast.success("Payment successful! Your properties have been activated.");
       setIsPaystackModalOpen(false);
       onClose();
+      // Add page refresh after a short delay to allow the toast to be visible
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     },
     [onClose]
   );
@@ -247,14 +251,14 @@ export default function PricingPlanSection({
 
   return (
     <div className="mt-8 w-full mx-auto px-4">
-      <h2 className="text-2xl font-bold tracking-tight text-blue-900 mb-4">
+      <h2 className="lg:text-2xl font-bold tracking-tight text-blue-900 mb-4">
         Our Pricing Plans
       </h2>
-      <p className="text-base text-muted-foreground mb-8">
+      <p className="text-base text-muted-foreground mb-8 hidden lg:flex">
         Choose the perfect plan for your real estate business
       </p>
 
-      <div className="flex flex-col items-start w-full mx-auto mb-8">
+      <div className="hidden lg:flex flex-col items-start w-full mx-auto mb-8">
         <div className="w-full flex items-center gap-4 mb-4">
           <Label className="text-sm font-medium">Selected Properties:</Label>
           <Select value={propertyRange} disabled>
@@ -274,7 +278,7 @@ export default function PricingPlanSection({
       </div>
 
       {isMobile ? (
-        <Carousel className="w-full max-w-[400px] mx-auto">
+        <Carousel className="mx-auto relative">
           <CarouselContent>
             {tiers.map((tier, index) => (
               <CarouselItem key={tier.name}>
@@ -295,8 +299,8 @@ export default function PricingPlanSection({
                           index === 0
                             ? "bg-yellow-100 text-yellow-800"
                             : index === 1
-                            ? "bg-blue-100 text-blue-800"
-                            : "bg-purple-100 text-purple-800"
+                              ? "bg-blue-100 text-blue-800"
+                              : "bg-purple-100 text-purple-800"
                         }`}
                       >
                         {tier.name}
@@ -346,11 +350,13 @@ export default function PricingPlanSection({
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
+          <div className="flex justify-between w-full absolute top-1/2 -translate-y-1/2 left-0 right-0 px-2 z-10">
+            <CarouselPrevious className="relative -left-5 translate-y-0" />
+            <CarouselNext className="relative -right-5 translate-y-0" />
+          </div>
         </Carousel>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-6">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-3">
           {tiers.map((tier, index) => (
             <Card
               key={tier.name}
@@ -376,8 +382,8 @@ export default function PricingPlanSection({
                       index === 0
                         ? "bg-yellow-100 text-yellow-800"
                         : index === 1
-                        ? "bg-blue-100 text-blue-800"
-                        : "bg-purple-100 text-purple-800"
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-purple-100 text-purple-800"
                     }`}
                   >
                     {tier.name}
@@ -427,7 +433,7 @@ export default function PricingPlanSection({
       )}
 
       {selectedTier && (
-        <div className="w-full mt-12">
+        <div className="w-full lg:mt-12 mt-4">
           <div className="flex flex-col lg:flex-row justify-between items-start gap-8">
             <div className="w-full lg:w-1/2">
               <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
@@ -521,7 +527,7 @@ export default function PricingPlanSection({
               </div>
             </div>
             <div className="w-full lg:w-1/2 flex flex-col items-center">
-              <div className="my-4 text-center">
+              <div className="my-2 text-center">
                 <p className="text-2xl font-bold">
                   Total: KES{" "}
                   {calculateTotalAmount(selectedTier).toLocaleString()}

@@ -90,7 +90,7 @@ export default function RoleSpecificFields({
                   <FormLabel>Agency Location</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="New York, NY"
+                      placeholder="Nairobi, Kenya"
                       {...field}
                       value={field.value || ""}
                     />

@@ -12,8 +12,12 @@ import { GeistMono } from "geist/font/mono";
 import SessionProvider from "@/providers/session-provider";
 import { cn } from "@/lib/utils";
 import Script from "next/script";
+import { initializeApp } from "@/lib/init";
 
-// Add this component to your layout
+// Initialize the app on the server side
+if (typeof window === "undefined") {
+  initializeApp();
+}
 
 export const metadata = getSEOTags();
 

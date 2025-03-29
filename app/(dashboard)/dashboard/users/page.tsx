@@ -24,7 +24,7 @@ export default async function UsersPage({
         : undefined
       : undefined;
 
-  const perPage = 5;
+  const perPage = 10;
 
   // Build where clause for Prisma query
   const whereClause = {
@@ -63,7 +63,7 @@ export default async function UsersPage({
   });
 
   return (
-    <section className="px-4 sm:px-8 pt-5 flex flex-col h-full overflow-hidden">
+    <section className="px-4 sm:px-8 pt-5 flex flex-col h-full relative">
       <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl mb-4">
         All users
       </h1>

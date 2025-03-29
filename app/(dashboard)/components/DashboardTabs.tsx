@@ -38,7 +38,7 @@ export default function DashboardTabs({
   ];
 
   return (
-    <Card className="bg-white shadow-md flex flex-col h-[calc(100vh-200px)]">
+    <Card className="bg-white shadow-none flex flex-col h-full">
       <CardContent className="p-0 flex flex-col h-full">
         <div className="border-b p-2 md:p-4">
           <div className="md:hidden">
@@ -88,7 +88,7 @@ export default function DashboardTabs({
             ))}
           </div>
         </div>
-        <div className="flex-grow overflow-y-auto">
+        <div className="flex-grow relative">
           {activeTab === "favorites" && (
             <PropertyList
               properties={favorites.items}

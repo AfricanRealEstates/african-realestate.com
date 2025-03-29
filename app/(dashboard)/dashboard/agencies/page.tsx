@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import { Suspense } from "react";
 import Link from "next/link";
 import IconMenu from "@/components/globals/icon-menu";
 import { Button } from "@/components/ui/button";
@@ -23,7 +23,7 @@ export default async function AgenciesPage({
     typeof searchParams.search === "string" ? searchParams.search : undefined;
 
   return (
-    <section className="px-4 sm:px-8 bg-gray-50 pt-6 sm:pt-12 flex flex-col">
+    <section className="px-4 sm:px-8 pt-6 sm:pt-12 flex flex-col relative">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8">
         <div className="w-full sm:w-80 mb-4 sm:mb-0">
           <SearchInput search={search} searchType="agencies" />
@@ -54,7 +54,7 @@ async function AgenciesTable({
   const search =
     typeof searchParams.search === "string" ? searchParams.search : undefined;
 
-  const perPage = 5;
+  const perPage = 10;
   const totalAgencies = await prisma.user.count({
     where: {
       name: {

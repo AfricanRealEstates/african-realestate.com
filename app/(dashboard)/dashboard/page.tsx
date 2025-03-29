@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -9,7 +9,10 @@ import {
   ShoppingCart,
   CheckCircle,
   XCircle,
+  ChevronRight,
 } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 import {
   getUserFavorites,
@@ -23,6 +26,8 @@ import {
 } from "./data";
 import { auth } from "@/auth";
 import DashboardTabs from "../components/DashboardTabs";
+import PropertyPaymentManager from "./properties/PropertyPaymentManager";
+import { prisma } from "@/lib/prisma";
 
 export default async function DashboardPage({
   searchParams = {},
@@ -37,13 +42,25 @@ export default async function DashboardPage({
   }
 
   const page =
-    typeof searchParams.page === "string" ? parseInt(searchParams.page, 10) : 1;
+    typeof searchParams.page === "string"
+      ? Number.parseInt(searchParams.page, 10)
+      : 1;
   const favorites = await getUserFavorites(user.id, page);
   const bookmarks = await getUserBookmarks(user.id, page);
   const properties = await getUserProperties(user.id, page);
   const ratings = await getUserRatings(user.id);
   const stats = await getUserStats(user.id);
   const propertySummary = await getPropertySummary(user.id);
+
+  // Fetch the user's properties
+  const userProperties = await prisma.property.findMany({
+    where: {
+      userId: user.id,
+    },
+    orderBy: {
+      createdAt: "desc", // Sort by most recent
+    },
+  });
 
   let adminSummary;
   let recentOrders;
@@ -74,6 +91,23 @@ export default async function DashboardPage({
       </Card>
 
       <main className="w-full mx-auto py-6">
+        {/* Add PropertyPaymentManager component here */}
+        {userProperties.length > 0 && (
+          <Card className="mb-6 bg-white shadow-md">
+            <CardContent className="p-4">
+              <PropertyPaymentManager
+                properties={userProperties}
+                user={{
+                  id: user.id!,
+                  email: user.email || "",
+                  name: user.name || "",
+                  phone: user.phoneNumber || "",
+                }}
+              />
+            </CardContent>
+          </Card>
+        )}
+
         {user.role === "ADMIN" && adminSummary && (
           <Card className="mb-6 bg-white shadow-md">
             <CardHeader className="p-4">
@@ -91,16 +125,25 @@ export default async function DashboardPage({
                   title="Total Revenue"
                   value={`KES ${adminSummary.totalRevenue.toLocaleString()}`}
                 />
-                <StatCard
+                <AdminPropertyCard
                   icon={<Home className="h-5 w-5 text-emerald-500" />}
                   title="Active Properties"
                   value={adminSummary.activeProperties}
+                  href="/dashboard/properties?status=active"
                 />
-                <StatCard
+                <AdminPropertyCard
                   icon={<XCircle className="h-5 w-5 text-red-500" />}
                   title="Inactive Properties"
                   value={adminSummary.inActiveProperties}
+                  href="/dashboard/properties?status=inactive"
                 />
+              </div>
+              <div className="mt-4">
+                <Link href="/dashboard/property-management">
+                  <Button variant="outline" size="sm">
+                    Manage All Properties
+                  </Button>
+                </Link>
               </div>
             </CardContent>
           </Card>
@@ -161,5 +204,32 @@ function StatCard({
         <p className="text-lg font-semibold">{value}</p>
       </div>
     </div>
+  );
+}
+
+function AdminPropertyCard({
+  icon,
+  title,
+  value,
+  href,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  value: number | string;
+  href: string;
+}) {
+  return (
+    <Link href={href} className="group">
+      <div className="flex items-center space-x-2 p-2 rounded-md transition-colors hover:bg-gray-50">
+        {icon}
+        <div>
+          <p className="text-xs text-gray-500">{title}</p>
+          <p className="text-lg font-semibold">{value}</p>
+        </div>
+        <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
+          <ChevronRight className="h-4 w-4 text-gray-400" />
+        </div>
+      </div>
+    </Link>
   );
 }

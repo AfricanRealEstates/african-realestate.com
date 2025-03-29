@@ -12,95 +12,178 @@ const lexend = Lexend({
 
 async function getProperties() {
   try {
-    const platinumProperties = await prisma.property.findMany({
-      where: {
-        isActive: true,
-        orders: {
-          some: {
-            tierName: "Platinum", // Only Platinum properties
+    // Keep track of selected property IDs to avoid duplicates
+    const selectedIds = new Set<string>();
+    const allFeaturedProperties: any[] = [];
+
+    // Define our tier allocation targets
+    const tierAllocation = {
+      Platinum: 3,
+      Diamond: 2,
+      Bronze: 1,
+    };
+
+    // Total properties we want to display
+    const totalPropertiesToShow = 6;
+
+    // 1. First pass: Get properties for each tier according to our ideal allocation
+    for (const [tierName, targetCount] of Object.entries(tierAllocation)) {
+      const tierProperties = await prisma.property.findMany({
+        where: {
+          isActive: true,
+          id: {
+            notIn: Array.from(selectedIds),
+          },
+          orders: {
+            some: {
+              tierName: tierName,
+            },
           },
         },
-      },
-      include: {
-        orders: {
-          select: {
-            tierName: true,
+        include: {
+          orders: {
+            select: {
+              tierName: true,
+            },
           },
         },
-      },
-      orderBy: {
-        updatedAt: "desc", // Sort by most recently updated
-      },
-      take: 3, // Limit to the first 3 Platinum properties
-    });
+        orderBy: {
+          updatedAt: "desc",
+        },
+        take: targetCount,
+      });
 
-    const diamondProperties = await prisma.property.findMany({
-      where: {
-        isActive: true,
-        orders: {
-          some: {
-            tierName: "Diamond", // Only Diamond properties
+      // Add properties from this tier to our selection
+      tierProperties.forEach((property) => {
+        selectedIds.add(property.id);
+        allFeaturedProperties.push({
+          ...property,
+          displayTier: tierName,
+        });
+      });
+
+      console.log(
+        `Found ${tierProperties.length}/${targetCount} ${tierName} properties`
+      );
+    }
+
+    // 2. Second pass: If we still have slots to fill, try to fill with remaining properties
+    // from each tier in order of priority (Platinum > Diamond > Bronze)
+    if (allFeaturedProperties.length < totalPropertiesToShow) {
+      const remainingSlotsAfterFirstPass =
+        totalPropertiesToShow - allFeaturedProperties.length;
+      console.log(`Need to fill ${remainingSlotsAfterFirstPass} more slots`);
+
+      // Try to fill with remaining properties from each tier in priority order
+      for (const tierName of Object.keys(tierAllocation)) {
+        // Skip if we've already filled all slots
+        if (allFeaturedProperties.length >= totalPropertiesToShow) break;
+
+        const remainingSlots =
+          totalPropertiesToShow - allFeaturedProperties.length;
+
+        const additionalTierProperties = await prisma.property.findMany({
+          where: {
+            isActive: true,
+            id: {
+              notIn: Array.from(selectedIds),
+            },
+            orders: {
+              some: {
+                tierName: tierName,
+              },
+            },
+          },
+          include: {
+            orders: {
+              select: {
+                tierName: true,
+              },
+            },
+          },
+          orderBy: {
+            updatedAt: "desc",
+          },
+          take: remainingSlots,
+        });
+
+        // Add additional properties from this tier
+        additionalTierProperties.forEach((property) => {
+          selectedIds.add(property.id);
+          allFeaturedProperties.push({
+            ...property,
+            displayTier: tierName,
+          });
+        });
+
+        console.log(
+          `Added ${additionalTierProperties.length} more ${tierName} properties`
+        );
+      }
+    }
+
+    // 3. Final pass: If we still don't have enough properties, fill with any active properties
+    if (allFeaturedProperties.length < totalPropertiesToShow) {
+      const finalRemainingSlots =
+        totalPropertiesToShow - allFeaturedProperties.length;
+      console.log(
+        `Still need ${finalRemainingSlots} more properties, filling with any active properties`
+      );
+
+      const fillerProperties = await prisma.property.findMany({
+        where: {
+          isActive: true,
+          id: {
+            notIn: Array.from(selectedIds),
           },
         },
-      },
-      include: {
-        orders: {
-          select: {
-            tierName: true,
+        include: {
+          orders: {
+            select: {
+              tierName: true,
+            },
           },
         },
-      },
-      orderBy: {
-        updatedAt: "desc", // Sort by most recently updated
-      },
-      take: 2, // Limit to the first 2 Diamond properties
-    });
-
-    const bronzeProperties = await prisma.property.findMany({
-      where: {
-        isActive: true,
-        orders: {
-          some: {
-            tierName: "Bronze", // Only Bronze properties
-          },
+        orderBy: {
+          updatedAt: "desc",
         },
-      },
-      include: {
-        orders: {
-          select: {
-            tierName: true,
-          },
-        },
-      },
-      orderBy: {
-        updatedAt: "desc", // Sort by most recently updated
-      },
-      take: 1, // Limit to the first Bronze property
-    });
+        take: finalRemainingSlots,
+      });
 
-    // Combine the properties from each tier
-    let properties: any = [
-      ...platinumProperties,
-      ...diamondProperties,
-      ...bronzeProperties,
-    ];
+      // Add filler properties
+      fillerProperties.forEach((property) => {
+        // Determine display tier - use the property's highest tier if it has one
+        let displayTier = undefined;
+        if (property.orders && property.orders.length > 0) {
+          // Find the highest tier if the property has multiple orders
+          if (property.orders.some((order) => order.tierName === "Platinum")) {
+            displayTier = "Platinum";
+          } else if (
+            property.orders.some((order) => order.tierName === "Diamond")
+          ) {
+            displayTier = "Diamond";
+          } else if (
+            property.orders.some((order) => order.tierName === "Bronze")
+          ) {
+            displayTier = "Bronze";
+          } else {
+            displayTier = property.orders[0].tierName;
+          }
+        }
 
-    // If less than 6 properties, fill the remaining spots with placeholders
-    const placeholderProperties = await prisma.property.findMany({
-      where: {
-        isActive: true,
-      },
-      orderBy: {
-        updatedAt: "desc", // Get other featured properties
-      },
-      take: 6 - properties.length, // Only take the remaining required properties
-    });
+        allFeaturedProperties.push({
+          ...property,
+          displayTier: displayTier,
+        });
+      });
 
-    // Add the placeholder properties
-    properties = [...properties, ...placeholderProperties];
+      console.log(`Added ${fillerProperties.length} filler properties`);
+    }
 
-    console.log("Properties fetched:", properties);
-    return properties;
+    console.log(`Total featured properties: ${allFeaturedProperties.length}`);
+
+    // Make sure we don't exceed our total
+    return allFeaturedProperties.slice(0, totalPropertiesToShow);
   } catch (error) {
     console.error("Error fetching properties:", error);
     return [];
@@ -124,11 +207,7 @@ function PropertyList({ properties }: any) {
         <PropertyCard
           key={property.id}
           data={property}
-          tierName={
-            property.orders && property.orders.length > 0
-              ? property.orders[0].tierName
-              : undefined
-          }
+          tierName={property.displayTier}
         />
       ))}
     </article>

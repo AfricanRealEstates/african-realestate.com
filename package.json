@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
-    "backup-db": "node scripts/backup-database.js"
+    "backup-db": "node scripts/backup-database.js",
+    "cron": "node -e \"require('./app/cron').initCronJobs()\""
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.0.0",
@@ -88,6 +89,7 @@
     "draft-js": "^0.11.7",
     "embla-carousel-react": "^8.1.6",
     "escape-string-regexp": "^5.0.0",
+    "express": "^4.21.2",
     "firebase": "^10.8.1",
     "framer": "^2.4.1",
     "froala-editor": "^4.2.0",
@@ -107,6 +109,7 @@
     "next-mdx-remote": "^5.0.0",
     "next-share": "^0.27.0",
     "next-themes": "^0.3.0",
+    "node-cron": "^3.0.3",
     "pg": "^8.13.1",
     "react": "^18.2.0",
     "react-avatar-editor": "^13.0.2",
@@ -161,9 +164,11 @@
     "@tailwindcss/typography": "^0.5.13",
     "@tanstack/react-query-devtools": "^5.32.0",
     "@types/bcryptjs": "^2.4.6",
+    "@types/express": "^5.0.0",
     "@types/lodash.debounce": "^4.0.9",
     "@types/markdown-draft-js": "^2.2.7",
     "@types/node": "^20",
+    "@types/node-cron": "^3.0.11",
     "@types/react": "^18",
     "@types/react-avatar-editor": "^13.0.4",
     "@types/react-dom": "^18",

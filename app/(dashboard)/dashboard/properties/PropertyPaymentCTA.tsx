@@ -53,12 +53,13 @@ export function PropertyPaymentCTA({
               </p>
             ) : (
               <>
-                <p className="text-sm text-yellow-700">
+                {/* <p className="text-sm text-yellow-700">
                   You have {unpaidPropertiesCount} unpublished{" "}
                   {unpaidPropertiesCount === 1 ? "property" : "properties"}.
-                </p>
+                </p> */}
                 <p className="text-sm text-yellow-700">
                   Pay NOW for{" "}
+                  <span className="underline"> {unpaidPropertiesCount}</span>{" "}
                   {unpaidPropertiesCount === 1 ? "property" : "properties"} to
                   go live
                 </p>
@@ -66,7 +67,7 @@ export function PropertyPaymentCTA({
             )}
           </div>
         </div>
-        <div className="grid grid-cols-3 lg:grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
           <Button
             onClick={() => onChangeViewMode("unpaid")}
             variant={viewMode === "unpaid" ? "default" : "outline"}
@@ -75,8 +76,8 @@ export function PropertyPaymentCTA({
               viewMode === "unpaid"
                 ? "bg-blue-500 text-white border-2 border-blue-600 w-full"
                 : allPropertiesPaid
-                ? "bg-green-50 text-green-700 hover:bg-green-100 w-full"
-                : "bg-yellow-50 text-yellow-700 hover:bg-yellow-100 w-full"
+                  ? "bg-green-50 text-green-700 hover:bg-green-100 w-full"
+                  : "bg-yellow-50 text-yellow-700 hover:bg-yellow-100 w-full"
             }`}
           >
             Unpublished ({unpaidPropertiesCount})
@@ -89,8 +90,8 @@ export function PropertyPaymentCTA({
               viewMode === "paid"
                 ? "bg-blue-500 text-white border-2 border-blue-600 w-full"
                 : allPropertiesPaid
-                ? "bg-green-50 text-green-700 hover:bg-green-100 w-full"
-                : "bg-yellow-50 text-yellow-700 hover:bg-yellow-100 w-full"
+                  ? "bg-green-50 text-green-700 hover:bg-green-100 w-full"
+                  : "bg-yellow-50 text-yellow-700 hover:bg-yellow-100 w-full"
             }`}
           >
             Published ({paidPropertiesCount})
@@ -99,12 +100,12 @@ export function PropertyPaymentCTA({
             onClick={() => onChangeViewMode("all")}
             variant={viewMode === "all" ? "default" : "outline"}
             size="sm"
-            className={`${
+            className={`hidden lg:flex ${
               viewMode === "all"
                 ? "bg-blue-500 text-white border-2 border-blue-600 w-full"
                 : allPropertiesPaid
-                ? "bg-green-50 text-green-700 hover:bg-green-100 w-full"
-                : "bg-yellow-50 text-yellow-700 hover:bg-yellow-100 w-full"
+                  ? "bg-green-50 text-green-700 hover:bg-green-100 w-full"
+                  : "bg-yellow-50 text-yellow-700 hover:bg-yellow-100 w-full"
             }`}
           >
             All ({totalPropertiesCount})

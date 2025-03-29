@@ -5,7 +5,8 @@ import Link from "next/link";
 import { format } from "date-fns";
 import PopularBlogs from "../../../PopularBlogs";
 import RecommendedTopics from "../../../RecommendedTopics";
-import { Metadata } from "next";
+import type { Metadata } from "next";
+import Pagination from "@/app/(blog)/Pagination";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -50,9 +51,25 @@ export async function generateMetadata({
 
 export default async function AuthorPostsPage({
   params,
+  searchParams,
 }: {
   params: { id: string };
+  searchParams: { page?: string };
 }) {
+  const currentPage = Number(searchParams.page) || 1;
+  const postsPerPage = 10;
+  const skip = (currentPage - 1) * postsPerPage;
+
+  // Get total count of posts for pagination
+  const totalPosts = await prisma.post.count({
+    where: {
+      authorId: params.id,
+      published: true,
+    },
+  });
+
+  const totalPages = Math.ceil(totalPosts / postsPerPage);
+
   const author = await prisma.user.findUnique({
     where: { id: params.id },
     include: {
@@ -62,6 +79,8 @@ export default async function AuthorPostsPage({
         include: {
           likes: true,
         },
+        skip,
+        take: postsPerPage,
       },
     },
   });
@@ -85,7 +104,7 @@ export default async function AuthorPostsPage({
           </div>
 
           <div className="w-full max-w-4xl mx-auto">
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-2 mt-6">
               {author.posts.map((post) => (
                 <article
                   key={post.id}
@@ -129,6 +148,11 @@ export default async function AuthorPostsPage({
                   </Link>
                 </article>
               ))}
+            </div>
+            <div className="mb-6">
+              {totalPages > 1 && (
+                <Pagination currentPage={currentPage} totalPages={totalPages} />
+              )}
             </div>
           </div>
 

@@ -49,7 +49,7 @@ export default async function Support() {
     isAdmin || hasPermission(user.permissions, "support:respond");
 
   return (
-    <section className="px-2 sm:px-4 pt-4 sm:pt-6 space-y-4 sm:space-y-6 max-w-full">
+    <section className="px-2 sm:px-4 pt-4 sm:pt-6 space-y-4 sm:space-y-6 max-w-full relative">
       <div className="mb-2 sm:mb-4 col-span-full">
         <h1 className="text-xl sm:text-2xl font-semibold text-blue-600">
           {isAdmin ? "Support Management" : "Support Dashboard"}

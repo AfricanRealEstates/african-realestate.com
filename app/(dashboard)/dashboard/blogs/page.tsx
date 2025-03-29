@@ -72,7 +72,7 @@ export default async function BlogDashboard({
   const acceptedInvitations = isAdmin ? await getAcceptedInvitations() : [];
 
   return (
-    <>
+    <div className="relative">
       {isAdmin && (
         <>
           <div className="container mx-auto py-6 px-4 sm:px-6">
@@ -107,6 +107,6 @@ export default async function BlogDashboard({
           <PaginationControls pageCount={pageCount} currentPage={page} />
         </div>
       </div>
-    </>
+    </div>
   );
 }
