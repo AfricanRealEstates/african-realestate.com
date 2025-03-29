@@ -97,7 +97,7 @@ export default async function PropertiesTable({
                     />
                   </div>
                   <div>
-                    <p className="font-medium truncate max-w-[200px]">
+                    <p className="font-medium text-xs truncate max-w-[200px]">
                       {property.title}
                     </p>
                     <div className="flex items-center gap-1">
