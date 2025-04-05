@@ -48,7 +48,7 @@ export function PropertyPaymentCTA({
           </div>
           <div className="ml-3 space-y-2">
             {allPropertiesPaid ? (
-              <p className="text-sm text-green-700">
+              <p className="text-xs lg:text-sm text-green-700">
                 Congratulations! All your properties are paid and published.
               </p>
             ) : (
@@ -57,7 +57,7 @@ export function PropertyPaymentCTA({
                   You have {unpaidPropertiesCount} unpublished{" "}
                   {unpaidPropertiesCount === 1 ? "property" : "properties"}.
                 </p> */}
-                <p className="text-sm text-yellow-700">
+                <p className="text-xs lg:text-sm text-yellow-700">
                   Pay NOW for{" "}
                   <span className="underline"> {unpaidPropertiesCount}</span>{" "}
                   {unpaidPropertiesCount === 1 ? "property" : "properties"} to
@@ -72,7 +72,7 @@ export function PropertyPaymentCTA({
             onClick={() => onChangeViewMode("unpaid")}
             variant={viewMode === "unpaid" ? "default" : "outline"}
             size="sm"
-            className={`${
+            className={`text-xs lg:text-sm ${
               viewMode === "unpaid"
                 ? "bg-blue-500 text-white border-2 border-blue-600 w-full"
                 : allPropertiesPaid
@@ -86,7 +86,7 @@ export function PropertyPaymentCTA({
             onClick={() => onChangeViewMode("paid")}
             variant={viewMode === "paid" ? "default" : "outline"}
             size="sm"
-            className={`${
+            className={`text-xs lg:text-sm ${
               viewMode === "paid"
                 ? "bg-blue-500 text-white border-2 border-blue-600 w-full"
                 : allPropertiesPaid

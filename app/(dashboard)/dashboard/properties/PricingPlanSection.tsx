@@ -291,6 +291,12 @@ export default function PricingPlanSection({
                       : "hover:shadow-md"
                   }`}
                 >
+                  {/* Add the Recommended badge for mobile view */}
+                  {tier.recommended && (
+                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-semibold py-1 px-4 rounded-full shadow-md z-10">
+                      Recommended
+                    </div>
+                  )}
                   <CardHeader>
                     <CardTitle className="text-xl text-blue-800 flex items-center justify-between">
                       {tier.title}
@@ -350,7 +356,7 @@ export default function PricingPlanSection({
               </CarouselItem>
             ))}
           </CarouselContent>
-          <div className="flex justify-between w-full absolute top-1/2 -translate-y-1/2 left-0 right-0 px-2 z-10">
+          <div className="flex justify-between w-full absolute top-1/2 -translate-y-1/2 left-0 right-0 px-2 z-[5]">
             <CarouselPrevious className="relative -left-5 translate-y-0" />
             <CarouselNext className="relative -right-5 translate-y-0" />
           </div>
@@ -436,8 +442,8 @@ export default function PricingPlanSection({
         <div className="w-full lg:mt-12 mt-4">
           <div className="flex flex-col lg:flex-row justify-between items-start gap-8">
             <div className="w-full lg:w-1/2">
-              <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
-                <h3 className="text-lg font-semibold mb-4">
+              <div className="bg-gray-50 p-3 rounded-lg shadow-sm">
+                <h3 className="text-lg font-semibold mb-4 hidden lg:block">
                   Available Discounts
                 </h3>
                 {userDiscounts.length > 0 ? (
@@ -527,7 +533,7 @@ export default function PricingPlanSection({
               </div>
             </div>
             <div className="w-full lg:w-1/2 flex flex-col items-center">
-              <div className="my-2 text-center">
+              <div className="lg:my-1 text-center">
                 <p className="text-2xl font-bold">
                   Total: KES{" "}
                   {calculateTotalAmount(selectedTier).toLocaleString()}

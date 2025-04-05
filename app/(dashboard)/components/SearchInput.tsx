@@ -1,8 +1,7 @@
 "use client";
-import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 export default function SearchInput({
   search,
   searchType,
@@ -44,7 +43,7 @@ export default function SearchInput({
           }, 500);
           setTimeoutId(id);
         }}
-        className="bg-gray-50 ring-1 ring-gray-300 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2"
+        className="placeholder:text-xs bg-gray-50 ring-1 ring-gray-300 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2"
       />
       {isSearching && (
         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">

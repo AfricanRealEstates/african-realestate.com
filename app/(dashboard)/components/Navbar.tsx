@@ -41,7 +41,9 @@ export default async function Navbar() {
             alt="message"
           />
         </button>
-        <NotificationIcon notifications={notifications} />
+        {user && user.role === "ADMIN" && (
+          <NotificationIcon notifications={notifications} />
+        )}
         <div className="hidden sm:flex sm:flex-col">
           <span className="text-xs font-medium leading-3">{user?.name}</span>
           <span className="text-right text-[10px] text-rose-500">

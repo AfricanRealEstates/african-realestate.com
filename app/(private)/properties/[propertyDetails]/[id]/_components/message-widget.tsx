@@ -38,7 +38,8 @@ export default function MessageWidget({
   // Create a pre-formatted message for WhatsApp sharing
   const createShareMessage = () => {
     return encodeURIComponent(
-      `*Check out this property!* ✅️\n\n` +
+      `*I'm interested in this property* ✅️\n\n` +
+        `*Can we have a chat?* ✅️\n\n` +
         `${propertyTitle}\n` +
         `Price: ${currencySymbol} ${formattedPrice}\n` +
         `Location: ${location}\n\n` +
@@ -71,7 +72,7 @@ export default function MessageWidget({
         {({ open }) => (
           <>
             <DisclosureButton
-              className="ease fixed right-5 bottom-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-green-500 shadow-lg transition duration-300 hover:bg-green-600 focus:bg-green-600 focus:outline-none"
+              className="ease fixed right-5 bottom-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-neutral-50 shadow-2xl transition duration-300 hover:bg-neutral-100 focus:bg-neutral-100 focus:outline-none"
               onClick={() => setIsOpen(!isOpen)}
             >
               <span className="sr-only">Share on WhatsApp</span>
@@ -110,7 +111,7 @@ export default function MessageWidget({
                 enterFrom="opacity-0 rotate-45 scale-75"
                 leave="transition duration-100 transform ease"
                 leaveTo="opacity-0 rotate-45"
-                className="absolute h-6 w-6 text-white"
+                className="absolute h-6 w-6 text-gray-600"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -139,7 +140,7 @@ export default function MessageWidget({
               leaveTo="opacity-0 translate-y-5"
             >
               <DisclosurePanel className="flex flex-col overflow-hidden rounded-md border border-gray-300 bg-white shadow-2xl">
-                <div className="flex flex-col items-center justify-center bg-green-600 p-5">
+                <div className="flex flex-col items-center justify-center bg-blue-400 p-5">
                   <h3 className="text-lg text-white">Share this property</h3>
                   <p className="text-white opacity-80 text-sm text-center">
                     Share this property with friends or contact the agent
@@ -149,7 +150,7 @@ export default function MessageWidget({
                 <div className="p-6 space-y-4">
                   <button
                     onClick={handleWhatsAppShare}
-                    className="w-full flex items-center justify-center gap-2 rounded-md bg-green-500 px-3 py-4 text-white hover:bg-green-600 focus:outline-none transition-colors"
+                    className="w-full flex items-center justify-center gap-2 rounded-md bg-blue-500 px-3 py-4 text-white hover:bg-blue-400 focus:outline-none transition-colors"
                   >
                     <svg
                       viewBox="0 0 256 259"
@@ -172,7 +173,7 @@ export default function MessageWidget({
 
                   <button
                     onClick={handleDirectShare}
-                    className="w-full flex items-center justify-center gap-2 rounded-md bg-indigo-500 px-3 py-4 text-white hover:bg-indigo-600 focus:outline-none transition-colors"
+                    className="w-full flex items-center justify-center gap-2 rounded-md bg-blue-400 px-3 py-4 text-white hover:bg-blue-500 focus:outline-none transition-colors"
                   >
                     <Share2 className="h-5 w-5" />
                     Share with Friends

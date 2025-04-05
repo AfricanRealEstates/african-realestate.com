@@ -250,15 +250,15 @@ export default async function Page({
               <div className="border-r border-ken-primary/10" />
               <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                 {/* {post.updatedAt &&
-          post.updatedAt.getTime() > post.createdAt.getTime() + 60000 ? (
-            <p className="text-sm text-neutral-600">
-              Updated on:{" "}
-              <span className="font-bold">
-                {format(post.updatedAt, "MMMM dd, yyyy")}
-              </span>
-            </p>
-          ) : (
-            )} */}
+      post.updatedAt.getTime() > post.createdAt.getTime() + 60000 ? (
+        <p className="text-sm text-neutral-600">
+          Updated on:{" "}
+          <span className="font-bold">
+            {format(post.updatedAt, "MMMM dd, yyyy")}
+          </span>
+        </p>
+      ) : (
+        )} */}
                 <p className="text-sm text-neutral-600">
                   Published on:{" "}
                   <span className="font-bold">
@@ -335,7 +335,9 @@ export default async function Page({
                   <span>{post.viewCount} views</span>
                 </div>
                 <span className="ml-4 px-2 py-1 bg-gray-100 rounded-md text-sm font-medium">
-                  {blogPosition}/{totalPublishedBlogs}
+                  {blogPosition.toString().padStart(4, "0")}
+
+                  {/* /{totalPublishedBlogs.toString().padStart(4, "0")} */}
                 </span>
               </div>
             </article>

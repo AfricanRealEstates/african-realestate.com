@@ -16,9 +16,24 @@ export type Post = {
   createdAt: string;
   slug: string;
   topics: string[];
+  // Add a virtual property for the blog number
+  blogNumber?: number;
 };
 
 export const columns: ColumnDef<Post>[] = [
+  {
+    id: "blogNumber",
+    header: "Blog #",
+    cell: ({ row }) => {
+      // Format the blog number with leading zeros (4 digits)
+      const blogNumber = row.original.blogNumber || 0;
+      return (
+        <span className="font-mono">
+          {blogNumber.toString().padStart(4, "0")}
+        </span>
+      );
+    },
+  },
   {
     accessorKey: "title",
     header: ({ column }) => {

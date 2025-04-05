@@ -52,7 +52,7 @@ export default async function BlogDashboard({
   // Execute both queries in parallel
   const [posts, totalPosts] = await Promise.all([postsQuery, countQuery]);
 
-  const formattedPosts = posts.map((post) => ({
+  const formattedPosts = posts.map((post, index) => ({
     id: post.id,
     title: post.title,
     likes: post.likes.length,
@@ -63,6 +63,8 @@ export default async function BlogDashboard({
     createdAt: post.createdAt.toISOString(),
     slug: post.slug,
     topics: post.topics,
+    // Calculate the blog number based on the current page and index
+    blogNumber: (page - 1) * perPage + index + 1,
   }));
 
   // Calculate page count

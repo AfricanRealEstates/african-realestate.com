@@ -34,8 +34,8 @@ export default async function PropertiesPage({
     typeof searchParams.search === "string" ? searchParams.search : undefined;
 
   return (
-    <section className="pt-2 flex flex-col relative">
-      <h1 className="text-xl lg:font-semibold text-gray-900 sm:text-2xl mb-4">
+    <section className="pt-1 flex flex-col relative">
+      <h1 className="text-lg lg:font-semibold text-gray-900 sm:text-2xl mb-2">
         All properties
       </h1>
       {userProperties.length > 0 ? (
@@ -48,7 +48,7 @@ export default async function PropertiesPage({
               <Button asChild>
                 <Link
                   href="/agent/properties/create-property"
-                  className="flex items-center gap-3 text-sm"
+                  className="flex items-center gap-3 text-xs lg:text-sm"
                 >
                   <Plus className="size-4" />
                   Add properties

@@ -67,7 +67,7 @@ export default function RoleSpecificFields({
                 name="agentEmail"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Agency Email</FormLabel>
+                    <FormLabel>Agency Email (option)</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="contact@agency.com"
@@ -107,7 +107,7 @@ export default function RoleSpecificFields({
                 name="officeLine"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Office Phone</FormLabel>
+                    <FormLabel>Office Phone (optional)</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="+25400000000"
