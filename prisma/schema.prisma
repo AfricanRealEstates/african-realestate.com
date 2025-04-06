@@ -10,17 +10,17 @@ datasource db {
 }
 
 model User {
-  id                String          @id @default(dbgenerated("concat('user_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
+  id                String           @id @default(dbgenerated("concat('user_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
   name              String?
   username          String?
-  email             String?         @unique
+  email             String?          @unique
   emailVerified     DateTime?
   image             String?
-  role              UserRole        @default(USER)
+  role              UserRole         @default(USER)
   permissions       String[]
   password          String?
-  isVerified        Boolean         @default(false)
-  isActive          Boolean         @default(true)
+  isVerified        Boolean          @default(false)
+  isActive          Boolean          @default(true)
   token             Int?
   agentName         String?
   agentEmail        String?
@@ -39,15 +39,15 @@ model User {
   youtubeLink       String?
   linkedinLink      String?
   instagramLink     String?
-  showAgentContact  Boolean?        @default(false)
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-  isPremium         Boolean         @default(false)
+  showAgentContact  Boolean?         @default(false)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  isPremium         Boolean          @default(false)
   favoriteIds       String[]
   suspensionEndDate DateTime?
   comments          Comment[]
-  following         Follows[]       @relation("follower")
-  followedBy        Follows[]       @relation("following")
+  following         Follows[]        @relation("follower")
+  followedBy        Follows[]        @relation("following")
   likes             Like[]
   notifications     Notification[]
   viewedProperties  PropertyView[]
@@ -60,11 +60,12 @@ model User {
   queries           Query[]
   sessions          Session[]
   subscriptions     Subscription[]
-  discounts         Discount[]      @relation("UserDiscounts")
-  likedPosts        BlogPost[]      @relation("UserLikedPosts")
-  likedBlog         Post[]          @relation("UserLikes")
+  discounts         Discount[]       @relation("UserDiscounts")
+  likedPosts        BlogPost[]       @relation("UserLikedPosts")
+  likedBlog         Post[]           @relation("UserLikes")
   posts             Post[]
-  Invitation        Invitation[]
+  invitations       Invitation[]
+  marketingEmails   MarketingEmail[]
 
   @@map("users")
 }
@@ -168,16 +169,17 @@ model Property {
   updatedAt              DateTime  @updatedAt
   expiryDate             DateTime?
 
-  comments      Comment[]
-  likes         Like[]
-  notifications Notification[]
-  views         PropertyView[]
-  ratings       Rating[]
-  savedBy       SavedProperty[]
-  upvotes       Upvote[]
-  orders        Order[]
-  user          User            @relation(fields: [userId], references: [id])
-  queries       Query[]
+  comments       Comment[]
+  likes          Like[]
+  notifications  Notification[]
+  views          PropertyView[]
+  ratings        Rating[]
+  savedBy        SavedProperty[]
+  upvotes        Upvote[]
+  orders         Order[]
+  user           User             @relation(fields: [userId], references: [id])
+  queries        Query[]
+  MarketingEmail MarketingEmail[]
 
   @@map("properties")
 }
@@ -413,6 +415,36 @@ model EmailLog {
   @@index([userId])
   @@index([propertyId])
   @@map("email_logs")
+}
+
+model EmailTemplate {
+  id        String   @id @default(cuid())
+  name      String
+  content   String   @db.Text
+  type      String // "active-property" or "inactive-property"
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("email_templates")
+}
+
+// Add this new model to track marketing emails
+model MarketingEmail {
+  id         String   @id @default(cuid())
+  propertyId String
+  userId     String
+  templateId String?
+  message    String   @db.Text
+  type       String // "active-property" or "inactive-property"
+  sentAt     DateTime @default(now())
+
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([propertyId])
+  @@index([userId])
+  @@map("marketing_emails")
 }
 
 enum UserRole {

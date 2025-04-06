@@ -29,7 +29,7 @@ export default async function DashboardLayout({
       <div className="flex-1 flex flex-col overflow-hidden w-full">
         <Navbar />
         <div className="flex-1 overflow-y-auto">
-          <main className="p-6 w-full">{children}</main>
+          <main className="p-2 lg:p-6 w-full">{children}</main>
           <footer className="p-4 border-t border-gray-300">
             <p className="text-center text-sm text-gray-600">
               &copy; African Real Estate, {new Date().getFullYear()}. All Rights

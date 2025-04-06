@@ -75,12 +75,12 @@ export default async function PropertiesManagementPage({
   const totalPages = Math.ceil(totalProperties / limit);
 
   return (
-    <div className="container mx-auto py-6">
+    <div className="container mx-auto py-2 px-2">
       <div className="relative h-full">
         <Card>
           <CardHeader>
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <CardTitle className="text-2xl font-bold">
+              <CardTitle className="text-xl sm:text-2xl font-bold">
                 Properties Management
               </CardTitle>
 
@@ -95,7 +95,7 @@ export default async function PropertiesManagementPage({
                   <Input
                     type="text"
                     name="search"
-                    placeholder="Search by property number, title, location..."
+                    placeholder="Search properties..."
                     defaultValue={search || ""}
                     className="pr-10"
                   />
@@ -113,12 +113,15 @@ export default async function PropertiesManagementPage({
           </CardHeader>
           <CardContent>
             <Tabs defaultValue={activeTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-3 mb-6">
+              <TabsList className="grid w-full grid-cols-3 mb-6 overflow-x-auto">
                 <Link
                   href={`/dashboard/property-management${search ? `?search=${encodeURIComponent(search)}` : ""}`}
                   className="w-full"
                 >
-                  <TabsTrigger value="all" className="w-full">
+                  <TabsTrigger
+                    value="all"
+                    className="w-full text-xs sm:text-sm"
+                  >
                     All Properties
                   </TabsTrigger>
                 </Link>
@@ -126,7 +129,10 @@ export default async function PropertiesManagementPage({
                   href={`/dashboard/property-management?status=active${search ? `&search=${encodeURIComponent(search)}` : ""}`}
                   className="w-full"
                 >
-                  <TabsTrigger value="active" className="w-full">
+                  <TabsTrigger
+                    value="active"
+                    className="w-full text-xs sm:text-sm"
+                  >
                     Active Properties
                   </TabsTrigger>
                 </Link>
@@ -134,36 +140,41 @@ export default async function PropertiesManagementPage({
                   href={`/dashboard/property-management?status=inactive${search ? `&search=${encodeURIComponent(search)}` : ""}`}
                   className="w-full"
                 >
-                  <TabsTrigger value="inactive" className="w-full">
+                  <TabsTrigger
+                    value="inactive"
+                    className="w-full text-xs sm:text-sm"
+                  >
                     Inactive Properties
                   </TabsTrigger>
                 </Link>
               </TabsList>
 
-              <Suspense fallback={<Loading />}>
-                <TabsContent value="all">
-                  <PropertiesTable page={page} search={search} />
-                </TabsContent>
-                <TabsContent value="active">
-                  <PropertiesTable
-                    status="active"
-                    page={page}
-                    search={search}
-                  />
-                </TabsContent>
-                <TabsContent value="inactive">
-                  <PropertiesTable
-                    status="inactive"
-                    page={page}
-                    search={search}
-                  />
-                </TabsContent>
-              </Suspense>
+              <div className="overflow-x-auto">
+                <Suspense fallback={<Loading />}>
+                  <TabsContent value="all">
+                    <PropertiesTable page={page} search={search} />
+                  </TabsContent>
+                  <TabsContent value="active">
+                    <PropertiesTable
+                      status="active"
+                      page={page}
+                      search={search}
+                    />
+                  </TabsContent>
+                  <TabsContent value="inactive">
+                    <PropertiesTable
+                      status="inactive"
+                      page={page}
+                      search={search}
+                    />
+                  </TabsContent>
+                </Suspense>
+              </div>
             </Tabs>
 
             {/* Improved Pagination */}
             {totalPages > 1 && (
-              <div className="mt-6">
+              <div className="mt-6 flex justify-center">
                 <PaginationComponent
                   currentPage={page}
                   totalPages={totalPages}
