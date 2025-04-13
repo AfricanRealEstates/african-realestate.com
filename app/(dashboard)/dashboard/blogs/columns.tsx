@@ -47,6 +47,7 @@ export const columns: ColumnDef<Post>[] = [
         </Button>
       );
     },
+    filterFn: "includesString",
   },
   {
     accessorKey: "likes",
@@ -77,10 +78,12 @@ export const columns: ColumnDef<Post>[] = [
         </span>
       );
     },
+    filterFn: "equals",
   },
   {
     accessorKey: "author",
     header: "Author",
+    filterFn: "equals",
   },
   {
     accessorKey: "createdAt",

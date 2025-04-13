@@ -13,7 +13,13 @@ import { PaginationControls } from "./pagination-controls";
 export default async function BlogDashboard({
   searchParams,
 }: {
-  searchParams: { page?: string; per_page?: string };
+  searchParams: {
+    page?: string;
+    per_page?: string;
+    title?: string;
+    status?: string;
+    author?: string;
+  };
 }) {
   const session = await auth();
   if (!session || !session.user) {
@@ -26,28 +32,40 @@ export default async function BlogDashboard({
   // Check if user is admin
   const isAdmin = session.user.role === "ADMIN";
 
-  // Filter posts based on user role
-  const postsQuery = isAdmin
-    ? // Admin sees all posts
-      prisma.post.findMany({
-        skip: (page - 1) * perPage,
-        take: perPage,
-        orderBy: { createdAt: "desc" },
-        include: { author: true, likes: true },
-      })
-    : // Regular users see only their posts
-      prisma.post.findMany({
-        where: { authorId: session.user.id },
-        skip: (page - 1) * perPage,
-        take: perPage,
-        orderBy: { createdAt: "desc" },
-        include: { author: true, likes: true },
-      });
+  // Build where clause based on filters
+  const whereClause: any = isAdmin ? {} : { authorId: session.user.id };
 
-  // Count total posts based on user role
-  const countQuery = isAdmin
-    ? prisma.post.count()
-    : prisma.post.count({ where: { authorId: session.user.id } });
+  // Add title filter if provided
+  if (searchParams.title) {
+    whereClause.title = {
+      contains: searchParams.title,
+      mode: "insensitive", // Case-insensitive search
+    };
+  }
+
+  // Add status filter if provided
+  if (searchParams.status) {
+    whereClause.published = searchParams.status === "Published";
+  }
+
+  // Add author filter if provided (for admin only)
+  if (isAdmin && searchParams.author) {
+    whereClause.author = {
+      name: searchParams.author,
+    };
+  }
+
+  // Filter posts based on user role and filters
+  const postsQuery = prisma.post.findMany({
+    where: whereClause,
+    skip: (page - 1) * perPage,
+    take: perPage,
+    orderBy: { createdAt: "desc" },
+    include: { author: true, likes: true },
+  });
+
+  // Count total posts based on user role and filters
+  const countQuery = prisma.post.count({ where: whereClause });
 
   // Execute both queries in parallel
   const [posts, totalPosts] = await Promise.all([postsQuery, countQuery]);

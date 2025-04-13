@@ -129,13 +129,13 @@ export default async function DashboardPage({
                   icon={<Home className="h-5 w-5 text-emerald-500" />}
                   title="Active Properties"
                   value={adminSummary.activeProperties}
-                  href="/dashboard/properties?status=active"
+                  href="/dashboard/property-management?status=active"
                 />
                 <AdminPropertyCard
                   icon={<XCircle className="h-5 w-5 text-red-500" />}
                   title="Inactive Properties"
                   value={adminSummary.inActiveProperties}
-                  href="/dashboard/properties?status=inactive"
+                  href="/dashboard/property-management?status=inactive"
                 />
               </div>
               <div className="mt-4">

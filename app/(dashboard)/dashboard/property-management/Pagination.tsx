@@ -10,6 +10,12 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface PaginationComponentProps {
   currentPage: number;
@@ -78,53 +84,91 @@ export function PaginationComponent({
   const visiblePages = getVisiblePages();
 
   return (
-    <Pagination>
-      <PaginationContent>
-        <PaginationItem>
-          <PaginationPrevious
-            href={currentPage > 1 ? createPageUrl(currentPage - 1) : "#"}
-            aria-disabled={currentPage === 1}
-            className={
-              currentPage === 1 ? "pointer-events-none opacity-50" : ""
-            }
-          />
-        </PaginationItem>
+    <TooltipProvider>
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <PaginationPrevious
+                  href={currentPage > 1 ? createPageUrl(currentPage - 1) : "#"}
+                  aria-disabled={currentPage === 1}
+                  className={
+                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                  }
+                />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Go to previous page</p>
+              </TooltipContent>
+            </Tooltip>
+          </PaginationItem>
 
-        {visiblePages.map((page, index) => {
-          // Render ellipsis
-          if (page < 0) {
+          {visiblePages.map((page, index) => {
+            // Render ellipsis
+            if (page < 0) {
+              return (
+                <PaginationItem key={`ellipsis-${index}`}>
+                  <PaginationEllipsis />
+                </PaginationItem>
+              );
+            }
+
+            // Render page number with tooltip for first and last page
             return (
-              <PaginationItem key={`ellipsis-${index}`}>
-                <PaginationEllipsis />
+              <PaginationItem key={page}>
+                {page === 1 || page === totalPages ? (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <PaginationLink
+                        href={createPageUrl(page)}
+                        isActive={page === currentPage}
+                      >
+                        {page}
+                      </PaginationLink>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>
+                        {page === 1 ? "Go to first page" : "Go to last page"}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                ) : (
+                  <PaginationLink
+                    href={createPageUrl(page)}
+                    isActive={page === currentPage}
+                  >
+                    {page}
+                  </PaginationLink>
+                )}
               </PaginationItem>
             );
-          }
+          })}
 
-          // Render page number
-          return (
-            <PaginationItem key={page}>
-              <PaginationLink
-                href={createPageUrl(page)}
-                isActive={page === currentPage}
-              >
-                {page}
-              </PaginationLink>
-            </PaginationItem>
-          );
-        })}
-
-        <PaginationItem>
-          <PaginationNext
-            href={
-              currentPage < totalPages ? createPageUrl(currentPage + 1) : "#"
-            }
-            aria-disabled={currentPage === totalPages}
-            className={
-              currentPage === totalPages ? "pointer-events-none opacity-50" : ""
-            }
-          />
-        </PaginationItem>
-      </PaginationContent>
-    </Pagination>
+          <PaginationItem>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <PaginationNext
+                  href={
+                    currentPage < totalPages
+                      ? createPageUrl(currentPage + 1)
+                      : "#"
+                  }
+                  aria-disabled={currentPage === totalPages}
+                  className={
+                    currentPage === totalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
+                  }
+                />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Go to next page</p>
+              </TooltipContent>
+            </Tooltip>
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    </TooltipProvider>
   );
 }

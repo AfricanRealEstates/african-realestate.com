@@ -8,6 +8,12 @@ import {
   ChevronsLeft,
   ChevronsRight,
 } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface PaginationProps {
   currentPage: number;
@@ -89,51 +95,89 @@ export default function Pagination({
   };
 
   return (
-    <div className="flex justify-center items-center space-x-2 mt-8">
-      <Button
-        variant="outline"
-        size="icon"
-        disabled={currentPage === 1}
-        onClick={() =>
-          currentPage !== 1 && (window.location.href = createPageURL(1))
-        }
-      >
-        <ChevronsLeft className="h-4 w-4" />
-      </Button>
-      <Button
-        variant="outline"
-        size="icon"
-        disabled={currentPage === 1}
-        onClick={() =>
-          currentPage !== 1 &&
-          (window.location.href = createPageURL(currentPage - 1))
-        }
-      >
-        <ChevronLeft className="h-4 w-4" />
-      </Button>
-      {renderPageNumbers()}
-      <Button
-        variant="outline"
-        size="icon"
-        disabled={currentPage === totalPages}
-        onClick={() =>
-          currentPage !== totalPages &&
-          (window.location.href = createPageURL(currentPage + 1))
-        }
-      >
-        <ChevronRight className="h-4 w-4" />
-      </Button>
-      <Button
-        variant="outline"
-        size="icon"
-        disabled={currentPage === totalPages}
-        onClick={() =>
-          currentPage !== totalPages &&
-          (window.location.href = createPageURL(totalPages))
-        }
-      >
-        <ChevronsRight className="h-4 w-4" />
-      </Button>
-    </div>
+    <TooltipProvider>
+      <div className="flex justify-center items-center space-x-2 mt-8">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              disabled={currentPage === 1}
+              onClick={() =>
+                currentPage !== 1 && (window.location.href = createPageURL(1))
+              }
+            >
+              <ChevronsLeft className="h-4 w-4" />
+              <span className="sr-only">Go to first page</span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Go to first page</p>
+          </TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              disabled={currentPage === 1}
+              onClick={() =>
+                currentPage !== 1 &&
+                (window.location.href = createPageURL(currentPage - 1))
+              }
+            >
+              <ChevronLeft className="h-4 w-4" />
+              <span className="sr-only">Go to previous page</span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Go to previous page</p>
+          </TooltipContent>
+        </Tooltip>
+
+        {renderPageNumbers()}
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              disabled={currentPage === totalPages}
+              onClick={() =>
+                currentPage !== totalPages &&
+                (window.location.href = createPageURL(currentPage + 1))
+              }
+            >
+              <ChevronRight className="h-4 w-4" />
+              <span className="sr-only">Go to next page</span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Go to next page</p>
+          </TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              disabled={currentPage === totalPages}
+              onClick={() =>
+                currentPage !== totalPages &&
+                (window.location.href = createPageURL(totalPages))
+              }
+            >
+              <ChevronsRight className="h-4 w-4" />
+              <span className="sr-only">Go to last page</span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Go to last page</p>
+          </TooltipContent>
+        </Tooltip>
+      </div>
+    </TooltipProvider>
   );
 }
