@@ -9,6 +9,7 @@ import ShareButton from "./ShareButton";
 import { incrementViewCount } from "@/actions/blog";
 import { auth } from "@/auth";
 import Link from "next/link";
+import BlogViewTracker from "@/app/(blog)/BlogViewTracker";
 
 export const dynamic = "force-dynamic";
 
@@ -268,6 +269,12 @@ export default async function Page({
         />
       ))}
 
+      <BlogViewTracker
+        postId={post.id}
+        slug={params.slug}
+        topic={params.topic}
+      />
+
       {/* <ReportViews topic={params.topic} title={post.title} slug={post.slug} /> */}
 
       <div className="">
@@ -296,10 +303,10 @@ export default async function Page({
                 {/* {post.updatedAt &&
 post.updatedAt.getTime() > post.createdAt.getTime() + 60000 ? (
 <p className="text-sm text-neutral-600">
-  Updated on:{" "}
-  <span className="font-bold">
-    {format(post.updatedAt, "MMMM dd, yyyy")}
-  </span>
+Updated on:{" "}
+<span className="font-bold">
+  {format(post.updatedAt, "MMMM dd, yyyy")}
+</span>
 </p>
 ) : (
 )} */}

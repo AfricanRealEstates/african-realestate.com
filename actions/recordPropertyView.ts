@@ -1,33 +1,54 @@
-"use server";
-import { getCurrentUser } from '../lib/session';
 import { prisma } from "@/lib/prisma";
-import { headers } from 'next/headers'
-import { UAParser } from 'ua-parser-js'
+import { getCurrentUser } from "@/lib/session";
+import { UAParser } from "ua-parser-js";
+import { headers } from "next/headers";
 
 export async function recordPropertyView(propertyId: string) {
+  try {
     const user = await getCurrentUser();
-    const headersList = headers()
-    const userAgent = headersList.get('user-agent');
 
-    const parser = new UAParser(userAgent || '')
-    const deviceType = parser.getDevice().type || 'unknown'
-    const browser = parser.getBrowser().name || 'unknown'
-    const os = parser.getOS().name || 'unknown'
+    // Get request headers (for IP and user-agent)
+    const headerList = headers();
+    const userAgent = headerList.get("user-agent") || "";
+    const ip = headerList.get("x-forwarded-for")?.split(",")[0] || "Unknown";
 
-    // You might want to use a geolocation service here
-    // For this example, we'll just use a placeholder
-    const country = 'Unknown'
-    const city = 'Unknown'
+    // Parse device info
+    const parser = new UAParser(userAgent);
+    const browser = parser.getBrowser().name || "Unknown";
+    const os = parser.getOS().name || "Unknown";
+    const deviceType = parser.getDevice().type || "desktop";
 
+    // Geolocation lookup from IP using ipapi.co
+    let country = "Unknown";
+    let city = "Unknown";
+
+    try {
+      const geoRes = await fetch(`https://ipapi.co/${ip}/json/`);
+      if (geoRes.ok) {
+        const geo = await geoRes.json();
+        country = geo.country_name || country;
+        city = geo.city || city;
+      }
+    } catch (geoError) {
+      console.warn("Geolocation fetch failed:", geoError);
+    }
+
+    // Create property view record
     await prisma.propertyView.create({
-        data: {
-            propertyId,
-            userId: user?.id,
-            deviceType,
-            browser,
-            os,
-            country,
-            city,
-        },
-    })
+      data: {
+        propertyId,
+        userId: user?.id,
+        deviceType,
+        browser,
+        os,
+        country,
+        city,
+      },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error recording property view:", error);
+    return { success: false, error };
+  }
 }

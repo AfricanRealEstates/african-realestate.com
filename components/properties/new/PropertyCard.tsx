@@ -106,7 +106,6 @@ export default async function PropertyCard({
       </div>
     );
   };
-
   const renderTienIch = () => {
     const convertToAcres = (size: number, units: string): number => {
       switch (units.toLowerCase()) {

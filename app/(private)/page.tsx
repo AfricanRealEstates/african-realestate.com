@@ -3,9 +3,12 @@ import CityProperties from "@/components/landing/CityProperties";
 import Facts from "@/components/landing/facts";
 import FeaturedProperties from "@/components/landing/featured-properties";
 import PropertyAdvice from "@/components/landing/property-advice";
+import RecentlyViewedProperties from "@/components/landing/recently-viewed-properties";
 import Reviews from "@/components/landing/reviews";
 import OurServices from "@/components/landing/services/OurServices";
 import Testing from "@/components/landing/testing";
+import RecentSearchesCompact from "@/components/search/RecentSearchesCompact";
+import { Suspense } from "react";
 
 export default async function Home() {
   const session = await auth();
@@ -40,7 +43,26 @@ export default async function Home() {
       <div className="home-page">
         <h1 className="sr-only">Home page</h1>
         <Testing />
-        <FeaturedProperties />
+
+        {/* Recent Searches - Zillow style */}
+        <Suspense fallback={<div className="h-24"></div>}>
+          <RecentSearchesCompact />
+        </Suspense>
+
+        {/* Featured Properties - Now personalized */}
+        <Suspense
+          fallback={
+            <div className="h-96 flex items-center justify-center">
+              Loading recommendations...
+            </div>
+          }
+        >
+          <FeaturedProperties />
+        </Suspense>
+
+        {/* Recently Viewed Properties - Client-side component */}
+        <RecentlyViewedProperties />
+
         <OurServices />
         <Facts />
         <CityProperties />

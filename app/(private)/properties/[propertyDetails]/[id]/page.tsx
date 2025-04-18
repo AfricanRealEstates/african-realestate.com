@@ -48,6 +48,7 @@ import { recordPropertyView } from "@/actions/recordPropertyView";
 import { PropertySkeleton } from "@/components/globals/PropertySkeleton";
 import { Suspense } from "react";
 import SocialMetaTags from "./_components/social-meta-tags";
+import ViewTracker from "@/components/properties/ViewTracker";
 
 const amenityIcons: { [key: string]: JSX.Element } = {
   mosque: <FaMosque className="size-4 text-neutral-600" />,
@@ -541,6 +542,7 @@ export default async function PropertyDetails({
     <div className="bg-white py-12 md:py-0">
       {/* Add SocialMetaTags component for dynamic meta tag updates */}
       <SocialMetaTags property={property} propertyUrl={propertyUrl} />
+      <ViewTracker propertyId={property.id} />
       <div className="mx-auto max-w-7xl px-4 pt-12 lg:pt-32 pb-8 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-y-4 ">
           <nav aria-label="Breadcrumb">

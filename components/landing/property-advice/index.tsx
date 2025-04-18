@@ -2,7 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Josefin_Sans } from "next/font/google";
 import { ArrowRight, CalendarDays, Eye, Share2 } from "lucide-react";
-import { prisma } from "@/lib/prisma";
+import { getPersonalizedBlogPosts } from "@/actions/getPersonalizedBlogPosts";
+import { getCurrentUser } from "@/lib/session";
 
 const josefin = Josefin_Sans({
   subsets: ["latin"],
@@ -17,30 +18,15 @@ export function formatBlogDate(date: Date) {
   }).format(new Date(date));
 }
 
-export async function getBlogPosts() {
-  const posts = await prisma.post.findMany({
-    where: {
-      published: true,
-    },
-    orderBy: [
-      {
-        viewCount: "desc",
-      },
-      {
-        shareCount: "desc",
-      },
-    ],
-    include: {
-      likes: true,
-      author: true,
-    },
-    take: 3,
-  });
+export default async function PropertyAdvice() {
+  const user = await getCurrentUser();
+  const posts = await getPersonalizedBlogPosts(3);
 
-  return posts.map((post) => ({
+  // Format posts for display
+  const formattedPosts = posts.map((post) => ({
     slug: post.slug,
     views: post.viewCount,
-    shares: post.shareCount, // Add shareCount to the returned data
+    shares: post.shareCount,
     metadata: {
       title: post.title,
       publishedAt: post.createdAt,
@@ -49,16 +35,13 @@ export async function getBlogPosts() {
       summary: post.metaDescription,
     },
   }));
-}
 
-export default async function PropertyAdvice() {
-  const latestPosts = await getBlogPosts();
   return (
     <section className={`py-12 leading-relaxed`}>
       <div className="w-[95%] max-w-7xl m-auto px-6 text-gray-600 md:px-12 xl:px-6">
         <div className="flex items-center justify-between mb-8">
           <p className={`text-xl text-gray-900 ${josefin.className}`}>
-            Property Insights & Tips
+            {user ? "Recommended Insights For You" : "Property Insights & Tips"}
           </p>
           <Link
             href="/blog"
@@ -70,7 +53,7 @@ export default async function PropertyAdvice() {
         </div>
 
         <div className="grid gap-12 md:gap-6 md:grid-cols-3 lg:gap-12">
-          {latestPosts.map((post) => (
+          {formattedPosts.map((post) => (
             <Link
               href={`/blog/${post.metadata.category}/${post.slug}`}
               key={post.slug}
