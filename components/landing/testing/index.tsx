@@ -1,20 +1,6 @@
 "use client";
-import { IBM_Plex_Mono, Josefin_Sans } from "next/font/google";
 import Image from "next/image";
-import React from "react";
 import SearchBar from "../hero/search";
-
-const ibmPlex = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["700"],
-  display: "swap",
-  variable: "--font-ibmplex",
-});
-
-const josefin = Josefin_Sans({
-  subsets: ["latin"],
-  weight: ["600"],
-});
 
 export default function Testing() {
   return (
@@ -40,17 +26,17 @@ export default function Testing() {
           <div className="flex items-center justify-center flex-col mx-auto max-w-7xl w-full px-4 lg:px-6 border-white/[0.03] lg:border-x">
             <div className="flex items-center flex-col my-10 mt-16 lg:mt-10 space-y-6 z-10">
               <p
-                className={`${josefin.className} text-sm tracking-wide font-semibold uppercase text-white hidden md:block`}
+                className={` text-sm tracking-wide font-semibold uppercase text-white hidden md:block`}
               >
                 The best way to
               </p>
               <h2
-                className={` ${josefin.className} text-center text-2xl sm:text-5xl lg:text-6xl tracking-tight text-white`}
+                className={`text-center text-2xl sm:text-5xl lg:text-6xl tracking-tight text-white`}
               >
                 Find your Dream Home
               </h2>
               <p
-                className={`${josefin.className} leading-relaxed font-medium text-white hidden md:block`}
+                className={` leading-relaxed font-medium text-white hidden md:block`}
               >
                 We&apos;ve more than 7,000 properties listed for you.
               </p>

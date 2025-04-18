@@ -1,8 +1,6 @@
 import PopularBlogs from "@/app/(blog)/PopularBlogs";
 import RecommendedTopics from "@/app/(blog)/RecommendedTopics";
-import { baseUrl } from "@/app/sitemap";
 import { notFound } from "next/navigation";
-import { Redis } from "@upstash/redis";
 import { prisma } from "@/lib/prisma";
 import type { Metadata } from "next";
 import { format } from "date-fns";
@@ -14,7 +12,6 @@ import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
-const redis = Redis.fromEnv();
 export const revalidate = 0;
 
 export async function generateStaticParams() {
@@ -62,16 +59,31 @@ export async function generateMetadata({
     plainTextContent.substring(0, 200) +
       (plainTextContent.length > 200 ? "..." : "");
 
+  // Ensure absolute URL for coverPhoto
   const ogImage = coverPhoto
-    ? `${baseUrl}${coverPhoto}`
-    : `${baseUrl}/og?title=${encodeURIComponent(title)}`;
+    ? coverPhoto.startsWith("http")
+      ? coverPhoto
+      : `https://www.african-realestate.com${coverPhoto}`
+    : `https://www.african-realestate.com/og?title=${encodeURIComponent(title)}`;
 
-  const url = `${baseUrl}/blog/${params.topic}/${post.slug}`;
+  const url = `https://www.african-realestate.com/blog/${params.topic}/${post.slug}`;
+
+  // Determine image type for proper content type
+  const imageType = coverPhoto?.endsWith(".png")
+    ? "image/png"
+    : coverPhoto?.endsWith(".gif")
+      ? "image/gif"
+      : "image/jpeg";
 
   return {
     title,
     description,
-    authors: [{ name: author.name! }],
+    authors: [
+      {
+        name: author.name!,
+        url: `https://www.african-realestate.com/blog/author/${post.authorId}`,
+      },
+    ],
     keywords: topics,
     openGraph: {
       title,
@@ -85,6 +97,7 @@ export async function generateMetadata({
           alt: title,
           width: 1200,
           height: 630,
+          type: imageType,
         },
       ],
       siteName: "African Real Estate Blog",
@@ -112,6 +125,16 @@ export async function generateMetadata({
         "max-image-preview": "large",
         "max-snippet": -1,
       },
+    },
+    other: {
+      "article:published_time": publishedTime.toISOString(),
+      "article:author": author.name!,
+      "article:publisher": "African Real Estate",
+      "og:article:tag": topics.join(","),
+      "og:site_name": "African Real Estate",
+      "og:locale": "en_US",
+      "og:image:width": "1200",
+      "og:image:height": "630",
     },
   };
 }
@@ -151,7 +174,7 @@ export default async function Page({
     take: 3,
   });
 
-  const url = `${baseUrl}/blog/${params.topic}/${post.slug}`;
+  const url = `https://www.african-realestate.com/blog/${params.topic}/${post.slug}`;
 
   const session = await auth();
 
@@ -191,6 +214,7 @@ export default async function Page({
             "@context": "https://schema.org",
             "@type": "BlogPosting",
             headline: post.title,
+            name: post.title,
             datePublished: post.createdAt.toISOString(),
             dateModified:
               post.updatedAt.getTime() > post.createdAt.getTime() + 60000
@@ -198,19 +222,24 @@ export default async function Page({
                 : post.createdAt.toISOString(),
             description: post.metaDescription || description,
             image: post.coverPhoto
-              ? `${baseUrl}${post.coverPhoto}`
-              : `${baseUrl}/og?title=${encodeURIComponent(post.title)}`,
+              ? post.coverPhoto.startsWith("http")
+                ? post.coverPhoto
+                : `https://www.african-realestate.com${post.coverPhoto}`
+              : `https://www.african-realestate.com/og?title=${encodeURIComponent(post.title)}`,
             url: url,
             author: {
               "@type": "Person",
               name: post.author.name,
+              url: `https://www.african-realestate.com/blog/author/${post.authorId}`,
             },
             publisher: {
               "@type": "Organization",
               name: "African Real Estate",
               logo: {
                 "@type": "ImageObject",
-                url: `${baseUrl}/logo.png`,
+                url: `https://www.african-realestate.com/logo.png`,
+                width: 600,
+                height: 60,
               },
             },
             mainEntityOfPage: {
@@ -220,9 +249,24 @@ export default async function Page({
             keywords: post.topics.join(", "),
             articleSection: params.topic,
             wordCount: plainTextContent.split(/\s+/).length,
+            inLanguage: "en-US",
+            potentialAction: {
+              "@type": "ReadAction",
+              target: [url],
+            },
+            isAccessibleForFree: "True",
+            discussionUrl: url + "#comments",
           }),
         }}
       />
+
+      {post.topics.map((topic) => (
+        <meta
+          key={`article:tag:${topic}`}
+          property="article:tag"
+          content={topic}
+        />
+      ))}
 
       {/* <ReportViews topic={params.topic} title={post.title} slug={post.slug} /> */}
 
@@ -250,15 +294,15 @@ export default async function Page({
               <div className="border-r border-ken-primary/10" />
               <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                 {/* {post.updatedAt &&
-    post.updatedAt.getTime() > post.createdAt.getTime() + 60000 ? (
-      <p className="text-sm text-neutral-600">
-        Updated on:{" "}
-        <span className="font-bold">
-          {format(post.updatedAt, "MMMM dd, yyyy")}
-        </span>
-      </p>
-    ) : (
-      )} */}
+post.updatedAt.getTime() > post.createdAt.getTime() + 60000 ? (
+<p className="text-sm text-neutral-600">
+  Updated on:{" "}
+  <span className="font-bold">
+    {format(post.updatedAt, "MMMM dd, yyyy")}
+  </span>
+</p>
+) : (
+)} */}
                 <p className="text-sm text-neutral-600">
                   Published on:{" "}
                   <span className="font-bold">
@@ -299,9 +343,13 @@ export default async function Page({
               {post.coverPhoto && (
                 <img
                   src={post.coverPhoto || "/placeholder.svg"}
-                  alt={post.title}
+                  alt={`Cover image for article: ${post.title}`}
                   className="w-full h-[300px] lg:h-[400px] object-cover rounded-lg mx-auto border p-1 mb-6"
                   itemProp="image"
+                  loading="eager"
+                  decoding="async"
+                  width="1200"
+                  height="630"
                 />
               )}
 
@@ -387,6 +435,8 @@ export default async function Page({
                                     <img
                                       src={
                                         relatedPost.author.image ||
+                                        "/placeholder.svg" ||
+                                        "/placeholder.svg" ||
                                         "/placeholder.svg" ||
                                         "/placeholder.svg"
                                       }

@@ -12,9 +12,10 @@ export const getSEOTags = ({
   canonicalUrlRelative?: string;
   extraTags?: Record<string, any>;
 } = {}) => {
-  const defaultTitle = "Home - African Real Estate";
+  const defaultTitle =
+    "African Real Estate | Luxury & Affordable Properties in Kenya & Africa";
   const defaultDescription =
-    "Discover luxurious and affordable properties across Kenya and Africa. Your trusted partner in African real estate investments, offering expert guidance and unparalleled market insights.";
+    "Explore premium and affordable real estate listings across Kenya and Africa. Your trusted partner for property sales, rentals, and investment opportunities.";
   const defaultKeywords = [
     "African real estate",
     "Kenya property",
@@ -73,17 +74,17 @@ export const getSEOTags = ({
       creator: "@AfricanRealEsta",
       images: [`https://${config.domainName}/twitter-image.jpg`],
     },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        "max-video-preview": -1,
-        "max-image-preview": "large",
-        "max-snippet": -1,
-      },
-    },
+    // robots: {
+    //   index: true,
+    //   follow: true,
+    //   googleBot: {
+    //     index: true,
+    //     follow: true,
+    //     "max-video-preview": -1,
+    //     "max-image-preview": "large",
+    //     "max-snippet": -1,
+    //   },
+    // },
     icons: {
       icon: "/favicon.ico",
       shortcut: "/favicon-16x16.png",
@@ -92,14 +93,15 @@ export const getSEOTags = ({
     manifest: "/site.webmanifest",
     verification: {
       google: "Ip7b3Hpc1VU0LkPSh0lgqyz3ImGRpGjc2BLLCvz3Xzo",
+      facebook: "746690373660443", // Replace with your actual Facebook App ID
     },
     alternates: {
       canonical: canonicalUrlRelative
         ? `https://${config.domainName}/${canonicalUrlRelative}`
         : `https://${config.domainName}`,
       languages: {
-        'en-KE': `https://${config.domainName}/en`,
-        'sw-KE': `https://${config.domainName}/sw`,
+        "en-KE": `https://${config.domainName}/en`,
+        "sw-KE": `https://${config.domainName}/sw`,
       },
     },
     ...extraTags,
@@ -144,24 +146,22 @@ export const renderSchemaTags = () => {
           ],
           openingHoursSpecification: {
             "@type": "OpeningHoursSpecification",
-            dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+            dayOfWeek: [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+            ],
             opens: "07:00",
             closes: "20:00",
           },
           priceRange: "$$",
           areaServed: [
-            {
-              "@type": "Country",
-              name: "Kenya",
-            },
-            {
-              "@type": "Country",
-              name: "Tanzania",
-            },
-            {
-              "@type": "Country",
-              name: "Uganda",
-            },
+            { "@type": "Country", name: "Kenya" },
+            { "@type": "Country", name: "Tanzania" },
+            { "@type": "Country", name: "Uganda" },
           ],
           makesOffer: [
             {
@@ -169,7 +169,8 @@ export const renderSchemaTags = () => {
               itemOffered: {
                 "@type": "Service",
                 name: "Property Sales",
-                description: "Buy luxurious and affordable properties across Kenya and Africa",
+                description:
+                  "Buy luxurious and affordable properties across Kenya and Africa",
               },
             },
             {
@@ -177,7 +178,8 @@ export const renderSchemaTags = () => {
               itemOffered: {
                 "@type": "Service",
                 name: "Property Rentals",
-                description: "Rent high-quality apartments and homes in prime African locations",
+                description:
+                  "Rent high-quality apartments and homes in prime African locations",
               },
             },
             {
@@ -185,7 +187,8 @@ export const renderSchemaTags = () => {
               itemOffered: {
                 "@type": "Service",
                 name: "Property Management",
-                description: "Professional management services for property owners and investors",
+                description:
+                  "Professional management services for property owners and investors",
               },
             },
             {
@@ -193,7 +196,8 @@ export const renderSchemaTags = () => {
               itemOffered: {
                 "@type": "Service",
                 name: "Real Estate Investment Advisory",
-                description: "Expert guidance on real estate investments in the African market",
+                description:
+                  "Expert guidance on real estate investments in the African market",
               },
             },
           ],
@@ -209,4 +213,3 @@ export const renderSchemaTags = () => {
     ></script>
   );
 };
-

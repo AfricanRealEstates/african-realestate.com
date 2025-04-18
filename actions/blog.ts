@@ -207,16 +207,27 @@ export const incrementViewCount = cache(async (postId: string) => {
 });
 
 export async function incrementShareCount(postId: string) {
-  await prisma.post.update({
-    where: { id: postId },
-    data: { shareCount: { increment: 1 } },
-  });
+  try {
+    // Update the share count
+    const updatedPost = await prisma.post.update({
+      where: { id: postId },
+      data: { shareCount: { increment: 1 } },
+      select: {
+        shareCount: true,
+        slug: true,
+        topics: true,
+      },
+    });
 
-  const post = await prisma.post.findUnique({
-    where: { id: postId },
-    select: { shareCount: true },
-  });
+    // Revalidate the specific blog path
+    if (updatedPost.topics && updatedPost.topics.length > 0) {
+      revalidatePath(`/blog/${updatedPost.topics[0]}/${updatedPost.slug}`);
+    }
 
-  revalidatePath(`/blog/${postId}`);
-  return post?.shareCount;
+    return updatedPost.shareCount;
+  } catch (error) {
+    console.error("Error incrementing share count:", error);
+    // Return null to indicate failure
+    return null;
+  }
 }

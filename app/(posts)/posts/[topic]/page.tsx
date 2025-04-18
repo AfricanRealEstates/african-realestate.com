@@ -41,7 +41,7 @@ export default async function TopicPage({
   if (posts.length === 0) notFound();
 
   return (
-    <div className={`pt-16 ${jakarta.variable}`}>
+    <div className={`pt-16`}>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <Link
           href="/posts"

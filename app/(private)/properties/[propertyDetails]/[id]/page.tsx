@@ -47,6 +47,7 @@ import { getCurrentUser } from "@/lib/session";
 import { recordPropertyView } from "@/actions/recordPropertyView";
 import { PropertySkeleton } from "@/components/globals/PropertySkeleton";
 import { Suspense } from "react";
+import SocialMetaTags from "./_components/social-meta-tags";
 
 const amenityIcons: { [key: string]: JSX.Element } = {
   mosque: <FaMosque className="size-4 text-neutral-600" />,
@@ -327,28 +328,6 @@ export default async function PropertyDetails({
     return <NotFound />;
   }
 
-  const getDetail = ({
-    name,
-    value,
-  }: {
-    name: string;
-    value: string | number;
-  }) => {
-    return (
-      <div className="flex justify-between">
-        <span className="text-sm text-gray-600">{name}</span>
-        <span className="text-sm text-gray-600">{value}</span>
-      </div>
-    );
-  };
-
-  const getSectionTitle = (title: string) => (
-    <div>
-      <h2 className="text-xl font-bold text-gray-700">{title}</h2>
-      <hr className="border border-gray-50 my-3" />
-    </div>
-  );
-
   const convertToAcres = (size: number, units: string): number => {
     switch (units.toLowerCase()) {
       case "ha":
@@ -560,6 +539,8 @@ export default async function PropertyDetails({
 
   return (
     <div className="bg-white py-12 md:py-0">
+      {/* Add SocialMetaTags component for dynamic meta tag updates */}
+      <SocialMetaTags property={property} propertyUrl={propertyUrl} />
       <div className="mx-auto max-w-7xl px-4 pt-12 lg:pt-32 pb-8 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-y-4 ">
           <nav aria-label="Breadcrumb">
