@@ -1,6 +1,7 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { propertyTypes, propertyStatuses } from "./PropertyData";
 import GuidesContent from "./GuidesContent";
+import GuidesHero from "./GuidesHero";
 
 export const metadata: Metadata = {
   title: "Property Guides | African Real Estate",
@@ -38,10 +39,8 @@ export const metadata: Metadata = {
 export default function GuidesPage() {
   return (
     <div className="min-h-screen bg-white">
-      <div className="w-[95%] lg:max-w-7xl mx-auto py-[100px] lg:py-[160px]">
-        <h1 className="text-3xl font-bold mb-12 text-center text-gray-500 tracking-tight">
-          Property Guides
-        </h1>
+      <GuidesHero />
+      <div className="max-w-7xl mx-auto py-12 lg:py-16">
         <GuidesContent
           propertyTypes={propertyTypes}
           propertyStatuses={propertyStatuses}

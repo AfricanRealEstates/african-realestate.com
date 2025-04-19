@@ -49,6 +49,9 @@ export default async function Home() {
           <SearchHistoryCarousel />
         </Suspense>
 
+        {/* Trending Properties - For all users */}
+        {/* <TrendingProperties /> */}
+
         {/* Featured Properties - Now personalized */}
         <Suspense
           fallback={
