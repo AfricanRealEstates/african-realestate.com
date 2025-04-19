@@ -1,16 +1,38 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/lib/session";
 import type { PropertyData } from "@/lib/types";
 
 export async function getRecentlyViewedProperties(
-  propertyIds: string[]
+  propertyIds?: string[]
 ): Promise<PropertyData[]> {
-  if (!propertyIds || propertyIds.length === 0) {
-    return [];
-  }
-
   try {
+    const user = await getCurrentUser();
+
+    // If user is logged in, get from database
+    if (user) {
+      const recentlyViewed = await prisma.recentlyViewedProperty.findMany({
+        where: {
+          userId: user.id,
+        },
+        orderBy: {
+          viewedAt: "desc",
+        },
+        take: 6,
+        include: {
+          property: true,
+        },
+      });
+
+      return recentlyViewed.map((item) => item.property) as PropertyData[];
+    }
+
+    // Otherwise use the provided property IDs from cookies/localStorage
+    if (!propertyIds || propertyIds.length === 0) {
+      return [];
+    }
+
     // Fetch properties by IDs
     const properties = await prisma.property.findMany({
       where: {

@@ -46,6 +46,42 @@ export async function recordPropertyView(propertyId: string) {
       },
     });
 
+    // If user is logged in, also record this for personalization
+    if (user) {
+      // Check if this property is already in recently viewed
+      const existingView = await prisma.recentlyViewedProperty.findUnique({
+        where: {
+          userId_propertyId: {
+            userId: user.id!,
+            propertyId,
+          },
+        },
+      });
+
+      if (existingView) {
+        // Update the timestamp
+        await prisma.recentlyViewedProperty.update({
+          where: {
+            userId_propertyId: {
+              userId: user.id!,
+              propertyId,
+            },
+          },
+          data: {
+            viewedAt: new Date(),
+          },
+        });
+      } else {
+        // Create a new entry
+        await prisma.recentlyViewedProperty.create({
+          data: {
+            userId: user.id!,
+            propertyId,
+          },
+        });
+      }
+    }
+
     return { success: true };
   } catch (error) {
     console.error("Error recording property view:", error);

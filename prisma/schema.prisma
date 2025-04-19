@@ -10,62 +10,65 @@ datasource db {
 }
 
 model User {
-  id                String           @id @default(dbgenerated("concat('user_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
-  name              String?
-  username          String?
-  email             String?          @unique
-  emailVerified     DateTime?
-  image             String?
-  role              UserRole         @default(USER)
-  permissions       String[]
-  password          String?
-  isVerified        Boolean          @default(false)
-  isActive          Boolean          @default(true)
-  token             Int?
-  agentName         String?
-  agentEmail        String?
-  agentLocation     String?
-  officeLine        String?
-  whatsappNumber    String?
-  phoneNumber       String?
-  address           String?
-  postalCode        String?
-  profilePhoto      String?
-  coverPhoto        String?
-  bio               String?
-  xLink             String?
-  tiktokLink        String?
-  facebookLink      String?
-  youtubeLink       String?
-  linkedinLink      String?
-  instagramLink     String?
-  showAgentContact  Boolean?         @default(false)
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
-  isPremium         Boolean          @default(false)
-  favoriteIds       String[]
-  suspensionEndDate DateTime?
-  comments          Comment[]
-  following         Follows[]        @relation("follower")
-  followedBy        Follows[]        @relation("following")
-  likes             Like[]
-  notifications     Notification[]
-  viewedProperties  PropertyView[]
-  ratings           Rating[]
-  saved             SavedProperty[]
-  upvotes           Upvote[]
-  accounts          Account[]
-  orders            Order[]
-  properties        Property[]
-  queries           Query[]
-  sessions          Session[]
-  subscriptions     Subscription[]
-  discounts         Discount[]       @relation("UserDiscounts")
-  likedPosts        BlogPost[]       @relation("UserLikedPosts")
-  likedBlog         Post[]           @relation("UserLikes")
-  posts             Post[]
-  invitations       Invitation[]
-  marketingEmails   MarketingEmail[]
+  id                     String                   @id @default(dbgenerated("concat('user_', replace((gen_random_uuid())::text, '-'::text, ''::text))"))
+  name                   String?
+  username               String?
+  email                  String?                  @unique
+  emailVerified          DateTime?
+  image                  String?
+  role                   UserRole                 @default(USER)
+  permissions            String[]
+  password               String?
+  isVerified             Boolean                  @default(false)
+  isActive               Boolean                  @default(true)
+  token                  Int?
+  agentName              String?
+  agentEmail             String?
+  agentLocation          String?
+  officeLine             String?
+  whatsappNumber         String?
+  phoneNumber            String?
+  address                String?
+  postalCode             String?
+  profilePhoto           String?
+  coverPhoto             String?
+  bio                    String?
+  xLink                  String?
+  tiktokLink             String?
+  facebookLink           String?
+  youtubeLink            String?
+  linkedinLink           String?
+  instagramLink          String?
+  showAgentContact       Boolean?                 @default(false)
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  isPremium              Boolean                  @default(false)
+  favoriteIds            String[]
+  suspensionEndDate      DateTime?
+  comments               Comment[]
+  following              Follows[]                @relation("follower")
+  followedBy             Follows[]                @relation("following")
+  likes                  Like[]
+  notifications          Notification[]
+  viewedProperties       PropertyView[]
+  ratings                Rating[]
+  saved                  SavedProperty[]
+  upvotes                Upvote[]
+  accounts               Account[]
+  orders                 Order[]
+  properties             Property[]
+  queries                Query[]
+  sessions               Session[]
+  subscriptions          Subscription[]
+  discounts              Discount[]               @relation("UserDiscounts")
+  likedPosts             BlogPost[]               @relation("UserLikedPosts")
+  likedBlog              Post[]                   @relation("UserLikes")
+  posts                  Post[]
+  invitations            Invitation[]
+  marketingEmails        MarketingEmail[]
+  SearchHistory          SearchHistory[]
+  RecommendationEvent    RecommendationEvent[]
+  RecentlyViewedProperty RecentlyViewedProperty[]
 
   @@map("users")
 }
@@ -169,17 +172,18 @@ model Property {
   updatedAt              DateTime  @updatedAt
   expiryDate             DateTime?
 
-  comments       Comment[]
-  likes          Like[]
-  notifications  Notification[]
-  views          PropertyView[]
-  ratings        Rating[]
-  savedBy        SavedProperty[]
-  upvotes        Upvote[]
-  orders         Order[]
-  user           User             @relation(fields: [userId], references: [id])
-  queries        Query[]
-  MarketingEmail MarketingEmail[]
+  comments               Comment[]
+  likes                  Like[]
+  notifications          Notification[]
+  views                  PropertyView[]
+  ratings                Rating[]
+  savedBy                SavedProperty[]
+  upvotes                Upvote[]
+  orders                 Order[]
+  user                   User                     @relation(fields: [userId], references: [id])
+  queries                Query[]
+  MarketingEmail         MarketingEmail[]
+  RecentlyViewedProperty RecentlyViewedProperty[]
 
   @@map("properties")
 }
@@ -429,7 +433,7 @@ model EmailTemplate {
   @@map("email_templates")
 }
 
-// Add this new model to track marketing emails
+// Track marketing emails
 model MarketingEmail {
   id         String   @id @default(cuid())
   propertyId String
@@ -445,6 +449,50 @@ model MarketingEmail {
   @@index([propertyId])
   @@index([userId])
   @@map("marketing_emails")
+}
+
+model SearchHistory {
+  id            String   @id @default(cuid())
+  userId        String
+  searchId      String
+  query         String
+  filters       Json
+  resultCount   Int      @default(0)
+  previewImages String[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, searchId])
+  @@index([userId])
+  @@map("search_history")
+}
+
+// Add these models to your schema.prisma file
+
+model RecommendationEvent {
+  id                 String   @id @default(cuid())
+  userId             String
+  propertyIds        String[]
+  recommendationType String // e.g., "featured_properties", "similar_properties"
+  createdAt          DateTime @default(now())
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("recommendation_events")
+}
+
+model RecentlyViewedProperty {
+  userId     String
+  propertyId String
+  viewedAt   DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@id([userId, propertyId])
+  @@index([userId])
+  @@index([propertyId])
+  @@map("recently_viewed_properties")
 }
 
 enum UserRole {

@@ -8,30 +8,57 @@ export async function getPersonalizedProperties(
   try {
     const user = await getCurrentUser();
 
-    // If no user is logged in, return featured properties
+    // If no user is logged in, return properties based on anonymous browsing data
     if (!user) {
-      return getDefaultFeaturedProperties(limit);
+      return getAnonymousRecommendations(limit);
     }
 
     // Get user's interaction data with proper error handling
     try {
-      const [viewedProperties, likedProperties, savedProperties] =
-        await Promise.all([
-          prisma.propertyView.findMany({
-            where: { userId: user.id },
-            orderBy: { viewedAt: "desc" },
-            take: 10,
-            select: { propertyId: true },
-          }),
-          prisma.like.findMany({
-            where: { userId: user.id },
-            select: { propertyId: true },
-          }),
-          prisma.savedProperty.findMany({
-            where: { userId: user.id },
-            select: { propertyId: true },
-          }),
-        ]);
+      // Get all user interactions with properties
+      const [
+        viewedProperties,
+        likedProperties,
+        savedProperties,
+        searchHistory,
+      ] = await Promise.all([
+        // Recently viewed properties
+        prisma.propertyView.findMany({
+          where: { userId: user.id },
+          orderBy: { viewedAt: "desc" },
+          take: 20,
+          select: { propertyId: true, viewedAt: true },
+        }),
+
+        // Liked properties
+        prisma.like.findMany({
+          where: { userId: user.id },
+          select: { propertyId: true, createdAt: true },
+        }),
+
+        // Saved properties
+        prisma.savedProperty.findMany({
+          where: { userId: user.id },
+          select: { propertyId: true, createdAt: true },
+        }),
+
+        // Search history
+        prisma.searchHistory.findMany({
+          where: { userId: user.id },
+          orderBy: { updatedAt: "desc" },
+          take: 10,
+        }),
+      ]);
+
+      // If user has no interactions, return default featured properties
+      if (
+        viewedProperties.length === 0 &&
+        likedProperties.length === 0 &&
+        savedProperties.length === 0 &&
+        searchHistory.length === 0
+      ) {
+        return getDefaultFeaturedProperties(limit);
+      }
 
       // Extract property IDs from user interactions
       const viewedIds = viewedProperties.map((view) => view.propertyId);
@@ -43,39 +70,116 @@ export async function getPersonalizedProperties(
         ...new Set([...viewedIds, ...likedIds, ...savedIds]),
       ];
 
-      // If user has no interactions, return default featured properties
-      if (interactedIds.length === 0) {
-        return getDefaultFeaturedProperties(limit);
-      }
-
       // Get properties the user has interacted with to analyze preferences
       const interactedProperties = await prisma.property.findMany({
         where: { id: { in: interactedIds } },
       });
 
-      // Extract basic preferences
+      // Extract user preferences
       const propertyDetails = interactedProperties.map(
         (p) => p.propertyDetails
       );
       const counties = interactedProperties.map((p) => p.county);
       const propertyTypes = interactedProperties.map((p) => p.propertyType);
+      const priceRanges = interactedProperties.map((p) => p.price);
 
-      // Get recommendations based on simple preferences
-      const recommendations = await prisma.property.findMany({
-        where: {
+      // Calculate price range preferences
+      const avgPrice =
+        priceRanges.reduce((sum, price) => sum + price, 0) / priceRanges.length;
+      const minPricePreference = avgPrice * 0.7; // 30% below average
+      const maxPricePreference = avgPrice * 1.3; // 30% above average
+
+      // Extract search preferences from search history
+      const searchPreferences = {
+        counties: new Set<string>(),
+        propertyTypes: new Set<string>(),
+        propertyDetails: new Set<string>(),
+        status: new Set<string>(),
+      };
+
+      searchHistory.forEach((search) => {
+        const filters = search.filters as any;
+        if (filters.county) searchPreferences.counties.add(filters.county);
+        if (filters.propertyType)
+          searchPreferences.propertyTypes.add(filters.propertyType);
+        if (filters.propertyDetails)
+          searchPreferences.propertyDetails.add(filters.propertyDetails);
+        if (filters.status) searchPreferences.status.add(filters.status);
+      });
+
+      // Build recommendation query
+      const recommendationQuery: any = {
+        AND: [
+          { isActive: true },
+          { id: { notIn: interactedIds } }, // Don't recommend properties the user already interacted with
+        ],
+        OR: [],
+      };
+
+      // Add preference-based conditions
+      const preferenceConditions = [];
+
+      // Property type preferences (from interactions and searches)
+      if (
+        propertyTypes.length > 0 ||
+        searchPreferences.propertyTypes.size > 0
+      ) {
+        const allPropertyTypes = [
+          ...propertyTypes,
+          ...Array.from(searchPreferences.propertyTypes),
+        ];
+        preferenceConditions.push({ propertyType: { in: allPropertyTypes } });
+      }
+
+      // Property details preferences (from interactions and searches)
+      if (
+        propertyDetails.length > 0 ||
+        searchPreferences.propertyDetails.size > 0
+      ) {
+        const allPropertyDetails = [
+          ...propertyDetails,
+          ...Array.from(searchPreferences.propertyDetails),
+        ];
+        preferenceConditions.push({
+          propertyDetails: { in: allPropertyDetails },
+        });
+      }
+
+      // Location preferences (from interactions and searches)
+      if (counties.length > 0 || searchPreferences.counties.size > 0) {
+        const allCounties = [
+          ...counties,
+          ...Array.from(searchPreferences.counties),
+        ];
+        preferenceConditions.push({ county: { in: allCounties } });
+      }
+
+      // Price range preferences (from interactions)
+      if (priceRanges.length > 0) {
+        preferenceConditions.push({
           AND: [
-            { isActive: true },
-            { id: { notIn: interactedIds } }, // Don't recommend properties the user already interacted with
-            {
-              OR: [
-                { propertyDetails: { in: propertyDetails } },
-                { county: { in: counties } },
-                { propertyType: { in: propertyTypes } },
-              ],
-            },
+            { price: { gte: minPricePreference } },
+            { price: { lte: maxPricePreference } },
           ],
-        },
-        orderBy: { updatedAt: "desc" },
+        });
+      }
+
+      // Status preferences (from searches)
+      if (searchPreferences.status.size > 0) {
+        preferenceConditions.push({
+          status: { in: Array.from(searchPreferences.status) },
+        });
+      }
+
+      // Add preference conditions to query
+      if (preferenceConditions.length > 0) {
+        recommendationQuery.OR = preferenceConditions;
+      }
+
+      // Get recommendations based on preferences
+      const recommendations = await prisma.property.findMany({
+        where: recommendationQuery,
+        orderBy: [{ updatedAt: "desc" }],
         take: limit,
       });
 
@@ -97,6 +201,13 @@ export async function getPersonalizedProperties(
         ) as PropertyData[];
       }
 
+      // Store these recommendations for analytics
+      await storeRecommendationEvent(
+        user.id!,
+        recommendations.map((p) => p.id),
+        "featured_properties"
+      );
+
       return recommendations as PropertyData[];
     } catch (error) {
       console.error("Error fetching user interactions:", error);
@@ -108,15 +219,85 @@ export async function getPersonalizedProperties(
   }
 }
 
+// Get recommendations for anonymous users based on cookie data
+async function getAnonymousRecommendations(
+  limit: number
+): Promise<PropertyData[]> {
+  try {
+    // For anonymous users, we'll return a mix of:
+    // 1. Most viewed properties (popular)
+    // 2. Recently added properties
+    // 3. Properties with price cuts (good deals)
+
+    const [popularProperties, recentProperties, dealsProperties] =
+      await Promise.all([
+        // Popular properties (most viewed)
+        prisma.property.findMany({
+          where: {
+            isActive: true,
+          },
+          orderBy: {
+            views: {
+              _count: "desc",
+            },
+          },
+          take: Math.ceil(limit / 3),
+        }),
+
+        // Recently added properties
+        prisma.property.findMany({
+          where: {
+            isActive: true,
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+          take: Math.ceil(limit / 3),
+        }),
+
+        // Properties with price cuts (leastPrice < price)
+        prisma.property.findMany({
+          where: {
+            isActive: true,
+            leastPrice: {
+              not: null,
+            },
+            AND: [{ leastPrice: { lt: prisma.property.fields.price } }],
+          },
+          orderBy: {
+            updatedAt: "desc",
+          },
+          take: Math.ceil(limit / 3),
+        }),
+      ]);
+
+    // Combine and deduplicate
+    const allProperties = [
+      ...popularProperties,
+      ...recentProperties,
+      ...dealsProperties,
+    ];
+    const uniqueProperties = Array.from(
+      new Map(allProperties.map((property) => [property.id, property])).values()
+    );
+
+    // Return up to the limit
+    return uniqueProperties.slice(0, limit) as PropertyData[];
+  } catch (error) {
+    console.error("Error fetching anonymous recommendations:", error);
+    return getDefaultFeaturedProperties(limit);
+  }
+}
+
 // Simplified fallback to get default featured properties
 async function getDefaultFeaturedProperties(
   limit: number
 ): Promise<PropertyData[]> {
   try {
-    // Simple query for active properties
+    // Get a mix of recently updated and popular properties
     const properties = await prisma.property.findMany({
       where: { isActive: true },
-      orderBy: { updatedAt: "desc" },
+      orderBy: [{ updatedAt: "desc" }],
       take: limit,
     });
 
@@ -124,5 +305,24 @@ async function getDefaultFeaturedProperties(
   } catch (error) {
     console.error("Error fetching default featured properties:", error);
     return [];
+  }
+}
+
+// Store recommendation events for analytics
+async function storeRecommendationEvent(
+  userId: string,
+  propertyIds: string[],
+  recommendationType: string
+): Promise<void> {
+  try {
+    await prisma.recommendationEvent.create({
+      data: {
+        userId,
+        propertyIds,
+        recommendationType,
+      },
+    });
+  } catch (error) {
+    console.error("Error storing recommendation event:", error);
   }
 }

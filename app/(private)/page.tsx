@@ -7,7 +7,7 @@ import RecentlyViewedProperties from "@/components/landing/recently-viewed-prope
 import Reviews from "@/components/landing/reviews";
 import OurServices from "@/components/landing/services/OurServices";
 import Testing from "@/components/landing/testing";
-import RecentSearchesCompact from "@/components/search/RecentSearchesCompact";
+import SearchHistoryCarousel from "@/components/search/SearchHistoryCarousel";
 import { Suspense } from "react";
 
 export default async function Home() {
@@ -46,7 +46,7 @@ export default async function Home() {
 
         {/* Recent Searches - Zillow style */}
         <Suspense fallback={<div className="h-24"></div>}>
-          <RecentSearchesCompact />
+          <SearchHistoryCarousel />
         </Suspense>
 
         {/* Featured Properties - Now personalized */}

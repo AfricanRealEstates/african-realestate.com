@@ -60,10 +60,10 @@ export default function PropertyCarousel({
             <button
               onClick={() => scroll("left")}
               disabled={scrollPosition <= 0}
-              className={`rounded-full p-2 border ${
+              className={`rounded-full p-2 border transition ${
                 scrollPosition <= 0
                   ? "text-gray-300 border-gray-200 cursor-not-allowed"
-                  : "text-gray-700 border-gray-300 hover:bg-gray-100"
+                  : "text-white bg-blue-300 border-blue-300 hover:bg-blue-400 shadow-md"
               }`}
               aria-label="Scroll left"
             >
@@ -72,10 +72,10 @@ export default function PropertyCarousel({
             <button
               onClick={() => scroll("right")}
               disabled={scrollPosition >= maxScroll}
-              className={`rounded-full p-2 border ${
+              className={`rounded-full p-2 border transition ${
                 scrollPosition >= maxScroll
                   ? "text-gray-300 border-gray-200 cursor-not-allowed"
-                  : "text-gray-700 border-gray-300 hover:bg-gray-100"
+                  : "text-white bg-blue-300 border-blue-300 hover:bg-blue-400 shadow-md"
               }`}
               aria-label="Scroll right"
             >

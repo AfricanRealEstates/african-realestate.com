@@ -27,6 +27,7 @@ import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 
 import { propertyTypes } from "../../constants/index";
+import { trackSearchHistory } from "@/actions/trackSearchHistory";
 
 const filterSchema = z.object({
   status: z.string().optional(),
@@ -59,8 +60,8 @@ export default function PropertyFilter({
           pageType === "buy"
             ? "sale"
             : pageType === "let"
-            ? "let"
-            : searchParams.get("status") || undefined,
+              ? "let"
+              : searchParams.get("status") || undefined,
         propertyType: searchParams.get("propertyType") || "",
         propertyDetails: searchParams.get("propertyDetails") || "",
         county: searchParams.get("county") || "",
@@ -86,33 +87,64 @@ export default function PropertyFilter({
 
   const convertPriceToCents = (price: string): number => {
     // Remove commas and convert to a number
-    const numericPrice = parseFloat(price.replace(/,/g, ""));
+    const numericPrice = Number.parseFloat(price.replace(/,/g, ""));
     // Return the numeric price as is, without multiplying by 100
     return Math.round(numericPrice);
   };
 
-  const onSubmit = (data: FilterValues) => {
+  const onSubmit = async (data: FilterValues) => {
     const params = new URLSearchParams(searchParams);
+    const filters: Record<string, string> = {};
+    let hasChanges = false;
+
     Object.entries(data).forEach(([key, value]) => {
       if (value) {
         if (key === "county" || key === "locality") {
           params.set(key, value.toLowerCase());
+          filters[key] = value.toLowerCase();
+          hasChanges = true;
         } else if (key === "minPrice" || key === "maxPrice") {
           // Convert price to whole number
           const wholeNumberValue = convertPriceToCents(value);
           if (!isNaN(wholeNumberValue)) {
             params.set(key, wholeNumberValue.toString());
+            filters[key] = wholeNumberValue.toString();
+            hasChanges = true;
           } else {
             params.delete(key);
           }
         } else {
           params.set(key, value.toString());
+          filters[key] = value.toString();
+          hasChanges = true;
         }
       } else {
         params.delete(key);
       }
     });
+
     setActiveFilters(data);
+
+    // Only track this filter selection if there are actual changes
+    if (hasChanges) {
+      // Fetch some property images to use as preview images
+      let previewImages: string[] = [];
+      try {
+        const response = await fetch(
+          `/api/properties/preview?${params.toString()}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          previewImages = data.previewImages || [];
+        }
+      } catch (error) {
+        console.error("Error fetching preview images:", error);
+      }
+
+      // Track search history with the filter selection
+      await trackSearchHistory("", filters, undefined, previewImages);
+    }
+
     router.push(`/${pageType}?${params.toString()}`);
     setIsOpen(false);
   };
@@ -130,7 +162,7 @@ export default function PropertyFilter({
 
   // Update the formatPrice function to handle large numbers
   const formatPrice = (price: string) => {
-    const numericPrice = parseFloat(price.replace(/,/g, ""));
+    const numericPrice = Number.parseFloat(price.replace(/,/g, ""));
     if (isNaN(numericPrice)) return "";
     return new Intl.NumberFormat("en-US", {
       maximumFractionDigits: 0,

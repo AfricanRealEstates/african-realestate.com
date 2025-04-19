@@ -1,5 +1,6 @@
 "use client";
 
+import type React from "react";
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
@@ -24,29 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { propertyTypes } from "@/constants";
-
-async function searchProperties(
-  query: string,
-  advancedParams: AdvancedSearchParams
-) {
-  const params = new URLSearchParams(query ? { q: query } : {});
-  Object.entries(advancedParams).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== "") {
-      params.append(key, value.toString());
-    }
-  });
-  try {
-    const response = await fetch(`/api/search?${params.toString()}`);
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Failed to fetch: ${response.status} ${errorText}`);
-    }
-    return response.json();
-  } catch (error) {
-    console.error("Search error:", error);
-    throw error;
-  }
-}
+import { trackSearchHistory } from "@/actions/trackSearchHistory";
 
 interface AdvancedSearchParams {
   status?: string;
@@ -55,6 +34,38 @@ interface AdvancedSearchParams {
   propertyType?: string;
   propertyDetails?: string;
   location?: string;
+  county?: string;
+  locality?: string;
+}
+
+type Property = {
+  coverPhotos?: string[];
+  images?: string[];
+  // add other fields if needed
+};
+
+type SearchResult = {
+  count: number;
+  properties: Property[];
+};
+
+async function searchProperties(
+  query: string,
+  advancedParams: AdvancedSearchParams
+): Promise<SearchResult> {
+  const params = new URLSearchParams(query ? { q: query } : {});
+  Object.entries(advancedParams).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      params.append(key, value.toString());
+    }
+  });
+
+  const response = await fetch(`/api/search?${params.toString()}`);
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to fetch: ${response.status} ${errorText}`);
+  }
+  return response.json();
 }
 
 function AdvancedSearch({
@@ -103,7 +114,7 @@ function AdvancedSearch({
   };
 
   const formatPrice = (price: string) => {
-    const numericPrice = parseFloat(price.replace(/,/g, ""));
+    const numericPrice = Number.parseFloat(price.replace(/,/g, ""));
     if (isNaN(numericPrice)) return "";
     return new Intl.NumberFormat("en-US", {
       maximumFractionDigits: 0,
@@ -111,7 +122,7 @@ function AdvancedSearch({
   };
 
   const handlePriceChange = (type: "minPrice" | "maxPrice", value: string) => {
-    const numericValue = parseFloat(value.replace(/,/g, ""));
+    const numericValue = Number.parseFloat(value.replace(/,/g, ""));
     if (type === "minPrice") {
       setMinPriceInput(value);
       handleChange("minPrice", isNaN(numericValue) ? undefined : numericValue);
@@ -135,7 +146,6 @@ function AdvancedSearch({
         </SheetHeader>
         <div className="flex-grow overflow-y-auto">
           <div className="grid gap-4 py-4">
-            {/* Location input */}
             <div className="space-y-2">
               <Label>Location</Label>
               <Input
@@ -145,7 +155,6 @@ function AdvancedSearch({
                 onChange={(e) => handleChange("location", e.target.value)}
               />
             </div>
-            {/* Status select */}
             <div className="space-y-2">
               <Label>Status</Label>
               <Select
@@ -161,7 +170,6 @@ function AdvancedSearch({
                 </SelectContent>
               </Select>
             </div>
-            {/* Price range inputs */}
             <div className="space-y-2">
               <Label>
                 {params.status === "let" ? "Rent Range" : "Price Range"}
@@ -195,7 +203,6 @@ function AdvancedSearch({
                 </div>
               </div>
             </div>
-            {/* Property Type select */}
             <div className="space-y-2">
               <Label>Property Type</Label>
               <Select
@@ -218,7 +225,6 @@ function AdvancedSearch({
                 </SelectContent>
               </Select>
             </div>
-            {/* Property Details select */}
             {selectedPropertyType && (
               <div className="space-y-2">
                 <Label>Property Details</Label>
@@ -260,7 +266,7 @@ function AdvancedSearch({
 
 export default function SearchBar() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [results, setResults] = useState<{ count: number } | null>(null);
+  const [results, setResults] = useState<SearchResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -298,6 +304,36 @@ export default function SearchBar() {
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (searchTerm.trim() || Object.keys(advancedParams).length > 0) {
+      const filters: Record<string, string> = {};
+      Object.entries(advancedParams).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== "") {
+          filters[key] = value.toString();
+        }
+      });
+
+      const previewImages: string[] =
+        results?.properties
+          ?.slice(0, 3)
+          .map((property) => {
+            if (property.coverPhotos && property.coverPhotos.length > 0) {
+              return property.coverPhotos[0];
+            } else if (property.images && property.images.length > 0) {
+              return property.images[0];
+            }
+            return null;
+          })
+          .filter((url): url is string => Boolean(url)) || [];
+
+      await trackSearchHistory(
+        searchTerm.trim(),
+        filters,
+        results?.count || 0,
+        previewImages
+      );
+    }
+
     navigateToSearchPage();
   };
 
@@ -332,6 +368,14 @@ export default function SearchBar() {
 
   const handleApplyFilters = (params: AdvancedSearchParams) => {
     setAdvancedParams(params);
+    const filters: Record<string, string> = {};
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        filters[key] = value.toString();
+      }
+    });
+
+    trackSearchHistory("", filters, 0, []);
     navigateToSearchPage();
   };
 
@@ -396,26 +440,17 @@ export default function SearchBar() {
           </Button>
         </div>
         {isLoading && (
-          <div
-            className="absolute left-0 right-0 bg-white p-2 shadow-md rounded-b-md mt-2"
-            aria-live="polite"
-          >
+          <div className="absolute left-0 right-0 bg-white p-2 shadow-md rounded-b-md mt-2">
             Loading...
           </div>
         )}
         {error && (
-          <div
-            className="absolute left-0 right-0 bg-red-100 text-red-800 p-2 shadow-md rounded-b-md mt-2"
-            aria-live="assertive"
-          >
+          <div className="absolute left-0 right-0 bg-red-100 text-red-800 p-2 shadow-md rounded-b-md mt-2">
             {error}
           </div>
         )}
         {results && !isLoading && (
-          <div
-            className="absolute left-0 right-0 bg-white p-2 shadow-md rounded-b-md mt-2"
-            aria-live="polite"
-          >
+          <div className="absolute left-0 right-0 bg-white p-2 shadow-md rounded-b-md mt-2">
             {results.count}{" "}
             {results.count === 1 ? "property matches" : "properties match"}
           </div>

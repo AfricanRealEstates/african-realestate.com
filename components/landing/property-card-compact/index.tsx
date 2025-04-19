@@ -41,7 +41,7 @@ export default function PropertyCardCompact({
       };
     }
 
-    return { text: property.propertyDetails, color: "bg-blue-500" };
+    return { text: property.propertyDetails, color: "bg-[#198754]" };
   };
 
   const tag = getTag();
