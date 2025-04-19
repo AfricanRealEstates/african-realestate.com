@@ -1,13 +1,9 @@
-import { Raleway } from "next/font/google";
-import { prisma } from "@/lib/prisma";
-import Link from "next/link";
 import Image from "next/image";
-import {
-  EnvelopeIcon,
-  BuildingOfficeIcon,
-  UserIcon,
-} from "@heroicons/react/20/solid";
-import { UserRole, type User } from "@prisma/client";
+import Link from "next/link";
+import { getSEOTags, renderSchemaTags } from "@/lib/seo";
+import { Button } from "@/components/ui/button";
+import { prisma } from "@/lib/prisma";
+import { MapPin, Phone, Mail } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Pagination,
@@ -19,63 +15,18 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-const raleway = Raleway({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-nunitosans",
+export const metadata = getSEOTags({
+  title: "Agencies & Agents | African Real Estate",
+  description:
+    "Explore our network of expert real estate agencies and agents offering tailored solutions to your property needs. Connect with professionals and find your dream property today.",
+  canonicalUrlRelative: "agencies",
 });
 
-export async function generateMetadata() {
-  return {
-    title:
-      "Agencies & Agents | Discover Real Estate Professionals - Your Real Estate Partner",
-    description:
-      "Explore our network of expert real estate agencies and agents offering tailored solutions to your property needs. Connect with professionals and find your dream property today.",
-    openGraph: {
-      title: "Agencies & Agents | Expert Real Estate Professionals",
-      description:
-        "Discover our trusted network of real estate agencies and individual agents to guide you through your property journey.",
-      url: "https://www.african-realestate.com/agencies",
-      images: [
-        {
-          url: "https://www.african-realestate.com/assets/house-1.jpg",
-          width: 1200,
-          height: 630,
-          alt: "Agencies & Agents Page",
-        },
-      ],
-      type: "website",
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: "Agencies & Agents | Expert Real Estate Professionals",
-      description:
-        "Explore trusted real estate agencies and agents to find tailored property solutions.",
-      images: ["https://www.african-realestate.com/assets/house-1.jpg"],
-    },
-    alternates: {
-      canonical: "https://www.african-realestate.com/agencies",
-    },
-  };
-}
-
 // Pagination constants
-const ITEMS_PER_PAGE = 8;
+const ITEMS_PER_PAGE = 12;
 
 // Add a type definition for the tab values
 type TabType = "all" | "agencies" | "agents";
-
-// Define the type for properties
-type Property = {
-  id: string;
-  // Add other property fields as needed
-  // This is a simplified version
-};
-
-// Define the type for professionals that matches the Prisma User model with properties
-type ProfessionalWithProperties = User & {
-  properties: Property[];
-};
 
 export default async function AgenciesAndAgents({
   searchParams,
@@ -99,7 +50,7 @@ export default async function AgenciesAndAgents({
   const totalProfessionals = await prisma.user.count({
     where: {
       role: {
-        in: [UserRole.AGENCY, UserRole.AGENT],
+        in: ["AGENT", "AGENCY"],
       },
       properties: {
         some: {}, // This ensures at least one property exists
@@ -109,7 +60,7 @@ export default async function AgenciesAndAgents({
 
   const totalAgencies = await prisma.user.count({
     where: {
-      role: UserRole.AGENCY,
+      role: "AGENCY",
       properties: {
         some: {}, // This ensures at least one property exists
       },
@@ -118,7 +69,7 @@ export default async function AgenciesAndAgents({
 
   const totalAgents = await prisma.user.count({
     where: {
-      role: UserRole.AGENT,
+      role: "AGENT",
       properties: {
         some: {}, // This ensures at least one property exists
       },
@@ -127,61 +78,135 @@ export default async function AgenciesAndAgents({
 
   // Fetch professionals with pagination
   const professionals = await prisma.user.findMany({
-    include: {
-      properties: true,
-    },
     where: {
       role: {
-        in: [UserRole.AGENCY, UserRole.AGENT],
+        in: ["AGENT", "AGENCY"],
       },
       properties: {
         some: {}, // This ensures at least one property exists
       },
     },
-    orderBy: {
-      role: "asc", // Sort by role to group agencies and agents
+    select: {
+      id: true,
+      name: true,
+      agentName: true,
+      agentLocation: true,
+      profilePhoto: true,
+      coverPhoto: true,
+      bio: true,
+      phoneNumber: true,
+      whatsappNumber: true,
+      agentEmail: true,
+      email: true,
+      role: true,
+      xLink: true,
+      facebookLink: true,
+      instagramLink: true,
+      linkedinLink: true,
+      _count: {
+        select: {
+          properties: {
+            where: {
+              isActive: true,
+            },
+          },
+        },
+      },
     },
-    skip,
-    take: ITEMS_PER_PAGE,
+    orderBy: {
+      properties: {
+        _count: "desc",
+      },
+    },
+    skip: tab === "all" ? skip : 0,
+    take: tab === "all" ? ITEMS_PER_PAGE : totalProfessionals,
   });
 
   // Separate professionals by role
   const agencies = await prisma.user.findMany({
-    include: {
-      properties: true,
-    },
     where: {
-      role: UserRole.AGENCY,
+      role: "AGENCY",
       properties: {
         some: {}, // This ensures at least one property exists
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+      agentName: true,
+      agentLocation: true,
+      profilePhoto: true,
+      coverPhoto: true,
+      bio: true,
+      phoneNumber: true,
+      whatsappNumber: true,
+      agentEmail: true,
+      email: true,
+      role: true,
+      xLink: true,
+      facebookLink: true,
+      instagramLink: true,
+      linkedinLink: true,
+      _count: {
+        select: {
+          properties: {
+            where: {
+              isActive: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      properties: {
+        _count: "desc",
       },
     },
     skip: tab === "agencies" ? skip : 0,
-    take:
-      tab === "agencies"
-        ? ITEMS_PER_PAGE
-        : totalAgencies > ITEMS_PER_PAGE
-          ? ITEMS_PER_PAGE
-          : totalAgencies,
+    take: tab === "agencies" ? ITEMS_PER_PAGE : totalAgencies,
   });
 
   const agents = await prisma.user.findMany({
-    include: {
-      properties: true,
-    },
     where: {
-      role: UserRole.AGENT,
+      role: "AGENT",
       properties: {
         some: {}, // This ensures at least one property exists
       },
     },
+    select: {
+      id: true,
+      name: true,
+      agentName: true,
+      agentLocation: true,
+      profilePhoto: true,
+      coverPhoto: true,
+      bio: true,
+      phoneNumber: true,
+      whatsappNumber: true,
+      agentEmail: true,
+      email: true,
+      role: true,
+      xLink: true,
+      facebookLink: true,
+      instagramLink: true,
+      linkedinLink: true,
+      _count: {
+        select: {
+          properties: {
+            where: {
+              isActive: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      properties: {
+        _count: "desc",
+      },
+    },
     skip: tab === "agents" ? skip : 0,
-    take:
-      tab === "agents"
-        ? ITEMS_PER_PAGE
-        : totalAgents > ITEMS_PER_PAGE
-          ? ITEMS_PER_PAGE
-          : totalAgents,
+    take: tab === "agents" ? ITEMS_PER_PAGE : totalAgents,
   });
 
   // Calculate total pages for each tab
@@ -191,107 +216,13 @@ export default async function AgenciesAndAgents({
     agents: Math.ceil(totalAgents / ITEMS_PER_PAGE),
   };
 
-  // Update the renderProfessionalCards function to use the correct type
-  const renderProfessionalCards = (
-    professionals: ProfessionalWithProperties[]
-  ) => {
-    if (professionals.length === 0) {
-      return (
-        <div className="text-center py-12">
-          <p className="text-lg text-gray-600">
-            No active professionals found in this category.
-          </p>
-          <p className="text-sm text-gray-500 mt-2">
-            Check back later for updates.
-          </p>
-        </div>
-      );
-    }
-
-    return (
-      <ul
-        role="list"
-        className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-      >
-        {professionals.map((professional) => (
-          <li
-            key={professional.id}
-            className="col-span-1 flex flex-col divide-y divide-gray-200 border-gray-200 border rounded-lg bg-white text-center shadow"
-          >
-            <div className="flex flex-1 flex-col p-8">
-              <Image
-                width={40}
-                height={40}
-                className="mx-auto size-10 flex-shrink-0 rounded-full"
-                src={professional.image || "/assets/placeholder.jpg"}
-                alt={professional.name || "Professional"}
-              />
-              <h3 className="mt-6 text-sm font-medium text-gray-900">
-                {professional.role === "AGENT"
-                  ? professional.name
-                  : professional.agentName}
-              </h3>
-              <dl className="mt-1 flex flex-grow flex-col justify-between">
-                <dt className="sr-only">Title</dt>
-                <dd className="text-sm my-4 text-gray-500 flex items-center justify-center gap-1">
-                  {professional.role === "AGENCY" ? (
-                    <>
-                      <BuildingOfficeIcon className="h-4 w-4" />
-                      AGENCY
-                    </>
-                  ) : (
-                    <>
-                      <UserIcon className="h-4 w-4" />
-                      AGENT
-                    </>
-                  )}
-                </dd>
-                <dt className="sr-only">Role</dt>
-
-                <dd className="mt-3">
-                  <span className="inline-flex items-center rounded-full bg-neutral-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/20">
-                    {professional.properties.length} listings
-                  </span>
-                </dd>
-              </dl>
-            </div>
-            <div>
-              <div className="-mt-px flex divide-x divide-gray-200">
-                <div className="flex w-0 flex-1">
-                  <Link
-                    href={`mailto:${professional.email}`}
-                    className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900"
-                  >
-                    <EnvelopeIcon
-                      className="h-5 w-5 text-gray-400"
-                      aria-hidden="true"
-                    />
-                    Email
-                  </Link>
-                </div>
-                <div className="-ml-px flex w-0 flex-1 bg-neutral-50 text-indigo-500 hover:bg-indigo-600 hover:text-neutral-50 transition-colors ease-linear">
-                  <Link
-                    href={`/${professional.role === "AGENCY" ? "agencies" : "agents"}/${professional.id}`}
-                    className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold"
-                  >
-                    View Listings
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </li>
-        ))}
-      </ul>
-    );
-  };
-
-  // Update the renderPagination function with proper typing
+  // Render pagination
   const renderPagination = (currentTab: TabType) => {
     const currentTotalPages = totalPages[currentTab];
     if (currentTotalPages <= 1) return null;
 
     return (
-      <Pagination className="mt-8">
+      <Pagination className="mt-12">
         <PaginationContent>
           {page > 1 && (
             <PaginationItem>
@@ -373,57 +304,386 @@ export default async function AgenciesAndAgents({
   };
 
   return (
-    <div className={`${raleway.className}`}>
-      <section className="mx-auto w-[95%] max-w-7xl px-5 py-24 md:px-10 md:py-24 lg:py-32">
-        <h1 className="text-center text-2xl font-bold md:text-4xl lg:text-left">
-          Agencies & Agents
-        </h1>
-        <p className="font-medium capitalize mb-8 mt-4 text-center text-sm text-[#636363] sm:text-base md:mb-12 lg:mb-16 lg:text-left">
-          Discover our network of active real estate professionals
-        </p>
+    <div className="bg-white">
+      {renderSchemaTags()}
+      <div className="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8">
+        <div className="mx-auto max-w-2xl text-center">
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+            Agencies & Agents
+          </h1>
+          <p className="mt-6 text-base leading-8 text-gray-600">
+            Connect with our network of trusted real estate professionals. These
+            experienced agents and agencies help buyers, sellers, and renters
+            navigate the African property market.
+          </p>
+        </div>
 
-        <Tabs defaultValue={tab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8">
-            <TabsTrigger value="all" asChild>
-              <Link href="?tab=all&page=1">All</Link>
-            </TabsTrigger>
-            <TabsTrigger value="agencies" asChild>
-              <Link href="?tab=agencies&page=1">Agencies</Link>
-            </TabsTrigger>
-            <TabsTrigger value="agents" asChild>
-              <Link href="?tab=agents&page=1">Agents</Link>
-            </TabsTrigger>
-          </TabsList>
+        {/* Tabs and Listings */}
+        <div className="mx-auto mt-12 max-w-7xl">
+          <Tabs defaultValue={tab} className="w-full">
+            <div className="flex justify-center mb-12">
+              <TabsList className="grid w-full max-w-md grid-cols-3">
+                <TabsTrigger value="all" asChild>
+                  <Link href="?tab=all&page=1" className="w-full">
+                    All Professionals
+                  </Link>
+                </TabsTrigger>
+                <TabsTrigger value="agencies" asChild>
+                  <Link href="?tab=agencies&page=1" className="w-full">
+                    Agencies
+                  </Link>
+                </TabsTrigger>
+                <TabsTrigger value="agents" asChild>
+                  <Link href="?tab=agents&page=1" className="w-full">
+                    Agents
+                  </Link>
+                </TabsTrigger>
+              </TabsList>
+            </div>
 
-          <TabsContent value="all">
-            {professionals.length > 0 ? (
-              <>
-                {renderProfessionalCards(professionals)}
-                {renderPagination("all")}
-              </>
-            ) : (
-              <div className="text-center py-12">
-                <p className="text-lg text-gray-600">
-                  No active real estate professionals found.
-                </p>
-                <p className="text-sm text-gray-500 mt-2">
-                  Check back later for updates.
-                </p>
+            <TabsContent value="all">
+              <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                {professionals.length > 0 ? (
+                  professionals.map((professional) => (
+                    <div
+                      key={professional.id}
+                      className="group relative flex flex-col rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+                    >
+                      <div className="relative h-40 w-full overflow-hidden bg-gray-100">
+                        <Image
+                          src={professional.coverPhoto || "/assets/house-1.jpg"}
+                          alt={
+                            professional.agentName ||
+                            professional.name ||
+                            "Real Estate Professional"
+                          }
+                          fill
+                          className="object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+                        <div className="absolute bottom-4 left-4 right-4 flex items-center gap-4">
+                          <div className="relative h-16 w-16 overflow-hidden rounded-full border-2 border-white bg-white">
+                            <Image
+                              src={
+                                professional.profilePhoto ||
+                                "/assets/placeholder.jpg"
+                              }
+                              alt={
+                                professional.agentName ||
+                                professional.name ||
+                                "Agent"
+                              }
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-semibold text-white">
+                              {professional.agentName ||
+                                professional.name ||
+                                "Real Estate Professional"}
+                            </h3>
+                            <p className="text-sm text-white/80">
+                              {professional.role === "AGENCY"
+                                ? "Agency"
+                                : " Agent"}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex-1 p-6">
+                        <div className="flex items-center gap-x-2 text-sm text-gray-500 mb-4">
+                          <MapPin className="h-4 w-4 text-gray-400" />
+                          <span>{professional.agentLocation || "Kenya"}</span>
+                        </div>
+                        <p className="text-gray-600 line-clamp-3 mb-4">
+                          {professional.bio ||
+                            "Experienced real estate professional helping clients find their perfect properties in Africa."}
+                        </p>
+                        <div className="space-y-2 text-sm">
+                          {professional.phoneNumber && (
+                            <div className="flex items-center gap-x-2">
+                              <Phone className="h-4 w-4 text-gray-400" />
+                              <a
+                                href={`tel:${professional.phoneNumber}`}
+                                className="text-gray-600 hover:text-blue-600"
+                              >
+                                {professional.phoneNumber}
+                              </a>
+                            </div>
+                          )}
+                          {(professional.agentEmail || professional.email) && (
+                            <div className="flex items-center gap-x-2">
+                              <Mail className="h-4 w-4 text-gray-400" />
+                              <a
+                                href={`mailto:${professional.agentEmail || professional.email}`}
+                                className="text-gray-600 hover:text-blue-600"
+                              >
+                                {professional.agentEmail || professional.email}
+                              </a>
+                            </div>
+                          )}
+                        </div>
+                        <div className="mt-6 flex items-center justify-between">
+                          <div className="text-sm text-gray-500">
+                            <span className="font-medium text-gray-900">
+                              {professional._count.properties}
+                            </span>{" "}
+                            active listings
+                          </div>
+                          <Button asChild size="sm" variant="outline">
+                            <Link
+                              href={`/${professional.role === "AGENCY" ? "agencies" : "agencies"}/${professional.id}`}
+                            >
+                              View Profile
+                            </Link>
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="col-span-full text-center py-12">
+                    <p className="text-lg text-gray-600">
+                      No active professionals found.
+                    </p>
+                    <p className="text-sm text-gray-500 mt-2">
+                      Check back later for updates.
+                    </p>
+                  </div>
+                )}
               </div>
-            )}
-          </TabsContent>
+              {renderPagination("all")}
+            </TabsContent>
 
-          <TabsContent value="agencies">
-            {renderProfessionalCards(agencies)}
-            {renderPagination("agencies")}
-          </TabsContent>
+            <TabsContent value="agencies">
+              <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                {agencies.length > 0 ? (
+                  agencies.map((agency) => (
+                    <div
+                      key={agency.id}
+                      className="group relative flex flex-col rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+                    >
+                      <div className="relative h-40 w-full overflow-hidden bg-gray-100">
+                        <Image
+                          src={agency.coverPhoto || "/assets/house-1.jpg"}
+                          alt={
+                            agency.agentName ||
+                            agency.name ||
+                            "Real Estate Agency"
+                          }
+                          fill
+                          className="object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+                        <div className="absolute bottom-4 left-4 right-4 flex items-center gap-4">
+                          <div className="relative h-16 w-16 overflow-hidden rounded-full border-2 border-white bg-white">
+                            <Image
+                              src={
+                                agency.profilePhoto || "/assets/placeholder.jpg"
+                              }
+                              alt={agency.agentName || agency.name || "Agency"}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-semibold text-white">
+                              {agency.agentName ||
+                                agency.name ||
+                                "Real Estate Agency"}
+                            </h3>
+                            <p className="text-sm text-white/80">Agency</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex-1 p-6">
+                        <div className="flex items-center gap-x-2 text-sm text-gray-500 mb-4">
+                          <MapPin className="h-4 w-4 text-gray-400" />
+                          <span>{agency.agentLocation || "Kenya"}</span>
+                        </div>
+                        <p className="text-gray-600 line-clamp-3 mb-4">
+                          {agency.bio ||
+                            "Professional real estate agency helping clients find their perfect properties in Africa."}
+                        </p>
+                        <div className="space-y-2 text-sm">
+                          {agency.phoneNumber && (
+                            <div className="flex items-center gap-x-2">
+                              <Phone className="h-4 w-4 text-gray-400" />
+                              <a
+                                href={`tel:${agency.phoneNumber}`}
+                                className="text-gray-600 hover:text-blue-600"
+                              >
+                                {agency.phoneNumber}
+                              </a>
+                            </div>
+                          )}
+                          {(agency.agentEmail || agency.email) && (
+                            <div className="flex items-center gap-x-2">
+                              <Mail className="h-4 w-4 text-gray-400" />
+                              <a
+                                href={`mailto:${agency.agentEmail || agency.email}`}
+                                className="text-gray-600 hover:text-blue-600"
+                              >
+                                {agency.agentEmail || agency.email}
+                              </a>
+                            </div>
+                          )}
+                        </div>
+                        <div className="mt-6 flex items-center justify-between">
+                          <div className="text-sm text-gray-500">
+                            <span className="font-medium text-gray-900">
+                              {agency._count.properties}
+                            </span>{" "}
+                            active listings
+                          </div>
+                          <Button asChild size="sm" variant="outline">
+                            <Link href={`/agencies/${agency.id}`}>
+                              View Profile
+                            </Link>
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="col-span-full text-center py-12">
+                    <p className="text-lg text-gray-600">
+                      No active agencies found.
+                    </p>
+                    <p className="text-sm text-gray-500 mt-2">
+                      Check back later for updates.
+                    </p>
+                  </div>
+                )}
+              </div>
+              {renderPagination("agencies")}
+            </TabsContent>
 
-          <TabsContent value="agents">
-            {renderProfessionalCards(agents)}
-            {renderPagination("agents")}
-          </TabsContent>
-        </Tabs>
-      </section>
+            <TabsContent value="agents">
+              <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                {agents.length > 0 ? (
+                  agents.map((agent) => (
+                    <div
+                      key={agent.id}
+                      className="group relative flex flex-col rounded-xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+                    >
+                      <div className="relative h-40 w-full overflow-hidden bg-gray-100">
+                        <Image
+                          src={agent.coverPhoto || "/assets/house-1.jpg"}
+                          alt={agent.name || "Real Estate Agent"}
+                          fill
+                          className="object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+                        <div className="absolute bottom-4 left-4 right-4 flex items-center gap-4">
+                          <div className="relative h-16 w-16 overflow-hidden rounded-full border-2 border-white bg-white">
+                            <Image
+                              src={
+                                agent.profilePhoto || "/assets/placeholder.jpg"
+                              }
+                              alt={agent.name || "Agent"}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-semibold text-white">
+                              {agent.name || "Real Estate Agent"}
+                            </h3>
+                            <p className="text-sm text-white/80">Agent</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex-1 p-6">
+                        <div className="flex items-center gap-x-2 text-sm text-gray-500 mb-4">
+                          <MapPin className="h-4 w-4 text-gray-400" />
+                          <span>{agent.agentLocation || "Kenya"}</span>
+                        </div>
+                        <p className="text-gray-600 line-clamp-3 mb-4">
+                          {agent.bio ||
+                            "Experienced real estate agent helping clients find their perfect properties in Africa."}
+                        </p>
+                        <div className="space-y-2 text-sm">
+                          {agent.phoneNumber && (
+                            <div className="flex items-center gap-x-2">
+                              <Phone className="h-4 w-4 text-gray-400" />
+                              <a
+                                href={`tel:${agent.phoneNumber}`}
+                                className="text-gray-600 hover:text-blue-600"
+                              >
+                                {agent.phoneNumber}
+                              </a>
+                            </div>
+                          )}
+                          {(agent.agentEmail || agent.email) && (
+                            <div className="flex items-center gap-x-2">
+                              <Mail className="h-4 w-4 text-gray-400" />
+                              <a
+                                href={`mailto:${agent.agentEmail || agent.email}`}
+                                className="text-gray-600 hover:text-blue-600"
+                              >
+                                {agent.agentEmail || agent.email}
+                              </a>
+                            </div>
+                          )}
+                        </div>
+                        <div className="mt-6 flex items-center justify-between">
+                          <div className="text-sm text-gray-500">
+                            <span className="font-medium text-gray-900">
+                              {agent._count.properties}
+                            </span>{" "}
+                            active listings
+                          </div>
+                          <Button asChild size="sm" variant="outline">
+                            <Link href={`/agencies/${agent.id}`}>
+                              View Profile
+                            </Link>
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="col-span-full text-center py-12">
+                    <p className="text-lg text-gray-600">
+                      No active agents found.
+                    </p>
+                    <p className="text-sm text-gray-500 mt-2">
+                      Check back later for updates.
+                    </p>
+                  </div>
+                )}
+              </div>
+              {renderPagination("agents")}
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        {/* Become a Partner CTA */}
+        <div className="mx-auto mt-24 max-w-7xl">
+          <div className="rounded-2xl bg-gradient-to-r bg-blue-50 px-6 py-16 sm:p-16">
+            <div className="mx-auto max-w-2xl text-center">
+              <h2 className="text-3xl font-bold tracking-tight text-gray-900">
+                Become a Partner
+              </h2>
+              <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-gray-600">
+                Join our network of trusted real estate professionals. List your
+                properties, connect with clients, and grow your business with
+                African Real Estate.
+              </p>
+              <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-6">
+                <Button asChild className="w-full sm:w-auto">
+                  <Link href="/pricing">View Partner Plans</Link>
+                </Button>
+                <Button asChild variant="outline" className=" w-full sm:w-auto">
+                  <Link href="/contact">Contact Partnership Team</Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

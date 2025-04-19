@@ -1,7 +1,4 @@
-import { HomeIcon } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 
 const navigation = {
   solutions: [
@@ -11,7 +8,7 @@ const navigation = {
     { name: "Agency", href: "/agencies" },
   ],
   support: [
-    { name: "Pricing", href: "/contact" },
+    { name: "Pricing", href: "/pricing" },
     { name: "Contact", href: "/contact" },
     { name: "Query", href: "/contact" },
     { name: "FAQ", href: "/faqs" },
