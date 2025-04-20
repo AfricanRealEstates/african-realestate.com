@@ -22,7 +22,7 @@ const navigation = {
   ],
   legal: [
     { name: "Terms of Service", href: "/terms-of-service" },
-    { name: "Privacy Policy", href: "/privacy-policy" },
+    { name: "Privacy Policy", href: "/privacy" },
     { name: "License", href: "/license" },
   ],
   social: [
