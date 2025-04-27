@@ -90,35 +90,31 @@ export async function generateMetadata({
   const description = `${property.description.substring(0, 150)}...`;
   const imageUrl = property.coverPhotos[0] || "/assets/Kilimani.webp";
   const fullUrl = `https://www.african-realestate.com/properties/${property.propertyDetails}/${property.id}`;
-  const formattedPrice = `${
-    property.currency
-  } ${property.price.toLocaleString()}`;
+  const formattedPrice = `${property.currency} ${property.price.toLocaleString()}`;
   const location = `${property.locality}, ${property.county}`;
 
-  // Ensure the imageUrl is an absolute URL
+  // Absolute Image URL
   const absoluteImageUrl = imageUrl.startsWith("http")
     ? imageUrl
     : `https://www.african-realestate.com${imageUrl}`;
 
-  const sharedMetadata = {
-    title,
-    description: `${description} - ${formattedPrice} - ${location}`,
-    images: [
-      {
-        url: absoluteImageUrl,
-        width: 1200,
-        height: 630,
-        alt: property.title,
-      },
-    ],
-  };
-
   return {
-    ...sharedMetadata,
+    title,
+    description,
     openGraph: {
-      ...sharedMetadata,
+      title,
+      description: `${description} - ${formattedPrice} - ${location}`,
       url: fullUrl,
       siteName: "African Real Estate",
+      images: [
+        {
+          url: absoluteImageUrl,
+          width: 1200,
+          height: 630,
+          alt: property.title,
+          type: "image/jpeg",
+        },
+      ],
       locale: "en_US",
       type: "website",
     },
@@ -126,71 +122,12 @@ export async function generateMetadata({
       card: "summary_large_image",
       site: "@AfricanRealEsta",
       creator: "@AfricanRealEsta",
-      title: sharedMetadata.title,
-      description: sharedMetadata.description,
+      title,
+      description: `${description} - ${formattedPrice} - ${location}`,
       images: [absoluteImageUrl],
     },
     alternates: {
       canonical: fullUrl,
-    },
-    other: {
-      // OpenGraph
-      "og:price:amount": property.price.toString(),
-      "og:price:currency": property.currency,
-      "og:availability": property.status === "sale" ? "for sale" : "to let",
-      "og:image": absoluteImageUrl,
-      "og:image:width": "1200",
-      "og:image:height": "630",
-      "og:image:alt": property.title,
-      "og:image:type": "image/jpeg",
-      "og:image:secure_url": absoluteImageUrl,
-
-      // Twitter
-      "twitter:image": absoluteImageUrl,
-      "twitter:image:alt": property.title,
-      "twitter:label1": "Price",
-      "twitter:data1": formattedPrice,
-      "twitter:label2": "Status",
-      "twitter:data2": property.status === "sale" ? "For Sale" : "To Let",
-      "twitter:label3": "Location",
-      "twitter:data3": location,
-      "twitter:label4": "Description",
-      "twitter:data4": description,
-
-      // Schema.org JSON-LD
-      "script:type": "application/ld+json",
-      "script:innerHTML": JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "RealEstateListing",
-        name: property.title,
-        description: description,
-        image: absoluteImageUrl,
-        url: fullUrl,
-        price: formattedPrice,
-        priceCurrency: property.currency,
-        address: {
-          "@type": "PostalAddress",
-          addressLocality: property.locality,
-          addressRegion: property.county,
-          addressCountry: "KE",
-        },
-        numberOfRooms: property.bedrooms,
-        numberOfBathroomsTotal: property.bathrooms,
-        floorSize: {
-          "@type": "QuantitativeValue",
-          value: property.landSize,
-          unitCode: property.landUnits,
-        },
-        offers: {
-          "@type": "Offer",
-          price: property.price,
-          priceCurrency: property.currency,
-          availability:
-            property.status === "sale"
-              ? "https://schema.org/InStock"
-              : "https://schema.org/LimitedAvailability",
-        },
-      }),
     },
   };
 }
