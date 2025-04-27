@@ -37,15 +37,17 @@ export default async function PropertyAdvice() {
   }));
 
   return (
-    <section className={`py-12 leading-relaxed`}>
+    <section className={`py-6 leading-relaxed`}>
       <div className="w-[95%] max-w-7xl m-auto px-6 text-gray-600 md:px-12 xl:px-6">
         <div className="flex items-center justify-between mb-8">
-          <p className={`text-xl text-gray-900 ${josefin.className}`}>
+          <p
+            className={`text-sm lg:text-xl text-gray-900 ${josefin.className}`}
+          >
             {user ? "Recommended Insights For You" : "Property Insights & Tips"}
           </p>
           <Link
             href="/blog"
-            className="inline-flex items-center text-ken-primary hover:underline group"
+            className="inline-flex items-center text-ken-primary hover:underline group text-sm lg:text-base"
           >
             View all
             <ArrowRight className="size-4 ml-1.5 transition-transform duration-300 group-hover:translate-x-[2px]" />

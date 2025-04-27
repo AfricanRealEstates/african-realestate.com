@@ -1,4 +1,5 @@
 "use client";
+
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   Pagination,
@@ -9,55 +10,59 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface PaginationControlsProps {
   pageCount: number;
   currentPage: number;
+  pageSize: number;
 }
 
 export function PaginationControls({
   pageCount,
   currentPage,
+  pageSize,
 }: PaginationControlsProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const createPageURL = (pageNumber: number) => {
+  const createPageURL = (pageNumber: number, newPageSize = pageSize) => {
     const params = new URLSearchParams(searchParams);
     params.set("page", pageNumber.toString());
+    params.set("per_page", newPageSize.toString());
     return `${pathname}?${params.toString()}`;
   };
 
-  // Generate page numbers to display
+  const handlePageSizeChange = (value: string) => {
+    router.push(createPageURL(1, parseInt(value))); // Reset to page 1 when changing page size
+  };
+
   const getPageNumbers = () => {
-    const pages = [];
+    const pages: (number | string)[] = [];
 
-    // Always show first page
-    pages.push(1);
-
-    // Current page neighborhood
-    for (
-      let i = Math.max(2, currentPage - 1);
-      i <= Math.min(pageCount - 1, currentPage + 1);
-      i++
-    ) {
-      if (pages[pages.length - 1] !== i - 1) {
-        // Add ellipsis if there's a gap
-        pages.push(-1);
+    if (pageCount <= 7) {
+      for (let i = 1; i <= pageCount; i++) {
+        pages.push(i);
       }
-      pages.push(i);
-    }
-
-    // Add last page if not already included
-    if (pageCount > 1) {
-      if (pages[pages.length - 1] !== pageCount - 1) {
-        // Add ellipsis if there's a gap
-        pages.push(-1);
+    } else {
+      pages.push(1);
+      if (currentPage > 4) pages.push("...");
+      for (
+        let i = Math.max(2, currentPage - 1);
+        i <= Math.min(pageCount - 1, currentPage + 1);
+        i++
+      ) {
+        pages.push(i);
       }
-      if (!pages.includes(pageCount)) {
-        pages.push(pageCount);
-      }
+      if (currentPage < pageCount - 3) pages.push("...");
+      pages.push(pageCount);
     }
 
     return pages;
@@ -66,45 +71,70 @@ export function PaginationControls({
   const pageNumbers = getPageNumbers();
 
   return (
-    <Pagination>
-      <PaginationContent>
-        <PaginationItem>
-          <PaginationPrevious
-            href={createPageURL(currentPage - 1)}
-            aria-disabled={currentPage <= 1}
-            tabIndex={currentPage <= 1 ? -1 : undefined}
-            className={currentPage <= 1 ? "pointer-events-none opacity-50" : ""}
-          />
-        </PaginationItem>
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      {/* Page size selector */}
+      <div className="flex items-center gap-2">
+        <span className="text-sm text-muted-foreground">Rows per page:</span>
+        <Select
+          value={pageSize.toString()}
+          onValueChange={handlePageSizeChange}
+        >
+          <SelectTrigger className="w-[80px]">
+            <SelectValue placeholder={pageSize.toString()} />
+          </SelectTrigger>
+          <SelectContent>
+            {[10, 20, 50, 100].map((size) => (
+              <SelectItem key={size} value={size.toString()}>
+                {size}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
-        {pageNumbers.map((pageNumber, i) =>
-          pageNumber === -1 ? (
-            <PaginationItem key={`ellipsis-${i}`}>
-              <PaginationEllipsis />
-            </PaginationItem>
-          ) : (
-            <PaginationItem key={pageNumber}>
-              <PaginationLink
-                href={createPageURL(pageNumber)}
-                isActive={pageNumber === currentPage}
-              >
-                {pageNumber}
-              </PaginationLink>
-            </PaginationItem>
-          )
-        )}
+      {/* Pagination navigation */}
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              href={createPageURL(currentPage - 1)}
+              aria-disabled={currentPage <= 1}
+              tabIndex={currentPage <= 1 ? -1 : undefined}
+              className={
+                currentPage <= 1 ? "pointer-events-none opacity-50" : ""
+              }
+            />
+          </PaginationItem>
 
-        <PaginationItem>
-          <PaginationNext
-            href={createPageURL(currentPage + 1)}
-            aria-disabled={currentPage >= pageCount}
-            tabIndex={currentPage >= pageCount ? -1 : undefined}
-            className={
-              currentPage >= pageCount ? "pointer-events-none opacity-50" : ""
-            }
-          />
-        </PaginationItem>
-      </PaginationContent>
-    </Pagination>
+          {pageNumbers.map((pageNumber, idx) =>
+            pageNumber === "..." ? (
+              <PaginationItem key={`ellipsis-${idx}`}>
+                <PaginationEllipsis />
+              </PaginationItem>
+            ) : (
+              <PaginationItem key={pageNumber}>
+                <PaginationLink
+                  href={createPageURL(Number(pageNumber))}
+                  isActive={Number(pageNumber) === currentPage}
+                >
+                  {pageNumber}
+                </PaginationLink>
+              </PaginationItem>
+            )
+          )}
+
+          <PaginationItem>
+            <PaginationNext
+              href={createPageURL(currentPage + 1)}
+              aria-disabled={currentPage >= pageCount}
+              tabIndex={currentPage >= pageCount ? -1 : undefined}
+              className={
+                currentPage >= pageCount ? "pointer-events-none opacity-50" : ""
+              }
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    </div>
   );
 }

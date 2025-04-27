@@ -8,15 +8,28 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get("status") || "active";
     const isActive = status === "active";
 
-    // Build the search query
+    const terms = term
+      .split(",")
+      .map((t) => t.trim())
+      .filter((t) => t.length > 0);
+
+    const numberTerms = terms.filter((t) => !isNaN(Number(t))).map(Number);
+    const textTerms = terms.filter((t) => isNaN(Number(t)));
+
     const properties = await prisma.property.findMany({
       where: {
         isActive,
         OR: [
-          { title: { contains: term, mode: "insensitive" } },
-          { propertyNumber: term ? Number.parseInt(term) : undefined },
-          { user: { name: { contains: term, mode: "insensitive" } } },
-          { user: { email: { contains: term, mode: "insensitive" } } },
+          ...(numberTerms.length > 0
+            ? [{ propertyNumber: { in: numberTerms } }]
+            : []),
+          ...(textTerms.length > 0
+            ? [
+                { title: { in: textTerms } },
+                { user: { name: { in: textTerms } } },
+                { user: { email: { in: textTerms } } },
+              ]
+            : []),
         ],
       },
       select: {
@@ -33,7 +46,7 @@ export async function GET(request: NextRequest) {
           },
         },
       },
-      take: 20, // Limit results
+      take: 50, // Allow bigger selection if needed
       orderBy: {
         updatedAt: "desc",
       },

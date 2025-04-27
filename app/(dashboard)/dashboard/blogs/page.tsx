@@ -124,7 +124,11 @@ export default async function BlogDashboard({
 
         {/* Alternative pagination UI with page numbers */}
         <div className="mt-4">
-          <PaginationControls pageCount={pageCount} currentPage={page} />
+          <PaginationControls
+            pageCount={pageCount}
+            currentPage={page}
+            pageSize={perPage}
+          />
         </div>
       </div>
     </div>

@@ -1,4 +1,5 @@
 "use client";
+
 import {
   type ColumnDef,
   flexRender,
@@ -18,9 +19,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useState, useEffect } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -28,8 +29,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+
+import { useState, useEffect } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -48,40 +51,29 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  // Initialize filters from URL params
+  // Initialize filters from URL
   useEffect(() => {
     const newFilters: ColumnFiltersState = [];
 
-    // Check for title filter
     const titleFilter = searchParams.get("title");
-    if (titleFilter) {
-      newFilters.push({
-        id: "title",
-        value: titleFilter,
-      });
-    }
+    if (titleFilter) newFilters.push({ id: "title", value: titleFilter });
 
-    // Check for status filter
     const statusFilter = searchParams.get("status");
-    if (statusFilter) {
-      newFilters.push({
-        id: "status",
-        value: statusFilter,
-      });
-    }
+    if (statusFilter && statusFilter !== "all")
+      newFilters.push({ id: "status", value: statusFilter });
 
-    // Check for author filter
     const authorFilter = searchParams.get("author");
-    if (authorFilter) {
-      newFilters.push({
-        id: "author",
-        value: authorFilter,
-      });
-    }
+    if (authorFilter && authorFilter !== "all")
+      newFilters.push({ id: "author", value: authorFilter });
+
+    const blogNumberFilter = searchParams.get("blogNumber");
+    if (blogNumberFilter)
+      newFilters.push({ id: "blogNumber", value: blogNumberFilter });
 
     setColumnFilters(newFilters);
   }, [searchParams]);
@@ -108,11 +100,8 @@ export function DataTable<TData, TValue>({
 
   const createQueryString = (params: Record<string, string | null>) => {
     const newParams = new URLSearchParams(searchParams.toString());
-
-    // Reset to first page when filters change
     newParams.set("page", "1");
 
-    // Update or remove params based on provided values
     Object.entries(params).forEach(([key, value]) => {
       if (value === null) {
         newParams.delete(key);
@@ -125,49 +114,29 @@ export function DataTable<TData, TValue>({
   };
 
   const handleFilterChange = (columnId: string, value: string) => {
-    // If value is empty, remove the filter
-    const paramValue = value.trim() === "" ? null : value;
-
-    // Update URL with new filter
+    const paramValue = value.trim() === "" || value === "all" ? null : value;
     router.push(`${pathname}?${createQueryString({ [columnId]: paramValue })}`);
   };
 
   const clearAllFilters = () => {
-    const newParams = new URLSearchParams(searchParams.toString());
-
-    // Remove all filter params but keep pagination
-    newParams.delete("title");
-    newParams.delete("status");
-    newParams.delete("author");
-    newParams.set("page", "1");
-
-    router.push(`${pathname}?${newParams.toString()}`);
+    router.push(`${pathname}?page=1`);
   };
 
-  const goToPage = (pageNumber: number) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("page", pageNumber.toString());
-    router.push(`${pathname}?${params.toString()}`);
-  };
-
-  // Get unique status values for the filter dropdown
-  const statusOptions = Array.from(
-    new Set(data.map((item: any) => item.status))
-  );
-
-  // Get unique author values for the filter dropdown
+  // Create options dynamically
+  const statusOptions = ["Published", "Draft"];
   const authorOptions = Array.from(
     new Set(data.map((item: any) => item.author).filter(Boolean))
   );
 
   return (
     <div>
-      <div className="flex flex-col gap-4 py-4 md:flex-row md:items-center">
+      {/* Filters section */}
+      <div className="flex flex-wrap gap-4 py-4">
         <Input
           placeholder="Filter by title..."
           value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
           onChange={(e) => handleFilterChange("title", e.target.value)}
-          className="max-w-sm"
+          className="max-w-xs"
         />
 
         <Select
@@ -204,6 +173,35 @@ export function DataTable<TData, TValue>({
           </SelectContent>
         </Select>
 
+        <Input
+          placeholder="Filter by blog number (e.g. 1, 2, 3...)"
+          value={
+            (table.getColumn("blogNumber")?.getFilterValue() as string) ?? ""
+          }
+          onChange={(e) => handleFilterChange("blogNumber", e.target.value)}
+          className="max-w-[160px]"
+          type="number"
+          min="1"
+        />
+
+        <Select
+          onValueChange={(value) => {
+            if (value === "newest") {
+              setSorting([{ id: "createdAt", desc: true }]);
+            } else if (value === "oldest") {
+              setSorting([{ id: "createdAt", desc: false }]);
+            }
+          }}
+        >
+          <SelectTrigger className="max-w-[180px]">
+            <SelectValue placeholder="Sort by" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="newest">Newest first</SelectItem>
+            <SelectItem value="oldest">Oldest first</SelectItem>
+          </SelectContent>
+        </Select>
+
         {columnFilters.length > 0 && (
           <Button
             variant="outline"
@@ -217,6 +215,7 @@ export function DataTable<TData, TValue>({
         )}
       </div>
 
+      {/* Table section */}
       <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>

@@ -45,6 +45,7 @@ type Template = {
   content: string;
   type: string;
   isDefault: boolean;
+  targetRole?: string;
 };
 
 export function MessageTemplates() {
@@ -55,6 +56,7 @@ export function MessageTemplates() {
     content: "",
     type: "active-property",
     isDefault: false,
+    targetRole: "",
   });
   const [isCreating, setIsCreating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -220,6 +222,26 @@ export function MessageTemplates() {
                 </Select>
               </div>
               <div className="space-y-2">
+                <Label htmlFor="template-target-role">Target User Role</Label>
+                <Select
+                  value={newTemplate.targetRole}
+                  onValueChange={(value) =>
+                    setNewTemplate({ ...newTemplate, targetRole: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select target user role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ADMIN">Admin</SelectItem>
+                    <SelectItem value="SUPPORT">Support</SelectItem>
+                    <SelectItem value="AGENCY">Agency</SelectItem>
+                    <SelectItem value="AGENT">Agent</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="template-default">Set as Default</Label>
                   <Switch
@@ -378,6 +400,31 @@ export function MessageTemplates() {
                   </SelectContent>
                 </Select>
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-template-target-role">
+                  Target User Role
+                </Label>
+                <Select
+                  value={editingTemplate.targetRole}
+                  onValueChange={(value) =>
+                    setEditingTemplate({
+                      ...editingTemplate,
+                      targetRole: value,
+                    })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select target user role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ADMIN">Admin</SelectItem>
+                    <SelectItem value="SUPPORT">Support</SelectItem>
+                    <SelectItem value="AGENCY">Agency</SelectItem>
+                    <SelectItem value="AGENT">Agent</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="edit-template-default">Set as Default</Label>

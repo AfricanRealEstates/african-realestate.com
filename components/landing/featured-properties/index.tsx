@@ -49,7 +49,7 @@ export default async function FeaturedProperties() {
 
   return (
     <div className={`border-b border-neutral-100 mb-4 text-[#4e4e4e]`}>
-      <div className="mx-auto w-[95%] max-w-7xl px-2 py-16 md:px-2 md:py-12 lg:py-16">
+      <div className="mx-auto w-[95%] max-w-7xl px-2 py-8 md:px-2 md:py-12 lg:py-16">
         <section className="flex items-center justify-start gap-8 flex-col w-full">
           <div className="flex flex-col items-center justify-center gap-2">
             <p

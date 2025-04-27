@@ -154,7 +154,7 @@
     "ua-parser-js": "^1.0.39",
     "unified-conditional": "^0.0.2",
     "uploadthing": "^6.13.3",
-    "use-debounce": "^10.0.0",
+    "use-debounce": "^10.0.4",
     "util": "^0.12.5",
     "uuid": "^9.0.1",
     "vaul": "^0.9.0",
