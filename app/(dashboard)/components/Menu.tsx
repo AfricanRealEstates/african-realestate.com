@@ -20,6 +20,7 @@ import {
   LogOut,
   MenuIcon,
   Book,
+  BookDashed,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -98,6 +99,12 @@ const menuItems = [
         icon: Book,
         title: "Blogs",
         url: "/dashboard/blogs",
+        visible: [UserRole.ADMIN, UserRole.SUPPORT],
+      },
+      {
+        icon: BookDashed,
+        title: "Guides",
+        url: "/dashboard/guides",
         visible: [UserRole.ADMIN, UserRole.SUPPORT],
       },
     ],

@@ -21,6 +21,14 @@ type SendEmailParams = {
   message: string;
   templateId: string;
   type: "active-property" | "inactive-property";
+  senderEmail?: string;
+};
+
+type EmailSender = {
+  id: string;
+  email: string;
+  displayName: string;
+  isActive: boolean;
 };
 
 export async function sendMarketingEmail({
@@ -28,10 +36,32 @@ export async function sendMarketingEmail({
   message,
   templateId,
   type,
+  senderEmail,
 }: SendEmailParams) {
   try {
     // Initialize Resend with your API key
     const resend = new Resend(process.env.RESEND_API_KEY);
+
+    // Get the template if templateId is provided
+    let template = null;
+    if (templateId !== "custom") {
+      template = await prisma.emailTemplate.findUnique({
+        where: { id: templateId },
+      });
+    }
+
+    // Get the sender information if senderEmail is provided
+    let sender = null;
+    if (senderEmail) {
+      sender = await prisma.emailSender.findFirst({
+        where: { email: senderEmail, isActive: true },
+      });
+    }
+
+    // If no specific sender is provided, use the default sender
+    const fromEmail = sender
+      ? `${sender.displayName} <${sender.email}>`
+      : `African Real Estate <noreply@african-realestate.com>`;
 
     // Send emails to each property owner
     const emailPromises = properties.map(async (property) => {
@@ -43,9 +73,21 @@ export async function sendMarketingEmail({
           ? `Marketing Update for Your Property #${propertyNumber}`
           : `Reactivate Your Property #${propertyNumber}`;
 
+      // Prepare the email content
+      let emailContent = message;
+
+      // If a template is provided, use it and replace placeholders
+      if (template) {
+        emailContent = template.content
+          .replace(/{userName}/g, user.name || "Property Owner")
+          .replace(/{propertyTitle}/g, title)
+          .replace(/{propertyNumber}/g, propertyNumber.toString())
+          .replace(/{message}/g, message);
+      }
+
       // Send the email
       const emailResult = await resend.emails.send({
-        from: `African Real Estate <noreply@african-realestate.com>`,
+        from: fromEmail,
         to: user.email,
         subject: subject,
         html: `
@@ -57,7 +99,7 @@ export async function sendMarketingEmail({
               <h2>Hello ${user.name},</h2>
               <p>Regarding your property: <strong>${title}</strong> (Property #${propertyNumber})</p>
               <div style="margin: 20px 0; padding: 15px; background-color: #f8f9fa; border-left: 4px solid #4a6cf7;">
-                ${message}
+                ${emailContent}
               </div>
               <p>If you have any questions, please don't hesitate to contact our support team.</p>
               <div style="margin-top: 30px; text-align: center;">
@@ -83,8 +125,9 @@ export async function sendMarketingEmail({
           propertyId: property.id,
           userId: user.id,
           templateId: templateId !== "custom" ? templateId : null,
-          message,
+          message: emailContent,
           type,
+          senderEmail: sender?.email || null,
         },
       });
 
@@ -129,9 +172,11 @@ export async function createEmailTemplate(data: {
   content: string;
   type: string;
   isDefault?: boolean;
+  targetRole?: string;
+  senderEmail?: string;
 }) {
   try {
-    const { name, content, type, isDefault } = data;
+    const { name, content, type, isDefault, targetRole, senderEmail } = data;
 
     // If this is set as default, unset any existing defaults of this type
     if (isDefault) {
@@ -147,6 +192,8 @@ export async function createEmailTemplate(data: {
         content,
         type,
         isDefault: isDefault || false,
+        targetRole,
+        senderEmail,
       },
     });
 
@@ -164,10 +211,12 @@ export async function updateEmailTemplate(
     content: string;
     type: string;
     isDefault?: boolean;
+    targetRole?: string;
+    senderEmail?: string;
   }
 ) {
   try {
-    const { name, content, type, isDefault } = data;
+    const { name, content, type, isDefault, targetRole, senderEmail } = data;
 
     // If this is set as default, unset any existing defaults of this type
     if (isDefault) {
@@ -184,6 +233,8 @@ export async function updateEmailTemplate(
         content,
         type,
         isDefault: isDefault || false,
+        targetRole,
+        senderEmail,
         updatedAt: new Date(),
       },
     });
@@ -205,5 +256,99 @@ export async function deleteEmailTemplate(id: string) {
   } catch (error) {
     console.error("Error deleting email template:", error);
     throw new Error("Failed to delete email template");
+  }
+}
+
+// Email Sender functions
+export async function getEmailSenders() {
+  try {
+    const senders = await prisma.emailSender.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return senders;
+  } catch (error) {
+    console.error("Error fetching email senders:", error);
+    throw new Error("Failed to fetch email senders");
+  }
+}
+
+export async function createEmailSender(data: {
+  email: string;
+  displayName: string;
+  isActive: boolean;
+}) {
+  try {
+    const { email, displayName, isActive } = data;
+
+    const sender = await prisma.emailSender.create({
+      data: {
+        email,
+        displayName,
+        isActive,
+      },
+    });
+
+    return sender;
+  } catch (error) {
+    console.error("Error creating email sender:", error);
+    throw new Error("Failed to create email sender");
+  }
+}
+
+export async function updateEmailSender(
+  id: string,
+  data: {
+    email: string;
+    displayName: string;
+    isActive: boolean;
+  }
+) {
+  try {
+    const { email, displayName, isActive } = data;
+
+    const sender = await prisma.emailSender.update({
+      where: { id },
+      data: {
+        email,
+        displayName,
+        isActive,
+        updatedAt: new Date(),
+      },
+    });
+
+    return sender;
+  } catch (error) {
+    console.error("Error updating email sender:", error);
+    throw new Error("Failed to update email sender");
+  }
+}
+
+export async function deleteEmailSender(id: string) {
+  try {
+    // First, update any templates using this sender to remove the sender reference
+    await prisma.emailTemplate.updateMany({
+      where: {
+        senderEmail: {
+          equals: (await prisma.emailSender.findUnique({ where: { id } }))
+            ?.email,
+        },
+      },
+      data: {
+        senderEmail: null,
+      },
+    });
+
+    // Then delete the sender
+    await prisma.emailSender.delete({
+      where: { id },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting email sender:", error);
+    throw new Error("Failed to delete email sender");
   }
 }

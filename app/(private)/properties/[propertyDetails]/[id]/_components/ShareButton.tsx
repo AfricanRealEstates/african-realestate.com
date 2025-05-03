@@ -28,54 +28,43 @@ export default function ShareButton({
     property.title
   }, ${property.price.toLocaleString()} ${property.currency}`;
 
-  // Ensure we always have a cover photo
-  const shareImage =
-    property.coverPhotos && property.coverPhotos.length > 0
-      ? property.coverPhotos[0]
-      : "/assets/default-property-image.jpg";
-
-  // Make sure the image URL is absolute
-  const absoluteShareImage = shareImage.startsWith("http")
-    ? shareImage
-    : `${typeof window !== "undefined" ? window.location.origin : ""}${shareImage}`;
-
   const shareToFacebook = () => {
-    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-      shareUrl
-    )}&quote=${encodeURIComponent(shareText)}&picture=${encodeURIComponent(absoluteShareImage)}`;
+    // Facebook will pick up the Open Graph meta tags from the page
+    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const shareToTwitter = () => {
+    // Twitter will pick up the Twitter card meta tags from the page
     const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(
       shareUrl
-    )}&text=${encodeURIComponent(shareText)}&media=${encodeURIComponent(absoluteShareImage)}`;
+    )}&text=${encodeURIComponent(shareText)}`;
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const shareToLinkedIn = () => {
+    // LinkedIn will pick up the Open Graph meta tags from the page
     const url = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(
       shareUrl
-    )}&title=${encodeURIComponent(property.title)}&summary=${encodeURIComponent(
-      shareText
-    )}&source=${encodeURIComponent(absoluteShareImage)}`;
+    )}&title=${encodeURIComponent(property.title)}&summary=${encodeURIComponent(shareText)}`;
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const shareToWhatsApp = () => {
-    // Enhanced WhatsApp message with more details and always including the image
+    // WhatsApp doesn't support direct image sharing via URL parameters
+    // It will rely on the meta tags when the recipient opens the link
     const formattedPrice = `${property.currency} ${property.price.toLocaleString()}`;
 
-    // Create a more detailed message with property features
+    // Create a detailed message with property features
     const bedroomsText = property.bedrooms
-      ? `🛏 ${property.bedrooms} bed, `
+      ? `🛌️ ${property.bedrooms} bed, `
       : "";
     const bathroomsText = property.bathrooms
-      ? `🛁 ${property.bathrooms} bath, `
+      ? `🛀️ ${property.bathrooms} bath, `
       : "";
-    const locationText = `📍 ${property.locality}, ${property.county}`;
+    const locationText = `📍️ ${property.locality}, ${property.county}`;
 
-    const shareMessage = `*${property.title}*\n\n${locationText}\n💰 ${formattedPrice}\n${bedroomsText}${bathroomsText}\n\n🖼️ View property: ${shareUrl}\n\nImage: ${absoluteShareImage}`;
+    const shareMessage = `*${property.title}*\n\n${locationText}\n💰️ ${formattedPrice}\n${bedroomsText}${bathroomsText}\n\nCheck out this property: ${shareUrl}`;
 
     const url = `https://wa.me/?text=${encodeURIComponent(shareMessage)}`;
     window.open(url, "_blank", "noopener,noreferrer");

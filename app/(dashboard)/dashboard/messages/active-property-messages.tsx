@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Loader2, Search, Send } from "lucide-react";
+import { Check, Loader2, Search, Send, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -23,7 +23,12 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { sendMarketingEmail, getEmailTemplates } from "./actions";
+import {
+  sendMarketingEmail,
+  getEmailTemplates,
+  getEmailSenders,
+} from "./actions";
+import { ActivePropertyEmail } from "./active-property";
 
 type Property = {
   id: string;
@@ -44,6 +49,15 @@ type EmailTemplate = {
   content: string;
   type: string;
   isDefault: boolean;
+  senderEmail: string | null;
+  targetRole: string | null;
+};
+
+type EmailSender = {
+  id: string;
+  email: string;
+  displayName: string;
+  isActive: boolean;
 };
 
 export function ActivePropertiesMessages() {
@@ -52,17 +66,25 @@ export function ActivePropertiesMessages() {
   const [sending, setSending] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTemplate, setSelectedTemplate] = useState("");
+  const [selectedSender, setSelectedSender] = useState("");
   const [selectedProperties, setSelectedProperties] = useState<Property[]>([]);
   const [customMessage, setCustomMessage] = useState("");
   const [properties, setProperties] = useState<Property[]>([]);
   const [templates, setTemplates] = useState<EmailTemplate[]>([]);
+  const [senders, setSenders] = useState<EmailSender[]>([]);
   const [loadingTemplates, setLoadingTemplates] = useState(true);
+  const [previewProperty, setPreviewProperty] = useState<Property | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
 
-  // Fetch templates from the database
+  // Fetch templates and senders from the database
   useEffect(() => {
-    async function fetchTemplates() {
+    async function fetchData() {
       try {
-        const fetchedTemplates = await getEmailTemplates("active-property");
+        const [fetchedTemplates, fetchedSenders] = await Promise.all([
+          getEmailTemplates("active-property"),
+          getEmailSenders(),
+        ]);
+
         setTemplates([
           ...fetchedTemplates,
           {
@@ -71,23 +93,34 @@ export function ActivePropertiesMessages() {
             content: "",
             type: "active-property",
             isDefault: false,
+            senderEmail: null,
+            targetRole: null,
           },
         ]);
+        setSenders(fetchedSenders);
 
         // Set default template if available
         const defaultTemplate = fetchedTemplates.find((t) => t.isDefault);
         if (defaultTemplate) {
           setSelectedTemplate(defaultTemplate.id);
           setCustomMessage(defaultTemplate.content);
+
+          // If the default template has a sender, select it
+          if (defaultTemplate.senderEmail) {
+            setSelectedSender(defaultTemplate.senderEmail);
+          } else if (fetchedSenders.length > 0) {
+            // Otherwise select the first available sender
+            setSelectedSender(fetchedSenders[0].email);
+          }
         }
       } catch (error) {
-        toast.error("Failed to load email templates");
+        toast.error("Failed to load email templates and senders");
       } finally {
         setLoadingTemplates(false);
       }
     }
 
-    fetchTemplates();
+    fetchData();
   }, []);
 
   // This now uses a real API call to search properties
@@ -107,6 +140,9 @@ export function ActivePropertiesMessages() {
 
       if (data.length === 0) {
         toast.info("No properties found matching your search criteria");
+      } else if (data.length > 0) {
+        // Set the first property as preview property
+        setPreviewProperty(data[0]);
       }
     } catch (error) {
       toast.error("Failed to search properties");
@@ -121,6 +157,11 @@ export function ActivePropertiesMessages() {
       const template = templates.find((t) => t.id === templateId);
       if (template) {
         setCustomMessage(template.content);
+
+        // If template has a sender, select it
+        if (template.senderEmail) {
+          setSelectedSender(template.senderEmail);
+        }
       }
     } else {
       setCustomMessage("");
@@ -135,6 +176,9 @@ export function ActivePropertiesMessages() {
     } else {
       setSelectedProperties([...selectedProperties, property]);
     }
+
+    // Set as preview property
+    setPreviewProperty(property);
   };
 
   const handleSendEmails = async () => {
@@ -148,6 +192,11 @@ export function ActivePropertiesMessages() {
       return;
     }
 
+    if (!selectedSender) {
+      toast.error("Please select a sender email");
+      return;
+    }
+
     setSending(true);
     try {
       await sendMarketingEmail({
@@ -155,6 +204,7 @@ export function ActivePropertiesMessages() {
         message: customMessage,
         templateId: selectedTemplate,
         type: "active-property",
+        senderEmail: selectedSender,
       });
 
       toast.success(
@@ -262,32 +312,56 @@ export function ActivePropertiesMessages() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="template">Select Template</Label>
-              {loadingTemplates ? (
-                <div className="flex items-center space-x-2">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span className="text-sm text-muted-foreground">
-                    Loading templates...
-                  </span>
-                </div>
-              ) : (
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="template">Select Template</Label>
+                {loadingTemplates ? (
+                  <div className="flex items-center space-x-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span className="text-sm text-muted-foreground">
+                      Loading templates...
+                    </span>
+                  </div>
+                ) : (
+                  <Select
+                    value={selectedTemplate}
+                    onValueChange={handleTemplateChange}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a template" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {templates.map((template) => (
+                        <SelectItem key={template.id} value={template.id}>
+                          {template.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="sender">Sender Email</Label>
                 <Select
-                  value={selectedTemplate}
-                  onValueChange={handleTemplateChange}
+                  value={selectedSender}
+                  onValueChange={setSelectedSender}
+                  disabled={loadingTemplates}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a template" />
+                    <SelectValue placeholder="Select sender email" />
                   </SelectTrigger>
                   <SelectContent>
-                    {templates.map((template) => (
-                      <SelectItem key={template.id} value={template.id}>
-                        {template.name}
-                      </SelectItem>
-                    ))}
+                    {senders
+                      .filter((s) => s.isActive)
+                      .map((sender) => (
+                        <SelectItem key={sender.id} value={sender.email}>
+                          {sender.displayName} ({sender.email})
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
-              )}
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -299,7 +373,47 @@ export function ActivePropertiesMessages() {
                 value={customMessage}
                 onChange={(e) => setCustomMessage(e.target.value)}
               />
+              <p className="text-xs text-muted-foreground">
+                You can use placeholders like {"{userName}"},{" "}
+                {"{propertyTitle}"}, {"{propertyNumber}"}, etc.
+              </p>
             </div>
+
+            {previewProperty && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label>Email Preview</Label>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowPreview(!showPreview)}
+                  >
+                    {showPreview ? "Hide Preview" : "Show Preview"}
+                  </Button>
+                </div>
+
+                {showPreview && (
+                  <div className="border rounded-md p-4 max-h-[400px] overflow-auto">
+                    <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
+                      <Mail className="h-4 w-4" />
+                      <span>
+                        From:{" "}
+                        {senders.find((s) => s.email === selectedSender)
+                          ?.displayName || "African Real Estate"}
+                        &lt;{selectedSender || "noreply@african-realestate.com"}
+                        &gt;
+                      </span>
+                    </div>
+                    <ActivePropertyEmail
+                      propertyTitle={previewProperty.title}
+                      propertyNumber={previewProperty.propertyNumber}
+                      ownerName={previewProperty.user.name}
+                      message={customMessage}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </CardContent>
         <CardFooter>
@@ -310,7 +424,8 @@ export function ActivePropertiesMessages() {
               sending ||
               selectedProperties.length === 0 ||
               !customMessage.trim() ||
-              loadingTemplates
+              loadingTemplates ||
+              !selectedSender
             }
           >
             {sending ? (

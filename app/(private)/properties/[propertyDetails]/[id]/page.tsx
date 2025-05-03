@@ -47,8 +47,8 @@ import { getCurrentUser } from "@/lib/session";
 import { recordPropertyView } from "@/actions/recordPropertyView";
 import { PropertySkeleton } from "@/components/globals/PropertySkeleton";
 import { Suspense } from "react";
-import SocialMetaTags from "./_components/social-meta-tags";
 import ViewTracker from "@/components/properties/ViewTracker";
+import SocialMetaTags from "./_components/SocialMetaTags";
 
 const amenityIcons: { [key: string]: JSX.Element } = {
   mosque: <FaMosque className="size-4 text-neutral-600" />,
@@ -297,7 +297,7 @@ export default async function PropertyDetails({
         {/* 1 */}
         <div className="flex justify-between items-center w-full">
           <Badge name="Location Info" />
-
+          <SocialMetaTags property={property} propertyUrl={propertyUrl} />
           {/* <PropertyViewsStats propertyId={property.id} /> */}
           <PropertyActions property={property} userId={user?.id} className="" />
         </div>

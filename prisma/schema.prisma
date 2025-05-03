@@ -422,26 +422,40 @@ model EmailLog {
 }
 
 model EmailTemplate {
-  id        String   @id @default(cuid())
-  name      String
-  content   String   @db.Text
-  type      String // "active-property" or "inactive-property"
-  isDefault Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  name        String
+  content     String   @db.Text
+  type        String // "active-property" or "inactive-property"
+  isDefault   Boolean  @default(false)
+  targetRole  String?
+  senderEmail String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@map("email_templates")
 }
 
+model EmailSender {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  displayName String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("email_senders")
+}
+
 // Track marketing emails
 model MarketingEmail {
-  id         String   @id @default(cuid())
-  propertyId String
-  userId     String
-  templateId String?
-  message    String   @db.Text
-  type       String // "active-property" or "inactive-property"
-  sentAt     DateTime @default(now())
+  id          String   @id @default(cuid())
+  propertyId  String
+  userId      String
+  templateId  String?
+  message     String   @db.Text
+  type        String // "active-property" or "inactive-property"
+  senderEmail String?
+  sentAt      DateTime @default(now())
 
   property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -468,8 +482,6 @@ model SearchHistory {
   @@map("search_history")
 }
 
-// Add these models to your schema.prisma file
-
 model RecommendationEvent {
   id                 String   @id @default(cuid())
   userId             String
@@ -493,6 +505,24 @@ model RecentlyViewedProperty {
   @@index([userId])
   @@index([propertyId])
   @@map("recently_viewed_properties")
+}
+
+model Guide {
+  id           String    @id @default(cuid())
+  title        String
+  slug         String    @unique
+  content      Json // Store rich text content as JSON
+  propertyType String // Residential, Commercial, Industrial, Vacational/Social, Land
+  guideType    String // sale, rent, sell
+  coverImage   String?
+  images       String[]
+  published    Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  publishedAt  DateTime?
+
+  @@index([propertyType, guideType])
+  @@map("guides")
 }
 
 enum UserRole {

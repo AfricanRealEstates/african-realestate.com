@@ -12,8 +12,7 @@ export const getSEOTags = ({
   canonicalUrlRelative?: string;
   extraTags?: Record<string, any>;
 } = {}) => {
-  const defaultTitle =
-    "African Real Estate | Luxury & Affordable Properties in Kenya & Africa";
+  const defaultTitle = "Home | African Real Estate";
   const defaultDescription =
     "Explore premium and affordable real estate listings across Kenya and Africa. Your trusted partner for property sales, rentals, and investment opportunities.";
   const defaultKeywords = [
