@@ -11,8 +11,8 @@ export const metadata: Metadata = {
 
 export default function GuidesAdminPage() {
   return (
-    <div className="max-w-7xl mx-auto py-10">
-      <div className="flex justify-between items-center mb-8">
+    <div className="w-full mx-auto py-10 px-8">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-y-6 mb-8">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Property Guides</h1>
           <p className="text-muted-foreground mt-1">
