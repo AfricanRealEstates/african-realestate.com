@@ -1,17 +1,11 @@
 "use client";
 
-import { PropertyWithExtras } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 import ShareButton from "./ShareButton";
 import BookmarkButton from "./BookmarkButton";
-import { motion } from "framer-motion";
 import { upvoteProperty } from "@/lib/actions";
-import {
-  PiArrowBendDoubleUpRight,
-  PiCaretUpFill,
-  PiChatCircle,
-} from "react-icons/pi";
 import Modal from "@/components/modals/Modal";
 import AuthContent from "@/components/auth/AuthContent";
 import LikeButton from "./Like";
@@ -21,7 +15,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import PropertyViewsStats from "./PropertyViewsStats";
 
 type Props = {
   property: any;

@@ -297,6 +297,7 @@ export default async function PropertyDetails({
         {/* 1 */}
         <div className="flex justify-between items-center w-full">
           <Badge name="Location Info" />
+
           {/* <PropertyViewsStats propertyId={property.id} /> */}
           <PropertyActions property={property} userId={user?.id} className="" />
         </div>

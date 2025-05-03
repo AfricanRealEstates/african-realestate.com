@@ -1,9 +1,7 @@
 "use client";
-
-import React from "react";
 import { Link, Share2 } from "lucide-react";
 import { toast } from "sonner";
-import { PropertyWithExtras } from "@/lib/types";
+import type { PropertyWithExtras } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -18,32 +16,40 @@ export default function ShareButton({
   propertyId: string;
   property: PropertyWithExtras;
 }) {
+  // Properly encode the property details to handle spaces and special characters
+  const encodedPropertyDetails = encodeURIComponent(property.propertyDetails);
+
+  // Create the share URL with proper encoding
   const shareUrl = `${
     typeof window !== "undefined" ? window.location.origin : ""
-  }/properties/${property.propertyDetails}/${propertyId}`;
+  }/properties/${encodedPropertyDetails}/${propertyId}`;
 
   const shareText = `Check out this ${property.propertyType} property: ${
     property.title
   }, ${property.price.toLocaleString()} ${property.currency}`;
 
+  // Ensure we always have a cover photo
   const shareImage =
-    property.coverPhotos[0] || "/assets/default-property-image.jpg";
+    property.coverPhotos && property.coverPhotos.length > 0
+      ? property.coverPhotos[0]
+      : "/assets/default-property-image.jpg";
+
+  // Make sure the image URL is absolute
+  const absoluteShareImage = shareImage.startsWith("http")
+    ? shareImage
+    : `${typeof window !== "undefined" ? window.location.origin : ""}${shareImage}`;
 
   const shareToFacebook = () => {
     const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
       shareUrl
-    )}&quote=${encodeURIComponent(shareText)}&picture=${encodeURIComponent(
-      shareImage
-    )}`;
+    )}&quote=${encodeURIComponent(shareText)}&picture=${encodeURIComponent(absoluteShareImage)}`;
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const shareToTwitter = () => {
     const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(
       shareUrl
-    )}&text=${encodeURIComponent(shareText)}&media=${encodeURIComponent(
-      shareImage
-    )}`;
+    )}&text=${encodeURIComponent(shareText)}&media=${encodeURIComponent(absoluteShareImage)}`;
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
@@ -52,26 +58,32 @@ export default function ShareButton({
       shareUrl
     )}&title=${encodeURIComponent(property.title)}&summary=${encodeURIComponent(
       shareText
-    )}&source=${encodeURIComponent(shareImage)}`;
+    )}&source=${encodeURIComponent(absoluteShareImage)}`;
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const shareToWhatsApp = () => {
-    const formattedPrice = `${
-      property.currency
-    } ${property.price.toLocaleString()}`;
-    const shareMessage = `*${property.title}*\n\n📍 ${property.locality}, ${property.county}\n💰 ${formattedPrice}\n🛏 ${property.bedrooms} bed, 🛁 ${property.bathrooms} bath\n\nCheck out this property:`;
+    // Enhanced WhatsApp message with more details and always including the image
+    const formattedPrice = `${property.currency} ${property.price.toLocaleString()}`;
 
-    const url = `https://wa.me/?text=${encodeURIComponent(
-      shareMessage + " " + shareUrl
-    )}`;
+    // Create a more detailed message with property features
+    const bedroomsText = property.bedrooms
+      ? `🛏 ${property.bedrooms} bed, `
+      : "";
+    const bathroomsText = property.bathrooms
+      ? `🛁 ${property.bathrooms} bath, `
+      : "";
+    const locationText = `📍 ${property.locality}, ${property.county}`;
+
+    const shareMessage = `*${property.title}*\n\n${locationText}\n💰 ${formattedPrice}\n${bedroomsText}${bathroomsText}\n\n🖼️ View property: ${shareUrl}\n\nImage: ${absoluteShareImage}`;
+
+    const url = `https://wa.me/?text=${encodeURIComponent(shareMessage)}`;
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const copyToClipboard = () => {
-    const fullShareText = `${shareText}\n\nImage: ${shareImage}\n\n${shareUrl}`;
     navigator.clipboard.writeText(shareUrl);
-    toast.success(`Property copied to clipboard. Share now!`, {
+    toast.success(`Property link copied to clipboard. Share now!`, {
       icon: <Link className="h-5 w-5" />,
     });
   };
