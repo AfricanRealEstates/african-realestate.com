@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
 import GuidesHero from "./guides-hero";
-import GuidesContent from "./guides-content";
+import DynamicGuidesContent from "./dynamic-guides-content";
 
 export const metadata: Metadata = {
   title: "Property Guides | African Real Estate",
@@ -66,7 +66,6 @@ const propertyTypes = [
         label: "Apartments",
         value: "Apartments",
       },
-
       {
         label: "Others",
         value: "Others",
@@ -117,7 +116,6 @@ const propertyTypes = [
       },
     ],
   },
-
   {
     label: "Vacational / Social",
     value: "Vacational / Social",
@@ -170,7 +168,7 @@ const propertyStatuses = [
   { value: "sell", label: "Sell" },
 ];
 
-// Fetch guides from the database
+// Fetch all guides from the database
 async function getGuides() {
   try {
     const guides = await prisma.guide.findMany({
@@ -195,11 +193,17 @@ export default async function GuidesPage() {
     <div className="min-h-screen bg-white py-16 md:py-24">
       <GuidesHero />
       <div className="max-w-7xl mx-auto py-8 px-4">
-        <GuidesContent
+        <DynamicGuidesContent
           propertyTypes={propertyTypes}
           propertyStatuses={propertyStatuses}
           guides={guides}
         />
+
+        {/* <GuidesContent
+          propertyStatuses={propertyStatuses}
+          propertyTypes={propertyTypes}
+          guides={guides}
+        /> */}
       </div>
     </div>
   );

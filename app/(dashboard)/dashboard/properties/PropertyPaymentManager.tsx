@@ -15,7 +15,6 @@ interface PropertyPaymentManagerProps {
     phone: string;
   };
 }
-
 export default function PropertyPaymentManager({
   properties,
   user,
@@ -116,8 +115,8 @@ export default function PropertyPaymentManager({
             {viewMode === "unpaid"
               ? "No properties to pay for."
               : viewMode === "paid"
-              ? "You don't have any paid properties yet. Pay for your properties to publish them."
-              : "You don't have any properties yet."}
+                ? "You don't have any paid properties yet. Pay for your properties to publish them."
+                : "You don't have any properties yet."}
           </p>
         </div>
       )}

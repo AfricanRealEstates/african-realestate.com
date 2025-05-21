@@ -1,25 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/20/solid";
-import {
-  Banknote,
-  Bath,
-  Bed,
-  Bus,
-  BusFront,
-  Church,
-  ExpandIcon,
-  FolderOpen,
-  Home,
-  Hospital,
-  LandPlot,
-  MapPin,
-  School2,
-  ShoppingBag,
-  ShoppingBasket,
-  ShoppingCart,
-  Siren,
-} from "lucide-react";
-import { Metadata } from "next";
+import { Bath, Bed, ExpandIcon, FolderOpen, MapPin } from "lucide-react";
+import type { Metadata } from "next";
 import ImageCarousel from "./_components/image-carousel";
 import Link from "next/link";
 import NotFound from "@/app/not-found";
@@ -31,39 +13,16 @@ import Image from "next/image";
 import { Button } from "@/components/utils/Button";
 import MessageWidget from "./_components/message-widget";
 import { calculatePercentageSavings, capitalizeWords } from "@/lib/utils";
-import {
-  FaBuyNLarge,
-  FaChurch,
-  FaGolfBall,
-  FaMosque,
-  FaPlaceOfWorship,
-} from "react-icons/fa";
 import SurroundingFeatures from "./_components/surrounding-features";
 import PropertyCard from "@/components/properties/new/PropertyCard";
 import { formatNumber } from "@/lib/formatter";
-import { PropertyData, PropertyWithExtras } from "@/lib/types";
+import type { PropertyData, PropertyWithExtras } from "@/lib/types";
 import PropertyActions from "./_components/PropertyActions";
 import { getCurrentUser } from "@/lib/session";
 import { recordPropertyView } from "@/actions/recordPropertyView";
 import { PropertySkeleton } from "@/components/globals/PropertySkeleton";
 import { Suspense } from "react";
 import ViewTracker from "@/components/properties/ViewTracker";
-import SocialMetaTags from "./_components/SocialMetaTags";
-
-const amenityIcons: { [key: string]: JSX.Element } = {
-  mosque: <FaMosque className="size-4 text-neutral-600" />,
-  church: <Church className="size-4 text-neutral-600" />,
-  temple: <FaPlaceOfWorship className="size-4 text-neutral-600" />,
-  market: <ShoppingBag className="size-4 text-neutral-600" />,
-  mall: <Home className="size-4 text-neutral-600" />,
-  golf: <FaGolfBall className="size-4 text-neutral-600" />,
-  shopping: <ShoppingCart className="size-4 text-neutral-600" />,
-  supermarket: <ShoppingBasket className="size-4 text-neutral-600" />,
-  playground: <LandPlot className="size-4 text-neutral-600" />,
-  busstop: <Bus className="size-4 text-neutral-600" />,
-  policestation: <Siren className="size-4 text-neutral-600" />,
-  banks: <Banknote className="size-4 text-neutral-600" />,
-};
 
 // no cache
 export const dynamic = "force-dynamic";
@@ -87,23 +46,83 @@ export async function generateMetadata({
   }
 
   const title = `${capitalizeWords(property.title)} | African Real Estate`;
-  const description = `${property.description.substring(0, 150)}...`;
-  const imageUrl = property.coverPhotos[0] || "/assets/Kilimani.webp";
-  const fullUrl = `https://www.african-realestate.com/properties/${property.propertyDetails}/${property.id}`;
-  const formattedPrice = `${property.currency} ${property.price.toLocaleString()}`;
-  const location = `${property.locality}, ${property.county}`;
 
-  // Absolute Image URL
+  // IMPORTANT FIX: Ensure we have a valid cover photo URL
+  let imageUrl = "/assets/Kilimani.webp"; // Default fallback image
+
+  // Check if coverPhotos exists and has at least one item
+  if (property.coverPhotos && property.coverPhotos.length > 0) {
+    imageUrl = property.coverPhotos[0];
+  }
+
+  // Ensure the image URL is absolute (this is critical for WhatsApp)
   const absoluteImageUrl = imageUrl.startsWith("http")
     ? imageUrl
     : `https://www.african-realestate.com${imageUrl}`;
 
+  const fullUrl = `https://www.african-realestate.com/properties/${property.propertyDetails}/${property.id}`;
+  const formattedPrice = `${property.currency} ${property.price.toLocaleString()}`;
+  const location = `${property.locality}, ${property.county}`;
+
+  // Create a dynamic description based on property type
+  let dynamicDescription = `${property.description.substring(0, 100)}...`;
+
+  // Add property-specific details to the description
+  switch (property.propertyType) {
+    case "Residential":
+      dynamicDescription += ` ${formattedPrice} - ${location} - ${property.bedrooms || 0} bedrooms, ${property.bathrooms || 0} bathrooms`;
+      if (property.landSize && property.landUnits) {
+        const acres = convertToAcres(property.landSize, property.landUnits);
+        dynamicDescription += `, ${acres.toPrecision(3)} acres`;
+      }
+      break;
+
+    case "Commercial":
+    case "Industrial":
+      dynamicDescription += ` ${formattedPrice} - ${location} - Commercial property`;
+      if (property.plinthArea) {
+        dynamicDescription += `, ${formatNumber(property.plinthArea)} Sq.m`;
+      }
+      if (property.bedrooms) {
+        dynamicDescription += `, ${property.bedrooms} parking spaces`;
+      }
+      break;
+
+    case "Vacational / Social":
+      dynamicDescription += ` ${formattedPrice} - ${location} - Vacation property`;
+      if (property.bathrooms) {
+        dynamicDescription += `, ${property.bathrooms} bathrooms`;
+      }
+      break;
+
+    case "Land":
+      dynamicDescription += ` ${formattedPrice} - ${location} - Land`;
+      if (property.landSize && property.landUnits) {
+        const acres = convertToAcres(property.landSize, property.landUnits);
+        dynamicDescription += `, ${acres.toPrecision(3)} acres`;
+      }
+      if (property.tenure) {
+        dynamicDescription += `, ${property.tenure} tenure`;
+      }
+      break;
+
+    default:
+      dynamicDescription += ` ${formattedPrice} - ${location}`;
+  }
+
+  // Determine image type for proper content type
+  const imageType = absoluteImageUrl.endsWith(".png")
+    ? "image/png"
+    : absoluteImageUrl.endsWith(".gif")
+      ? "image/gif"
+      : "image/jpeg";
+
   return {
     title,
-    description,
+    description: dynamicDescription,
     openGraph: {
       title,
-      description: `${description} - ${formattedPrice} - ${location}`,
+      description: dynamicDescription,
       url: fullUrl,
       siteName: "African Real Estate",
       images: [
@@ -112,7 +131,7 @@ export async function generateMetadata({
           width: 1200,
           height: 630,
           alt: property.title,
-          type: "image/jpeg",
+          type: imageType,
         },
       ],
       locale: "en_US",
@@ -123,15 +142,43 @@ export async function generateMetadata({
       site: "@AfricanRealEsta",
       creator: "@AfricanRealEsta",
       title,
-      description: `${description} - ${formattedPrice} - ${location}`,
+      description: dynamicDescription,
       images: [absoluteImageUrl],
     },
     alternates: {
       canonical: fullUrl,
     },
+    // Additional meta tags to help with social sharing
+    other: {
+      "og:image:width": "1200",
+      "og:image:height": "630",
+      "og:image:alt": property.title,
+      "og:site_name": "African Real Estate",
+      "og:locale": "en_US",
+      // This tag helps WhatsApp identify the image
+      image_src: absoluteImageUrl,
+    },
   };
 }
 
+// Helper function to convert different land size units to acres
+const convertToAcres = (size: number, units: string): number => {
+  switch (units.toLowerCase()) {
+    case "ha":
+      // Conversion factor: 1 hectare = 2.47105 acres
+      return size * 2.47105;
+    case "acres":
+      return size;
+    case "sqft":
+      // Conversion factor: 1 acre = 43560 square feet
+      return size / 43560;
+    case "sqm":
+      // Conversion factor: 1 acre = 4046.86 square meters
+      return size / 4046.86;
+    default:
+      return size;
+  }
+};
 const formatName = (name: string | null): string => {
   if (!name) return "N/A";
 
@@ -143,7 +190,7 @@ const formatName = (name: string | null): string => {
   return `${firstName[0]}. ${lastName}`;
 };
 
-const truncateAgentName = (name: string, maxLength: number = 18) => {
+const truncateAgentName = (name: string, maxLength = 18) => {
   if (!name) return "";
 
   // Capitalize the name
@@ -289,7 +336,7 @@ export default async function PropertyDetails({
     convertedLandSize = convertToAcres(property.landSize, property.landUnits);
   }
 
-  const propertyUrl = `https://www.african-real-estate.com/properties/${property.propertyDetails}/${property.id}`;
+  const propertyUrl = `https://www.african-realestate.com/properties/${property.propertyDetails}/${property.id}`;
 
   const renderSection1 = () => {
     return (
@@ -297,8 +344,6 @@ export default async function PropertyDetails({
         {/* 1 */}
         <div className="flex justify-between items-center w-full">
           <Badge name="Location Info" />
-          <SocialMetaTags property={property} propertyUrl={propertyUrl} />
-          {/* <PropertyViewsStats propertyId={property.id} /> */}
           <PropertyActions property={property} userId={user?.id} className="" />
         </div>
 
@@ -451,23 +496,6 @@ export default async function PropertyDetails({
     }
   };
 
-  const featureIcons: { [key: string]: JSX.Element } = {
-    mosque: <FaMosque className="size-4 text-[#eb6753]" />,
-    church: <FaChurch className="size-4 text-[#eb6753]" />,
-    temple: <FaPlaceOfWorship className="size-4 text-[#eb6753]" />,
-    market: <FaBuyNLarge className="size-4 text-[#eb6753]" />,
-    mall: <ShoppingBag className="size-4 text-[#eb6753]" />,
-    school: <School2 className="size-4 text-[#eb6753]" />,
-    hospital: <Hospital className="size-4 text-[#eb6753]" />,
-    golf: <FaGolfBall className="size-4 text-[#eb6753]" />,
-    shopping: <ShoppingBag className="size-4 text-[#eb6753]" />,
-    supermarket: <FaBuyNLarge className="size-4 text-[#eb6753]" />,
-    playground: <LandPlot className="size-4 text-[#eb6753]" />,
-    busstop: <BusFront className="size-4 text-[#eb6753]" />,
-    policestation: <Siren className="size-4 text-[#eb6753]" />,
-    banks: <Banknote className="size-4 text-[#eb6753]" />,
-  };
-
   const renderSidebar = () => {
     return (
       <>
@@ -478,8 +506,20 @@ export default async function PropertyDetails({
 
   return (
     <div className="bg-white py-12 md:py-0">
-      {/* Add SocialMetaTags component for dynamic meta tag updates */}
-      <SocialMetaTags property={property} propertyUrl={propertyUrl} />
+      {/* Add special meta tags for social sharing directly in the HTML head */}
+      <head>
+        <link
+          rel="image_src"
+          href={
+            property.coverPhotos && property.coverPhotos.length > 0
+              ? property.coverPhotos[0].startsWith("http")
+                ? property.coverPhotos[0]
+                : `https://www.african-realestate.com${property.coverPhotos[0]}`
+              : "https://www.african-realestate.com/assets/Kilimani.webp"
+          }
+        />
+      </head>
+
       <ViewTracker propertyId={property.id} />
       <div className="mx-auto max-w-7xl px-4 pt-12 lg:pt-32 pb-8 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-y-4 ">
@@ -544,6 +584,7 @@ export default async function PropertyDetails({
           <ImageCarousel
             property={property}
             whatsappNumber={agent.whatsappNumber}
+            videoLink={property.videoLink!}
           />
 
           <div className="flex-grow lg:mt-0 h-full">
@@ -555,7 +596,7 @@ export default async function PropertyDetails({
                       {property.status === "let" ? "To " : "For "}
                       <span className="capitalize">{property.status}</span>
                     </p>
-                    {savings && parseFloat(savings) > 0 ? (
+                    {savings && Number.parseFloat(savings) > 0 ? (
                       <p className="text-xs font-medium text-rose-400 bg-gray-50 px-4 py-1 rounded-full">
                         Save {savings}%
                       </p>
@@ -659,9 +700,7 @@ export default async function PropertyDetails({
                             <Link
                               target="_blank"
                               rel="noopener noreferrer"
-                              href={`tel:${formatPhoneNumber(
-                                agent.phoneNumber
-                              )}`}
+                              href={`tel:${formatPhoneNumber(agent.phoneNumber)}`}
                               className="flex size-6 items-center justify-center text-gray-400 hover:text-gray-500"
                             >
                               <span className="sr-only">Call Agent</span>
@@ -694,7 +733,7 @@ export default async function PropertyDetails({
                         <Image
                           height={100}
                           width={100}
-                          src={agent.image}
+                          src={agent.image || "/placeholder.svg"}
                           alt="Agent"
                           className="object-cover lg:h-28 lg:w-28 h-36 w-36 ml-4 lg:ml-0 rounded-full border border-gray-200"
                         />
@@ -812,7 +851,7 @@ export default async function PropertyDetails({
 // Loading skeleton for related properties
 function RelatedPropertiesSkeleton() {
   return (
-    <div className="mt-6 grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 sm:gap-y-10 lg:grid-cols-3">
+    <div className="mt-6 grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 sm:gap-y-10 lg:grid-cols-3 w-full">
       {Array.from({ length: 3 }).map((_, index) => (
         <PropertySkeleton key={index} />
       ))}

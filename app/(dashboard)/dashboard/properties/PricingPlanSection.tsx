@@ -242,7 +242,7 @@ export default function PricingPlanSection({
       // Add page refresh after a short delay to allow the toast to be visible
       setTimeout(() => {
         window.location.reload();
-      }, 1500);
+      }, 1000);
     },
     [onClose]
   );

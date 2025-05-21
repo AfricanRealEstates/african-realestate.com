@@ -115,8 +115,6 @@ export default async function PayPage() {
             }}
           />
         </div>
-        {/* <PaymentPricingPlansWrapper properties={properties} isAdmin={isAdmin} /> */}
-        {/* <PaymentForm transactionConfig={config} />  */}
       </div>
     </div>
   );
