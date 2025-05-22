@@ -255,7 +255,7 @@ export default async function CityProperties() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {displayProperties.map((property) => (
           <Link
-            href={`/properties/${property.slug}`}
+            href={`/properties/${property.propertyDetails}/${property.id}`}
             key={property.id}
             className="group hover:cursor-pointer flex flex-col h-full transition-all ease-in-out border rounded-lg border-neutral-200 hover:border-neutral-100 hover:shadow-2xl hover:shadow-gray-600/10 bg-white overflow-hidden"
           >

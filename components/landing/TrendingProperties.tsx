@@ -212,7 +212,7 @@ export default async function TrendingProperties() {
           </h3>
         </div>
         <Link
-          href="/properties?sort=hot"
+          href="/properties"
           className="text-[#636262] hover:text-red-500 group font-semibold relative flex items-center gap-x-2"
         >
           <span className="group-hover:underline group-hover:underline-offset-4">
@@ -225,7 +225,7 @@ export default async function TrendingProperties() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {hottestProperties.map((property) => (
           <Link
-            href={`/properties/${property.slug}`}
+            href={`/properties/${property.propertyDetails}/${property.id}`}
             key={property.id}
             className="group hover:cursor-pointer flex flex-col h-full transition-all ease-in-out border rounded-lg border-neutral-200 hover:border-neutral-100 hover:shadow-2xl hover:shadow-gray-600/10 bg-white overflow-hidden"
           >
