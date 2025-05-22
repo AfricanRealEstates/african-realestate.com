@@ -92,7 +92,7 @@ export default async function AuthorPostsPage({
   return (
     <div className="">
       <div className="xl:container m-auto px-6 text-gray-600 md:px-12 xl:px-16">
-        <div className="lg:p-10 rounded-[4rem] space-y-6 md:flex flex-col md:gap-6 justify-center md:space-y-0 lg:items-center border-b border-gray-50">
+        <div className="lg:p-10 rounded-[4rem] space-y-6 md:flex flex-col md:gap-6 justify-center md:space-y-0 lg:items-center border-b border-gray-50 px-6 mt-9">
           <h1 className="font-semibold text-2xl lg:text-4xl tracking-tighter capitalize">
             Posts by: {author.name}
           </h1>

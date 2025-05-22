@@ -280,7 +280,7 @@ export default async function Page({
       <div className="">
         <div className="xl:container m-aut0 text-gray-600 md:px-12 xl:px-16">
           <div className="lg:p-10 px-4 rounded-[4rem] space-y-6 md:flex flex-col md:gap-6 justify-center md:space-y-0 lg:items-center border-b border-gray-50">
-            <h1 className="font-semibold text-xl md:text-2xl lg:text-4xl tracking-tighter">
+            <h1 className="font-semibold text-xl md:text-2xl lg:text-4xl tracking-tighter mt-9">
               {post.title
                 .split(" ") // Split into words
                 .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
@@ -305,7 +305,7 @@ post.updatedAt.getTime() > post.createdAt.getTime() + 60000 ? (
 <p className="text-sm text-neutral-600">
 Updated on:{" "}
 <span className="font-bold">
-  {format(post.updatedAt, "MMMM dd, yyyy")}
+{format(post.updatedAt, "MMMM dd, yyyy")}
 </span>
 </p>
 ) : (
@@ -320,13 +320,13 @@ Updated on:{" "}
             </div>
           </div>
 
-          <section className="flex justify-between gap-4 px-4 mx-auto container mt-8">
+          <section className="flex flex-col lg:flex-row justify-between gap-4 px-4 mx-auto container mt-8">
             <div className="hidden mb-6 xl:block lg:w-60">
               <PopularBlogs />
             </div>
 
             <article
-              className="prose w-full max-w-2xl mx-auto"
+              className="prose w-full max-w-2xl mx-auto order-1"
               itemScope
               itemType="https://schema.org/BlogPosting"
             >
@@ -397,7 +397,82 @@ Updated on:{" "}
               </div>
             </article>
 
-            <aside className="hidden lg:block lg:w-60 sticky top-36">
+            {/* Mobile Topics and Related Posts - Only visible on mobile/tablet */}
+            <div className="lg:hidden w-full mt-8 mb-12 order-2">
+              <div className="mb-8">
+                <h3 className="text-xl font-bold mb-4">Topics</h3>
+                <div className="flex flex-wrap gap-2">
+                  {post.topics.map((topic) => (
+                    <Link
+                      key={topic}
+                      href={`/blog/${topic}`}
+                      className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-full text-sm font-medium transition-colors"
+                    >
+                      {topic.charAt(0).toUpperCase() + topic.slice(1)}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              {relatedPosts.length > 0 && (
+                <div>
+                  <h3 className="text-xl font-bold mb-4">Related Articles</h3>
+                  <div className="grid grid-cols-1 gap-4">
+                    {relatedPosts.slice(0, 3).map((relatedPost) => (
+                      <Link
+                        key={relatedPost.id}
+                        href={`/blog/${relatedPost.topics[0]}/${relatedPost.slug}`}
+                        className="group flex items-start gap-3 border-b pb-4"
+                      >
+                        <div className="w-24 h-24 flex-shrink-0 overflow-hidden rounded-md">
+                          <img
+                            src={relatedPost.coverPhoto || "/placeholder.svg"}
+                            alt={relatedPost.title}
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-medium line-clamp-2 group-hover:text-blue-600 transition-colors">
+                            {relatedPost.title}
+                          </h4>
+                          <div className="mt-1 flex items-center text-xs text-gray-500">
+                            <span>{relatedPost.author.name}</span>
+                            <span className="mx-1.5">•</span>
+                            <span>
+                              {format(
+                                new Date(relatedPost.createdAt),
+                                "MMM d, yyyy"
+                              )}
+                            </span>
+                          </div>
+                          <span className="inline-block mt-1.5 bg-gray-100 text-gray-800 text-xs px-2 py-0.5 rounded-full">
+                            {relatedPost.topics[0].charAt(0).toUpperCase() +
+                              relatedPost.topics[0].slice(1)}
+                          </span>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+
+                  <Link
+                    href="/blog"
+                    className="mt-4 inline-block text-blue-600 hover:text-blue-800 font-medium text-sm"
+                  >
+                    View all articles →
+                  </Link>
+                </div>
+              )}
+
+              {/* Mobile Popular Blogs Section */}
+              <div className="mt-8">
+                <h3 className="text-xl font-bold mb-4">Popular Articles</h3>
+                <div className="lg:hidden">
+                  <PopularBlogs />
+                </div>
+              </div>
+            </div>
+
+            <aside className="hidden lg:block lg:w-60 sticky top-36 order-3">
               <RecommendedTopics />
 
               {/* Related Posts Section */}
@@ -438,21 +513,18 @@ Updated on:{" "}
                               </h3>
                               <div className="mt-auto flex items-center justify-between text-sm text-gray-500">
                                 <div className="flex items-center">
-                                  {relatedPost.author.image ? (
-                                    <img
-                                      src={
-                                        relatedPost.author.image ||
-                                        "/placeholder.svg" ||
-                                        "/placeholder.svg" ||
-                                        "/placeholder.svg" ||
-                                        "/placeholder.svg"
-                                      }
-                                      alt={relatedPost.author.name || "Author"}
-                                      className="w-6 h-6 rounded-full mr-2"
-                                    />
-                                  ) : (
-                                    <div className="w-6 h-6 rounded-full bg-gray-200 mr-2"></div>
-                                  )}
+                                  {/* {relatedPost.author.image ? (
+                              <img
+                                src={
+                                  relatedPost.author.image ||
+                                  "/assets/placeholder.jpg"
+                                }
+                                alt={relatedPost.author.name || "Author"}
+                                className="w-6 h-6 rounded-full mr-2"
+                              />
+                            ) : (
+                            )} */}
+                                  <div className="w-6 h-6 rounded-full bg-gray-200 mr-2"></div>
                                   <span>{relatedPost.author.name}</span>
                                 </div>
                                 <span>
