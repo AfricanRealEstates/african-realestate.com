@@ -1,9 +1,9 @@
+import { getUserLocation } from "@/lib/user-location";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import Image from "next/image";
 import {
   ArrowRight,
-  Flame,
   Home,
   Building,
   Factory,
@@ -11,62 +11,49 @@ import {
   Map,
 } from "lucide-react";
 
-export default async function TrendingProperties() {
-  // Fetch all active properties sorted by views
-  const allProperties = await prisma.property.findMany({
+export default async function CityProperties() {
+  // Get user's location
+  const location = await getUserLocation();
+
+  // Default to Nairobi if location not available
+  const city = location.city || "Nairobi";
+  const country = location.country || "Kenya";
+
+  // Fetch properties in the user's city or nearby
+  const properties = await prisma.property.findMany({
     where: {
+      OR: [
+        { county: { contains: city, mode: "insensitive" } },
+        { locality: { contains: city, mode: "insensitive" } },
+        { nearbyTown: { contains: city, mode: "insensitive" } },
+      ],
       isActive: true,
     },
-    include: {
-      _count: {
-        select: {
-          views: true,
-        },
-      },
-    },
-    orderBy: {
-      views: {
-        _count: "desc",
-      },
-    },
-    take: 50, // Fetch enough to ensure we have all property types
+    take: 6,
+    orderBy: { createdAt: "desc" },
   });
 
-  // Group properties by type
-  const propertiesByType = allProperties.reduce(
-    (acc, property) => {
-      if (!acc[property.propertyType]) {
-        acc[property.propertyType] = [];
-      }
-      acc[property.propertyType].push(property);
-      return acc;
-    },
-    {} as Record<string, typeof allProperties>
-  );
+  // If no properties found in the user's city, get properties from the country
+  const countryProperties =
+    properties.length === 0
+      ? await prisma.property.findMany({
+          where: {
+            country: { contains: country, mode: "insensitive" },
+            isActive: true,
+          },
+          take: 6,
+          orderBy: { createdAt: "desc" },
+        })
+      : [];
 
-  // Get property types
-  const propertyTypes = Object.keys(propertiesByType);
+  // Use either city properties or country properties
+  const displayProperties =
+    properties.length > 0 ? properties : countryProperties;
 
-  // Select the hottest property from each type
-  const representativeProperties = propertyTypes.map(
-    (type) => propertiesByType[type][0] // Take the hottest property of each type
-  );
-
-  // Fill remaining slots with the hottest properties overall
-  const remainingCount = 6 - representativeProperties.length;
-  const additionalProperties = allProperties
-    .filter(
-      (property) => !representativeProperties.some((p) => p.id === property.id)
-    )
-    .slice(0, remainingCount >= 0 ? remainingCount : 0);
-
-  // Combine and sort by view count
-  const hottestProperties = [
-    ...representativeProperties,
-    ...additionalProperties,
-  ]
-    .sort((a, b) => b._count.views - a._count.views)
-    .slice(0, 6); // Ensure we have exactly 6 properties
+  // If still no properties, return null (component won't render)
+  if (displayProperties.length === 0) {
+    return null;
+  }
 
   // Get color based on property type
   const getTypeColor = (type: string) => {
@@ -203,27 +190,26 @@ export default async function TrendingProperties() {
     <section className="mx-auto w-full max-w-7xl px-5 py-16 md:px-10">
       <div className="flex items-center justify-between flex-wrap gap-4 mb-10">
         <div>
-          <h2 className="text-sm text-red-500 font-semibold mb-2 uppercase flex items-center">
-            <Flame className="size-4 mr-1 text-red-500" />
-            Hottest Properties
+          <h2 className="text-sm text-blue-500 font-semibold mb-2 uppercase">
+            Local Properties
           </h2>
           <h3 className="text-[#636262] text-3xl md:text-4xl font-semibold">
-            Most Viewed Listings
+            Properties in {city}
           </h3>
         </div>
         <Link
-          href="/properties?sort=hot"
-          className="text-[#636262] hover:text-red-500 group font-semibold relative flex items-center gap-x-2"
+          href={`/properties?location=${encodeURIComponent(city)}`}
+          className="text-[#636262] hover:text-blue-500 group font-semibold relative flex items-center gap-x-2"
         >
           <span className="group-hover:underline group-hover:underline-offset-4">
-            View All Hot Properties
+            View All Properties in {city}
           </span>
           <ArrowRight className="size-4 ml-1 transition-transform duration-300 group-hover:translate-x-1" />
         </Link>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {hottestProperties.map((property) => (
+        {displayProperties.map((property) => (
           <Link
             href={`/properties/${property.slug}`}
             key={property.id}
@@ -233,7 +219,8 @@ export default async function TrendingProperties() {
               <Image
                 src={
                   property.coverPhotos[0] ||
-                  "/placeholder.svg?height=400&width=600"
+                  "/placeholder.svg?height=400&width=600" ||
+                  "/placeholder.svg"
                 }
                 alt={property.title}
                 className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
@@ -247,14 +234,13 @@ export default async function TrendingProperties() {
                 {getTypeIcon(property.propertyType)}
                 {property.propertyType}
               </div>
-              <div
-                className={`absolute bottom-4 left-4 bg-${getTypeColor(
-                  property.propertyType
-                )}-600 text-white px-2 py-1 rounded-md text-xs font-medium flex items-center`}
-              >
-                <Flame className="size-3 mr-1" />
-                {property._count.views} views
-              </div>
+              {property.status && (
+                <div
+                  className={`absolute bottom-4 right-4 bg-${property.status === "sale" ? "green" : "blue"}-600 text-white px-2 py-1 rounded-md text-xs font-medium`}
+                >
+                  {property.status === "sale" ? "For Sale" : "For Rent"}
+                </div>
+              )}
             </div>
 
             <div className="p-4">

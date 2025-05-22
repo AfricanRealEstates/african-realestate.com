@@ -37,7 +37,7 @@ export default async function PropertyAdvice() {
   }));
 
   return (
-    <section className={`py-6 leading-relaxed`}>
+    <section className={`py-6 leading-relaxed border-t border-gray-50`}>
       <div className="w-[95%] max-w-7xl m-auto px-6 text-gray-600 md:px-12 xl:px-6">
         <div className="flex items-center justify-between mb-8">
           <p

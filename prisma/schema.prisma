@@ -525,6 +525,30 @@ model Guide {
   @@map("guides")
 }
 
+model ABTestConversion {
+  id        String   @id @default(cuid())
+  testName  String
+  variant   String
+  userId    String?
+  timestamp DateTime @default(now())
+
+  @@index([testName, variant])
+  @@index([userId])
+  @@map("ab_test_conversions")
+}
+
+model ABTestImpression {
+  id        String   @id @default(cuid())
+  testName  String
+  variant   String
+  userId    String?
+  timestamp DateTime @default(now())
+
+  @@index([testName, variant])
+  @@index([userId])
+  @@map("ab_test_impressions")
+}
+
 enum UserRole {
   USER
   AGENT

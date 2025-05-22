@@ -7,11 +7,47 @@ import RecentlyViewedProperties from "@/components/landing/recently-viewed-prope
 import Reviews from "@/components/landing/reviews";
 import OurServices from "@/components/landing/services/OurServices";
 import Testing from "@/components/landing/testing";
+import TrendingProperties from "@/components/landing/TrendingProperties";
 import SearchHistoryCarousel from "@/components/search/SearchHistoryCarousel";
+import { getUserLocation } from "@/lib/user-location";
+import { getUserPreferences } from "@/lib/user-preferences";
+import { Metadata, ResolvingMetadata } from "next";
 import { Suspense } from "react";
+
+// Generate dynamic metadata based on user location
+export async function generateMetadata(
+  params: {},
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  // Get user location
+  const location = await getUserLocation();
+
+  // Get the default metadata from parent
+  const previousMetadata = await parent;
+
+  // Default location if not available
+  const city = location.city || "Africa";
+  const country = location.country || "Kenya";
+
+  return {
+    title: `Find Your Dream Property in ${city}, ${country} | African Real Estate`,
+    description: `Discover residential, commercial, and land properties for sale and rent in ${city}, ${country}. African Real Estate offers the best selection of properties across Africa.`,
+    // openGraph: {
+    //   ...previousMetadata.openGraph,
+    //   title: `Find Your Dream Property in ${city}, ${country} | African Real Estate`,
+    //   description: `Discover residential, commercial, and land properties for sale and rent in ${city}, ${country}. African Real Estate offers the best selection of properties across Africa.`,
+    // },
+    // twitter: {
+    //   ...previousMetadata.twitter,
+    //   title: `Find Your Dream Property in ${city}, ${country} | African Real Estate`,
+    //   description: `Discover residential, commercial, and land properties for sale and rent in ${city}, ${country}. African Real Estate offers the best selection of properties across Africa.`,
+    // },
+  };
+}
 
 export default async function Home() {
   const session = await auth();
+  const userPreferences = await getUserPreferences();
 
   return (
     <>
@@ -49,8 +85,11 @@ export default async function Home() {
           <SearchHistoryCarousel />
         </Suspense>
 
+        {/* A/B Testing for Featured Content */}
+        {/* <FeaturedContent userPreferences={userPreferences} /> */}
+
         {/* Trending Properties - For all users */}
-        {/* <TrendingProperties /> */}
+        <TrendingProperties />
 
         {/* Featured Properties - Now personalized */}
         <Suspense
@@ -68,6 +107,7 @@ export default async function Home() {
 
         <OurServices />
         <Facts />
+        {/* Location-based Properties */}
         <CityProperties />
         <PropertyAdvice />
         <Reviews />
