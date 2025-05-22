@@ -200,14 +200,14 @@ export default async function TrendingProperties() {
   };
 
   return (
-    <section className="mx-auto w-full max-w-7xl px-5 py-16 md:px-10">
+    <section className="mx-auto w-full max-w-7xl px-4 py-16 ">
       <div className="flex items-center justify-between flex-wrap gap-4 mb-10">
         <div>
           <h2 className="text-sm text-red-500 font-semibold mb-2 uppercase flex items-center">
             <Flame className="size-4 mr-1 text-red-500" />
             Hottest Properties
           </h2>
-          <h3 className="text-[#636262] text-3xl md:text-4xl font-semibold">
+          <h3 className="text-2xl font-bold text-gray-900">
             Most Viewed Listings
           </h3>
         </div>

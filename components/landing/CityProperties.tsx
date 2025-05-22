@@ -9,36 +9,51 @@ import {
   Factory,
   Umbrella,
   Map,
+  MapPin,
 } from "lucide-react";
+import { Prisma } from "@prisma/client";
 
 export default async function CityProperties() {
   // Get user's location
   const location = await getUserLocation();
 
-  // Default to Nairobi if location not available
+  console.log("User location detected:", location);
+
+  // Use detected location or fallback
   const city = location.city || "Nairobi";
   const country = location.country || "Kenya";
+  const region = location.region;
 
-  // Fetch properties in the user's city or nearby
+  // Create search terms array
+  const searchTerms = [city];
+  if (region && region !== city) {
+    searchTerms.push(region);
+  }
+
+  // Create OR conditions for each search term
+  const searchConditions = searchTerms.flatMap((term) => [
+    { county: { contains: term, mode: Prisma.QueryMode.insensitive } },
+    { locality: { contains: term, mode: Prisma.QueryMode.insensitive } },
+    { nearbyTown: { contains: term, mode: Prisma.QueryMode.insensitive } },
+    { district: { contains: term, mode: Prisma.QueryMode.insensitive } },
+  ]);
+
+  // Fetch properties in the user's city or nearby with more flexible matching
   const properties = await prisma.property.findMany({
     where: {
-      OR: [
-        { county: { contains: city, mode: "insensitive" } },
-        { locality: { contains: city, mode: "insensitive" } },
-        { nearbyTown: { contains: city, mode: "insensitive" } },
-      ],
+      OR: searchConditions,
       isActive: true,
     },
     take: 6,
     orderBy: { createdAt: "desc" },
   });
 
-  // If no properties found in the user's city, get properties from the country
+  // If no properties found in the user's city/region, expand search to country
   const countryProperties =
     properties.length === 0
       ? await prisma.property.findMany({
           where: {
-            country: { contains: country, mode: "insensitive" },
+            country: { contains: country, mode: Prisma.QueryMode.insensitive },
             isActive: true,
           },
           take: 6,
@@ -46,9 +61,31 @@ export default async function CityProperties() {
         })
       : [];
 
-  // Use either city properties or country properties
+  // If still no properties, get any recent properties
+  const fallbackProperties =
+    properties.length === 0 && countryProperties.length === 0
+      ? await prisma.property.findMany({
+          where: { isActive: true },
+          take: 6,
+          orderBy: { createdAt: "desc" },
+        })
+      : [];
+
+  // Use the best available properties
   const displayProperties =
-    properties.length > 0 ? properties : countryProperties;
+    properties.length > 0
+      ? properties
+      : countryProperties.length > 0
+        ? countryProperties
+        : fallbackProperties;
+
+  // Determine the display location
+  const displayLocation =
+    properties.length > 0
+      ? city
+      : countryProperties.length > 0
+        ? country
+        : "Available Areas";
 
   // If still no properties, return null (component won't render)
   if (displayProperties.length === 0) {
@@ -187,22 +224,29 @@ export default async function CityProperties() {
   };
 
   return (
-    <section className="mx-auto w-full max-w-7xl px-5 py-16 md:px-10">
+    <section className="mx-auto w-full max-w-7xl px-4 py-8 lg:py-16">
       <div className="flex items-center justify-between flex-wrap gap-4 mb-10">
         <div>
-          <h2 className="text-sm text-blue-500 font-semibold mb-2 uppercase">
+          <h2 className="text-sm text-blue-500 font-semibold mb-2 uppercase flex items-center">
+            <MapPin className="size-4 mr-1" />
             Local Properties
           </h2>
-          <h3 className="text-[#636262] text-3xl md:text-4xl font-semibold">
-            Properties in {city}
+          <h3 className="text-2xl font-bold text-gray-900">
+            Properties in {displayLocation}
           </h3>
+          {location.city && location.city !== "Nairobi" && (
+            <p className="text-sm text-gray-500 mt-1">
+              Showing properties near your location: {location.city},{" "}
+              {location.country}
+            </p>
+          )}
         </div>
         <Link
-          href={`/properties?location=${encodeURIComponent(city)}`}
+          href={`/properties?location=${encodeURIComponent(displayLocation)}`}
           className="text-[#636262] hover:text-blue-500 group font-semibold relative flex items-center gap-x-2"
         >
           <span className="group-hover:underline group-hover:underline-offset-4">
-            View All Properties in {city}
+            View All Properties in {displayLocation}
           </span>
           <ArrowRight className="size-4 ml-1 transition-transform duration-300 group-hover:translate-x-1" />
         </Link>
@@ -219,8 +263,7 @@ export default async function CityProperties() {
               <Image
                 src={
                   property.coverPhotos[0] ||
-                  "/placeholder.svg?height=400&width=600" ||
-                  "/placeholder.svg"
+                  "/placeholder.svg?height=400&width=600"
                 }
                 alt={property.title}
                 className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
@@ -236,7 +279,9 @@ export default async function CityProperties() {
               </div>
               {property.status && (
                 <div
-                  className={`absolute bottom-4 right-4 bg-${property.status === "sale" ? "green" : "blue"}-600 text-white px-2 py-1 rounded-md text-xs font-medium`}
+                  className={`absolute bottom-4 right-4 ${
+                    property.status === "sale" ? "bg-green-600" : "bg-blue-600"
+                  } text-white px-2 py-1 rounded-md text-xs font-medium`}
                 >
                   {property.status === "sale" ? "For Sale" : "For Rent"}
                 </div>

@@ -254,7 +254,7 @@ export default async function OurServices() {
 
   return (
     <div className="border-t border-gray-50">
-      <section className="mx-auto w-full max-w-7xl px-5 py-16 md:px-10">
+      <section className="mx-auto w-full max-w-7xl px-4">
         <div className="flex items-center justify-between flex-wrap gap-4 mb-10">
           <div>
             {/* <h2
@@ -262,7 +262,7 @@ export default async function OurServices() {
           >
             Our Services
           </h2> */}
-            <h3 className={` text-[#636262] text-xl md:text-3xl font-semibold`}>
+            <h3 className={`text-2xl font-bold text-gray-900`}>
               Property Guides
             </h3>
           </div>
