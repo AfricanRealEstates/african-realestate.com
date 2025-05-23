@@ -47,10 +47,10 @@ export default async function PopularInCategory({
     <section className="mx-auto w-full max-w-7xl px-5 py-16 md:px-10">
       <div className="flex items-center justify-between flex-wrap gap-4 mb-10">
         <div>
-          <h2 className="text-sm text-blue-500 font-semibold mb-2 uppercase">
+          <h2 className="text-xs text-blue-500 font-semibold mb-2 uppercase">
             Popular {preferredType}
           </h2>
-          <h3 className="text-[#636262] text-3xl md:text-4xl font-semibold">
+          <h3 className="text-2xl font-bold text-gray-600">
             Top {preferredType} Properties
           </h3>
         </div>
@@ -68,7 +68,7 @@ export default async function PopularInCategory({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {popularProperties.map((property) => (
           <Link
-            href={`/properties/${property.slug}`}
+            href={`/properties/${property.propertyDetails}/${property.id}`}
             key={property.id}
             className="group hover:cursor-pointer flex flex-col h-full transition-all ease-in-out border rounded-lg border-neutral-200 hover:border-neutral-100 hover:shadow-2xl hover:shadow-gray-600/10 bg-white overflow-hidden"
           >

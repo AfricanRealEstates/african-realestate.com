@@ -30,8 +30,8 @@ export async function generateMetadata(
   const country = location.country || "Kenya";
 
   return {
-    title: `Find Your Dream Property in ${city}, ${country} | African Real Estate`,
-    description: `Discover residential, commercial, and land properties for sale and rent in ${city}, ${country}. African Real Estate offers the best selection of properties across Africa.`,
+    // title: `Find Your Dream Property in ${city}, ${country} | African Real Estate`,
+    // description: `Discover residential, commercial, and land properties for sale and rent in ${city}, ${country}. African Real Estate offers the best selection of properties across Africa.`,
     // openGraph: {
     //   ...previousMetadata.openGraph,
     //   title: `Find Your Dream Property in ${city}, ${country} | African Real Estate`,

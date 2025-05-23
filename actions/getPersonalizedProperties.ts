@@ -1,16 +1,20 @@
+"use server";
+
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import type { PropertyData } from "@/lib/types";
 
 export async function getPersonalizedProperties(
-  limit = 6
+  limit = 8
 ): Promise<PropertyData[]> {
   try {
+    console.log("Fetching personalized properties...");
     const user = await getCurrentUser();
 
     // If no user is logged in, return properties based on anonymous browsing data
     if (!user) {
-      return getAnonymousRecommendations(limit);
+      console.log("No user logged in, fetching default properties");
+      return getDefaultFeaturedProperties(limit);
     }
 
     // Get user's interaction data with proper error handling
@@ -57,6 +61,7 @@ export async function getPersonalizedProperties(
         savedProperties.length === 0 &&
         searchHistory.length === 0
       ) {
+        console.log("User has no interactions, fetching default properties");
         return getDefaultFeaturedProperties(limit);
       }
 
@@ -131,20 +136,6 @@ export async function getPersonalizedProperties(
         preferenceConditions.push({ propertyType: { in: allPropertyTypes } });
       }
 
-      // Property details preferences (from interactions and searches)
-      if (
-        propertyDetails.length > 0 ||
-        searchPreferences.propertyDetails.size > 0
-      ) {
-        const allPropertyDetails = [
-          ...propertyDetails,
-          ...Array.from(searchPreferences.propertyDetails),
-        ];
-        preferenceConditions.push({
-          propertyDetails: { in: allPropertyDetails },
-        });
-      }
-
       // Location preferences (from interactions and searches)
       if (counties.length > 0 || searchPreferences.counties.size > 0) {
         const allCounties = [
@@ -176,15 +167,22 @@ export async function getPersonalizedProperties(
         recommendationQuery.OR = preferenceConditions;
       }
 
-      // Get recommendations based on preferences
+      // Get recommendations based on preferences with view count
       const recommendations = await prisma.property.findMany({
         where: recommendationQuery,
         orderBy: [{ updatedAt: "desc" }],
         take: limit,
+        include: {
+          views: true,
+          likes: true,
+        },
       });
 
       // If we don't have enough recommendations, fill with featured properties
       if (recommendations.length < limit) {
+        console.log(
+          `Only found ${recommendations.length} recommendations, filling with featured properties`
+        );
         const featuredProperties = await getDefaultFeaturedProperties(
           limit - recommendations.length
         );
@@ -201,14 +199,10 @@ export async function getPersonalizedProperties(
         ) as PropertyData[];
       }
 
-      // Store these recommendations for analytics
-      await storeRecommendationEvent(
-        user.id!,
-        recommendations.map((p) => p.id),
-        "featured_properties"
+      console.log(
+        `Found ${recommendations.length} personalized recommendations`
       );
-
-      return recommendations as PropertyData[];
+      return recommendations as any[];
     } catch (error) {
       console.error("Error fetching user interactions:", error);
       return getDefaultFeaturedProperties(limit);
@@ -219,110 +213,31 @@ export async function getPersonalizedProperties(
   }
 }
 
-// Get recommendations for anonymous users based on cookie data
-async function getAnonymousRecommendations(
-  limit: number
-): Promise<PropertyData[]> {
-  try {
-    // For anonymous users, we'll return a mix of:
-    // 1. Most viewed properties (popular)
-    // 2. Recently added properties
-    // 3. Properties with price cuts (good deals)
-
-    const [popularProperties, recentProperties, dealsProperties] =
-      await Promise.all([
-        // Popular properties (most viewed)
-        prisma.property.findMany({
-          where: {
-            isActive: true,
-          },
-          orderBy: {
-            views: {
-              _count: "desc",
-            },
-          },
-          take: Math.ceil(limit / 3),
-        }),
-
-        // Recently added properties
-        prisma.property.findMany({
-          where: {
-            isActive: true,
-          },
-          orderBy: {
-            createdAt: "desc",
-          },
-          take: Math.ceil(limit / 3),
-        }),
-
-        // Properties with price cuts (leastPrice < price)
-        prisma.property.findMany({
-          where: {
-            isActive: true,
-            leastPrice: {
-              not: null,
-            },
-            AND: [{ leastPrice: { lt: prisma.property.fields.price } }],
-          },
-          orderBy: {
-            updatedAt: "desc",
-          },
-          take: Math.ceil(limit / 3),
-        }),
-      ]);
-
-    // Combine and deduplicate
-    const allProperties = [
-      ...popularProperties,
-      ...recentProperties,
-      ...dealsProperties,
-    ];
-    const uniqueProperties = Array.from(
-      new Map(allProperties.map((property) => [property.id, property])).values()
-    );
-
-    // Return up to the limit
-    return uniqueProperties.slice(0, limit) as PropertyData[];
-  } catch (error) {
-    console.error("Error fetching anonymous recommendations:", error);
-    return getDefaultFeaturedProperties(limit);
-  }
-}
-
 // Simplified fallback to get default featured properties
 async function getDefaultFeaturedProperties(
   limit: number
 ): Promise<PropertyData[]> {
   try {
+    console.log("Fetching default featured properties...");
+
     // Get a mix of recently updated and popular properties
     const properties = await prisma.property.findMany({
       where: { isActive: true },
       orderBy: [{ updatedAt: "desc" }],
       take: limit,
-    });
-
-    return properties as PropertyData[];
-  } catch (error) {
-    console.error("Error fetching default featured properties:", error);
-    return [];
-  }
-}
-
-// Store recommendation events for analytics
-async function storeRecommendationEvent(
-  userId: string,
-  propertyIds: string[],
-  recommendationType: string
-): Promise<void> {
-  try {
-    await prisma.recommendationEvent.create({
-      data: {
-        userId,
-        propertyIds,
-        recommendationType,
+      include: {
+        views: true,
+        likes: true,
       },
     });
+
+    console.log(`Found ${properties.length} default featured properties`);
+    return properties as any[];
   } catch (error) {
-    console.error("Error storing recommendation event:", error);
+    console.error("Error fetching default featured properties:", error);
+
+    // Return empty array as last resort
+    console.log("Returning empty array due to error");
+    return [];
   }
 }

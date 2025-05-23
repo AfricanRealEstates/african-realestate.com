@@ -4,52 +4,52 @@ import type { Route as NextRoute } from "next";
 import { ComponentType } from "react";
 
 export type RegisterInputProps = {
-    fullName: string;
-    role: UserRole;
-    email: string;
-    password: string;
-}
+  fullName: string;
+  role: UserRole;
+  email: string;
+  password: string;
+};
 
 export type LoginInputProps = {
-    email: string;
-    password: string
-}
+  email: string;
+  password: string;
+};
 export type NavItem = {
-    title: string
-    href?: string
-    disabled?: boolean
-    external?: boolean
-    icon?: keyof typeof Icons
-    label?: string
-    description?: string
-}
+  title: string;
+  href?: string;
+  disabled?: boolean;
+  external?: boolean;
+  icon?: keyof typeof Icons;
+  label?: string;
+  description?: string;
+};
 
 export type ExtendedUser = User & {
-    profilePhoto?: string;
-    whatsappNumber?: string;
-    phoneNumber?: string;
-    xLink?: string;
-    tiktokLink?: string;
-    facebookLink?: string;
-    linkedinLink?: string;
-    instagramLink?: string;
-    bio?: string;
+  profilePhoto?: string;
+  whatsappNumber?: string;
+  phoneNumber?: string;
+  xLink?: string;
+  tiktokLink?: string;
+  facebookLink?: string;
+  linkedinLink?: string;
+  instagramLink?: string;
+  bio?: string;
 };
 
 export interface NavItemWithChildren extends NavItem {
-    items: NavItemWithChildren[]
+  items: NavItemWithChildren[];
 }
 
 export interface NavItemWithOptionalChildren extends NavItem {
-    items?: NavItemWithChildren[]
+  items?: NavItemWithChildren[];
 }
 
-export type MainNavItem = NavItemWithOptionalChildren
+export type MainNavItem = NavItemWithOptionalChildren;
 
-export type SidebarNavItem = NavItemWithChildren
+export type SidebarNavItem = NavItemWithChildren;
 
 export interface SearchParams {
-    [key: string]: string | string[] | undefined
+  [key: string]: string | string[] | undefined;
 }
 
 // Get ready to update to nextjs version 13.2 with X typedRoutes
@@ -57,17 +57,17 @@ export type Route<T = string> = NextRoute;
 export type PathName = Route;
 
 export interface Page {
-    path: PathName;
-    exact?: boolean;
-    component: ComponentType<Object>;
+  path: PathName;
+  exact?: boolean;
+  component: ComponentType<Object>;
 }
 
 export type TwMainColor =
-    | "pink"
-    | "green"
-    | "yellow"
-    | "red"
-    | "indigo"
-    | "blue"
-    | "purple"
-    | "gray";
+  | "pink"
+  | "green"
+  | "yellow"
+  | "red"
+  | "indigo"
+  | "blue"
+  | "purple"
+  | "gray";

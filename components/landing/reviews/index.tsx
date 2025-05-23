@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import type React from "react";
 import { Lexend } from "next/font/google";
 import { Card } from "@/components/ui/card";
 import {
@@ -10,7 +10,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { BadgeCheck } from "lucide-react";
+import { BadgeCheck, Star, Users } from "lucide-react";
 import { Tab } from "@headlessui/react";
 import Image from "next/image";
 
@@ -28,12 +28,6 @@ interface Review {
 const reviews: { google: Review[]; trustpilot: Review[]; reviewsIO: Review[] } =
   {
     google: [
-      // {
-      //   name: "Mungai Kihara",
-      //   username: "@mtollah",
-      //   body: "I recently used African Real Estate to advertise my property, and I couldn't be happier with the results. I highly recommend African Real Estate to anyone looking to sell or rent their property quickly!",
-      //   img: "/assets/realtor-1.jpeg",
-      // },
       {
         name: "Nancy Nyam. O",
         username: "@nancy_o",
@@ -63,7 +57,7 @@ const reviews: { google: Review[]; trustpilot: Review[]; reviewsIO: Review[] } =
       {
         name: "Jacenta Kang'ethe",
         username: "@ill_tw",
-        body: "Buying my first home was a daunting experience, but African Real Estate made it seamless and enjoyable. Thanks to African Real Estate, I found my dream home in no time!",
+        body: "Buying my first home was a daunting experience, but African Real Estate made it seamless and enjoyable. Thanks to African Real Estate.",
         img: "/assets/placeholder.jpg",
       },
       {
@@ -95,7 +89,7 @@ const reviews: { google: Review[]; trustpilot: Review[]; reviewsIO: Review[] } =
       {
         name: "John Mark",
         username: "@john",
-        body: "As a small business owner, finding the perfect office space was crucial for our growth. African Real Estate had a fantastic selection of office spaces that fit our budget and needs perfectly. Highly recommended for any business looking for new office space!",
+        body: "As a small business owner, finding the perfect office space was crucial for our growth. African Real Estate had a fantastic selection of office spaces that fit perfectly.",
         img: "https://avatar.vercel.sh/john",
       },
       {
@@ -127,23 +121,37 @@ const reviews: { google: Review[]; trustpilot: Review[]; reviewsIO: Review[] } =
 
 const Reviews: React.FC = () => {
   return (
-    <section className="bg-neutral-50 px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
-      <div className="mx-auto max-w-7xl">
-        <h4
-          className={`${lexend.className} text-gray-600 mt-4 tracking-tight text-2xl sm:text-3xl lg:text-4xl font-semibold capitalize text-center`}
-        >
-          Our recent customer reviews
-        </h4>
+    <section className="bg-white px-4 py-12 sm:py-16 lg:py-20">
+      <div className="mx-auto max-w-7xl px-4">
+        {/* Header Section */}
+        <div className="mb-12 flex gap-4">
+          <div className="inline-flex items-center justify-center mb-4">
+            <div className="p-3 bg-blue-100 rounded-full">
+              <Users className="h-6 w-6 text-blue-600" />
+            </div>
+          </div>
+          <div>
+            <h4
+              className={`${lexend.className} mt-2 tracking-tight text-2xl font-bold text-gray-700 capitalize`}
+            >
+              Our recent customer reviews
+            </h4>
+            <p className="mt-2 text-sm text-gray-600 max-w-2xl">
+              See what our satisfied customers have to say about their
+              experience with African Real Estate
+            </p>
+          </div>
+        </div>
 
         <div className="mt-10 overflow-x-auto">
           <Tab.Group>
-            <Tab.List className="flex flex-col sm:flex-row justify-between items-center rounded-lg w-full gap-4 bg-white p-2">
+            <Tab.List className="flex flex-col sm:flex-row justify-between items-center rounded-xl w-full mx-auto gap-4 bg-white p-3 border border-gray-100">
               <Tab
                 className={({ selected }) =>
-                  `w-full sm:w-auto flex items-center justify-center gap-3 p-2 rounded-md transition-colors ${
+                  `w-full sm:w-auto flex items-center justify-center gap-3 p-4 rounded-lg transition-all duration-200 ${
                     selected
-                      ? "bg-blue-100 text-blue-700"
-                      : "text-gray-500 hover:bg-gray-100"
+                      ? "bg-blue-50 text-blue-700 shadow-sm ring-2 ring-blue-200"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-800"
                   }`
                 }
               >
@@ -152,16 +160,27 @@ const Reviews: React.FC = () => {
                   alt="Google Review"
                   width={96}
                   height={96}
-                  className="h-16 w-auto"
+                  className="h-12 w-auto"
                 />
-                <p className="text-xl font-bold">4.9/5</p>
+                <div className="text-center">
+                  <div className="flex items-center justify-center mb-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className="h-4 w-4 text-yellow-400 fill-yellow-400"
+                      />
+                    ))}
+                  </div>
+                  <p className="text-xl font-bold">4.9/5</p>
+                  <p className="text-xs text-gray-500">Google Reviews</p>
+                </div>
               </Tab>
               <Tab
                 className={({ selected }) =>
-                  `w-full sm:w-auto flex items-center justify-center gap-3 p-2 rounded-md transition-colors ${
+                  `w-full sm:w-auto flex items-center justify-center gap-3 p-4 rounded-lg transition-all duration-200 ${
                     selected
-                      ? "bg-blue-100 text-blue-700"
-                      : "text-gray-500 hover:bg-gray-100"
+                      ? "bg-blue-50 text-blue-700 shadow-sm ring-2 ring-blue-200"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-800"
                   }`
                 }
               >
@@ -170,16 +189,27 @@ const Reviews: React.FC = () => {
                   alt="TrustPilot"
                   width={112}
                   height={56}
-                  className="h-14 w-auto"
+                  className="h-10 w-auto"
                 />
-                <p className="text-xl font-bold">4.8/5</p>
+                <div className="text-center">
+                  <div className="flex items-center justify-center mb-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className="h-4 w-4 text-green-500 fill-green-500"
+                      />
+                    ))}
+                  </div>
+                  <p className="text-xl font-bold">4.8/5</p>
+                  <p className="text-xs text-gray-500">Trustpilot</p>
+                </div>
               </Tab>
               <Tab
                 className={({ selected }) =>
-                  `w-full sm:w-auto flex items-center justify-center gap-3 p-2 rounded-md transition-colors ${
+                  `w-full sm:w-auto flex items-center justify-center gap-3 p-4 rounded-lg transition-all duration-200 ${
                     selected
-                      ? "bg-blue-100 text-blue-700"
-                      : "text-gray-500 hover:bg-gray-100"
+                      ? "bg-blue-50 text-blue-700 shadow-sm ring-2 ring-blue-200"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-800"
                   }`
                 }
               >
@@ -188,13 +218,24 @@ const Reviews: React.FC = () => {
                   alt="Reviews.io"
                   width={112}
                   height={56}
-                  className="h-14 w-auto"
+                  className="h-10 w-auto"
                 />
-                <p className="text-xl font-bold">5.0/5</p>
+                <div className="text-center">
+                  <div className="flex items-center justify-center mb-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className="h-4 w-4 text-blue-500 fill-blue-500"
+                      />
+                    ))}
+                  </div>
+                  <p className="text-xl font-bold">5.0/5</p>
+                  <p className="text-xs text-gray-500">Reviews.io</p>
+                </div>
               </Tab>
             </Tab.List>
 
-            <Tab.Panels className="mt-4">
+            <Tab.Panels className="mt-8 bg-gray-50">
               <Tab.Panel>
                 <ReviewCarousel reviews={reviews.google} reviewType="google" />
               </Tab.Panel>
@@ -233,43 +274,88 @@ const ReviewCarousel: React.FC<ReviewCarouselProps> = ({
     reviewsIO: "/assets/reviews-io.png",
   };
 
+  const starColors = {
+    google: "text-yellow-400 fill-yellow-400",
+    trustpilot: "text-green-500 fill-green-500",
+    reviewsIO: "text-blue-500 fill-blue-500",
+  };
+
+  const badgeColors = {
+    google: "text-blue-600",
+    trustpilot: "text-green-600",
+    reviewsIO: "text-blue-600",
+  };
+
   return (
-    <div className="bg-[#f7f7f7] p-2 mt-4 rounded-lg">
-      <Carousel className="w-full max-w-3xl mx-auto">
-        <CarouselContent>
+    <div className="bg-white/50 backdrop-blur-sm p-4 mt-6 rounded-xl border border-white/20">
+      <Carousel className="w-full max-w-7xl mx-auto">
+        <CarouselContent className="-ml-2 md:-ml-4">
           {reviews.map((review, index) => (
-            <CarouselItem key={index}>
-              <div className="p-2">
-                <Card className="flex flex-col h-full p-6 rounded-md bg-white shadow-md">
+            <CarouselItem
+              key={index}
+              className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3"
+            >
+              <div className="p-1">
+                <Card className="flex flex-col h-full p-6 rounded-xl bg-white shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100">
+                  {/* User Info */}
                   <div className="flex items-center space-x-4 mb-4">
-                    <Image
-                      src={review.img}
-                      alt={review.name}
-                      width={64}
-                      height={64}
-                      className="rounded-full"
-                    />
-                    <div>
-                      <p className="font-semibold text-lg">{review.name}</p>
-                      <p className="text-sm text-gray-500">{review.username}</p>
+                    <div className="relative">
+                      <Image
+                        src={
+                          review.img || "/placeholder.svg?height=64&width=64"
+                        }
+                        alt={review.name}
+                        width={64}
+                        height={64}
+                        className="rounded-full object-cover h-12 w-12"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-lg text-gray-900 truncate">
+                        {review.name}
+                      </p>
+                      <p className="text-sm text-gray-500 truncate">
+                        {review.username}
+                      </p>
                     </div>
                   </div>
-                  <div className="flex-grow">
-                    <p className="text-base leading-relaxed tracking-wide mb-6">
+
+                  {/* Rating */}
+                  <div className="flex items-center mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`h-4 w-4 ${starColors[reviewType]}`}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Review Text */}
+                  <div className="flex-grow mb-6">
+                    <p className="text-base leading-relaxed tracking-wide text-gray-700">
                       &ldquo;{review.body}&rdquo;
                     </p>
                   </div>
-                  <div className="flex justify-between items-center mt-4">
+
+                  {/* Footer */}
+                  <div className="flex justify-between items-center pt-4 border-t border-gray-100">
                     <Image
-                      src={reviewImages[reviewType]}
+                      src={
+                        reviewImages[reviewType] ||
+                        "/placeholder.svg?height=40&width=80"
+                      }
                       alt={`${reviewType} Review`}
-                      width={100}
-                      height={50}
-                      className="h-10 w-auto"
+                      width={80}
+                      height={40}
+                      className="h-8 w-auto opacity-80"
                     />
                     <div className="flex items-center space-x-1">
-                      <BadgeCheck className="w-5 h-5 text-emerald-600" />
-                      <p className="text-sm font-medium text-emerald-600">
+                      <BadgeCheck
+                        className={`w-4 h-4 ${badgeColors[reviewType]}`}
+                      />
+                      <p
+                        className={`text-xs font-medium ${badgeColors[reviewType]}`}
+                      >
                         Verified
                       </p>
                     </div>
@@ -279,9 +365,9 @@ const ReviewCarousel: React.FC<ReviewCarouselProps> = ({
             </CarouselItem>
           ))}
         </CarouselContent>
-        <div className="flex justify-center mt-4 gap-2">
-          <CarouselPrevious />
-          <CarouselNext />
+        <div className="flex justify-center mt-6 gap-4">
+          <CarouselPrevious className="relative inset-0 translate-y-0 bg-white/80 backdrop-blur-sm border border-gray-200 hover:bg-white shadow-sm" />
+          <CarouselNext className="relative inset-0 translate-y-0 bg-white/80 backdrop-blur-sm border border-gray-200 hover:bg-white shadow-sm" />
         </div>
       </Carousel>
     </div>

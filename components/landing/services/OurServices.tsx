@@ -262,7 +262,7 @@ export default async function OurServices() {
           >
             Our Services
           </h2> */}
-            <h3 className={`text-2xl font-bold text-gray-900`}>
+            <h3 className={`text-2xl font-bold text-gray-700`}>
               Property Guides
             </h3>
           </div>

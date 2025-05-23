@@ -21,13 +21,20 @@ export default async function CityProperties() {
 
   // Use detected location or fallback
   const city = location.city || "Nairobi";
+  const county = location.county || "Nairobi";
   const country = location.country || "Kenya";
-  const region = location.region;
 
-  // Create search terms array
-  const searchTerms = [city];
-  if (region && region !== city) {
-    searchTerms.push(region);
+  // Create search terms array prioritizing county for Kenya
+  const searchTerms = [];
+
+  // Add county as primary search term for Kenya
+  if (country === "Kenya" && county) {
+    searchTerms.push(county);
+  }
+
+  // Add city as secondary search term
+  if (city && !searchTerms.includes(city)) {
+    searchTerms.push(city);
   }
 
   // Create OR conditions for each search term
@@ -38,7 +45,7 @@ export default async function CityProperties() {
     { district: { contains: term, mode: Prisma.QueryMode.insensitive } },
   ]);
 
-  // Fetch properties in the user's city or nearby with more flexible matching
+  // Fetch properties in the user's county or nearby with more flexible matching
   const properties = await prisma.property.findMany({
     where: {
       OR: searchConditions,
@@ -48,7 +55,7 @@ export default async function CityProperties() {
     orderBy: { createdAt: "desc" },
   });
 
-  // If no properties found in the user's city/region, expand search to country
+  // If no properties found in the user's county/city, expand search to country
   const countryProperties =
     properties.length === 0
       ? await prisma.property.findMany({
@@ -79,10 +86,12 @@ export default async function CityProperties() {
         ? countryProperties
         : fallbackProperties;
 
-  // Determine the display location
+  // Determine the display location (prioritize county for Kenya)
   const displayLocation =
     properties.length > 0
-      ? city
+      ? country === "Kenya"
+        ? county
+        : city
       : countryProperties.length > 0
         ? country
         : "Available Areas";
@@ -224,25 +233,26 @@ export default async function CityProperties() {
   };
 
   return (
-    <section className="mx-auto w-full max-w-7xl px-4 py-8 lg:py-16">
+    <section className="mx-auto w-full max-w-7xl px-4 py-16 ">
       <div className="flex items-center justify-between flex-wrap gap-4 mb-10">
         <div>
-          <h2 className="text-sm text-blue-500 font-semibold mb-2 uppercase flex items-center">
+          <h2 className="text-xs text-blue-500 font-semibold mb-2 uppercase flex items-center">
             <MapPin className="size-4 mr-1" />
-            Local Properties
+            {country === "Kenya" ? "Properties near you" : "Local Properties"}
           </h2>
-          <h3 className="text-2xl font-bold text-gray-900">
+          <h3 className="text-2xl font-bold text-gray-600 ">
             Properties in {displayLocation}
           </h3>
-          {location.city && location.city !== "Nairobi" && (
-            <p className="text-sm text-gray-500 mt-1">
-              Showing properties near your location: {location.city},{" "}
-              {location.country}
-            </p>
-          )}
+          {location.county &&
+            location.county !== "Nairobi" &&
+            country === "Kenya" && (
+              <p className="text-sm text-gray-500 mt-1">
+                Showing properties in {location.county}.
+              </p>
+            )}
         </div>
         <Link
-          href={`/properties?location=${encodeURIComponent(displayLocation)}`}
+          href={`/properties/town/${encodeURIComponent(displayLocation)}`}
           className="text-[#636262] hover:text-blue-500 group font-semibold relative flex items-center gap-x-2"
         >
           <span className="group-hover:underline group-hover:underline-offset-4">

@@ -221,7 +221,7 @@ function validateOrderData(order: any, type: "expired" | "expiring"): boolean {
     !order.property.id ||
     !order.property.title ||
     !order.property.propertyNumber ||
-    !order.property.slug
+    !order.property.id
   ) {
     console.error(
       `Cannot send ${type} email: Missing property data for property ${order.propertyId}`
@@ -253,7 +253,7 @@ async function sendExpiredPropertyEmail(order: any) {
       !property ||
       !property.title ||
       !property.propertyNumber ||
-      !property.slug
+      !property.id
     ) {
       console.error(
         `Cannot send expired email: Missing property, user email, or order data for property ${order.propertyId}`
@@ -272,7 +272,7 @@ async function sendExpiredPropertyEmail(order: any) {
           <p>Your listing for <strong>${property.title}</strong> (Property #${property.propertyNumber}) has expired and is no longer active on our platform.</p>
           <p>To reactivate your listing and continue showcasing your property to potential buyers, please renew your subscription.</p>
           <div style="margin: 20px 0; text-align: center;">
-            <a href="${process.env.NEXT_PUBLIC_APP_URL}/properties/${property.slug}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">Renew Your Listing</a>
+            <a href="${process.env.NEXT_PUBLIC_APP_URL}/properties/${property.propertyDetails}/${property.id}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">Renew Your Listing</a>
           </div>
           <p>If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
           <p>Thank you for choosing African Real Estate for your property needs.</p>
@@ -310,7 +310,7 @@ async function sendExpiringPropertyEmail(order: any, daysRemaining: number) {
       !property ||
       !property.title ||
       !property.propertyNumber ||
-      !property.slug
+      !property.id
     ) {
       console.error(
         `Cannot send expiring email: Missing property, user email, or order data for property ${order.propertyId}`
@@ -329,7 +329,7 @@ async function sendExpiringPropertyEmail(order: any, daysRemaining: number) {
           <p>Your listing for <strong>${property.title}</strong> (Property #${property.propertyNumber}) will expire in <strong>${daysRemaining} day${daysRemaining > 1 ? "s" : ""}</strong>.</p>
           <p>To ensure your property remains visible to potential buyers, please renew your subscription before it expires.</p>
           <div style="margin: 20px 0; text-align: center;">
-            <a href="${process.env.NEXT_PUBLIC_APP_URL}/properties/${property.slug}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">Renew Your Listing</a>
+            <a href="${process.env.NEXT_PUBLIC_APP_URL}/properties/${property.propertyDetails}/${property.id}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">Renew Your Listing</a>
           </div>
           <p>Benefits of keeping your listing active:</p>
           <ul>

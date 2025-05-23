@@ -5,10 +5,109 @@ import { headers } from "next/headers";
 type GeoLocation = {
   country?: string;
   city?: string;
+  county?: string; // Added county field specifically for Kenya
   region?: string;
   latitude?: number;
   longitude?: number;
 };
+
+// Kenya counties list for better matching
+const KENYA_COUNTIES = [
+  "Nairobi",
+  "Mombasa",
+  "Kisumu",
+  "Nakuru",
+  "Kiambu",
+  "Uasin Gishu",
+  "Machakos",
+  "Kajiado",
+  "Bungoma",
+  "Kakamega",
+  "Kilifi",
+  "Kisii",
+  "Nyeri",
+  "Meru",
+  "Nyandarua",
+  "Laikipia",
+  "Kericho",
+  "Bomet",
+  "Busia",
+  "Siaya",
+  "Murang'a",
+  "Homa Bay",
+  "Migori",
+  "Kirinyaga",
+  "Embu",
+  "Makueni",
+  "Nandi",
+  "Trans Nzoia",
+  "Baringo",
+  "Narok",
+  "Kwale",
+  "Nyamira",
+  "Turkana",
+  "Kitui",
+  "Vihiga",
+  "Tharaka-Nithi",
+  "Garissa",
+  "Taita-Taveta",
+  "Elgeyo-Marakwet",
+  "West Pokot",
+  "Tana River",
+  "Marsabit",
+  "Isiolo",
+  "Samburu",
+  "Wajir",
+  "Mandera",
+  "Lamu",
+];
+
+// Map city names to counties for Kenyan cities
+const KENYA_CITY_TO_COUNTY: Record<string, string> = {
+  Nairobi: "Nairobi",
+  Mombasa: "Mombasa",
+  Kisumu: "Kisumu",
+  Nakuru: "Nakuru",
+  Eldoret: "Uasin Gishu",
+  Thika: "Kiambu",
+  Ruiru: "Kiambu",
+  Kikuyu: "Kiambu",
+  Malindi: "Kilifi",
+  Kitale: "Trans Nzoia",
+  Nyeri: "Nyeri",
+  Machakos: "Machakos",
+  Kericho: "Kericho",
+  Naivasha: "Nakuru",
+  Kakamega: "Kakamega",
+  Kisii: "Kisii",
+  Bungoma: "Bungoma",
+  Garissa: "Garissa",
+  Voi: "Taita-Taveta",
+  Migori: "Migori",
+  "Athi River": "Machakos",
+  Kilifi: "Kilifi",
+};
+
+// Detect if a string is a Kenyan county
+function isKenyanCounty(location: string): boolean {
+  return KENYA_COUNTIES.some(
+    (county) =>
+      location.toLowerCase().includes(county.toLowerCase()) ||
+      county.toLowerCase().includes(location.toLowerCase())
+  );
+}
+
+// Get county from city name for Kenya
+function getCountyFromCity(city: string): string | undefined {
+  return (
+    KENYA_CITY_TO_COUNTY[city] ||
+    Object.entries(KENYA_CITY_TO_COUNTY).find(
+      ([cityName]) =>
+        cityName.toLowerCase().includes(city.toLowerCase()) ||
+        city.toLowerCase().includes(cityName.toLowerCase())
+    )?.[1]
+  );
+}
 
 export async function getUserLocation(): Promise<GeoLocation> {
   try {
@@ -43,6 +142,7 @@ export async function getUserLocation(): Promise<GeoLocation> {
       return {
         country: "Kenya",
         city: "Nairobi",
+        county: "Nairobi", // Added county
         region: "Nairobi County",
         latitude: -1.292066,
         longitude: 36.821945,
@@ -100,6 +200,19 @@ export async function getUserLocation(): Promise<GeoLocation> {
             latitude: lat ? Number.parseFloat(lat) : undefined,
             longitude: lng ? Number.parseFloat(lng) : undefined,
           };
+        }
+
+        // For Kenya, try to determine the county
+        if (location.country === "Kenya") {
+          // Check if region is a county
+          if (location.region && isKenyanCounty(location.region)) {
+            location.county = location.region;
+          }
+          // Try to map city to county
+          else if (location.city) {
+            location.county =
+              getCountyFromCity(location.city) || location.region;
+          }
         }
 
         // Validate that we got meaningful data
