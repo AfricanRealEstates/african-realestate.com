@@ -32,10 +32,22 @@ export async function getProperties(
     if (maxPrice) where.price.lte = Number.parseInt(maxPrice as string);
   }
 
+  // Handle special case for sorting by views (hot properties)
+  let orderBy: any;
+  if (sort === "views" || sort === "hot") {
+    orderBy = {
+      views: {
+        _count: order,
+      },
+    };
+  } else {
+    orderBy = { [sort as string]: order };
+  }
+
   const [properties, totalCount] = await Promise.all([
     prisma.property.findMany({
       where,
-      orderBy: { [sort as string]: order },
+      orderBy,
       take: pageSize,
       skip: (page - 1) * pageSize,
     }),

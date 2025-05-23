@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { Flame } from "lucide-react";
 import PropertyCardEnhanced from "./featured-properties/property-card-enhanced";
+import Link from "next/link";
 
 export default async function TrendingProperties() {
   // Fetch all active properties sorted by views
@@ -73,8 +74,8 @@ export default async function TrendingProperties() {
             Most Viewed Listings
           </h3>
         </div>
-        <a
-          href="/properties?sort=hot"
+        <Link
+          href="/properties?sort=hot&order=desc"
           className="text-[#636262] hover:text-red-500 group font-semibold relative flex items-center gap-x-2"
         >
           <span className="group-hover:underline group-hover:underline-offset-4">
@@ -95,7 +96,7 @@ export default async function TrendingProperties() {
             <path d="M5 12h14" />
             <path d="m12 5 7 7-7 7" />
           </svg>
-        </a>
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

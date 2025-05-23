@@ -96,6 +96,10 @@ export default async function CityProperties() {
         ? country
         : "Available Areas";
 
+  // Get the nearby town from the first property or use the display location
+  const nearbyTown =
+    properties.length > 0 ? properties[0].nearbyTown : displayLocation;
+
   // If still no properties, return null (component won't render)
   if (displayProperties.length === 0) {
     return null;
@@ -252,7 +256,7 @@ export default async function CityProperties() {
             )}
         </div>
         <Link
-          href={`/properties/town/${encodeURIComponent(displayLocation)}`}
+          href={`/properties/town/${encodeURIComponent(nearbyTown)}`}
           className="text-[#636262] hover:text-blue-500 group font-semibold relative flex items-center gap-x-2"
         >
           <span className="group-hover:underline group-hover:underline-offset-4">

@@ -254,7 +254,7 @@ export default async function OurServices() {
 
   return (
     <div className="border-t border-gray-50">
-      <section className="mx-auto w-full max-w-7xl px-4">
+      <section className="mx-auto w-full max-w-7xl px-4 py-8">
         <div className="flex items-center justify-between flex-wrap gap-4 mb-10">
           <div>
             {/* <h2
