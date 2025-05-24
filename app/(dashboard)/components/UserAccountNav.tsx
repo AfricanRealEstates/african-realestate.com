@@ -1,4 +1,5 @@
 "use client";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,16 +7,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { useState } from "react";
 import { UserAvatar } from "./UserAvatar";
 import Link from "next/link";
 import { Lock, LogOut, Settings, User } from "lucide-react";
-export default function UserAccountNav() {
-  const { data: session } = useSession();
-  const user = session?.user;
+import { useGlobalSession } from "@/providers/session-provider";
 
+export default function UserAccountNav() {
+  const { session } = useGlobalSession();
+  const user = session?.user;
   const [open, setOpen] = useState(false);
+
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger>
@@ -40,10 +43,7 @@ export default function UserAccountNav() {
 
         {user?.role === "ADMIN" ? (
           <DropdownMenuItem asChild>
-            <Link
-              href="/dashboard/admin"
-              className="flex items-center space-x-2.5"
-            >
+            <Link href="/dashboard" className="flex items-center space-x-2.5">
               <Lock className="size-4" />
               <p className="text-sm">Admin</p>
             </Link>

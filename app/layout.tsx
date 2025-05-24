@@ -10,7 +10,7 @@ import ModalProvider from "@/providers/modal-provider";
 import { auth } from "@/auth";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
-import SessionProvider from "@/providers/session-provider";
+import { SessionProvider } from "@/providers/session-provider";
 import { cn } from "@/lib/utils";
 import Script from "next/script";
 import { initializeApp } from "@/lib/init";

@@ -17,8 +17,8 @@ import { Slider } from "@/components/ui/slider";
 import { toast } from "sonner";
 import { Camera, Loader2, Upload, X } from "lucide-react";
 import AvatarEditor from "react-avatar-editor";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { updateProfilePhoto, removeUserImage } from "../use-actions";
+import { useGlobalSession } from "@/providers/session-provider";
 
 export default function ImageUpload({
   profileImage,
@@ -34,8 +34,7 @@ export default function ImageUpload({
   const [scale, setScale] = useState(1.2);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const router = useRouter();
-  const { update } = useSession();
+  const { updateSession, refreshSession } = useGlobalSession();
   const editorRef = useRef<AvatarEditor>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -43,11 +42,13 @@ export default function ImageUpload({
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
 
+      // Validate file size
       if (file.size > 5 * 1024 * 1024) {
         toast.error("File size should not exceed 5MB");
         return;
       }
 
+      // Validate file type
       if (!file.type.startsWith("image/")) {
         toast.error("Please select an image file");
         return;
@@ -70,123 +71,144 @@ export default function ImageUpload({
   };
 
   const handleSave = async () => {
-    if (editorRef.current && image) {
-      setIsUploading(true);
+    if (!editorRef.current || !image) {
+      toast.error("No image selected");
+      return;
+    }
 
-      try {
-        const canvas = editorRef.current.getImageScaledToCanvas();
+    setIsUploading(true);
 
-        // Convert canvas to blob
-        const blob = await new Promise<Blob>((resolve, reject) => {
-          canvas.toBlob(
-            (blob) => {
-              if (blob) {
-                resolve(blob);
-              } else {
-                reject(new Error("Failed to create image blob"));
-              }
-            },
-            "image/jpeg",
-            0.95
-          );
-        });
+    try {
+      const canvas = editorRef.current.getImageScaledToCanvas();
 
-        // Create a File from the blob
-        const croppedFile = new File([blob], image.name, {
+      // Convert canvas to blob
+      const blob = await new Promise<Blob>((resolve, reject) => {
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              resolve(blob);
+            } else {
+              reject(new Error("Failed to create image blob"));
+            }
+          },
+          "image/jpeg",
+          0.95
+        );
+      });
+
+      // Create a File from the blob
+      const croppedFile = new File(
+        [blob],
+        `profile-${userId}-${Date.now()}.jpg`,
+        {
           type: "image/jpeg",
           lastModified: Date.now(),
-        });
+        }
+      );
 
-        // Create form data for the API request
-        const formData = new FormData();
-        formData.append("file", croppedFile);
-        formData.append("type", "profile");
+      // Create form data for S3 upload
+      const formData = new FormData();
+      formData.append("file", croppedFile);
+      formData.append("userId", userId);
+      formData.append("type", "profile");
 
-        // Upload the image
-        const response = await fetch("/api/update-profile", {
-          method: "POST",
-          body: formData,
-        });
+      console.log("Uploading to S3...");
 
+      // Upload to S3
+      const response = await fetch("/api/upload/s3", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
         const responseText = await response.text();
-        console.log("API Response text:", responseText);
+        console.error("Upload failed with response:", responseText);
 
-        let result;
+        let errorMessage = "Failed to upload image";
         try {
-          result = responseText ? JSON.parse(responseText) : {};
-        } catch (e) {
-          console.error("Error parsing response:", e);
-          throw new Error("Invalid server response");
+          const errorData = JSON.parse(responseText);
+          errorMessage = errorData.error || errorMessage;
+        } catch {
+          if (responseText.includes("<!DOCTYPE")) {
+            errorMessage = `Server error (${response.status}). Please try again.`;
+          } else {
+            errorMessage = responseText || errorMessage;
+          }
         }
-
-        if (!response.ok) {
-          throw new Error(result.error || "Server returned an error");
-        }
-
-        if (!result.success) {
-          throw new Error(result.error || "Failed to upload image");
-        }
-
-        // Update the NextAuth session with the new image URL
-        await update({
-          randomKey: Date.now().toString(), // Add a random key to force a refresh
-        });
-
-        // Only show success toast if we actually succeeded
-        toast.success("Profile photo updated successfully");
-        setIsDialogOpen(false);
-
-        // Refresh the page to show the updated image
-        router.refresh();
-      } catch (error) {
-        console.error("Error uploading image:", error);
-        toast.error(
-          `Failed to upload image: ${error instanceof Error ? error.message : "Unknown error"}`
-        );
-      } finally {
-        setIsUploading(false);
+        throw new Error(errorMessage);
       }
+
+      const uploadResult = await response.json();
+
+      if (!uploadResult.url) {
+        throw new Error("No URL returned from upload");
+      }
+
+      console.log("Upload successful, URL:", uploadResult.url);
+
+      // Update profile photo in database using server action
+      const result = await updateProfilePhoto(userId, uploadResult.url);
+
+      if (!result.success) {
+        throw new Error(result.error || "Failed to update profile photo");
+      }
+
+      // Update global session
+      await updateSession({
+        image: uploadResult.url,
+      });
+
+      // Force refresh session from server
+      await refreshSession();
+
+      toast.success("Profile photo updated successfully");
+      setIsDialogOpen(false);
+
+      // Clean up preview URL
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+      setPreviewUrl(null);
+      setImage(null);
+      setScale(1.2);
+
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast.error(
+        `Failed to upload image: ${error instanceof Error ? error.message : "Unknown error"}`
+      );
+    } finally {
+      setIsUploading(false);
     }
   };
 
   const handleRemoveImage = async () => {
-    if (!profileImage) return;
+    if (!profileImage) {
+      toast.error("No image to remove");
+      return;
+    }
 
     setIsRemoving(true);
 
     try {
-      const response = await fetch(`/api/update-profile?type=profile`, {
-        method: "DELETE",
+      console.log("Removing profile image...");
+
+      // Use server action to remove image from S3 and database
+      await removeUserImage(userId, "profile");
+
+      // Update global session
+      await updateSession({
+        image: null,
       });
 
-      const responseText = await response.text();
-      console.log("API Response text for delete:", responseText);
-
-      let result;
-      try {
-        result = responseText ? JSON.parse(responseText) : {};
-      } catch (e) {
-        console.error("Error parsing delete response:", e);
-        throw new Error("Invalid server response");
-      }
-
-      if (!response.ok) {
-        throw new Error(result.error || "Server returned an error");
-      }
-
-      if (!result.success) {
-        throw new Error(result.error || "Failed to remove image");
-      }
-
-      // Update the NextAuth session to remove the image
-      await update({
-        randomKey: Date.now().toString(), // Add a random key to force a refresh
-      });
+      // Force refresh session from server
+      await refreshSession();
 
       toast.success("Profile photo removed successfully");
-
-      // Refresh the page to show the updated image
-      router.refresh();
     } catch (error) {
       console.error("Error removing image:", error);
       toast.error(
@@ -194,6 +216,27 @@ export default function ImageUpload({
       );
     } finally {
       setIsRemoving(false);
+    }
+  };
+
+  const handleDialogClose = (open: boolean) => {
+    // Only allow closing if we're not uploading
+    if (!isUploading) {
+      setIsDialogOpen(open);
+      if (!open) {
+        // Clean up when dialog closes
+        if (previewUrl) {
+          URL.revokeObjectURL(previewUrl);
+        }
+        setPreviewUrl(null);
+        setImage(null);
+        setScale(1.2);
+
+        // Reset file input
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+      }
     }
   };
 
@@ -205,6 +248,7 @@ export default function ImageUpload({
         className="hidden"
         accept="image/*"
         onChange={handleFileChange}
+        disabled={isUploading || isRemoving}
       />
 
       <Card className="shadow-none">
@@ -212,10 +256,15 @@ export default function ImageUpload({
           <div className="relative w-40 h-40 rounded-full overflow-hidden border-2 border-muted">
             {profileImage ? (
               <Image
-                src={profileImage || "/placeholder.svg"}
+                src={`${profileImage}?t=${Date.now()}`}
                 alt="Profile"
                 fill
                 className="object-cover"
+                onError={(e) => {
+                  // Fallback if image fails to load
+                  const target = e.target as HTMLImageElement;
+                  target.src = "/placeholder.svg";
+                }}
               />
             ) : (
               <div className="w-full h-full bg-muted flex items-center justify-center">
@@ -225,7 +274,12 @@ export default function ImageUpload({
           </div>
 
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={triggerFileInput}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={triggerFileInput}
+              disabled={isUploading || isRemoving}
+            >
               <Upload className="h-4 w-4 mr-2" />
               Upload
             </Button>
@@ -235,27 +289,25 @@ export default function ImageUpload({
                 variant="destructive"
                 size="sm"
                 onClick={handleRemoveImage}
-                disabled={isRemoving}
+                disabled={isRemoving || isUploading}
               >
                 {isRemoving ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   <X className="h-4 w-4 mr-2" />
                 )}
-                Remove
+                {isRemoving ? "Removing..." : "Remove"}
               </Button>
             )}
           </div>
+
+          <p className="text-xs text-muted-foreground text-center">
+            Upload a profile photo. Max file size: 5MB
+          </p>
         </CardContent>
       </Card>
 
-      <Dialog
-        open={isDialogOpen}
-        onOpenChange={(open) => {
-          // Only allow closing if we're not uploading
-          if (!isUploading) setIsDialogOpen(open);
-        }}
-      >
+      <Dialog open={isDialogOpen} onOpenChange={handleDialogClose}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Crop Profile Image</DialogTitle>
@@ -292,6 +344,7 @@ export default function ImageUpload({
                 step={0.1}
                 value={[scale]}
                 onValueChange={handleScaleChange}
+                disabled={isUploading}
               />
             </div>
           </div>
@@ -299,7 +352,7 @@ export default function ImageUpload({
           <div className="flex justify-end gap-2">
             <Button
               variant="outline"
-              onClick={() => setIsDialogOpen(false)}
+              onClick={() => handleDialogClose(false)}
               disabled={isUploading}
             >
               Cancel

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
-import PropertyCard from "@/components/properties/new/PropertyCard";
+import PropertyCardEnhanced from "@/components/landing/featured-properties/property-card-enhanced";
 import SortingOptions from "./SortingOptions";
 import { Badge } from "@/components/ui/badge";
 import PropertyFilter from "@/components/properties/PropertyFilter";
@@ -217,6 +217,8 @@ async function getSearchResults(
       },
       include: {
         user: true,
+        views: true, // Include views for the PropertyCardEnhanced component
+        likes: true, // Include likes for the PropertyCardEnhanced component
       },
       orderBy: {
         [sortBy]: sortOrder,
@@ -401,8 +403,12 @@ export default async function SearchPage({
       {searchResults.length > 0 ? (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {searchResults.map((property) => (
-              <PropertyCard key={property.id} data={property as any} />
+            {searchResults.map((property, index) => (
+              <PropertyCardEnhanced
+                key={property.id}
+                property={property as any}
+                index={index}
+              />
             ))}
           </div>
           <Pagination currentPage={page} totalPages={totalPages} />

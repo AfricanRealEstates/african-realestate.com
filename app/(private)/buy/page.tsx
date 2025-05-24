@@ -1,13 +1,12 @@
 import { Suspense } from "react";
 import { Raleway } from "next/font/google";
 import { getSEOTags } from "@/lib/seo";
-import type { PropertyData } from "@/lib/types";
 import SortingOptions from "@/app/search/SortingOptions";
 import PropertyFilter from "@/components/properties/PropertyFilter";
 import { getProperties } from "@/lib/getProperties";
-import PropertyCard from "@/components/properties/new/PropertyCard";
 import Pagination from "@/components/globals/Pagination";
 import { PropertySkeleton } from "@/components/globals/PropertySkeleton";
+import PropertyCardEnhanced from "@/components/landing/featured-properties/property-card-enhanced";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -51,7 +50,7 @@ export default async function BuyPage({
 
   return (
     <div
-      className={`${raleway.className} w-[95%] lg:max-w-7xl mx-auto py-[90px] lg:py-[120px] px-4 sm:px-6 lg:px-8 `}
+      className={`${raleway.className} w-[95%] lg:max-w-7xl mx-auto py-[90px] lg:py-[120px] px-4 sm:px-6 lg:px-8`}
     >
       <h1 className="text-3xl font-semibold mb-8">Properties for Sale</h1>
       <article className="flex flex-col md:flex-row md:items-center justify-between w-full mb-8">
@@ -75,10 +74,11 @@ export default async function BuyPage({
         ) : (
           <>
             <section className="mx-auto mb-8 gap-8 grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-center">
-              {properties.map((property) => (
-                <PropertyCard
+              {properties.map((property, index) => (
+                <PropertyCardEnhanced
                   key={property.id}
-                  data={property as PropertyData}
+                  property={property as any}
+                  index={index}
                 />
               ))}
             </section>

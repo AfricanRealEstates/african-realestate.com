@@ -3,7 +3,7 @@ import { Raleway } from "next/font/google";
 import { getSEOTags } from "@/lib/seo";
 import { getProperties } from "@/lib/getProperties";
 import PropertyFilter from "@/components/properties/PropertyFilter";
-import PropertyCard from "@/components/properties/new/PropertyCard";
+import PropertyCardEnhanced from "@/components/landing/featured-properties/property-card-enhanced";
 import SortingOptions from "@/app/search/SortingOptions";
 import Pagination from "@/components/globals/Pagination";
 import { PropertySkeleton } from "@/components/globals/PropertySkeleton";
@@ -22,17 +22,15 @@ export const metadata = getSEOTags({
 });
 
 export default async function PropertyPage({
-  params,
   searchParams,
 }: {
-  params: { type: "buy" | "let" };
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const sort = (searchParams.sort as string) || "createdAt";
   const order = (searchParams.order as string) || "desc";
-  const status = params.type === "buy" ? "sale" : "let";
+  const status = "let";
   const page = Number.parseInt(searchParams.page as string) || 1;
-  const pageSize = 12; // You can adjust this value as needed
+  const pageSize = 12;
 
   const { properties, totalCount, totalPages } = await getProperties(
     searchParams,
@@ -79,8 +77,12 @@ export default async function PropertyPage({
             ) : (
               <>
                 <section className="mx-auto mb-8 gap-8 grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-center">
-                  {properties.map((property: any) => (
-                    <PropertyCard key={property.id} data={property} />
+                  {properties.map((property: any, index: number) => (
+                    <PropertyCardEnhanced
+                      key={property.id}
+                      property={property}
+                      index={index}
+                    />
                   ))}
                 </section>
                 <Pagination currentPage={page} totalPages={totalPages} />

@@ -4,11 +4,10 @@ import { Raleway } from "next/font/google";
 import PropertyFilter from "@/components/properties/PropertyFilter";
 import SortingOptions from "@/app/search/SortingOptions";
 import { getProperties } from "@/lib/getProperties";
-import PropertyCard from "@/components/properties/new/PropertyCard";
-import type { PropertyData } from "@/lib/types";
 import { baseUrl } from "@/app/sitemap";
 import Pagination from "@/components/globals/Pagination";
 import { PropertySkeleton } from "@/components/globals/PropertySkeleton";
+import PropertyCardEnhanced from "@/components/landing/featured-properties/property-card-enhanced";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -154,10 +153,11 @@ export default async function Properties({
           ) : (
             <>
               <section className="mx-auto mb-8 gap-8 grid w-full grid-cols-[repeat(auto-fill,minmax(335px,1fr))] justify-center">
-                {properties.map((property) => (
-                  <PropertyCard
+                {properties.map((property, index) => (
+                  <PropertyCardEnhanced
                     key={property.id}
-                    data={property as PropertyData}
+                    property={property}
+                    index={index}
                   />
                 ))}
               </section>

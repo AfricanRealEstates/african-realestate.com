@@ -17,9 +17,7 @@ import {
   Sparkles,
   TrendingUp,
   Share2,
-  Eye,
 } from "lucide-react";
-// import type { PropertyData } from "@/lib/types";
 import {
   likeProperty,
   unlikeProperty,
@@ -241,9 +239,23 @@ export default function PropertyCardEnhanced({
     return features;
   };
 
-  // Format view count with K/M suffix
+  // Check if property is new (less than 7 days old)
+  const isNewProperty = () => {
+    const createdDate = new Date(property.createdAt);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - createdDate.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays <= 7 && property.isActive;
+  };
+
+  // Format view count with K/M suffix or show "New" for new properties
   const formatViewCount = (count: number) => {
-    if (!count) return "New";
+    // Show "New" for properties that are 7 days old or newer
+    if (isNewProperty()) {
+      return "New";
+    }
+
+    if (!count) return "0 views";
     if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M views`;
     if (count >= 1000) return `${(count / 1000).toFixed(1)}K views`;
     return `${count} views`;
@@ -256,15 +268,6 @@ export default function PropertyCardEnhanced({
       return property.views.length;
     }
     return 0;
-  };
-
-  // Check if property is new (less than 7 days old)
-  const isNewProperty = () => {
-    const createdDate = new Date(property.createdAt);
-    const now = new Date();
-    const diffTime = Math.abs(now.getTime() - createdDate.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays <= 7 && property.isActive;
   };
 
   // Handle like/unlike property
@@ -353,7 +356,7 @@ export default function PropertyCardEnhanced({
     <div
       className={`group relative bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border ${
         isRecommended
-          ? "border-gray-200 ring-1 ring-gray-100"
+          ? "border-blue-200 ring-1 ring-blue-100"
           : "border-gray-200"
       }`}
       style={{
@@ -376,7 +379,7 @@ export default function PropertyCardEnhanced({
         </div>
       )}
 
-      {/* New Property Badge */}
+      {/* New Property Badge - Only show if not showing other badges and property is new */}
       {isNewProperty() && !viewedRecently && !showRecommendationBadge && (
         <div className="absolute top-3 left-3 z-20 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1">
           <span className="h-2 w-2 bg-white rounded-full animate-pulse mr-1"></span>
@@ -425,16 +428,31 @@ export default function PropertyCardEnhanced({
             </div>
             {property.status && (
               <div className="text-xs text-gray-600">
-                {property.status === "sale" ? "For Sale" : "For Rent"}
+                {property.status === "sale" ? "For Sale" : "To Let"}
               </div>
             )}
           </div>
 
-          {/* View Count */}
-          <div className="absolute bottom-3 right-3 bg-black/70 text-white px-2 py-1 rounded-md text-xs flex items-center">
-            <Eye className="h-3 w-3 mr-1" />
-            {formatViewCount(getViewCount())}
-          </div>
+          {/* View Count or New Badge */}
+          {/* <div
+            className={`absolute bottom-3 right-3 px-2 py-1 rounded-md text-xs flex items-center ${
+              isNewProperty()
+                ? "bg-green-500 text-white"
+                : "bg-black/70 text-white"
+            }`}
+          >
+            {isNewProperty() ? (
+              <>
+                <span className="h-2 w-2 bg-white rounded-full animate-pulse mr-1"></span>
+                New
+              </>
+            ) : (
+              <>
+                <Eye className="h-3 w-3 mr-1" />
+                {formatViewCount(getViewCount())}
+              </>
+            )}
+          </div> */}
 
           {/* Action Buttons */}
           <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">

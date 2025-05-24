@@ -14,15 +14,15 @@ import { Button } from "@/components/utils/Button";
 import MessageWidget from "./_components/message-widget";
 import { calculatePercentageSavings, capitalizeWords } from "@/lib/utils";
 import SurroundingFeatures from "./_components/surrounding-features";
-import PropertyCard from "@/components/properties/new/PropertyCard";
 import { formatNumber } from "@/lib/formatter";
-import type { PropertyData, PropertyWithExtras } from "@/lib/types";
+import type { PropertyWithExtras } from "@/lib/types";
 import PropertyActions from "./_components/PropertyActions";
 import { getCurrentUser } from "@/lib/session";
 import { recordPropertyView } from "@/actions/recordPropertyView";
 import { PropertySkeleton } from "@/components/globals/PropertySkeleton";
 import { Suspense } from "react";
 import ViewTracker from "@/components/properties/ViewTracker";
+import PropertyCardEnhanced from "@/components/landing/featured-properties/property-card-enhanced";
 
 // no cache
 export const dynamic = "force-dynamic";
@@ -822,10 +822,11 @@ export default async function PropertyDetails({
           {relatedProperties.length > 0 ? (
             <div className="mt-6 grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2 sm:gap-y-10 lg:grid-cols-3">
               <Suspense fallback={<RelatedPropertiesSkeleton />}>
-                {relatedProperties.map((property) => (
-                  <PropertyCard
+                {relatedProperties.map((property, index) => (
+                  <PropertyCardEnhanced
                     key={property.id}
-                    data={property as PropertyData}
+                    property={property}
+                    index={index}
                   />
                 ))}
               </Suspense>

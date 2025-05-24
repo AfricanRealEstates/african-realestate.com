@@ -2,13 +2,12 @@ import { Suspense } from "react";
 import { Raleway } from "next/font/google";
 import type { Metadata } from "next";
 import SortingOptions from "@/app/search/SortingOptions";
-import PropertyCard from "@/components/properties/new/PropertyCard";
 import { prisma } from "@/lib/prisma";
-import type { PropertyData } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import Pagination from "@/components/globals/Pagination";
 import { PropertySkeleton } from "@/components/globals/PropertySkeleton";
+import PropertyCardEnhanced from "@/components/landing/featured-properties/property-card-enhanced";
 
 const raleway = Raleway({
   subsets: ["latin"],
@@ -155,10 +154,11 @@ export default async function PropertyDetails({
         ) : (
           <>
             <section className="mx-auto mb-8 gap-8 grid w-full grid-cols-[repeat(auto-fill,minmax(335px,1fr))] justify-center">
-              {searchProperties.map((property) => (
-                <PropertyCard
+              {searchProperties.map((property, index) => (
+                <PropertyCardEnhanced
                   key={property.id}
-                  data={property as PropertyData}
+                  property={property}
+                  index={index}
                 />
               ))}
             </section>

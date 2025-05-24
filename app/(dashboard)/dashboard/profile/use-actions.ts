@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { hash, compare } from "bcrypt";
 import { DeleteObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { prisma } from "@/lib/prisma";
+import { auth, update } from "@/auth";
 
 export async function getUserById(id: string) {
   try {
@@ -43,6 +44,12 @@ export async function updateUserProfile(
   }
 ) {
   try {
+    const session = await auth();
+
+    if (!session?.user || session.user.id !== userId) {
+      throw new Error("Unauthorized");
+    }
+
     console.log("Updating profile for user:", userId);
     console.log("Update data:", data);
 
@@ -66,15 +73,99 @@ export async function updateUserProfile(
 
     const updatedUser = await prisma.user.update({
       where: { id: userId },
-      data: cleanedData,
+      data: {
+        ...cleanedData,
+        updatedAt: new Date(),
+      },
+    });
+
+    // Update the session with new user data
+    await update({
+      user: {
+        ...session.user,
+        name: updatedUser.name,
+        agentName: updatedUser.agentName!,
+        agentEmail: updatedUser.agentEmail!,
+        agentLocation: updatedUser.agentLocation!,
+        officeLine: updatedUser.officeLine!,
+        whatsappNumber: updatedUser.whatsappNumber!,
+        phoneNumber: updatedUser.phoneNumber!,
+        address: updatedUser.address!,
+        postalCode: updatedUser.postalCode!,
+        bio: updatedUser.bio!,
+        xLink: updatedUser.xLink!,
+        tiktokLink: updatedUser.tiktokLink!,
+        facebookLink: updatedUser.facebookLink!,
+        // youtubeLink: updatedUser.youtubeLink!,
+        linkedinLink: updatedUser.linkedinLink!,
+        instagramLink: updatedUser.instagramLink!,
+        // showAgentContact: updatedUser.showAgentContact,
+      },
     });
 
     console.log("Profile updated successfully:", updatedUser.id);
+
+    // Revalidate paths that might show user data
+    revalidatePath("/dashboard");
     revalidatePath("/dashboard/profile");
-    return { success: true };
+    revalidatePath("/");
+
+    return { success: true, user: updatedUser };
   } catch (error) {
     console.error("Error updating user profile:", error);
     return { success: false, error: String(error) };
+  }
+}
+
+export async function updateProfilePhoto(
+  userId: string,
+  profilePhotoUrl: string
+) {
+  try {
+    const session = await auth();
+
+    if (!session?.user || session.user.id !== userId) {
+      throw new Error("Unauthorized");
+    }
+
+    console.log("Updating profile photo for user:", userId);
+    console.log("New photo URL:", profilePhotoUrl);
+
+    // Update profile photo in database
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        profilePhoto: profilePhotoUrl || null,
+        updatedAt: new Date(),
+      },
+    });
+
+    // Update the session with new profile photo
+    await update({
+      user: {
+        ...session.user,
+        image: profilePhotoUrl || null,
+      },
+    });
+
+    console.log("Profile photo updated successfully");
+
+    // Revalidate paths that might show user data
+    revalidatePath("/dashboard");
+    revalidatePath("/dashboard/profile");
+    revalidatePath("/");
+
+    // Return the updated user data
+    return { success: true, profilePhoto: profilePhotoUrl, user: updatedUser };
+  } catch (error) {
+    console.error("Error updating profile photo:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to update profile photo",
+    };
   }
 }
 
@@ -88,6 +179,12 @@ export async function updatePassword({
   newPassword: string;
 }) {
   try {
+    const session = await auth();
+
+    if (!session?.user || session.user.id !== userId) {
+      throw new Error("Unauthorized");
+    }
+
     // Get the user with the password
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -111,7 +208,10 @@ export async function updatePassword({
     // Update the password
     await prisma.user.update({
       where: { id: userId },
-      data: { password: hashedPassword },
+      data: {
+        password: hashedPassword,
+        updatedAt: new Date(),
+      },
     });
 
     return { success: true };
@@ -126,6 +226,12 @@ export async function removeUserImage(
   type: "profile" | "cover"
 ) {
   try {
+    const session = await auth();
+
+    if (!session?.user || session.user.id !== userId) {
+      throw new Error("Unauthorized");
+    }
+
     // Find the user and get the image URL
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -138,7 +244,16 @@ export async function removeUserImage(
     const imageUrl = type === "profile" ? user?.profilePhoto : user?.coverPhoto;
 
     if (!imageUrl) {
-      return; // No image to remove
+      // No image to remove, but still update session if it's profile photo
+      if (type === "profile") {
+        await update({
+          user: {
+            ...session.user,
+            image: null,
+          },
+        });
+      }
+      return { success: true };
     }
 
     // Extract the file name from the URL
@@ -156,10 +271,12 @@ export async function removeUserImage(
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
       },
     });
+
     const command = new DeleteObjectCommand({
       Bucket: process.env.S3_BUCKET_NAME!,
       Key: `users/${fileName}`,
     });
+
     await s3Client.send(command);
 
     // Update the user's profilePhoto or coverPhoto field in the database
@@ -167,10 +284,82 @@ export async function removeUserImage(
       where: { id: userId },
       data: {
         [type === "profile" ? "profilePhoto" : "coverPhoto"]: null,
+        updatedAt: new Date(),
       },
     });
+
+    // Update session if it's profile photo
+    if (type === "profile") {
+      await update({
+        user: {
+          ...session.user,
+          image: null,
+        },
+      });
+    }
+
+    // Revalidate paths
+    revalidatePath("/dashboard");
+    revalidatePath("/dashboard/profile");
+    revalidatePath("/");
+
+    return { success: true };
   } catch (error) {
     console.error("Error removing user image:", error);
     throw error;
+  }
+}
+
+// New function to handle S3 profile photo uploads
+export async function uploadProfilePhotoToS3(userId: string, file: File) {
+  try {
+    const session = await auth();
+
+    if (!session?.user || session.user.id !== userId) {
+      throw new Error("Unauthorized");
+    }
+
+    // Validate file
+    if (!file.type.startsWith("image/")) {
+      throw new Error("Invalid file type. Please upload an image.");
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      throw new Error("File too large. Maximum size is 5MB.");
+    }
+
+    // Create FormData for the upload
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("userId", userId);
+    formData.append("type", "profile");
+
+    // Upload to your S3 upload endpoint
+    const response = await fetch("/api/upload/s3", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Failed to upload image");
+    }
+
+    const { url } = await response.json();
+
+    // Update profile photo in database and session
+    const result = await updateProfilePhoto(userId, url);
+
+    if (!result.success) {
+      throw new Error(result.error || "Failed to update profile photo");
+    }
+
+    return { success: true, url };
+  } catch (error) {
+    console.error("Error uploading profile photo:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to upload image",
+    };
   }
 }

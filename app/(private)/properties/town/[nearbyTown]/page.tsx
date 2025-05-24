@@ -1,14 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import PropertyCard from "@/components/properties/new/PropertyCard";
-import type { PropertyData } from "@/lib/types";
 import type { Metadata } from "next";
 import { baseUrl } from "@/app/sitemap";
 import { Suspense } from "react";
 import SortingOptions from "@/app/search/SortingOptions";
 import Pagination from "@/components/globals/Pagination";
 import { PropertySkeleton } from "@/components/globals/PropertySkeleton";
+import PropertyCardEnhanced from "@/components/landing/featured-properties/property-card-enhanced";
 
 type Props = {
   params: { nearbyTown: string };
@@ -200,10 +199,11 @@ export default async function NearbyTownPropertiesPage({
             </div>
             <section className="mx-auto mb-8 gap-8 grid w-full grid-cols-[repeat(auto-fill,minmax(335px,1fr))] justify-center">
               {/* <Suspense fallback={<PropertySkeletonGrid />}></Suspense> */}
-              {allProperties.map((property) => (
-                <PropertyCard
+              {allProperties.map((property, index) => (
+                <PropertyCardEnhanced
                   key={property.id}
-                  data={property as PropertyData}
+                  property={property}
+                  index={index}
                 />
               ))}
             </section>
@@ -212,10 +212,11 @@ export default async function NearbyTownPropertiesPage({
           <>
             <section className="mx-auto mb-8 gap-8 grid w-full grid-cols-[repeat(auto-fill,minmax(335px,1fr))] justify-center">
               {/* <Suspense fallback={<PropertySkeletonGrid />}></Suspense> */}
-              {properties.map((property) => (
-                <PropertyCard
+              {properties.map((property, index) => (
+                <PropertyCardEnhanced
                   key={property.id}
-                  data={property as PropertyData}
+                  property={property}
+                  index={index}
                 />
               ))}
             </section>
