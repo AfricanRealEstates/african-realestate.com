@@ -13,6 +13,12 @@ import {
 } from "lucide-react";
 import { Prisma } from "@prisma/client";
 
+interface NearbyTownWithCount {
+  nearbyTown: string;
+  count: number;
+  properties: any[];
+}
+
 export default async function CityProperties() {
   // Get user's location
   const location = await getUserLocation();
@@ -24,81 +30,159 @@ export default async function CityProperties() {
   const county = location.county || "Nairobi";
   const country = location.country || "Kenya";
 
-  // Create search terms array prioritizing county for Kenya
-  const searchTerms = [];
+  let displayProperties: any[] = [];
+  let selectedNearbyTown = "";
+  let displayLocation = "";
 
-  // Add county as primary search term for Kenya
   if (country === "Kenya" && county) {
-    searchTerms.push(county);
-  }
+    // Step 1: Find all nearbyTowns in the user's county and count properties
+    const nearbyTownsWithCounts = await prisma.property.groupBy({
+      by: ["nearbyTown"],
+      where: {
+        county: {
+          contains: county,
+          mode: Prisma.QueryMode.insensitive,
+        },
+        isActive: true,
+        nearbyTown: {
+          not: "",
+        },
+      },
+      _count: {
+        id: true,
+      },
+      orderBy: {
+        _count: {
+          id: "desc",
+        },
+      },
+    });
 
-  // Add city as secondary search term
-  if (city && !searchTerms.includes(city)) {
-    searchTerms.push(city);
-  }
+    console.log("Nearby towns with counts:", nearbyTownsWithCounts);
 
-  // Create OR conditions for each search term
-  const searchConditions = searchTerms.flatMap((term) => [
-    { county: { contains: term, mode: Prisma.QueryMode.insensitive } },
-    { locality: { contains: term, mode: Prisma.QueryMode.insensitive } },
-    { nearbyTown: { contains: term, mode: Prisma.QueryMode.insensitive } },
-    { district: { contains: term, mode: Prisma.QueryMode.insensitive } },
-  ]);
+    // Step 2: Try to get properties from towns with most properties first
+    const targetPropertyCount = 6;
+    const collectedProperties: any[] = [];
 
-  // Fetch properties in the user's county or nearby with more flexible matching
-  const properties = await prisma.property.findMany({
-    where: {
-      OR: searchConditions,
-      isActive: true,
-    },
-    take: 6,
-    orderBy: { createdAt: "desc" },
-  });
+    for (const townData of nearbyTownsWithCounts) {
+      if (collectedProperties.length >= targetPropertyCount) break;
 
-  // If no properties found in the user's county/city, expand search to country
-  const countryProperties =
-    properties.length === 0
-      ? await prisma.property.findMany({
-          where: {
-            country: { contains: country, mode: Prisma.QueryMode.insensitive },
-            isActive: true,
+      const remainingNeeded = targetPropertyCount - collectedProperties.length;
+
+      const townProperties = await prisma.property.findMany({
+        where: {
+          nearbyTown: townData.nearbyTown,
+          county: {
+            contains: county,
+            mode: Prisma.QueryMode.insensitive,
           },
-          take: 6,
-          orderBy: { createdAt: "desc" },
-        })
-      : [];
+          isActive: true,
+        },
+        take: remainingNeeded,
+        orderBy: { createdAt: "desc" },
+      });
 
-  // If still no properties, get any recent properties
-  const fallbackProperties =
-    properties.length === 0 && countryProperties.length === 0
-      ? await prisma.property.findMany({
-          where: { isActive: true },
-          take: 6,
-          orderBy: { createdAt: "desc" },
-        })
-      : [];
+      if (townProperties.length > 0) {
+        collectedProperties.push(...townProperties);
 
-  // Use the best available properties
-  const displayProperties =
-    properties.length > 0
-      ? properties
-      : countryProperties.length > 0
-        ? countryProperties
-        : fallbackProperties;
+        // Set the primary nearby town (the one with most properties that we're showing)
+        if (!selectedNearbyTown) {
+          selectedNearbyTown = townData.nearbyTown;
+        }
+      }
+    }
 
-  // Determine the display location (prioritize county for Kenya)
-  const displayLocation =
-    properties.length > 0
-      ? country === "Kenya"
-        ? county
-        : city
-      : countryProperties.length > 0
-        ? country
-        : "Available Areas";
+    displayProperties = collectedProperties;
+    displayLocation = county;
 
-  // Get the nearby town from the first property or use the display location
-  const nearbyTown =
-    properties.length > 0 ? properties[0].nearbyTown : displayLocation;
+    // If we found properties, use the selected nearby town for the link
+    if (selectedNearbyTown) {
+      console.log("Selected nearby town:", selectedNearbyTown);
+    }
+  }
+
+  // Fallback 1: If no properties found in county's towns, search broader county area
+  if (displayProperties.length === 0 && county) {
+    const countyProperties = await prisma.property.findMany({
+      where: {
+        OR: [
+          { county: { contains: county, mode: Prisma.QueryMode.insensitive } },
+          {
+            locality: { contains: county, mode: Prisma.QueryMode.insensitive },
+          },
+          {
+            district: { contains: county, mode: Prisma.QueryMode.insensitive },
+          },
+        ],
+        isActive: true,
+      },
+      take: 6,
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (countyProperties.length > 0) {
+      displayProperties = countyProperties;
+      displayLocation = county;
+      selectedNearbyTown = countyProperties[0]?.nearbyTown || county;
+    }
+  }
+
+  // Fallback 2: If still no properties, search by city
+  if (displayProperties.length === 0 && city) {
+    const cityProperties = await prisma.property.findMany({
+      where: {
+        OR: [
+          { locality: { contains: city, mode: Prisma.QueryMode.insensitive } },
+          {
+            nearbyTown: { contains: city, mode: Prisma.QueryMode.insensitive },
+          },
+          { district: { contains: city, mode: Prisma.QueryMode.insensitive } },
+        ],
+        isActive: true,
+      },
+      take: 6,
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (cityProperties.length > 0) {
+      displayProperties = cityProperties;
+      displayLocation = city;
+      selectedNearbyTown = cityProperties[0]?.nearbyTown || city;
+    }
+  }
+
+  // Fallback 3: If still no properties, get country-wide properties
+  if (displayProperties.length === 0) {
+    const countryProperties = await prisma.property.findMany({
+      where: {
+        country: { contains: country, mode: Prisma.QueryMode.insensitive },
+        isActive: true,
+      },
+      take: 6,
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (countryProperties.length > 0) {
+      displayProperties = countryProperties;
+      displayLocation = country;
+      selectedNearbyTown = countryProperties[0]?.nearbyTown || "Kenya";
+    }
+  }
+
+  // Final fallback: Get any recent properties
+  if (displayProperties.length === 0) {
+    const fallbackProperties = await prisma.property.findMany({
+      where: { isActive: true },
+      take: 6,
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (fallbackProperties.length > 0) {
+      displayProperties = fallbackProperties;
+      displayLocation = "Available Areas";
+      selectedNearbyTown = fallbackProperties[0]?.nearbyTown || "properties";
+    }
+  }
 
   // If still no properties, return null (component won't render)
   if (displayProperties.length === 0) {
@@ -237,30 +321,28 @@ export default async function CityProperties() {
   };
 
   return (
-    <section className="mx-auto w-full max-w-7xl px-4 py-16 ">
+    <section className="mx-auto w-full max-w-7xl px-4 py-16">
       <div className="flex items-center justify-between flex-wrap gap-4 mb-10">
         <div>
           <h2 className="text-xs text-blue-500 font-semibold mb-2 uppercase flex items-center">
             <MapPin className="size-4 mr-1" />
             {country === "Kenya" ? "Properties near you" : "Local Properties"}
           </h2>
-          <h3 className="text-2xl font-bold text-gray-600 ">
+          <h3 className="text-2xl font-bold text-gray-600">
             Properties in {displayLocation}
           </h3>
-          {location.county &&
-            location.county !== "Nairobi" &&
-            country === "Kenya" && (
-              <p className="text-sm text-gray-500 mt-1">
-                Showing properties in {location.county}.
-              </p>
-            )}
+          {selectedNearbyTown && selectedNearbyTown !== displayLocation && (
+            <p className="text-sm text-gray-500 mt-1">
+              Featuring properties from {selectedNearbyTown} and nearby areas
+            </p>
+          )}
         </div>
         <Link
-          href={`/properties/town/${encodeURIComponent(nearbyTown)}`}
+          href={`/properties/town/${encodeURIComponent(selectedNearbyTown)}`}
           className="text-[#636262] hover:text-blue-500 group font-semibold relative flex items-center gap-x-2"
         >
           <span className="group-hover:underline group-hover:underline-offset-4">
-            View All Properties in {displayLocation}
+            View All Properties in {selectedNearbyTown}
           </span>
           <ArrowRight className="size-4 ml-1 transition-transform duration-300 group-hover:translate-x-1" />
         </Link>
@@ -307,7 +389,7 @@ export default async function CityProperties() {
                 {property.title}
               </h4>
               <p className="text-[#5c6368] text-sm mb-2 line-clamp-1">
-                {property.locality}, {property.county}
+                {property.nearbyTown}, {property.county}
               </p>
 
               <div className="flex items-center gap-4 text-sm text-gray-600 mt-2">
@@ -324,6 +406,18 @@ export default async function CityProperties() {
           </Link>
         ))}
       </div>
+
+      {/* Additional info section */}
+      {country === "Kenya" && county && selectedNearbyTown && (
+        <div className="mt-8 text-center">
+          <div className="inline-flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-full text-sm text-blue-700">
+            <MapPin className="h-4 w-4" />
+            <span>
+              Showing properties from {selectedNearbyTown} in {county} County
+            </span>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
