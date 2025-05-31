@@ -18,6 +18,13 @@ interface MessageWidgetProps {
   price: number;
   currency: string;
   location: string;
+  propertyType: string;
+  bedrooms?: number | null;
+  bathrooms?: number | null;
+  landSize?: number | null;
+  landUnits?: string | null;
+  plinthArea?: number | null;
+  tenure?: string | null;
 }
 
 export default function MessageWidget({
@@ -29,21 +36,91 @@ export default function MessageWidget({
   price,
   currency,
   location,
+  propertyType,
+  bedrooms,
+  bathrooms,
+  landSize,
+  landUnits,
+  plinthArea,
+  tenure,
 }: MessageWidgetProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const formattedPrice = new Intl.NumberFormat("en-US").format(price);
   const currencySymbol = currency === "USD" ? "$" : "Ksh";
 
+  // Helper function to convert different land size units to acres
+  const convertToAcres = (size: number, units: string): number => {
+    switch (units.toLowerCase()) {
+      case "ha":
+        // Conversion factor: 1 hectare = 2.47105 acres
+        return size * 2.47105;
+      case "acres":
+        return size;
+      case "sqft":
+        // Conversion factor: 1 acre = 43560 square feet
+        return size / 43560;
+      case "sqm":
+        // Conversion factor: 1 acre = 4046.86 square meters
+        return size / 4046.86;
+      default:
+        return size;
+    }
+  };
+
+  // Create property-specific details based on property type
+  const getPropertySpecificDetails = () => {
+    let details = "";
+
+    switch (propertyType) {
+      case "Residential":
+        if (bedrooms)
+          details += `🛌️ ${bedrooms} bedroom${bedrooms > 1 ? "s" : ""}\n`;
+        if (bathrooms)
+          details += `🛀️ ${bathrooms} bathroom${bathrooms > 1 ? "s" : ""}\n`;
+        if (landSize && landUnits) {
+          const acres = convertToAcres(landSize, landUnits);
+          details += `🌳 ${acres.toPrecision(3)} acres\n`;
+        }
+        break;
+
+      case "Commercial":
+      case "Industrial":
+        if (plinthArea) details += `🏢 ${plinthArea} sq.m plinth area\n`;
+        if (bedrooms)
+          details += `🅿️ ${bedrooms} parking space${bedrooms > 1 ? "s" : ""}\n`;
+        break;
+
+      case "Vacational / Social":
+        if (bathrooms)
+          details += `🛀️ ${bathrooms} bathroom${bathrooms > 1 ? "s" : ""}\n`;
+        details += `🏖️ Vacation property\n`;
+        break;
+
+      case "Land":
+        if (landSize && landUnits) {
+          const acres = convertToAcres(landSize, landUnits);
+          details += `🌳 ${acres.toPrecision(3)} acres\n`;
+        }
+        if (tenure) details += `📄 ${tenure} tenure\n`;
+        break;
+    }
+
+    return details;
+  };
+
   // Encode full message and the URL to prevent link breaks
   const createShareMessage = () => {
     const encodedUrl = encodeURI(propertyUrl); // This encodes the URL properly
+    const propertyDetails = getPropertySpecificDetails();
+
     return encodeURIComponent(
-      `*I'm interested in this property* ✅️\n\n` +
+      `*I'm interested in this ${propertyType} property* ✅️\n\n` +
         `*Can we have a chat?* ✅️\n\n` +
         `${propertyTitle}\n` +
         `Price: ${currencySymbol} ${formattedPrice}\n` +
-        `Location: ${location}\n\n` +
+        `Location: ${location}\n` +
+        `${propertyDetails}\n` +
         `View more details here: ${encodedUrl}\n\n` +
         `Property ID: #ARE-${propertyNumber}\n` +
         `Listed on African Real Estate`
@@ -148,6 +225,25 @@ export default function MessageWidget({
                 </div>
 
                 <div className="p-6 space-y-4">
+                  {/* Property type-specific badge */}
+                  <div className="flex justify-center">
+                    <span
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                        propertyType === "Residential"
+                          ? "bg-blue-100 text-blue-800"
+                          : propertyType === "Commercial"
+                            ? "bg-green-100 text-green-800"
+                            : propertyType === "Industrial"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : propertyType === "Vacational / Social"
+                                ? "bg-purple-100 text-purple-800"
+                                : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {propertyType}
+                    </span>
+                  </div>
+
                   <button
                     onClick={handleWhatsAppShare}
                     className="w-full flex items-center justify-center gap-2 rounded-md bg-blue-500 px-3 py-4 text-white hover:bg-blue-400 focus:outline-none transition-colors"

@@ -1,4 +1,5 @@
 "use client";
+
 import { Link, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import type { PropertyWithExtras } from "@/lib/types";
@@ -20,13 +21,97 @@ export default function ShareButton({
   const encodedPropertyDetails = encodeURIComponent(property.propertyDetails);
 
   // Create the share URL with proper encoding
-  const shareUrl = `${
-    typeof window !== "undefined" ? window.location.origin : ""
-  }/properties/${encodedPropertyDetails}/${propertyId}`;
+  const shareUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/properties/${encodedPropertyDetails}/${propertyId}`;
 
-  const shareText = `Check out this ${property.propertyType} property: ${
-    property.title
-  }, ${property.price.toLocaleString()} ${property.currency}`;
+  // Helper function to convert different land size units to acres
+  const convertToAcres = (size: number, units: string): number => {
+    switch (units.toLowerCase()) {
+      case "ha":
+        // Conversion factor: 1 hectare = 2.47105 acres
+        return size * 2.47105;
+      case "acres":
+        return size;
+      case "sqft":
+        // Conversion factor: 1 acre = 43560 square feet
+        return size / 43560;
+      case "sqm":
+        // Conversion factor: 1 acre = 4046.86 square meters
+        return size / 4046.86;
+      default:
+        return size;
+    }
+  };
+
+  // Create dynamic share text based on property type
+  const createShareText = () => {
+    const formattedPrice = `${property.currency} ${property.price.toLocaleString()}`;
+    const location = `${property.locality}, ${property.county}`;
+
+    // Base share text that all property types will have
+    let baseText = `Check out this ${property.propertyType} property: ${property.title}, ${formattedPrice}`;
+
+    // Add property-specific details based on property type
+    switch (property.propertyType) {
+      case "Residential":
+        if (property.bedrooms || property.bathrooms) {
+          const beds = property.bedrooms ? `${property.bedrooms} bed` : "";
+          const baths = property.bathrooms ? `${property.bathrooms} bath` : "";
+          const specs = [beds, baths].filter(Boolean).join(", ");
+          baseText += ` | ${specs} | ${location}`;
+        } else {
+          baseText += ` | ${location}`;
+        }
+        break;
+
+      case "Commercial":
+      case "Industrial":
+        const plinthArea = property.plinthArea
+          ? `${property.plinthArea} sq.m`
+          : "";
+        const parkings = property.bedrooms
+          ? `${property.bedrooms} parking spaces`
+          : "";
+        const commercialSpecs = [plinthArea, parkings]
+          .filter(Boolean)
+          .join(", ");
+        baseText += commercialSpecs
+          ? ` | ${commercialSpecs} | ${location}`
+          : ` | ${location}`;
+        break;
+
+      case "Vacational / Social":
+        const vacationalDetails = property.bathrooms
+          ? `${property.bathrooms} bath`
+          : "";
+        baseText += vacationalDetails
+          ? ` | ${vacationalDetails} | ${location}`
+          : ` | ${location}`;
+        break;
+
+      case "Land":
+        let landDetails = "";
+        if (property.landSize && property.landUnits) {
+          const acres = convertToAcres(property.landSize, property.landUnits);
+          landDetails += `${acres.toPrecision(3)} acres`;
+        }
+        if (property.tenure) {
+          landDetails += landDetails
+            ? `, ${property.tenure} tenure`
+            : `${property.tenure} tenure`;
+        }
+        baseText += landDetails
+          ? ` | ${landDetails} | ${location}`
+          : ` | ${location}`;
+        break;
+
+      default:
+        baseText += ` | ${location}`;
+    }
+
+    return baseText;
+  };
+
+  const shareText = createShareText();
 
   const shareToFacebook = () => {
     // Facebook will pick up the Open Graph meta tags from the page
@@ -36,35 +121,71 @@ export default function ShareButton({
 
   const shareToTwitter = () => {
     // Twitter will pick up the Twitter card meta tags from the page
-    const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(
-      shareUrl
-    )}&text=${encodeURIComponent(shareText)}`;
+    const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const shareToLinkedIn = () => {
     // LinkedIn will pick up the Open Graph meta tags from the page
-    const url = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(
-      shareUrl
-    )}&title=${encodeURIComponent(property.title)}&summary=${encodeURIComponent(shareText)}`;
+    const url = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent(property.title)}&summary=${encodeURIComponent(shareText)}`;
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const shareToWhatsApp = () => {
-    // WhatsApp doesn't support direct image sharing via URL parameters
-    // It will rely on the meta tags when the recipient opens the link
+    // Create a detailed message with property features based on property type
     const formattedPrice = `${property.currency} ${property.price.toLocaleString()}`;
-
-    // Create a detailed message with property features
-    const bedroomsText = property.bedrooms
-      ? `🛌️ ${property.bedrooms} bed, `
-      : "";
-    const bathroomsText = property.bathrooms
-      ? `🛀️ ${property.bathrooms} bath, `
-      : "";
     const locationText = `📍️ ${property.locality}, ${property.county}`;
 
-    const shareMessage = `*${property.title}*\n\n${locationText}\n💰️ ${formattedPrice}\n${bedroomsText}${bathroomsText}\n\nCheck out this property: ${shareUrl}`;
+    let propertySpecificDetails = "";
+
+    switch (property.propertyType) {
+      case "Residential":
+        const bedroomsText = property.bedrooms
+          ? `🛌️ ${property.bedrooms} bed, `
+          : "";
+        const bathroomsText = property.bathrooms
+          ? `🛀️ ${property.bathrooms} bath, `
+          : "";
+        propertySpecificDetails = `${bedroomsText}${bathroomsText}`;
+
+        if (property.landSize && property.landUnits) {
+          const acres = convertToAcres(property.landSize, property.landUnits);
+          propertySpecificDetails += `🌳 ${acres.toPrecision(3)} acres, `;
+        }
+        break;
+
+      case "Commercial":
+      case "Industrial":
+        if (property.plinthArea) {
+          propertySpecificDetails += `🏢 ${property.plinthArea} sq.m, `;
+        }
+        if (property.bedrooms) {
+          propertySpecificDetails += `🅿️ ${property.bedrooms} parking spaces, `;
+        }
+        break;
+
+      case "Vacational / Social":
+        if (property.bathrooms) {
+          propertySpecificDetails += `🛀️ ${property.bathrooms} bath, `;
+        }
+        propertySpecificDetails += `🏖️ Vacation property, `;
+        break;
+
+      case "Land":
+        if (property.landSize && property.landUnits) {
+          const acres = convertToAcres(property.landSize, property.landUnits);
+          propertySpecificDetails += `🌳 ${acres.toPrecision(3)} acres, `;
+        }
+        if (property.tenure) {
+          propertySpecificDetails += `📄 ${property.tenure} tenure, `;
+        }
+        break;
+    }
+
+    // Remove trailing comma and space if present
+    propertySpecificDetails = propertySpecificDetails.replace(/, $/, "");
+
+    const shareMessage = `*${property.title}*\n\n${locationText}\n💰️ ${formattedPrice}\n${propertySpecificDetails}\n\nCheck out this property: ${shareUrl}`;
 
     const url = `https://wa.me/?text=${encodeURIComponent(shareMessage)}`;
     window.open(url, "_blank", "noopener,noreferrer");

@@ -1,33 +1,66 @@
-import { prisma } from "@/lib/prisma";
 import { Flame } from "lucide-react";
-import PropertyCardEnhanced from "./featured-properties/property-card-enhanced";
 import Link from "next/link";
+import { prisma } from "@/lib/prisma";
+import PropertyCardEnhanced from "./featured-properties/property-card-enhanced";
 
-export default async function TrendingProperties() {
-  // Fetch all active properties sorted by views
-  const allProperties = await prisma.property.findMany({
+const TrendingProperties = async () => {
+  // Fetch trending properties from the last week
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+  // Get properties with the most views in the last week
+  const trendingProperties = await prisma.property.findMany({
     where: {
       isActive: true,
     },
     include: {
-      views: true,
-      likes: true,
+      views: {
+        where: {
+          viewedAt: {
+            gte: oneWeekAgo,
+          },
+        },
+      },
+      likes: {
+        where: {
+          createdAt: {
+            gte: oneWeekAgo,
+          },
+        },
+      },
       orders: {
         select: {
           tierName: true,
         },
       },
     },
-    orderBy: {
-      views: {
-        _count: "desc",
+    orderBy: [
+      {
+        views: {
+          _count: "desc",
+        },
       },
-    },
-    take: 50, // Fetch enough to ensure we have all property types
+    ],
+    take: 12, // Fetch more than needed to ensure diversity
+  });
+
+  // Calculate a "heat score" for each property based on recent activity
+  const scoredProperties = trendingProperties.map((property) => {
+    // Calculate heat score based on views, likes, and recency
+    const viewsCount = property.views.length;
+    const likesCount = property.likes.length;
+
+    // Heat score formula: views + (likes * 2)
+    const heatScore = viewsCount + likesCount * 2;
+
+    return {
+      ...property,
+      heatScore,
+    };
   });
 
   // Group properties by type
-  const propertiesByType = allProperties.reduce(
+  const propertiesByType = scoredProperties.reduce(
     (acc, property) => {
       if (!acc[property.propertyType]) {
         acc[property.propertyType] = [];
@@ -35,7 +68,7 @@ export default async function TrendingProperties() {
       acc[property.propertyType].push(property);
       return acc;
     },
-    {} as Record<string, typeof allProperties>
+    {} as Record<string, typeof scoredProperties>
   );
 
   // Get property types
@@ -48,34 +81,34 @@ export default async function TrendingProperties() {
 
   // Fill remaining slots with the hottest properties overall
   const remainingCount = 6 - representativeProperties.length;
-  const additionalProperties = allProperties
+  const additionalProperties = scoredProperties
     .filter(
       (property) => !representativeProperties.some((p) => p.id === property.id)
     )
     .slice(0, remainingCount >= 0 ? remainingCount : 0);
 
-  // Combine and sort by view count
+  // Combine and sort by heat score
   const hottestProperties = [
     ...representativeProperties,
     ...additionalProperties,
   ]
-    .sort((a, b) => b.views.length - a.views.length)
+    .sort((a, b) => b.heatScore - a.heatScore)
     .slice(0, 6); // Ensure we have exactly 6 properties
 
   return (
-    <section className="mx-auto w-full max-w-7xl px-5 py-16 md:px-10">
-      <div className="flex items-center justify-between flex-wrap gap-4 mb-10">
+    <div className="container max-w-7xl mx-auto py-10">
+      <div className="flex justify-between items-center mb-6">
         <div>
           <h2 className="text-sm text-red-500 font-semibold mb-2 uppercase flex items-center">
             <Flame className="size-4 mr-1 text-red-500" />
-            Hottest Properties
+            This Week&apos;s Hottest Properties
           </h2>
           <h3 className="text-2xl font-bold text-gray-700">
-            Most Viewed Listings
+            Trending This Week
           </h3>
         </div>
         <Link
-          href="/properties?sort=hot&order=desc"
+          href="/properties?sort=hot&order=desc&period=week"
           className="text-[#636262] hover:text-red-500 group font-semibold relative flex items-center gap-x-2"
         >
           <span className="group-hover:underline group-hover:underline-offset-4">
@@ -98,17 +131,23 @@ export default async function TrendingProperties() {
           </svg>
         </Link>
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {hottestProperties.map((property, index) => (
-          <PropertyCardEnhanced
-            key={property.id}
-            property={property as any}
-            index={index}
-            showRecommendationBadge={false}
-          />
+          <div key={property.id} className="relative">
+            {/* <div className="absolute top-2 right-2 z-10 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center">
+              <Flame className="size-3 mr-1" />
+              {property.heatScore} Heat
+            </div> */}
+            <PropertyCardEnhanced
+              property={property as any}
+              index={index}
+              showRecommendationBadge={false}
+            />
+          </div>
         ))}
       </div>
-    </section>
+    </div>
   );
-}
+};
+
+export default TrendingProperties;

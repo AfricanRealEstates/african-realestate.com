@@ -797,6 +797,19 @@ export default async function PropertyDetails({
         </main>
 
         <MessageWidget
+          price={property.price}
+          location={property.locality!}
+          currency={property.currency}
+          propertyType={property.propertyType}
+          propertyId={property.id!}
+          propertyNumber={property.propertyNumber}
+          propertyTitle={property.title}
+          whatsappNumber={agent.whatsappNumber}
+          propertyUrl={propertyUrl}
+        />
+
+        {/* <MessageWidget
+          propertyType={property.propertyType}
           propertyTitle={property.title}
           propertyId={property.id}
           propertyUrl={propertyUrl}
@@ -805,7 +818,7 @@ export default async function PropertyDetails({
           price={property.price}
           currency={property.currency}
           location={`${property.locality}, ${property.county}`}
-        />
+        /> */}
         <section className="mx-auto mt-12 max-w-2xl sm:mt-12 lg:max-w-none">
           <div className="flex items-center justify-between space-x-4">
             <h2 className="text-lg lg:text-xl font-medium text-gray-950">

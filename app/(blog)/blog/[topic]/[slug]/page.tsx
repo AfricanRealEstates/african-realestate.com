@@ -318,9 +318,25 @@ Updated on:{" "}
                 </p>
               </div>
             </div>
+            <div className="lg:hidden w-full mt-2 order-2">
+              <div className="mb-1">
+                {/* <h3 className="text-xl font-bold mb-4">Topics</h3> */}
+                <div className="flex flex-wrap gap-2">
+                  {post.topics.map((topic) => (
+                    <Link
+                      key={topic}
+                      href={`/blog/${topic}`}
+                      className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-full text-sm font-medium transition-colors"
+                    >
+                      {topic.charAt(0).toUpperCase() + topic.slice(1)}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
 
-          <section className="flex flex-col lg:flex-row justify-between gap-4 px-4 mx-auto container mt-8">
+          <section className="flex flex-col lg:flex-row justify-between gap-4 px-4 mx-auto container mt-2">
             <div className="hidden mb-6 xl:block lg:w-60">
               <PopularBlogs />
             </div>
@@ -399,20 +415,20 @@ Updated on:{" "}
 
             {/* Mobile Topics and Related Posts - Only visible on mobile/tablet */}
             <div className="lg:hidden w-full mt-8 mb-12 order-2">
-              <div className="mb-8">
-                <h3 className="text-xl font-bold mb-4">Topics</h3>
-                <div className="flex flex-wrap gap-2">
-                  {post.topics.map((topic) => (
-                    <Link
-                      key={topic}
-                      href={`/blog/${topic}`}
-                      className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-full text-sm font-medium transition-colors"
-                    >
-                      {topic.charAt(0).toUpperCase() + topic.slice(1)}
-                    </Link>
-                  ))}
-                </div>
+              {/* <div className="mb-8">
+              <h3 className="text-xl font-bold mb-4">Topics</h3>
+              <div className="flex flex-wrap gap-2">
+                {post.topics.map((topic) => (
+                  <Link
+                    key={topic}
+                    href={`/blog/${topic}`}
+                    className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-full text-sm font-medium transition-colors"
+                  >
+                    {topic.charAt(0).toUpperCase() + topic.slice(1)}
+                  </Link>
+                ))}
               </div>
+            </div> */}
 
               {relatedPosts.length > 0 && (
                 <div>
@@ -514,16 +530,16 @@ Updated on:{" "}
                               <div className="mt-auto flex items-center justify-between text-sm text-gray-500">
                                 <div className="flex items-center">
                                   {/* {relatedPost.author.image ? (
-                              <img
-                                src={
-                                  relatedPost.author.image ||
-                                  "/assets/placeholder.jpg"
-                                }
-                                alt={relatedPost.author.name || "Author"}
-                                className="w-6 h-6 rounded-full mr-2"
-                              />
-                            ) : (
-                            )} */}
+                <img
+                  src={
+                    relatedPost.author.image ||
+                    "/assets/placeholder.jpg"
+                  }
+                  alt={relatedPost.author.name || "Author"}
+                  className="w-6 h-6 rounded-full mr-2"
+                />
+              ) : (
+              )} */}
                                   <div className="w-6 h-6 rounded-full bg-gray-200 mr-2"></div>
                                   <span>{relatedPost.author.name}</span>
                                 </div>

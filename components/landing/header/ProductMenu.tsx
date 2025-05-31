@@ -1,4 +1,3 @@
-import React from "react";
 // import {
 //   ArrowPathIcon,
 //   ArrowRightStartOnRectangleIcon,
@@ -10,14 +9,7 @@ import React from "react";
 //   SquaresPlusIcon,
 //   XMarkIcon,
 // } from "@heroicons/react/24/outline";
-import {
-  ChevronDownIcon,
-  LightBulbIcon,
-  PhoneIcon,
-  PlayCircleIcon,
-  ShieldCheckIcon,
-  UserCircleIcon,
-} from "@heroicons/react/20/solid";
+import { PhoneIcon, PlayCircleIcon } from "@heroicons/react/20/solid";
 import {
   BarChart2,
   Blocks,
@@ -26,7 +18,6 @@ import {
   Workflow,
 } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 const products = [
   {
     name: "Properties",
@@ -72,7 +63,7 @@ const company = [
   },
   {
     name: "Partners",
-    href: "/contact",
+    href: "/agencies",
     description: "Get in touch with our dedicated Support Team.",
   },
   {
