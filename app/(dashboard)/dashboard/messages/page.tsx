@@ -3,7 +3,7 @@ import { MessageTemplates } from "./message-templates";
 import { ActivePropertiesMessages } from "./active-property-messages";
 import { InactivePropertiesMessages } from "./inactive-property-messages";
 
-export default function MarketingMessages() {
+export default function DashboardMessages() {
   return (
     <section className="px-4 pt-6">
       <div className="mb-4 col-span-full xl:mb-2">

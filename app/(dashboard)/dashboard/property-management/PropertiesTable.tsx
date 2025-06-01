@@ -162,7 +162,7 @@ export default async function PropertiesTable({
                     </Button>
                   </Link>
                   <ContactAgentDialog
-                    property={property}
+                    property={property as any}
                     trigger={
                       <Button size="icon" variant="ghost">
                         <Mail className="h-4 w-4" />

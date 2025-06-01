@@ -32,44 +32,76 @@ export async function sendEmailToAgent({
       };
     }
 
-    // Format the message with proper HTML
-    const htmlMessage = message.replace(/\n/g, "<br />");
+    // Validate email parameters
+    if (!agentEmail || !subject || !message) {
+      return {
+        success: false,
+        error: "Missing required email parameters",
+      };
+    }
 
+    // Send email with improved HTML content
     const data = await resend.emails.send({
-      from: "African Real Estate <support@african-realestate.com>",
+      from: "African Real Estate <support@african-real-estate.com>",
       to: [agentEmail],
       subject: subject,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background-color: #f8f9fa; padding: 20px; text-align: center; border-bottom: 3px solid #4f46e5;">
-            <h1 style="color: #4f46e5; margin: 0;">African Real Estate</h1>
-          </div>
-          <div style="padding: 20px; background-color: white;">
-            <div style="line-height: 1.6;">
-              ${htmlMessage}
-            </div>
-          </div>
-          <div style="background-color: #f8f9fa; padding: 15px; text-align: center; font-size: 12px; color: #6c757d;">
-            <p>© ${new Date().getFullYear()} African Real Estate. All rights reserved.</p>
-            <p>If you have any questions, please contact our support team at support@african-realestate.com</p>
-          </div>
-        </div>
-      `,
+      html: message, // The message now contains full HTML from templates
+      // Add text fallback for better deliverability
+      text: message.replace(/<[^>]*>/g, "").replace(/\n\s*\n/g, "\n"),
     });
+
+    // Log the email for tracking
+    try {
+      if (session?.user?.id) {
+        await prisma.marketingEmail.create({
+          data: {
+            propertyId,
+            userId: session.user.id, // Now we know this is defined
+            message: message,
+            type: "admin-communication",
+            senderEmail: "support@african-real-estate.com",
+          },
+        });
+      } else {
+        console.warn("User ID not available for logging email");
+      }
+    } catch (logError) {
+      console.warn("Failed to log email:", logError);
+      // Don't fail the email send if logging fails
+    }
 
     return {
       success: true,
       data,
+      messageId: data.data?.id, // Correctly access the id from the Resend response
     };
   } catch (error) {
     console.error("Error sending email:", error);
+
+    // Provide more specific error messages
+    if (error instanceof Error) {
+      if (error.message.includes("API key")) {
+        return {
+          success: false,
+          error: "Email service configuration error",
+        };
+      }
+      if (error.message.includes("rate limit")) {
+        return {
+          success: false,
+          error: "Too many emails sent. Please try again later.",
+        };
+      }
+    }
+
     return {
       success: false,
-      error: "Failed to send email",
+      error: "Failed to send email. Please try again.",
     };
   }
 }
 
+// Keep the existing togglePropertyStatus function unchanged
 export async function togglePropertyStatus(propertyId: string) {
   try {
     const session = await auth();
@@ -81,7 +113,6 @@ export async function togglePropertyStatus(propertyId: string) {
       };
     }
 
-    // Get current property
     const property = await prisma.property.findUnique({
       where: { id: propertyId },
     });
@@ -93,13 +124,11 @@ export async function togglePropertyStatus(propertyId: string) {
       };
     }
 
-    // Toggle the isActive status
     const updatedProperty = await prisma.property.update({
       where: { id: propertyId },
       data: { isActive: !property.isActive },
     });
 
-    // Revalidate the properties page to reflect the changes
     revalidatePath("/dashboard/property-management");
 
     return {

@@ -1,7 +1,7 @@
 "use server";
 
-import { Resend } from "resend";
 import { prisma } from "@/lib/prisma";
+import { Resend } from "resend";
 
 type Property = {
   id: string;
@@ -11,8 +11,8 @@ type Property = {
   isActive: boolean;
   user: {
     id: string;
-    name: string;
-    email: string;
+    name: string | null;
+    email: string | null;
   };
 };
 
@@ -67,11 +67,17 @@ export async function sendMarketingEmail({
     const emailPromises = properties.map(async (property) => {
       const { user, title, propertyNumber } = property;
 
+      // Skip if user doesn't have an email
+      if (!user.email) {
+        console.warn(`Skipping property ${propertyNumber} - user has no email`);
+        return null;
+      }
+
       // Create email subject based on the type
       const subject =
         type === "active-property"
-          ? `Marketing Update for Your Property #${propertyNumber}`
-          : `Reactivate Your Property #${propertyNumber}`;
+          ? `🏡 Exciting Updates for Your Property #${propertyNumber} - African Real Estate`
+          : `🚀 Reactivate Your Property #${propertyNumber} - New Opportunities Await!`;
 
       // Prepare the email content
       let emailContent = message;
@@ -85,41 +91,165 @@ export async function sendMarketingEmail({
           .replace(/{message}/g, message);
       }
 
+      // Enhanced HTML email template with modern design
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>African Real Estate</title>
+          <style>
+            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f8fafc; }
+            .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; }
+            .header { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); padding: 30px 20px; text-align: center; }
+            .logo { color: #ffffff; font-size: 28px; font-weight: bold; margin-bottom: 10px; }
+            .tagline { color: #e0e7ff; font-size: 14px; }
+            .content { padding: 40px 30px; }
+            .greeting { font-size: 24px; font-weight: 600; color: #1f2937; margin-bottom: 20px; }
+            .property-info { background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); padding: 20px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #3b82f6; }
+            .property-title { font-size: 18px; font-weight: 600; color: #1f2937; margin-bottom: 5px; }
+            .property-number { color: #6b7280; font-size: 14px; }
+            .message-content { background-color: #f8fafc; padding: 25px; border-radius: 12px; margin: 25px 0; line-height: 1.6; color: #374151; }
+            .cta-section { text-align: center; margin: 30px 0; }
+            .cta-button { display: inline-block; background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: #ffffff; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3); }
+            .features { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 30px 0; }
+            .feature { text-align: center; padding: 20px; background-color: #f8fafc; border-radius: 8px; }
+            .feature-icon { font-size: 24px; margin-bottom: 10px; }
+            .feature-text { font-size: 14px; color: #6b7280; }
+            .stats { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); padding: 20px; border-radius: 12px; margin: 25px 0; }
+            .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; text-align: center; }
+            .stat-number { font-size: 24px; font-weight: bold; color: #059669; }
+            .stat-label { font-size: 12px; color: #6b7280; }
+            .footer { background-color: #1f2937; color: #9ca3af; padding: 30px; text-align: center; }
+            .footer-links { margin: 20px 0; }
+            .footer-links a { color: #60a5fa; text-decoration: none; margin: 0 15px; }
+            .social-links { margin: 20px 0; }
+            .social-links a { display: inline-block; margin: 0 10px; }
+            @media (max-width: 600px) {
+              .features { grid-template-columns: 1fr; }
+              .stats-grid { grid-template-columns: 1fr; }
+              .content { padding: 20px; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <!-- Header -->
+            <div class="header">
+              <div class="logo">African Real Estate</div>
+              <div class="tagline">Connecting Africa Through Premium Real Estate</div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="content">
+              <div class="greeting">Hello ${user.name || "Property Owner"}! 👋</div>
+              
+              <div class="property-info">
+                <div class="property-title">📍 ${title}</div>
+                <div class="property-number">Property #${propertyNumber}</div>
+              </div>
+
+              <div class="message-content">
+                ${emailContent.replace(/\n/g, "<br>")}
+              </div>
+
+              <!-- Platform Stats -->
+              <div class="stats">
+                <h3 style="text-align: center; color: #059669; margin-bottom: 20px;">🚀 African Real Estate Platform Impact</h3>
+                <div class="stats-grid">
+                  <div>
+                    <div class="stat-number">50K+</div>
+                    <div class="stat-label">Verified Buyers</div>
+                  </div>
+                  <div>
+                    <div class="stat-number">8+</div>
+                    <div class="stat-label">Years Experience</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Features -->
+              <div class="features">
+                <div class="feature">
+                  <div class="feature-icon">🎯</div>
+                  <div class="feature-text">AI-Powered Buyer Matching</div>
+                </div>
+                <div class="feature">
+                  <div class="feature-icon">📱</div>
+                  <div class="feature-text">Mobile-First Platform</div>
+                </div>
+                <div class="feature">
+                  <div class="feature-icon">🌍</div>
+                  <div class="feature-text">Global Network</div>
+                </div>
+                <div class="feature">
+                  <div class="feature-icon">💎</div>
+                  <div class="feature-text">Premium Marketing</div>
+                </div>
+              </div>
+
+              <!-- Call to Action -->
+              <div class="cta-section">
+                <a href="https://www.african-realestate.com/dashboard?utm_source=email&utm_medium=marketing&utm_campaign=${type}" class="cta-button">
+                  🚀 Access Your Dashboard
+                </a>
+                <p style="margin-top: 15px; color: #6b7280; font-size: 14px;">
+                  Manage your property, view analytics, and connect with buyers
+                </p>
+              </div>
+
+              <!-- Support Section -->
+              <div style="background-color: #fef3c7; padding: 20px; border-radius: 12px; margin: 25px 0; border-left: 4px solid #f59e0b;">
+                <h4 style="color: #92400e; margin: 0 0 10px 0;">💬 Need Assistance?</h4>
+                <p style="color: #92400e; margin: 0; font-size: 14px;">
+                  Our dedicated support team is here to help you maximize your property's potential. 
+                  <a href="https://www.african-realestate.com/contact" style="color: #92400e; font-weight: 600;">Contact Support</a>
+                </p>
+              </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+              <div style="font-size: 18px; font-weight: 600; margin-bottom: 10px;">African Real Estate</div>
+              <div style="margin-bottom: 20px;">Transforming African Real Estate Markets</div>
+              
+              <div class="footer-links">
+                <a href="https://www.african-realestate.com/about">About Us</a>
+                <a href="https://www.african-realestate.com/blog">Success Stories</a>
+                <a href="https://www.african-realestate.com/blog">Market Insights</a>
+                <a href="https://www.african-realestate.com/contact">Contact</a>
+              </div>
+
+              <div class="social-links">
+                <a href="https://www.linkedin.com/company/african-real-estate">LinkedIn</a>
+                <a href="https://twitter.com/AfricanRealEsta">Twitter</a>
+                <a href="https://facebook.com/AfricanRealEstateMungaiKihara">Facebook</a>
+              </div>
+
+              <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #374151; font-size: 12px;">
+                <p>© ${new Date().getFullYear()} African Real Estate. All rights reserved.</p>
+                <p>
+                  <a href="https://www.african-realestate.com/privacy" style="color: #9ca3af;">Privacy Policy</a> | 
+                  <a href="https://www.african-realestate.com/terms" style="color: #9ca3af;">Terms of Service</a> | 
+                  <a href="https://www.african-realestate.com/contact" style="color: #9ca3af;">Unsubscribe</a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+
       // Send the email
       const emailResult = await resend.emails.send({
         from: fromEmail,
         to: user.email,
         subject: subject,
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <div style="background-color: #f8f9fa; padding: 20px; text-align: center;">
-              <img src="https://www.african-realestate.com/logo.png" alt="African Real Estate" style="max-width: 200px;">
-            </div>
-            <div style="padding: 20px;">
-              <h2>Hello ${user.name},</h2>
-              <p>Regarding your property: <strong>${title}</strong> (Property #${propertyNumber})</p>
-              <div style="margin: 20px 0; padding: 15px; background-color: #f8f9fa; border-left: 4px solid #4a6cf7;">
-                ${emailContent}
-              </div>
-              <p>If you have any questions, please don't hesitate to contact our support team.</p>
-              <div style="margin-top: 30px; text-align: center;">
-                <a href="https://www.african-realestate.com/dashboard" style="background-color: #4a6cf7; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">
-                  Go to Dashboard
-                </a>
-              </div>
-            </div>
-            <div style="background-color: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #6c757d;">
-              <p>© ${new Date().getFullYear()} African Real Estate. All rights reserved.</p>
-              <p>
-                <a href="https://www.african-realestate.com/privacy" style="color: #6c757d; margin-right: 10px;">Privacy Policy</a>
-                <a href="https://www.african-realestate.com/terms" style="color: #6c757d;">Terms of Service</a>
-              </p>
-            </div>
-          </div>
-        `,
+        html: htmlContent,
       });
 
-      // Log the email in the database
+      // Log the email in the database using the correct schema
       await prisma.marketingEmail.create({
         data: {
           propertyId: property.id,
@@ -134,15 +264,16 @@ export async function sendMarketingEmail({
       return emailResult;
     });
 
-    // Wait for all emails to be sent
-    await Promise.all(emailPromises);
+    // Wait for all emails to be sent (filter out null results)
+    const results = await Promise.all(emailPromises);
+    const successfulEmails = results.filter((result) => result !== null);
 
     // Log the activity
     console.log(
-      `Sent ${type} marketing emails to ${properties.length} property owners`
+      `Sent ${type} marketing emails to ${successfulEmails.length} property owners`
     );
 
-    return { success: true, count: properties.length };
+    return { success: true, count: successfulEmails.length };
   } catch (error) {
     console.error("Error sending marketing emails:", error);
     throw new Error("Failed to send marketing emails");
@@ -328,18 +459,22 @@ export async function updateEmailSender(
 
 export async function deleteEmailSender(id: string) {
   try {
-    // First, update any templates using this sender to remove the sender reference
-    await prisma.emailTemplate.updateMany({
-      where: {
-        senderEmail: {
-          equals: (await prisma.emailSender.findUnique({ where: { id } }))
-            ?.email,
-        },
-      },
-      data: {
-        senderEmail: null,
-      },
+    // First, get the sender to find its email
+    const sender = await prisma.emailSender.findUnique({
+      where: { id },
     });
+
+    if (sender) {
+      // Update any templates using this sender to remove the sender reference
+      await prisma.emailTemplate.updateMany({
+        where: {
+          senderEmail: sender.email,
+        },
+        data: {
+          senderEmail: null,
+        },
+      });
+    }
 
     // Then delete the sender
     await prisma.emailSender.delete({
