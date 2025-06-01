@@ -42,7 +42,7 @@ export async function sendEmailToAgent({
 
     // Send email with improved HTML content
     const data = await resend.emails.send({
-      from: "African Real Estate <support@african-real-estate.com>",
+      from: "African Real Estate <support@african-realestate.com>",
       to: [agentEmail],
       subject: subject,
       html: message, // The message now contains full HTML from templates
