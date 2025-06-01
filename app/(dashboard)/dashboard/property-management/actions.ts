@@ -59,7 +59,7 @@ export async function sendEmailToAgent({
             userId: session.user.id, // Now we know this is defined
             message: message,
             type: "admin-communication",
-            senderEmail: "support@african-real-estate.com",
+            senderEmail: "support@african-realestate.com",
           },
         });
       } else {
