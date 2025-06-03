@@ -1,7 +1,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MessageTemplates } from "./message-templates";
-import { ActivePropertiesMessages } from "./active-property-messages";
 import { InactivePropertiesMessages } from "./inactive-property-messages";
+import { ActivePropertiesMessages } from "./active-property-messages";
+import { EmailStats } from "./email-stats";
 
 export default function DashboardMessages() {
   return (
@@ -16,18 +17,24 @@ export default function DashboardMessages() {
       </div>
 
       <Tabs defaultValue="active" className="w-full">
-        <TabsList className=" w-full flex flex-wrap md:flex-nowrap">
+        <TabsList className="w-full flex flex-wrap md:flex-nowrap">
           <TabsTrigger value="active" className="flex-1 text-sm sm:text-base">
-            Active
+            Active Properties
           </TabsTrigger>
           <TabsTrigger value="inactive" className="flex-1 text-sm sm:text-base">
-            Inactive
+            Inactive Properties
           </TabsTrigger>
           <TabsTrigger
             value="templates"
             className="flex-1 text-sm sm:text-base"
           >
             Templates
+          </TabsTrigger>
+          <TabsTrigger
+            value="analytics"
+            className="flex-1 text-sm sm:text-base"
+          >
+            Analytics
           </TabsTrigger>
         </TabsList>
         <TabsContent value="active" className="mt-4">
@@ -38,6 +45,9 @@ export default function DashboardMessages() {
         </TabsContent>
         <TabsContent value="templates" className="mt-4">
           <MessageTemplates />
+        </TabsContent>
+        <TabsContent value="analytics" className="mt-4">
+          <EmailStats />
         </TabsContent>
       </Tabs>
     </section>

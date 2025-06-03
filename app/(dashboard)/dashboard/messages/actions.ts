@@ -13,7 +13,16 @@ type Property = {
     id: string;
     name: string | null;
     email: string | null;
+    role: string;
   };
+};
+
+type SearchPropertiesParams = {
+  term: string;
+  status: "active" | "inactive";
+  role: string;
+  propertyNumberFrom?: number;
+  propertyNumberTo?: number;
 };
 
 type SendEmailParams = {
@@ -30,6 +39,136 @@ type EmailSender = {
   displayName: string;
   isActive: boolean;
 };
+
+export async function searchPropertiesByRole({
+  term,
+  status,
+  role,
+  propertyNumberFrom,
+  propertyNumberTo,
+}: SearchPropertiesParams) {
+  try {
+    const isActive = status === "active";
+
+    // Build the where clause
+    const whereClause: any = {
+      isActive,
+    };
+
+    // Add search term conditions
+    if (term) {
+      whereClause.OR = [
+        {
+          title: {
+            contains: term,
+            mode: "insensitive",
+          },
+        },
+        {
+          propertyNumber: {
+            equals: Number.parseInt(term) || undefined,
+          },
+        },
+        {
+          user: {
+            name: {
+              contains: term,
+              mode: "insensitive",
+            },
+          },
+        },
+        {
+          user: {
+            email: {
+              contains: term,
+              mode: "insensitive",
+            },
+          },
+        },
+      ];
+    }
+
+    // Add role filter if not "all"
+    if (role !== "all") {
+      whereClause.user = {
+        ...whereClause.user,
+        role: role,
+      };
+    }
+
+    // Add property number range filter
+    if (propertyNumberFrom || propertyNumberTo) {
+      const propertyNumberFilter: any = {};
+
+      if (propertyNumberFrom) {
+        propertyNumberFilter.gte = propertyNumberFrom;
+      }
+
+      if (propertyNumberTo) {
+        propertyNumberFilter.lte = propertyNumberTo;
+      }
+
+      whereClause.propertyNumber = propertyNumberFilter;
+    }
+
+    const properties = await prisma.property.findMany({
+      where: whereClause,
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+          },
+        },
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+      take: 50, // Limit results
+    });
+
+    return properties;
+  } catch (error) {
+    console.error("Error searching properties by role:", error);
+    throw new Error("Failed to search properties");
+  }
+}
+
+export async function getMarketingEmailHistory(type?: string) {
+  try {
+    const whereClause = type ? { type } : {};
+
+    const emails = await prisma.marketingEmail.findMany({
+      where: whereClause,
+      include: {
+        property: {
+          select: {
+            title: true,
+            propertyNumber: true,
+          },
+        },
+        user: {
+          select: {
+            name: true,
+            email: true,
+            role: true,
+          },
+        },
+      },
+      orderBy: {
+        sentAt: "desc",
+      },
+      take: 100, // Limit to last 100 emails
+    });
+
+    return emails;
+  } catch (error) {
+    console.error("Error fetching marketing email history:", error);
+    throw new Error("Failed to fetch email history");
+  }
+}
 
 export async function sendMarketingEmail({
   properties,
@@ -113,22 +252,10 @@ export async function sendMarketingEmail({
             .message-content { background-color: #f8fafc; padding: 25px; border-radius: 12px; margin: 25px 0; line-height: 1.6; color: #374151; }
             .cta-section { text-align: center; margin: 30px 0; }
             .cta-button { display: inline-block; background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: #ffffff; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3); }
-            .features { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 30px 0; }
-            .feature { text-align: center; padding: 20px; background-color: #f8fafc; border-radius: 8px; }
-            .feature-icon { font-size: 24px; margin-bottom: 10px; }
-            .feature-text { font-size: 14px; color: #6b7280; }
+            .role-badge { display: inline-block; background: ${user.role === "AGENT" ? "#dbeafe" : user.role === "AGENCY" ? "#f3e8ff" : "#f3f4f6"}; color: ${user.role === "AGENT" ? "#1e40af" : user.role === "AGENCY" ? "#7c3aed" : "#374151"}; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin: 10px 0; }
             .stats { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); padding: 20px; border-radius: 12px; margin: 25px 0; }
-            .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; text-align: center; }
-            .stat-number { font-size: 24px; font-weight: bold; color: #059669; }
-            .stat-label { font-size: 12px; color: #6b7280; }
             .footer { background-color: #1f2937; color: #9ca3af; padding: 30px; text-align: center; }
-            .footer-links { margin: 20px 0; }
-            .footer-links a { color: #60a5fa; text-decoration: none; margin: 0 15px; }
-            .social-links { margin: 20px 0; }
-            .social-links a { display: inline-block; margin: 0 10px; }
             @media (max-width: 600px) {
-              .features { grid-template-columns: 1fr; }
-              .stats-grid { grid-template-columns: 1fr; }
               .content { padding: 20px; }
             }
           </style>
@@ -145,6 +272,10 @@ export async function sendMarketingEmail({
             <div class="content">
               <div class="greeting">Hello ${user.name || "Property Owner"}! 👋</div>
               
+              <div class="role-badge">
+                ${user.role === "AGENT" ? "👤 Agent" : user.role === "AGENCY" ? "🏢 Agency" : "👥 Property Owner"}
+              </div>
+              
               <div class="property-info">
                 <div class="property-title">📍 ${title}</div>
                 <div class="property-number">Property #${propertyNumber}</div>
@@ -157,54 +288,25 @@ export async function sendMarketingEmail({
               <!-- Platform Stats -->
               <div class="stats">
                 <h3 style="text-align: center; color: #059669; margin-bottom: 20px;">🚀 African Real Estate Platform Impact</h3>
-                <div class="stats-grid">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; text-align: center;">
                   <div>
-                    <div class="stat-number">50K+</div>
-                    <div class="stat-label">Verified Buyers</div>
+                    <div style="font-size: 24px; font-weight: bold; color: #059669;">50K+</div>
+                    <div style="font-size: 12px; color: #6b7280;">Verified Buyers</div>
                   </div>
                   <div>
-                    <div class="stat-number">8+</div>
-                    <div class="stat-label">Years Experience</div>
+                    <div style="font-size: 24px; font-weight: bold; color: #059669;">8+</div>
+                    <div style="font-size: 12px; color: #6b7280;">Years Experience</div>
                   </div>
-                </div>
-              </div>
-
-              <!-- Features -->
-              <div class="features">
-                <div class="feature">
-                  <div class="feature-icon">🎯</div>
-                  <div class="feature-text">AI-Powered Buyer Matching</div>
-                </div>
-                <div class="feature">
-                  <div class="feature-icon">📱</div>
-                  <div class="feature-text">Mobile-First Platform</div>
-                </div>
-                <div class="feature">
-                  <div class="feature-icon">🌍</div>
-                  <div class="feature-text">Global Network</div>
-                </div>
-                <div class="feature">
-                  <div class="feature-icon">💎</div>
-                  <div class="feature-text">Premium Marketing</div>
                 </div>
               </div>
 
               <!-- Call to Action -->
               <div class="cta-section">
-                <a href="https://www.african-realestate.com/dashboard?utm_source=email&utm_medium=marketing&utm_campaign=${type}" class="cta-button">
+                <a href="https://www.african-real-estate.com/dashboard?utm_source=email&utm_medium=marketing&utm_campaign=${type}" class="cta-button">
                   🚀 Access Your Dashboard
                 </a>
                 <p style="margin-top: 15px; color: #6b7280; font-size: 14px;">
                   Manage your property, view analytics, and connect with buyers
-                </p>
-              </div>
-
-              <!-- Support Section -->
-              <div style="background-color: #fef3c7; padding: 20px; border-radius: 12px; margin: 25px 0; border-left: 4px solid #f59e0b;">
-                <h4 style="color: #92400e; margin: 0 0 10px 0;">💬 Need Assistance?</h4>
-                <p style="color: #92400e; margin: 0; font-size: 14px;">
-                  Our dedicated support team is here to help you maximize your property's potential. 
-                  <a href="https://www.african-realestate.com/contact" style="color: #92400e; font-weight: 600;">Contact Support</a>
                 </p>
               </div>
             </div>
@@ -214,25 +316,11 @@ export async function sendMarketingEmail({
               <div style="font-size: 18px; font-weight: 600; margin-bottom: 10px;">African Real Estate</div>
               <div style="margin-bottom: 20px;">Transforming African Real Estate Markets</div>
               
-              <div class="footer-links">
-                <a href="https://www.african-realestate.com/about">About Us</a>
-                <a href="https://www.african-realestate.com/blog">Success Stories</a>
-                <a href="https://www.african-realestate.com/blog">Market Insights</a>
-                <a href="https://www.african-realestate.com/contact">Contact</a>
-              </div>
-
-              <div class="social-links">
-                <a href="https://www.linkedin.com/company/african-real-estate">LinkedIn</a>
-                <a href="https://twitter.com/AfricanRealEsta">Twitter</a>
-                <a href="https://facebook.com/AfricanRealEstateMungaiKihara">Facebook</a>
-              </div>
-
               <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #374151; font-size: 12px;">
                 <p>© ${new Date().getFullYear()} African Real Estate. All rights reserved.</p>
                 <p>
                   <a href="https://www.african-realestate.com/privacy" style="color: #9ca3af;">Privacy Policy</a> | 
-                  <a href="https://www.african-realestate.com/terms" style="color: #9ca3af;">Terms of Service</a> | 
-                  <a href="https://www.african-realestate.com/contact" style="color: #9ca3af;">Unsubscribe</a>
+                  <a href="https://www.african-realestate.com/terms" style="color: #9ca3af;">Terms of Service</a>
                 </p>
               </div>
             </div>
@@ -249,7 +337,7 @@ export async function sendMarketingEmail({
         html: htmlContent,
       });
 
-      // Log the email in the database using the correct schema
+      // Log the email in the database
       await prisma.marketingEmail.create({
         data: {
           propertyId: property.id,
@@ -485,5 +573,42 @@ export async function deleteEmailSender(id: string) {
   } catch (error) {
     console.error("Error deleting email sender:", error);
     throw new Error("Failed to delete email sender");
+  }
+}
+
+// Get email statistics
+export async function getEmailStatistics() {
+  try {
+    const [
+      totalEmails,
+      activePropertyEmails,
+      inactivePropertyEmails,
+      recentEmails,
+    ] = await Promise.all([
+      prisma.marketingEmail.count(),
+      prisma.marketingEmail.count({
+        where: { type: "active-property" },
+      }),
+      prisma.marketingEmail.count({
+        where: { type: "inactive-property" },
+      }),
+      prisma.marketingEmail.count({
+        where: {
+          sentAt: {
+            gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // Last 7 days
+          },
+        },
+      }),
+    ]);
+
+    return {
+      totalEmails,
+      activePropertyEmails,
+      inactivePropertyEmails,
+      recentEmails,
+    };
+  } catch (error) {
+    console.error("Error fetching email statistics:", error);
+    throw new Error("Failed to fetch email statistics");
   }
 }
