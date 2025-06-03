@@ -148,7 +148,7 @@ export default function AgencyProfileClient({
   const averageRating = 4.8;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-indigo-50/20">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-indigo-50/20 pt-16">
       {/* Enhanced Header Section */}
       <div className="bg-white border-b border-gray-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 pt-16 lg:pt-32 pb-8">
@@ -166,7 +166,7 @@ export default function AgencyProfileClient({
                   />
                 </div>
                 {/* Professional Badge */}
-                <div className="absolute -bottom-3 -right-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-3 rounded-full shadow-lg">
+                <div className="hidden absolute -bottom-3 -right-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-3 rounded-full shadow-lg">
                   {agency.role === "AGENCY" ? (
                     <Building className="h-5 w-5" />
                   ) : (
@@ -174,7 +174,7 @@ export default function AgencyProfileClient({
                   )}
                 </div>
                 {/* Verification Badge */}
-                <div className="absolute -top-2 -right-2 bg-green-500 text-white p-1.5 rounded-full shadow-lg">
+                <div className="hidden absolute -top-2 -right-2 bg-green-500 text-white p-1.5 rounded-full shadow-lg">
                   <CheckCircle className="h-4 w-4" />
                 </div>
               </div>

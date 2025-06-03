@@ -9,8 +9,6 @@ import {
   MapPin,
   CheckCircle,
   ArrowRight,
-  Phone,
-  Mail,
   Calendar,
   Eye,
   Building2,
@@ -156,9 +154,9 @@ export default function ProfessionalCard({
               professional.email) && (
               <div className="space-y-2 mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
                 <div className="text-xs font-medium text-blue-800 mb-2">
-                  Contact Information
+                  Verified Contact Information Available
                 </div>
-                {professional.phoneNumber && (
+                {/* {professional.phoneNumber && (
                   <a
                     href={`tel:${professional.phoneNumber}`}
                     className="flex items-center gap-2 text-sm text-blue-700 hover:text-blue-900 transition-colors"
@@ -177,7 +175,7 @@ export default function ProfessionalCard({
                       {professional.agentEmail || professional.email}
                     </span>
                   </a>
-                )}
+                )} */}
               </div>
             )}
 

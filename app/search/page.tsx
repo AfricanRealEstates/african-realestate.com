@@ -356,7 +356,7 @@ export default async function SearchPage({
   })();
 
   return (
-    <div className="w-[95%] lg:max-w-7xl mx-auto py-[100px] lg:py-[160px] px-8">
+    <div className=" lg:max-w-7xl mx-auto py-[100px] lg:py-[160px] px-4">
       <div>
         <h1 className="text-3xl font-bold mb-4">
           {query ? `Search Results for "${query}"` : "All Properties"}

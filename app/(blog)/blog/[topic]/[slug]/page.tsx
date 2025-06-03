@@ -10,6 +10,7 @@ import { incrementViewCount } from "@/actions/blog";
 import { auth } from "@/auth";
 import Link from "next/link";
 import BlogViewTracker from "@/app/(blog)/BlogViewTracker";
+import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -205,6 +206,9 @@ export default async function Page({
     plainTextContent.substring(0, 200) +
     (plainTextContent.length > 200 ? "..." : "");
 
+  // Current topic from URL params
+  const currentTopic = params.topic;
+
   return (
     <>
       <script
@@ -275,12 +279,32 @@ export default async function Page({
         topic={params.topic}
       />
 
-      {/* <ReportViews topic={params.topic} title={post.title} slug={post.slug} /> */}
-
       <div className="">
         <div className="xl:container m-aut0 text-gray-600 md:px-12 xl:px-16">
           <div className="lg:p-10 px-4 rounded-[4rem] space-y-6 md:flex flex-col md:gap-6 justify-center md:space-y-0 lg:items-center border-b border-gray-50">
-            <h1 className="font-semibold text-xl md:text-2xl lg:text-4xl tracking-tighter mt-9">
+            {/* Topics Navigation - Desktop & Mobile */}
+            <div className="lg:hidden w-full mt-6">
+              <div className="overflow-x-auto scrollbar-hide pb-2">
+                <div className="flex gap-2 min-w-max">
+                  {post.topics.map((topic) => (
+                    <Link
+                      key={topic}
+                      href={`/blog/${topic}`}
+                      className={cn(
+                        "px-3 py-1.5 rounded-full text-sm font-medium transition-colors whitespace-nowrap",
+                        topic === currentTopic
+                          ? "bg-blue-600 text-white hover:bg-blue-700"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      )}
+                    >
+                      {topic.charAt(0).toUpperCase() + topic.slice(1)}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <h1 className="font-semibold text-xl md:text-2xl lg:text-4xl tracking-tighter">
               {post.title
                 .split(" ") // Split into words
                 .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
@@ -300,38 +324,12 @@ export default async function Page({
               </p>
               <div className="border-r border-ken-primary/10" />
               <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                {/* {post.updatedAt &&
-post.updatedAt.getTime() > post.createdAt.getTime() + 60000 ? (
-<p className="text-sm text-neutral-600">
-Updated on:{" "}
-<span className="font-bold">
-{format(post.updatedAt, "MMMM dd, yyyy")}
-</span>
-</p>
-) : (
-)} */}
                 <p className="text-sm text-neutral-600">
                   Published on:{" "}
                   <span className="font-bold">
                     {format(post.createdAt, "MMMM dd, yyyy")}
                   </span>
                 </p>
-              </div>
-            </div>
-            <div className="lg:hidden w-full mt-2 order-2">
-              <div className="mb-1">
-                {/* <h3 className="text-xl font-bold mb-4">Topics</h3> */}
-                <div className="flex flex-wrap gap-2">
-                  {post.topics.map((topic) => (
-                    <Link
-                      key={topic}
-                      href={`/blog/${topic}`}
-                      className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-full text-sm font-medium transition-colors"
-                    >
-                      {topic.charAt(0).toUpperCase() + topic.slice(1)}
-                    </Link>
-                  ))}
-                </div>
               </div>
             </div>
           </div>
@@ -407,29 +405,12 @@ Updated on:{" "}
                 </div>
                 <span className="ml-4 px-2 py-1 rounded-md text-sm font-medium">
                   {blogPosition.toString().padStart(4, "0")}
-
-                  {/* /{totalPublishedBlogs.toString().padStart(4, "0")} */}
                 </span>
               </div>
             </article>
 
             {/* Mobile Topics and Related Posts - Only visible on mobile/tablet */}
             <div className="lg:hidden w-full mt-8 mb-12 order-2">
-              {/* <div className="mb-8">
-              <h3 className="text-xl font-bold mb-4">Topics</h3>
-              <div className="flex flex-wrap gap-2">
-                {post.topics.map((topic) => (
-                  <Link
-                    key={topic}
-                    href={`/blog/${topic}`}
-                    className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-full text-sm font-medium transition-colors"
-                  >
-                    {topic.charAt(0).toUpperCase() + topic.slice(1)}
-                  </Link>
-                ))}
-              </div>
-            </div> */}
-
               {relatedPosts.length > 0 && (
                 <div>
                   <h3 className="text-xl font-bold mb-4">Related Articles</h3>
@@ -529,17 +510,6 @@ Updated on:{" "}
                               </h3>
                               <div className="mt-auto flex items-center justify-between text-sm text-gray-500">
                                 <div className="flex items-center">
-                                  {/* {relatedPost.author.image ? (
-                <img
-                  src={
-                    relatedPost.author.image ||
-                    "/assets/placeholder.jpg"
-                  }
-                  alt={relatedPost.author.name || "Author"}
-                  className="w-6 h-6 rounded-full mr-2"
-                />
-              ) : (
-              )} */}
                                   <div className="w-6 h-6 rounded-full bg-gray-200 mr-2"></div>
                                   <span>{relatedPost.author.name}</span>
                                 </div>

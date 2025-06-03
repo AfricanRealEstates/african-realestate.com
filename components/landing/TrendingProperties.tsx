@@ -96,14 +96,14 @@ const TrendingProperties = async () => {
     .slice(0, 6); // Ensure we have exactly 6 properties
 
   return (
-    <div className="container max-w-7xl mx-auto py-10">
-      <div className="flex justify-between items-center mb-6">
+    <div className="max-w-7xl mx-auto py-10 px-4">
+      <div className="flex flex-col lg:flex-row justify-between lg:items-center mb-6 gap-y-4">
         <div>
           <h2 className="text-sm text-red-500 font-semibold mb-2 uppercase flex items-center">
             <Flame className="size-4 mr-1 text-red-500" />
             This Week&apos;s Hottest Properties
           </h2>
-          <h3 className="text-2xl font-bold text-gray-700">
+          <h3 className="text-2xl font-bold text-gray-700 hidden lg:block">
             Trending This Week
           </h3>
         </div>

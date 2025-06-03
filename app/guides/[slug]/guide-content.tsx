@@ -1,6 +1,5 @@
 "use client";
-
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import Image from "next/image";
 import type { JSX } from "react/jsx-runtime";
 
@@ -8,126 +7,188 @@ interface GuideContentProps {
   content: any;
 }
 
-export function GuideContent({ content }: GuideContentProps) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return null;
-  }
-
-  // Function to render content recursively
-  const renderContent = (node: any) => {
-    if (!node) return null;
-
-    if (node.type === "doc") {
+export default function GuideContent({ content }: GuideContentProps) {
+  const renderedContent = useMemo(() => {
+    if (!content || typeof content !== "object") {
       return (
-        <div className="prose prose-blue max-w-none">
-          {node.content?.map((child: any, index: number) =>
-            renderContent(child)
-          )}
+        <div className="text-gray-600 leading-relaxed">
+          <p>
+            This guide provides comprehensive information about property
+            transactions in Africa.
+          </p>
         </div>
       );
     }
 
-    if (node.type === "paragraph") {
+    // Handle ProseMirror/TipTap JSON format
+    if (
+      content.type === "doc" &&
+      content.content &&
+      Array.isArray(content.content)
+    ) {
       return (
-        <p key={Math.random()} className="mb-4">
-          {node.content?.map((child: any, index: number) =>
-            renderContent(child)
-          )}
-        </p>
-      );
-    }
+        <div className="space-y-6">
+          {content.content.map((node: any, index: number) => {
+            switch (node.type) {
+              case "paragraph":
+                if (!node.content || node.content.length === 0) {
+                  return <div key={index} className="h-4" />; // Empty paragraph spacing
+                }
+                return (
+                  <p
+                    key={index}
+                    className="text-gray-700 leading-relaxed text-lg"
+                  >
+                    {node.content.map((textNode: any, textIndex: number) => {
+                      if (textNode.type === "text") {
+                        const text = textNode.text;
+                        if (textNode.marks) {
+                          textNode.marks.forEach((mark: any) => {
+                            if (mark.type === "bold") {
+                              return (
+                                <strong
+                                  key={textIndex}
+                                  className="font-semibold text-gray-900"
+                                >
+                                  {text}
+                                </strong>
+                              );
+                            }
+                            if (mark.type === "italic") {
+                              return (
+                                <em key={textIndex} className="italic">
+                                  {text}
+                                </em>
+                              );
+                            }
+                          });
+                          // Return formatted text
+                          if (
+                            textNode.marks.some(
+                              (mark: any) => mark.type === "bold"
+                            )
+                          ) {
+                            return (
+                              <strong
+                                key={textIndex}
+                                className="font-semibold text-gray-900"
+                              >
+                                {text}
+                              </strong>
+                            );
+                          }
+                          if (
+                            textNode.marks.some(
+                              (mark: any) => mark.type === "italic"
+                            )
+                          ) {
+                            return (
+                              <em key={textIndex} className="italic">
+                                {text}
+                              </em>
+                            );
+                          }
+                        }
+                        return text;
+                      }
+                      return null;
+                    })}
+                  </p>
+                );
 
-    if (node.type === "heading") {
-      const HeadingTag = `h${node.attrs.level}` as keyof JSX.IntrinsicElements;
-      return (
-        <HeadingTag key={Math.random()} className="mt-8 mb-4">
-          {node.content?.map((child: any, index: number) =>
-            renderContent(child)
-          )}
-        </HeadingTag>
-      );
-    }
+              case "image":
+                return (
+                  <div key={index} className="my-8">
+                    <div className="relative w-full h-64 md:h-80 rounded-lg overflow-hidden bg-gray-100">
+                      <Image
+                        src={node.attrs?.src || "/placeholder.svg"}
+                        alt={node.attrs?.alt || "Guide image"}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
+                      />
+                    </div>
+                    {node.attrs?.title && (
+                      <p className="text-sm text-gray-500 mt-2 text-center italic">
+                        {node.attrs.title}
+                      </p>
+                    )}
+                  </div>
+                );
 
-    if (node.type === "bulletList") {
-      return (
-        <ul key={Math.random()} className="list-disc pl-6 mb-4">
-          {node.content?.map((child: any, index: number) =>
-            renderContent(child)
-          )}
-        </ul>
-      );
-    }
+              case "heading":
+                const level = node.attrs?.level || 2;
+                const HeadingTag = `h${level}` as keyof JSX.IntrinsicElements;
+                return (
+                  <HeadingTag
+                    key={index}
+                    className={`font-bold text-gray-900 mt-8 mb-4 ${
+                      level === 1
+                        ? "text-3xl"
+                        : level === 2
+                          ? "text-2xl"
+                          : level === 3
+                            ? "text-xl"
+                            : "text-lg"
+                    }`}
+                  >
+                    {node.content?.[0]?.text || ""}
+                  </HeadingTag>
+                );
 
-    if (node.type === "orderedList") {
-      return (
-        <ol key={Math.random()} className="list-decimal pl-6 mb-4">
-          {node.content?.map((child: any, index: number) =>
-            renderContent(child)
-          )}
-        </ol>
-      );
-    }
+              case "bulletList":
+                return (
+                  <ul
+                    key={index}
+                    className="list-disc list-inside space-y-2 text-gray-700 ml-4"
+                  >
+                    {node.content?.map((listItem: any, itemIndex: number) => (
+                      <li key={itemIndex}>
+                        {listItem.content?.[0]?.content?.[0]?.text || ""}
+                      </li>
+                    ))}
+                  </ul>
+                );
 
-    if (node.type === "listItem") {
-      return (
-        <li key={Math.random()}>
-          {node.content?.map((child: any, index: number) =>
-            renderContent(child)
-          )}
-        </li>
-      );
-    }
+              case "orderedList":
+                return (
+                  <ol
+                    key={index}
+                    className="list-decimal list-inside space-y-2 text-gray-700 ml-4"
+                  >
+                    {node.content?.map((listItem: any, itemIndex: number) => (
+                      <li key={itemIndex}>
+                        {listItem.content?.[0]?.content?.[0]?.text || ""}
+                      </li>
+                    ))}
+                  </ol>
+                );
 
-    if (node.type === "image") {
-      return (
-        <div key={Math.random()} className="my-8 relative">
-          <Image
-            src={node.attrs.src || "/placeholder.svg"}
-            alt={node.attrs.alt || "Guide image"}
-            width={800}
-            height={450}
-            className="rounded-lg mx-auto"
-          />
+              case "blockquote":
+                return (
+                  <blockquote
+                    key={index}
+                    className="border-l-4 border-blue-500 pl-6 italic text-gray-600 my-6 bg-blue-50 py-4 rounded-r-lg"
+                  >
+                    {node.content?.[0]?.content?.[0]?.text || ""}
+                  </blockquote>
+                );
+
+              default:
+                return null;
+            }
+          })}
         </div>
       );
     }
 
-    if (node.type === "text") {
-      let content = node.text;
+    // Fallback for other formats
+    return (
+      <div className="text-gray-600 leading-relaxed">
+        <p>Content format not supported. Please contact support.</p>
+      </div>
+    );
+  }, [content]);
 
-      if (node.marks) {
-        for (const mark of node.marks) {
-          if (mark.type === "bold") {
-            content = <strong key={Math.random()}>{content}</strong>;
-          } else if (mark.type === "italic") {
-            content = <em key={Math.random()}>{content}</em>;
-          } else if (mark.type === "link") {
-            content = (
-              <a
-                key={Math.random()}
-                href={mark.attrs.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
-              >
-                {content}
-              </a>
-            );
-          }
-        }
-      }
-
-      return content;
-    }
-
-    return null;
-  };
-
-  return renderContent(content);
+  return <div className="guide-content max-w-none">{renderedContent}</div>;
 }

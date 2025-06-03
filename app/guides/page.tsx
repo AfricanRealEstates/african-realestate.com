@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { prisma } from "@/lib/prisma";
 import GuidesHero from "./guides-hero";
 import DynamicGuidesContent from "./dynamic-guides-content";
 
@@ -42,122 +41,53 @@ const propertyTypes = [
     label: "Residential",
     value: "Residential",
     subOptions: [
-      {
-        label: "Bungalows",
-        value: "Bungalows",
-      },
-      {
-        label: "Mansions",
-        value: "Mansions",
-      },
-      {
-        label: "Villas",
-        value: "Villas",
-      },
-      {
-        label: "Town Houses",
-        value: "Town Houses",
-      },
-      {
-        label: "Duplexes",
-        value: "Duplexes",
-      },
-      {
-        label: "Apartments",
-        value: "Apartments",
-      },
-      {
-        label: "Others",
-        value: "Others",
-      },
+      { label: "Bungalows", value: "Bungalows" },
+      { label: "Mansions", value: "Mansions" },
+      { label: "Villas", value: "Villas" },
+      { label: "Town Houses", value: "Town Houses" },
+      { label: "Duplexes", value: "Duplexes" },
+      { label: "Apartments", value: "Apartments" },
+      { label: "Others", value: "Others" },
     ],
   },
   {
     label: "Commercial",
     value: "Commercial",
     subOptions: [
-      {
-        label: "Office Spaces",
-        value: "Office Spaces",
-      },
-      {
-        label: "Shops",
-        value: "shops",
-      },
-      {
-        label: "Stalls",
-        value: "Stalls",
-      },
-      {
-        label: "Others",
-        value: "Others",
-      },
+      { label: "Office Spaces", value: "Office Spaces" },
+      { label: "Shops", value: "shops" },
+      { label: "Stalls", value: "Stalls" },
+      { label: "Others", value: "Others" },
     ],
   },
   {
     label: "Industrial",
     value: "Industrial",
     subOptions: [
-      {
-        label: "Warehouses",
-        value: "Warehouses",
-      },
-      {
-        label: "Go Downs",
-        value: "Go Downs",
-      },
-      {
-        label: "Parks",
-        value: "Parks",
-      },
-      {
-        label: "Flex Spaces",
-        value: "Flex Spaces",
-      },
+      { label: "Warehouses", value: "Warehouses" },
+      { label: "Go Downs", value: "Go Downs" },
+      { label: "Parks", value: "Parks" },
+      { label: "Flex Spaces", value: "Flex Spaces" },
     ],
   },
   {
     label: "Vacational / Social",
     value: "Vacational / Social",
     subOptions: [
-      {
-        label: "Airbnbs",
-        value: "Airbnbs",
-      },
-      {
-        label: "Cabins",
-        value: "Cabins",
-      },
-      {
-        label: "Cottages",
-        value: "Cottages",
-      },
-      {
-        label: "Vacational Homes",
-        value: "Vacational Homes",
-      },
-      {
-        label: "Others",
-        value: "Others",
-      },
+      { label: "Airbnbs", value: "Airbnbs" },
+      { label: "Cabins", value: "Cabins" },
+      { label: "Cottages", value: "Cottages" },
+      { label: "Vacational Homes", value: "Vacational Homes" },
+      { label: "Others", value: "Others" },
     ],
   },
   {
     label: "Land",
     value: "Land",
     subOptions: [
-      {
-        label: "Plots",
-        value: "Plots",
-      },
-      {
-        label: "Farms",
-        value: "Farms",
-      },
-      {
-        label: "Others",
-        value: "Others",
-      },
+      { label: "Plots", value: "Plots" },
+      { label: "Farms", value: "Farms" },
+      { label: "Others", value: "Others" },
     ],
   },
 ];
@@ -168,27 +98,7 @@ const propertyStatuses = [
   { value: "sell", label: "Sell" },
 ];
 
-// Fetch all guides from the database
-async function getGuides() {
-  try {
-    const guides = await prisma.guide.findMany({
-      where: {
-        published: true,
-      },
-      orderBy: {
-        updatedAt: "desc",
-      },
-    });
-    return guides;
-  } catch (error) {
-    console.error("Failed to fetch guides:", error);
-    return [];
-  }
-}
-
 export default async function GuidesPage() {
-  const guides = await getGuides();
-
   return (
     <div className="min-h-screen bg-white py-16 md:py-24">
       <GuidesHero />
@@ -196,14 +106,7 @@ export default async function GuidesPage() {
         <DynamicGuidesContent
           propertyTypes={propertyTypes}
           propertyStatuses={propertyStatuses}
-          guides={guides}
         />
-
-        {/* <GuidesContent
-          propertyStatuses={propertyStatuses}
-          propertyTypes={propertyTypes}
-          guides={guides}
-        /> */}
       </div>
     </div>
   );

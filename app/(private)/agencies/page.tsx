@@ -263,7 +263,9 @@ export default async function AgenciesAndAgents({
                 >
                   <Users className="h-4 w-4" />
                   <span className="hidden sm:inline">All</span>
-                  <span className="text-xs">({counts.totalProfessionals})</span>
+                  <span className="text-xs">
+                    ({counts.totalProfessionals}) Last 24-hr
+                  </span>
                 </Link>
               </TabsTrigger>
               <TabsTrigger
@@ -277,7 +279,9 @@ export default async function AgenciesAndAgents({
                 >
                   <Building className="h-4 w-4" />
                   <span className="hidden sm:inline">Agencies</span>
-                  <span className="text-xs">({counts.totalAgencies})</span>
+                  <span className="text-xs">
+                    ({counts.totalAgencies}) Last 24-hr
+                  </span>
                 </Link>
               </TabsTrigger>
               <TabsTrigger
@@ -291,7 +295,9 @@ export default async function AgenciesAndAgents({
                 >
                   <Users className="h-4 w-4" />
                   <span className="hidden sm:inline">Agents</span>
-                  <span className="text-xs">({counts.totalAgents})</span>
+                  <span className="text-xs">
+                    ({counts.totalAgents}) Last 24-hr
+                  </span>
                 </Link>
               </TabsTrigger>
             </TabsList>

@@ -1,154 +1,211 @@
-import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Link from "next/link";
-import { GuideContent } from "./guide-content";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, Clock } from "lucide-react";
+import type { Metadata } from "next";
+import { prisma } from "@/lib/prisma";
 import { format } from "date-fns";
-import { getGuideBySlug } from "@/app/(dashboard)/dashboard/guides/actions";
+import {
+  Calendar,
+  Clock,
+  ArrowLeft,
+  Home,
+  Building,
+  Warehouse,
+  Map,
+  DollarSign,
+  Key,
+  FileText,
+} from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import GuideContent from "./guide-content";
 
-interface GuidePageProps {
+interface Props {
   params: {
     slug: string;
   };
 }
 
-export async function generateMetadata({
-  params,
-}: GuidePageProps): Promise<Metadata> {
-  const guide = await getGuideBySlug(params.slug);
+async function getGuide(slug: string) {
+  try {
+    const guide = await prisma.guide.findUnique({
+      where: {
+        slug,
+        published: true,
+      },
+    });
+    return guide;
+  } catch (error) {
+    console.error("Failed to fetch guide:", error);
+    return null;
+  }
+}
 
-  if (!guide || !guide.published) {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const guide = await getGuide(params.slug);
+
+  if (!guide) {
     return {
-      title: "Guide Not Found | African Real Estate",
+      title: "Guide Not Found",
     };
   }
 
   return {
-    title: `${guide.title} | African Real Estate Guides`,
-    description: `Guide for ${guide.propertyType} properties - ${guide.guideType === "sale" ? "For Sale" : guide.guideType === "rent" ? "For Rent" : "To Sell"}`,
+    title: `${guide.title} | African Real Estate`,
+    description: `Comprehensive guide on ${guide.propertyType.toLowerCase()} properties for ${guide.guideType === "sale" ? "buying" : guide.guideType === "rent" ? "renting" : "selling"} in Africa.`,
     openGraph: {
       title: guide.title,
-      description: `Guide for ${guide.propertyType} properties - ${guide.guideType === "sale" ? "For Sale" : guide.guideType === "rent" ? "For Rent" : "To Sell"}`,
-      type: "article",
-      images: guide.coverImage ? [{ url: guide.coverImage }] : undefined,
+      description: `Expert guide on ${guide.propertyType.toLowerCase()} properties`,
+      images: guide.coverImage ? [guide.coverImage] : [],
     },
   };
 }
 
-export default async function GuidePage({ params }: GuidePageProps) {
-  const guide = await getGuideBySlug(params.slug);
+const getTypeIcon = (type: string) => {
+  switch (type) {
+    case "Residential":
+      return <Home className="h-5 w-5" />;
+    case "Commercial":
+      return <Building className="h-5 w-5" />;
+    case "Industrial":
+      return <Warehouse className="h-5 w-5" />;
+    case "Land":
+      return <Map className="h-5 w-5" />;
+    default:
+      return <Home className="h-5 w-5" />;
+  }
+};
 
-  if (!guide || !guide.published) {
+const getGuideTypeIcon = (type: string) => {
+  switch (type) {
+    case "sale":
+      return <DollarSign className="h-4 w-4" />;
+    case "rent":
+      return <Key className="h-4 w-4" />;
+    case "sell":
+      return <FileText className="h-4 w-4" />;
+    default:
+      return <DollarSign className="h-4 w-4" />;
+  }
+};
+
+const getGuideTypeText = (type: string) => {
+  switch (type) {
+    case "sale":
+      return "Buying Guide";
+    case "rent":
+      return "Renting Guide";
+    case "sell":
+      return "Selling Guide";
+    default:
+      return "Property Guide";
+  }
+};
+
+const calculateReadTime = (content: any) => {
+  const contentString = JSON.stringify(content);
+  const wordCount = contentString.split(/\s+/).length;
+  return Math.max(1, Math.ceil(wordCount / 200));
+};
+
+export default async function GuidePage({ params }: Props) {
+  const guide = await getGuide(params.slug);
+
+  if (!guide) {
     notFound();
   }
 
-  // Format the guide type for display
-  const guideTypeDisplay =
-    guide.guideType === "sale"
-      ? "For Sale"
-      : guide.guideType === "rent"
-        ? "For Rent"
-        : "To Sell";
-
-  // Calculate read time (rough estimate: 200 words per minute)
-  const contentString = JSON.stringify(guide.content);
-  const wordCount = contentString.split(/\s+/).length;
-  const readTimeMinutes = Math.max(1, Math.ceil(wordCount / 200));
+  const readTime = calculateReadTime(guide.content);
 
   return (
-    <div className="min-h-screen bg-white py-20 md:py-32">
-      <article className="max-w-7xl mx-auto">
-        {/* Hero section with cover image */}
-        <div className="relative h-full w-full">
-          {/* 
-        {guide.coverImage ? (
-          <Image
-            src={guide.coverImage || "/placeholder.svg"}
-            alt={guide.title}
-            fill
-            className="object-cover"
-            priority
-          />
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-800" />
-        )}
-        
-        <div className="absolute inset-0 bg-black/40" /> */}
-          <div className="flex items-center justify-center">
-            <div className="container mx-auto px-4 text-center">
-              <h1 className="text-xl md:text-3xl lg:text-4xl font-bold mb-4">
-                {guide.title}
-              </h1>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full ">
-                <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
-                  {guide.propertyType}
-                </Badge>
-                <span className="w-1.5 h-1.5 rounded-full bg-gray-400" />
-                <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-100">
-                  {guideTypeDisplay}
-                </Badge>
-              </div>
+    <div className="min-h-screen bg-white">
+      {/* Hero Section */}
+      <div className="bg-gray-50 border-b border-gray-100">
+        <div className="max-w-4xl mx-auto px-4 py-12">
+          <Link
+            href="/guides"
+            className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-8 transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Guides
+          </Link>
+
+          <div className="flex items-center gap-3 mb-6">
+            <Badge className="bg-blue-50 text-blue-700 border-blue-200 flex items-center gap-1.5">
+              {getTypeIcon(guide.propertyType)}
+              {guide.propertyType}
+            </Badge>
+            <Badge className="bg-green-50 text-green-700 border-green-200 flex items-center gap-1.5">
+              {getGuideTypeIcon(guide.guideType)}
+              {getGuideTypeText(guide.guideType)}
+            </Badge>
+          </div>
+
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+            {guide.title}
+          </h1>
+
+          <div className="flex items-center gap-6 text-gray-600">
+            <div className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              <time>
+                {guide.publishedAt
+                  ? format(new Date(guide.publishedAt), "MMMM d, yyyy")
+                  : format(new Date(guide.createdAt), "MMMM d, yyyy")}
+              </time>
+            </div>
+            <div className="flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              <span>{readTime} min read</span>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Content section */}
-        <div className="container mx-auto px-4 py-12">
-          <div className="max-w-3xl mx-auto">
-            <Link href="/guides">
-              <Button variant="outline" className="mb-6 -ml-2">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Guides
-              </Button>
-            </Link>
-
-            <div className="flex items-center text-sm text-muted-foreground mb-8 gap-6">
-              <div className="flex items-center">
-                <Calendar className="mr-2 h-4 w-4" />
-                <time
-                  dateTime={
-                    guide.publishedAt?.toISOString() ||
-                    guide.createdAt.toISOString()
-                  }
-                >
-                  {guide.publishedAt
-                    ? format(new Date(guide.publishedAt), "MMMM d, yyyy")
-                    : format(new Date(guide.createdAt), "MMMM d, yyyy")}
-                </time>
-              </div>
-              <div className="flex items-center">
-                <Clock className="mr-2 h-4 w-4" />
-                <span>{readTimeMinutes} min read</span>
-              </div>
-            </div>
-
-            <GuideContent content={guide.content} />
-
-            <div className="mt-12 pt-8 border-t">
-              <h2 className="text-2xl font-bold mb-4">
-                Looking for {guide.propertyType} Properties?
-              </h2>
-              <p className="text-muted-foreground mb-6">
-                Browse our selection of {guide.propertyType.toLowerCase()}{" "}
-                properties
-                {guide.guideType === "sale"
-                  ? " for sale"
-                  : guide.guideType === "rent"
-                    ? " for rent"
-                    : " to sell"}{" "}
-                in Africa.
-              </p>
-              <Link
-                href={`/properties?propertyType=${encodeURIComponent(guide.propertyType)}&status=${guide.guideType}`}
-              >
-                <Button>View {guide.propertyType} Properties</Button>
-              </Link>
-            </div>
+      {/* Cover Image */}
+      {guide.coverImage && (
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <div className="relative h-64 md:h-96 rounded-xl overflow-hidden">
+            <Image
+              src={guide.coverImage || "/placeholder.svg"}
+              alt={guide.title}
+              fill
+              className="object-cover"
+            />
           </div>
         </div>
-      </article>
+      )}
+
+      {/* Content */}
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <article className="prose prose-lg max-w-none">
+          <GuideContent content={guide.content} />
+        </article>
+
+        {/* Call to Action */}
+        <div className="mt-16 bg-gray-50 rounded-xl p-8 text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Ready to explore {guide.propertyType.toLowerCase()} properties?
+          </h2>
+          <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
+            Browse our curated selection of {guide.propertyType.toLowerCase()}{" "}
+            properties
+            {guide.guideType === "sale"
+              ? " for sale"
+              : guide.guideType === "rent"
+                ? " for rent"
+                : " to sell"}
+            across Africa.
+          </p>
+          <Link
+            href={`/properties?propertyType=${encodeURIComponent(guide.propertyType)}&status=${guide.guideType}`}
+          >
+            <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+              View {guide.propertyType} Properties
+            </Button>
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

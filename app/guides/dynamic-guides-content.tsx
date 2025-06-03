@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import {
@@ -17,11 +16,12 @@ import {
   FileText,
   Calendar,
   Clock,
+  Loader2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-import { GuideContent } from "./[slug]/guide-content";
+import GuideContent from "./[slug]/guide-content";
 
 interface PropertyType {
   value: string;
@@ -55,37 +55,49 @@ interface Guide {
 interface DynamicGuidesContentProps {
   propertyTypes: PropertyType[];
   propertyStatuses: PropertyStatus[];
-  guides: Guide[];
 }
 
 export default function DynamicGuidesContent({
   propertyTypes,
   propertyStatuses,
-  guides,
 }: DynamicGuidesContentProps) {
   const [activeType, setActiveType] = useState(propertyTypes[0].value);
   const [activeStatus, setActiveStatus] = useState("sale");
+  const [guides, setGuides] = useState<Guide[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isClient, setIsClient] = useState(false);
 
-  // Prevent hydration mismatch
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // Get the appropriate guide for the current property type and status
-  const getCurrentGuide = (): Guide | null => {
-    const matchingGuides = guides.filter(
-      (guide) =>
-        guide.propertyType === activeType && guide.guideType === activeStatus
-    );
-    return matchingGuides.length > 0 ? matchingGuides[0] : null;
-  };
+  // Fetch guides from API
+  useEffect(() => {
+    const fetchGuides = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(
+          `/api/guides/filtered?propertyType=${activeType}&guideType=${activeStatus}`
+        );
+        const data = await response.json();
+        setGuides(data);
+      } catch (error) {
+        console.error("Failed to fetch guides:", error);
+        setGuides([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (isClient) {
+      fetchGuides();
+    }
+  }, [activeType, activeStatus, isClient]);
 
   if (!isClient) {
     return null;
   }
 
-  // Get icon based on property type
   const getTypeIcon = (type: string) => {
     switch (type) {
       case "Residential":
@@ -103,279 +115,203 @@ export default function DynamicGuidesContent({
     }
   };
 
-  // Get icon based on property status
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "sale":
-        return <DollarSign className="h-5 w-5" />;
+        return <DollarSign className="h-4 w-4" />;
       case "rent":
-        return <Key className="h-5 w-5" />;
+        return <Key className="h-4 w-4" />;
       case "sell":
-        return <FileText className="h-5 w-5" />;
+        return <FileText className="h-4 w-4" />;
       default:
-        return <DollarSign className="h-5 w-5" />;
+        return <DollarSign className="h-4 w-4" />;
     }
   };
 
-  // Filter guides based on active type and status
-  const filteredGuides = guides.filter(
-    (guide) =>
-      guide.propertyType === activeType && guide.guideType === activeStatus
-  );
-
-  // Get guide content based on property type and status
-  const getGuideContent = (propertyDetails: string, status: string) => {
-    return status === "sale"
-      ? `Guide to buying ${propertyDetails}. Learn about pricing trends, investment potential, and what to look for when purchasing.`
-      : status === "rent"
-        ? `Guide to renting ${propertyDetails}. Understand rental terms, tenant rights, and what to expect from your landlord.`
-        : `Guide to selling ${propertyDetails}. Learn how to prepare your property, set the right price, and attract potential buyers.`;
-  };
-
-  // Format the guide type for display
   const getGuideTypeDisplay = (guideType: string) => {
-    return guideType === "sale"
-      ? "For Sale"
-      : guideType === "rent"
-        ? "For Rent"
-        : "To Sell";
+    return guideType === "sale" ? "Buy" : guideType === "rent" ? "Let" : "Sell";
   };
 
-  // Calculate read time (rough estimate: 200 words per minute)
   const calculateReadTime = (content: any) => {
-    const contentString = JSON.stringify(content);
-    const wordCount = contentString.split(/\s+/).length;
+    if (!content || typeof content !== "object") return 5;
+
+    let wordCount = 0;
+    if (content.type === "doc" && content.content) {
+      content.content.forEach((node: any) => {
+        if (node.type === "paragraph" && node.content) {
+          node.content.forEach((textNode: any) => {
+            if (textNode.type === "text" && textNode.text) {
+              wordCount += textNode.text.split(/\s+/).length;
+            }
+          });
+        }
+      });
+    }
     return Math.max(1, Math.ceil(wordCount / 200));
   };
 
-  // Get the current guide based on selected property type and status
-  const currentGuide = getCurrentGuide();
-  const guideTypeDisplay = currentGuide
-    ? getGuideTypeDisplay(currentGuide.guideType)
-    : getGuideTypeDisplay(activeStatus);
-  const readTimeMinutes = currentGuide
-    ? calculateReadTime(currentGuide.content)
-    : 5; // Default read time
+  const currentGuide = guides.length > 0 ? guides[0] : null;
 
   return (
-    <div className="flex flex-col gap-8">
-      {/* Status tabs */}
+    <div className="max-w-7xl mx-auto">
       <Tabs
         defaultValue={activeStatus}
         onValueChange={setActiveStatus}
         className="w-full"
       >
-        <div className="flex justify-center mb-8">
-          <TabsList className="grid w-full max-w-md grid-cols-3">
+        <div className="flex justify-center mb-12">
+          <TabsList className="grid w-full max-w-md grid-cols-3 bg-gray-100 p-1 rounded-xl">
             {propertyStatuses.map((status) => (
               <TabsTrigger
                 key={status.value}
                 value={status.value}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm"
               >
                 {getStatusIcon(status.value)}
-                {status.value === "sell" ? "To Sell" : `For ${status.label}`}
+                <span className="hidden sm:inline">
+                  {status.value === "sell" ? "Sell" : `${status.label}`}
+                </span>
+                <span className="sm:hidden">
+                  {status.value === "sell" ? "Sell" : status.label}
+                </span>
               </TabsTrigger>
             ))}
           </TabsList>
         </div>
 
-        {/* Content for each status */}
         {propertyStatuses.map((status) => (
           <TabsContent key={status.value} value={status.value} className="mt-0">
-            <div className="flex flex-col lg:flex-row gap-8">
-              {/* Property types sidebar */}
-              <div className="lg:w-1/4">
-                <div className="sticky top-8 bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-                  <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+            <div className="grid lg:grid-cols-4 gap-8">
+              <div className="lg:col-span-1">
+                <div className="bg-white rounded-xl border border-gray-100 p-6 sticky top-8">
+                  <h3 className="font-semibold text-gray-900 mb-4">
                     Property Types
-                  </h2>
-                  <ScrollArea className="h-full">
-                    <nav className="space-y-2">
-                      {propertyTypes.map((type) => (
-                        <button
-                          key={type.value}
-                          onClick={() => setActiveType(type.value)}
-                          className={cn(
-                            "w-full text-left px-4 py-3 rounded-md transition-all duration-300 ease-in-out flex items-center gap-3",
-                            activeType === type.value
-                              ? "bg-blue-50 text-blue-700 font-medium"
-                              : "hover:bg-gray-50 text-gray-600"
-                          )}
-                        >
-                          {getTypeIcon(type.value)}
-                          {type.label}
-                        </button>
-                      ))}
-                    </nav>
-                  </ScrollArea>
+                  </h3>
+                  <nav className="space-y-1">
+                    {propertyTypes.map((type) => (
+                      <button
+                        key={type.value}
+                        onClick={() => setActiveType(type.value)}
+                        className={cn(
+                          "w-full text-left px-3 py-2.5 rounded-lg transition-colors flex items-center gap-3 text-sm",
+                          activeType === type.value
+                            ? "bg-blue-50 text-blue-700 font-medium"
+                            : "hover:bg-gray-50 text-gray-600"
+                        )}
+                      >
+                        {getTypeIcon(type.value)}
+                        {type.label}
+                      </button>
+                    ))}
+                  </nav>
                 </div>
               </div>
 
-              {/* Guide content area */}
-              <div className="lg:w-3/4">
-                {currentGuide ? (
-                  <article className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-                    <div className="mb-6">
-                      <h1 className="text-2xl md:text-3xl font-bold mb-4">
-                        {currentGuide.title}
-                      </h1>
-                      <div className="flex items-center gap-2">
-                        <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
+              <div className="lg:col-span-3">
+                {loading ? (
+                  <div className="bg-white rounded-xl border border-gray-100 p-8">
+                    <div className="flex items-center justify-center py-12">
+                      <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+                    </div>
+                  </div>
+                ) : currentGuide ? (
+                  <article className="bg-white rounded-xl border border-gray-100 p-8">
+                    {/* Guide Header */}
+                    <div className="mb-8 pb-6 border-b border-gray-100">
+                      <div className="flex items-center gap-3 mb-4">
+                        <Badge
+                          variant="secondary"
+                          className="bg-blue-50 text-blue-700 border-blue-200"
+                        >
                           {currentGuide.propertyType}
                         </Badge>
-                        <span className="w-1.5 h-1.5 rounded-full bg-gray-400" />
-                        <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-100">
-                          {guideTypeDisplay}
+                        <Badge
+                          variant="secondary"
+                          className="bg-green-50 text-green-700 border-green-200"
+                        >
+                          {getGuideTypeDisplay(currentGuide.guideType)}
                         </Badge>
                       </div>
 
-                      <div className="flex items-center text-sm text-muted-foreground mt-4 gap-6">
-                        <div className="flex items-center">
-                          <Calendar className="mr-2 h-4 w-4" />
-                          <time
-                            dateTime={
-                              currentGuide.publishedAt?.toISOString() ||
-                              currentGuide.createdAt.toISOString()
-                            }
-                          >
+                      <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                        {currentGuide.title}
+                      </h1>
+
+                      <div className="flex items-center gap-6 text-sm text-gray-500">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4" />
+                          <time>
                             {currentGuide.publishedAt
                               ? format(
                                   new Date(currentGuide.publishedAt),
-                                  "MMMM d, yyyy"
+                                  "MMM d, yyyy"
                                 )
                               : format(
                                   new Date(currentGuide.createdAt),
-                                  "MMMM d, yyyy"
+                                  "MMM d, yyyy"
                                 )}
                           </time>
                         </div>
-                        <div className="flex items-center">
-                          <Clock className="mr-2 h-4 w-4" />
-                          <span>{readTimeMinutes} min read</span>
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-4 w-4" />
+                          <span>
+                            {calculateReadTime(currentGuide.content)} min read
+                          </span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Guide content would go here */}
-                    <GuideContent content={currentGuide.content} />
+                    {/* Full Guide Content */}
+                    <div className="prose prose-lg max-w-none mb-8">
+                      <GuideContent content={currentGuide.content} />
+                    </div>
 
-                    {/* <div className="prose max-w-none">
-                    
-                      <p>
-                        {JSON.stringify(currentGuide.content) !== "{}" &&
-                          `This is a guide about ${currentGuide.propertyType} properties for ${currentGuide.guideType === "sale" ? "buying" : currentGuide.guideType === "rent" ? "renting" : "selling"}.`}
-                      </p>
-                    </div> */}
-
-                    <div className="mt-12 pt-8 border-t">
-                      <h2 className="text-2xl font-bold mb-4">
-                        Looking for {currentGuide.propertyType} Properties?
-                      </h2>
-                      <p className="text-muted-foreground mb-6">
-                        Browse our selection of{" "}
-                        {currentGuide.propertyType.toLowerCase()} properties
-                        {currentGuide.guideType === "sale"
-                          ? " for sale"
-                          : currentGuide.guideType === "rent"
-                            ? " for rent"
-                            : " to sell"}{" "}
-                        in Africa.
+                    {/* Call to Action */}
+                    <div className="bg-gray-50 rounded-lg p-6 mt-8">
+                      <h3 className="font-semibold text-gray-900 mb-2">
+                        Ready to explore{" "}
+                        {currentGuide.propertyType.toLowerCase()} properties?
+                      </h3>
+                      <p className="text-gray-600 mb-4">
+                        Browse our curated selection of properties that match
+                        your needs.
                       </p>
                       <Link
                         href={`/properties?propertyType=${encodeURIComponent(currentGuide.propertyType)}&status=${currentGuide.guideType}`}
                       >
-                        <Button>
-                          View {currentGuide.propertyType} Properties
+                        <Button className="bg-blue-600 hover:bg-blue-700">
+                          View Properties
+                          <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>
                       </Link>
                     </div>
                   </article>
                 ) : (
-                  <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-                    <div className="mb-8">
-                      <h3 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+                  <div className="bg-white rounded-xl border border-gray-100 p-8">
+                    <div className="text-center py-12">
+                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         {getTypeIcon(activeType)}
-                        {
-                          propertyTypes.find(
-                            (type) => type.value === activeType
-                          )?.label
-                        }{" "}
-                        Properties
-                        <span className="text-gray-500 font-normal text-lg ml-2">
-                          (
-                          {activeStatus === "sell"
-                            ? "To Sell"
-                            : `For ${propertyStatuses.find((s) => s.value === activeStatus)?.label || activeStatus}`}
-                          )
-                        </span>
-                      </h3>
-                      <p className="text-gray-600 mt-2">
-                        No specific guide is available for this combination.
-                        Here&apos;s some general information about{" "}
-                        {propertyTypes
-                          .find((type) => type.value === activeType)
-                          ?.label.toLowerCase()}{" "}
-                        properties
-                        {activeStatus === "sale"
-                          ? " available for purchase"
-                          : activeStatus === "rent"
-                            ? " available for rent"
-                            : " you want to sell"}{" "}
-                        in African Real Estate.
-                      </p>
-                    </div>
-
-                    <div className="prose max-w-none">
-                      <h2>
-                        Guide to{" "}
-                        {activeStatus === "sale"
-                          ? "Buying"
-                          : activeStatus === "rent"
-                            ? "Renting"
-                            : "Selling"}{" "}
-                        {
-                          propertyTypes.find(
-                            (type) => type.value === activeType
-                          )?.label
-                        }{" "}
-                        Properties
-                      </h2>
-
-                      <p>
-                        {getGuideContent(
-                          propertyTypes
-                            .find((type) => type.value === activeType)
-                            ?.label.toLowerCase() || "",
-                          activeStatus
-                        )}
-                      </p>
-
-                      <h3>Key Considerations</h3>
-                      <ul>
-                        <li>Location and accessibility</li>
-                        <li>Property condition and maintenance</li>
-                        <li>Legal documentation and compliance</li>
-                        <li>Market trends and valuation</li>
-                        <li>Financing options and requirements</li>
-                      </ul>
-
-                      <div className="mt-8">
-                        <Link
-                          href={`/properties?propertyType=${encodeURIComponent(activeType)}&status=${activeStatus}`}
-                        >
-                          <Button>
-                            View{" "}
-                            {
-                              propertyTypes.find(
-                                (type) => type.value === activeType
-                              )?.label
-                            }{" "}
-                            Properties
-                            <ArrowRight className="ml-2 h-4 w-4" />
-                          </Button>
-                        </Link>
                       </div>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                        {
+                          propertyTypes.find(
+                            (type) => type.value === activeType
+                          )?.label
+                        }{" "}
+                        Properties
+                      </h3>
+                      <p className="text-gray-600 mb-6">
+                        No specific guide available for this combination.
+                        Explore our general property information below.
+                      </p>
+                      <Link
+                        href={`/properties?propertyType=${encodeURIComponent(activeType)}&status=${activeStatus}`}
+                      >
+                        <Button variant="outline">
+                          Browse Properties
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
+                      </Link>
                     </div>
                   </div>
                 )}

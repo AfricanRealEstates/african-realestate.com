@@ -1,3 +1,5 @@
+"use client";
+import { useState, useEffect } from "react";
 import {
   ArrowRight,
   BookOpen,
@@ -8,11 +10,10 @@ import {
   DollarSign,
   Key,
   FileText,
+  Search,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { prisma } from "@/lib/prisma";
-import { Badge } from "@/components/ui/badge";
 import {
   Carousel,
   CarouselContent,
@@ -20,323 +21,300 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-// Helper function to get icon based on property type
+interface Guide {
+  id: string;
+  title: string;
+  slug: string;
+  propertyType: string;
+  guideType: string;
+  coverImage: string | null;
+  published: boolean;
+  publishedAt: Date | null;
+  createdAt: Date;
+}
+
+// Helper functions
 const getTypeIcon = (type: string) => {
   switch (type) {
     case "Residential":
-      return <Home className="h-5 w-5" />;
+      return <Home className="h-4 w-4" />;
     case "Commercial":
-      return <Building className="h-5 w-5" />;
+      return <Building className="h-4 w-4" />;
     case "Industrial":
-      return <Warehouse className="h-5 w-5" />;
+      return <Warehouse className="h-4 w-4" />;
     case "Land":
-      return <Map className="h-5 w-5" />;
+      return <Map className="h-4 w-4" />;
     default:
-      return <Home className="h-5 w-5" />;
+      return <Home className="h-4 w-4" />;
   }
 };
 
-// Helper function to get icon based on guide type
 const getGuideTypeIcon = (type: string) => {
   switch (type) {
     case "sale":
-      return <DollarSign className="h-5 w-5" />;
+      return <DollarSign className="h-4 w-4" />;
     case "rent":
-      return <Key className="h-5 w-5" />;
+      return <Key className="h-4 w-4" />;
     case "sell":
-      return <FileText className="h-5 w-5" />;
+      return <FileText className="h-4 w-4" />;
     default:
-      return <DollarSign className="h-5 w-5" />;
+      return <DollarSign className="h-4 w-4" />;
   }
 };
 
-// Helper function to get formatted guide type text
 const getGuideTypeText = (type: string) => {
   switch (type) {
     case "sale":
-      return "Buying Guide";
+      return "Buying";
     case "rent":
-      return "Renting Guide";
+      return "Renting";
     case "sell":
-      return "Selling Guide";
+      return "Selling";
     default:
-      return "Property Guide";
+      return "Guide";
   }
 };
 
-// Default guides with images if no guides are available in the database
-const defaultGuides = [
-  {
-    id: "default-1",
-    title: "Buying Residential Property",
-    propertyType: "Residential",
-    guideType: "sale",
-    description:
-      "Discover your dream home effortlessly. Explore diverse properties and expert guidance for a seamless buying experience.",
-    slug: "buying-residential-property",
-    coverImage: "/assets/residential-buying.jpg",
-    defaultImage: "/placeholder.svg?height=400&width=600",
-  },
-  {
-    id: "default-2",
-    title: "Renting Commercial Space",
-    propertyType: "Commercial",
-    guideType: "rent",
-    description:
-      "Find the perfect rental space for your business. Browse our listings tailored to suit your unique business needs.",
-    slug: "renting-commercial-property",
-    coverImage: "/assets/commercial-renting.jpg",
-    defaultImage: "/placeholder.svg?height=400&width=600",
-  },
-  {
-    id: "default-3",
-    title: "Selling Land Property",
-    propertyType: "Land",
-    guideType: "sell",
-    description:
-      "Maximize your land value with our expert selling guidance. We'll help showcase your property's best features for a successful sale.",
-    slug: "selling-land-property",
-    coverImage: "/assets/land-selling.jpg",
-    defaultImage: "/placeholder.svg?height=400&width=600",
-  },
-  {
-    id: "default-4",
-    title: "Buying Commercial Property",
-    propertyType: "Commercial",
-    guideType: "sale",
-    description:
-      "Invest in commercial real estate with confidence. Our guide helps you navigate the market and find profitable opportunities.",
-    slug: "buying-commercial-property",
-    coverImage: "/assets/commercial-buying.jpg",
-    defaultImage: "/placeholder.svg?height=400&width=600",
-  },
-  {
-    id: "default-5",
-    title: "Renting Residential Property",
-    propertyType: "Residential",
-    guideType: "rent",
-    description:
-      "Find your perfect home to rent. Our comprehensive guide walks you through the rental process from search to signing.",
-    slug: "renting-residential-property",
-    coverImage: "/assets/residential-renting.jpg",
-    defaultImage: "/placeholder.svg?height=400&width=600",
-  },
-  {
-    id: "default-6",
-    title: "Selling Industrial Property",
-    propertyType: "Industrial",
-    guideType: "sell",
-    description:
-      "Sell your industrial property at the best price. Learn about market valuation, buyer expectations, and closing strategies.",
-    slug: "selling-industrial-property",
-    coverImage: "/assets/industrial-selling.jpg",
-    defaultImage: "/placeholder.svg?height=400&width=600",
-  },
-];
-
-// Guide card component
-const GuideCard = ({ guide }: { guide: any }) => {
+// Clean guide card component
+const GuideCard = ({ guide }: { guide: Guide }) => {
   return (
-    <article className="group hover:cursor-pointer flex flex-col h-full transition-all ease-in-out border rounded-lg border-neutral-200 hover:border-neutral-100 hover:shadow-2xl hover:shadow-gray-600/10 bg-white overflow-hidden">
-      <div className="relative h-48 overflow-hidden">
-        <Image
-          src={
-            guide.coverImage ||
-            guide.defaultImage ||
-            "/placeholder.svg?height=400&width=600"
-          }
-          alt={guide.title}
-          className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
-          width={600}
-          height={400}
-        />
-        <div className="absolute top-4 right-4">
-          <Badge
-            className="bg-purple-100 text-purple-800 hover:bg-purple-100 border-none"
-            variant="outline"
-          >
-            {getGuideTypeText(guide.guideType)}
-          </Badge>
-        </div>
-      </div>
-
-      <div className="p-3 flex flex-col flex-1">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 rounded-full bg-blue-50 text-blue-600">
-            {getTypeIcon(guide.propertyType)}
+    <Link href={`/guides/${guide.slug}`} className="block group">
+      <article className="bg-white rounded-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-gray-200 h-full">
+        <div className="relative h-48 overflow-hidden bg-gray-50">
+          <Image
+            src={guide.coverImage || "/placeholder.svg?height=300&width=400"}
+            alt={guide.title}
+            className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+            width={400}
+            height={300}
+          />
+          <div className="absolute top-3 left-3">
+            <div className="flex items-center gap-1.5 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 text-xs font-medium text-gray-700">
+              {getGuideTypeIcon(guide.guideType)}
+              {getGuideTypeText(guide.guideType)}
+            </div>
           </div>
-          <Badge
-            className="bg-blue-100 text-blue-800 hover:bg-blue-100 border-none"
-            variant="outline"
-          >
-            {guide.propertyType}
-          </Badge>
         </div>
 
-        <div className="content flex-1">
-          <h4
-            className={`capitalize font-bold text-base lg:text-lg text-[#636262] mb-3`}
-          >
+        <div className="p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-1.5 text-gray-600">
+              {getTypeIcon(guide.propertyType)}
+              <span className="text-sm font-medium">{guide.propertyType}</span>
+            </div>
+          </div>
+
+          <h3 className="font-semibold text-gray-900 text-lg mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
             {guide.title}
-          </h4>
-          {/* <p className="text-[#5c6368] leading-relaxed text-sm mb-6">
-            {guide.description}
-          </p> */}
-        </div>
+          </h3>
 
-        <div className="flex items-center justify-between mt-auto pt-2 border-t border-gray-100">
-          <Link
-            href={`/guides/${guide.slug}`}
-            className={` group-hover:text-blue-500 text-[#5c6368] group-hover:underline underline-offset-4 transition-all ease-in-out flex items-center gap-2`}
-          >
-            <BookOpen className="h-4 w-4" />
-            <span>Read Guide</span>
-          </Link>
-
-          <Link
-            href={`/guides/${guide.slug}`}
-            aria-label={`Read guide: ${guide.title}`}
-            className="relative ml-auto flex h-10 w-10 items-center justify-center before:absolute before:inset-0 before:rounded-full before:border before:border-gray-200/40 before:bg-gray-100 before:transition-transform before:duration-300 active:duration-75 active:before:scale-95 group-hover:before:scale-110 dark:before:border-gray-700 dark:before:bg-gray-800"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-              className="relative text-gray-500 h-4 w-4 transition duration-300 group-hover:-rotate-45 group-hover:text-blue-600"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-              ></path>
-            </svg>
-          </Link>
+          <div className="flex items-center text-blue-600 text-sm font-medium group-hover:text-blue-700">
+            <BookOpen className="h-4 w-4 mr-1.5" />
+            Read Guide
+            <ArrowRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
+          </div>
         </div>
-      </div>
-    </article>
+      </article>
+    </Link>
   );
 };
 
-export default async function OurServices() {
-  // Fetch published guides from the database
-  const guides = await prisma.guide.findMany({
-    where: {
-      published: true,
-    },
-    orderBy: {
-      publishedAt: "desc",
-    },
-    take: 12, // Get more guides for the carousel
-  });
+export default function OurServices() {
+  const [guides, setGuides] = useState<Guide[]>([]);
+  const [filteredGuides, setFilteredGuides] = useState<Guide[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedType, setSelectedType] = useState<string>("all");
+  const [selectedGuideType, setSelectedGuideType] = useState<string>("all");
 
-  // Process guides to add descriptions if missing
-  const processedGuides = guides.map((guide) => {
-    // Generate a description if none exists
-    const description =
-      "Expert guide on navigating the property market. Learn about pricing, legal requirements, and making informed decisions.";
-
-    // Add default image if none exists
-    const defaultImage = `/placeholder.svg?height=400&width=600&text=${encodeURIComponent(guide.title)}`;
-
-    return {
-      ...guide,
-      description,
-      defaultImage,
+  // Fetch guides from API
+  useEffect(() => {
+    const fetchGuides = async () => {
+      try {
+        const response = await fetch("/api/guides");
+        const data = await response.json();
+        setGuides(data);
+        setFilteredGuides(data);
+      } catch (error) {
+        console.error("Failed to fetch guides:", error);
+      } finally {
+        setLoading(false);
+      }
     };
-  });
 
-  // Use default guides if no guides are available
-  const displayGuides =
-    processedGuides.length > 0 ? processedGuides : defaultGuides;
+    fetchGuides();
+  }, []);
+
+  // Filter guides based on search and filters
+  useEffect(() => {
+    let filtered = guides;
+
+    if (searchTerm) {
+      filtered = filtered.filter(
+        (guide) =>
+          guide.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          guide.propertyType.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (selectedType !== "all") {
+      filtered = filtered.filter(
+        (guide) => guide.propertyType === selectedType
+      );
+    }
+
+    if (selectedGuideType !== "all") {
+      filtered = filtered.filter(
+        (guide) => guide.guideType === selectedGuideType
+      );
+    }
+
+    setFilteredGuides(filtered);
+  }, [guides, searchTerm, selectedType, selectedGuideType]);
+
+  if (loading) {
+    return (
+      <section className="py-16 bg-gray-50/50">
+        <div className="mx-auto w-full max-w-7xl px-4">
+          <div className="text-center mb-12">
+            <div className="h-8 bg-gray-200 rounded w-64 mx-auto mb-4 animate-pulse"></div>
+            <div className="h-4 bg-gray-200 rounded w-96 mx-auto animate-pulse"></div>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+              <div
+                key={i}
+                className="bg-white rounded-xl border border-gray-100 overflow-hidden"
+              >
+                <div className="h-48 bg-gray-200 animate-pulse"></div>
+                <div className="p-5">
+                  <div className="h-4 bg-gray-200 rounded w-20 mb-3 animate-pulse"></div>
+                  <div className="h-6 bg-gray-200 rounded w-full mb-3 animate-pulse"></div>
+                  <div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <div className="border-t border-gray-50">
-      <section className="mx-auto w-full max-w-7xl px-4 py-8">
-        <div className="flex items-center justify-between flex-wrap gap-4 mb-10">
-          <div>
-            {/* <h2
-            className={`text-[14px] text-blue-500 font-semibold mb-2 uppercase `}
-          >
-            Our Services
-          </h2> */}
-            <h3 className={`text-2xl font-bold text-gray-700`}>
-              Property Guides
-            </h3>
+    <section className="py-16 bg-gray-50/50">
+      <div className="mx-auto w-full max-w-7xl px-4">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            Property Guides
+          </h2>
+          <p className="text-gray-600 max-w-2xl mx-auto mb-8">
+            Expert guidance for buying, selling, and renting properties across
+            Africa. Get the insights you need to make informed real estate
+            decisions.
+          </p>
+
+          {/* Interactive Filters */}
+          <div className="flex flex-col sm:flex-row gap-4 max-w-4xl mx-auto">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder="Search guides..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 bg-white border-gray-200"
+              />
+            </div>
+            <Select value={selectedType} onValueChange={setSelectedType}>
+              <SelectTrigger className="w-full sm:w-48 bg-white border-gray-200">
+                <SelectValue placeholder="Property Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="Residential">Residential</SelectItem>
+                <SelectItem value="Commercial">Commercial</SelectItem>
+                <SelectItem value="Industrial">Industrial</SelectItem>
+                <SelectItem value="Land">Land</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select
+              value={selectedGuideType}
+              onValueChange={setSelectedGuideType}
+            >
+              <SelectTrigger className="w-full sm:w-48 bg-white border-gray-200">
+                <SelectValue placeholder="Guide Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Guides</SelectItem>
+                <SelectItem value="sale">Buying</SelectItem>
+                <SelectItem value="rent">Renting</SelectItem>
+                <SelectItem value="sell">Selling</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
+        </div>
+
+        {/* Results */}
+        {filteredGuides.length > 0 ? (
+          <div className="relative">
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              className="w-full"
+            >
+              <CarouselContent className="-ml-4">
+                {filteredGuides.map((guide) => (
+                  <CarouselItem
+                    key={guide.id}
+                    className="pl-4 md:basis-1/2 lg:basis-1/3"
+                  >
+                    <GuideCard guide={guide} />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <div className="flex justify-center gap-2 mt-8">
+                <CarouselPrevious className="relative inset-0 translate-y-0 bg-white border border-gray-200 hover:bg-gray-50 shadow-sm" />
+                <CarouselNext className="relative inset-0 translate-y-0 bg-white border border-gray-200 hover:bg-gray-50 shadow-sm" />
+              </div>
+            </Carousel>
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Search className="h-8 w-8 text-gray-400" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              No guides found
+            </h3>
+            <p className="text-gray-600">
+              Try adjusting your search or filters to find what you&apos;re
+              looking for.
+            </p>
+          </div>
+        )}
+
+        {/* View All Link */}
+        <div className="text-center mt-12">
           <Link
             href="/guides"
-            className={` text-[#636262] hover:text-blue-500 group font-semibold relative flex items-center gap-x-2`}
+            className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
           >
-            <span className="group-hover:underline group-hover:underline-offset-4">
-              View All Guides
-            </span>
-            <ArrowRight className="size-4 ml-1 transition-transform duration-300 group-hover:translate-x-1" />
+            View All Guides
+            <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
-
-        {/* Featured Guides Carousel */}
-        <div className="mb-12">
-          {/* <h4
-          className={`${josefin.className} text-[#636262] text-xl font-semibold mb-6`}
-        >
-          Featured Guides
-        </h4> */}
-          <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-            className="w-full"
-          >
-            <CarouselContent>
-              {displayGuides.map((guide) => (
-                <CarouselItem
-                  key={guide.id}
-                  className="md:basis-1/2 lg:basis-1/3 pl-4"
-                >
-                  <GuideCard guide={guide} />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <div className="flex justify-end gap-2 mt-6">
-              <CarouselPrevious className="relative inset-0 translate-y-0 bg-white border border-gray-200 hover:bg-gray-50" />
-              <CarouselNext className="relative inset-0 translate-y-0 bg-white border border-gray-200 hover:bg-gray-50" />
-            </div>
-          </Carousel>
-        </div>
-
-        {/* Popular Guides Grid */}
-        {/* <div>
-        <h4
-          className={`${josefin.className} text-[#636262] text-xl font-semibold mb-6`}
-        >
-          Popular Guides
-        </h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {displayGuides.slice(0, 6).map((guide) => (
-            <GuideCard key={guide.id} guide={guide} />
-          ))}
-        </div>
       </div>
-
-      <div className="mt-12 text-center">
-        <p className="text-[#5c6368] mb-6 max-w-2xl mx-auto">
-          Looking for more detailed information about buying, selling, or
-          renting properties in Africa? Our comprehensive guides provide expert
-          advice for every step of your real estate journey.
-        </p>
-        <Link
-          href="/guides"
-          className="inline-flex items-center justify-center rounded-md bg-blue-600 px-6 py-3 text-white font-medium hover:bg-blue-700 transition-colors"
-        >
-          Explore All Property Guides
-          <ArrowRight className="ml-2 h-4 w-4" />
-        </Link>
-      </div> */}
-      </section>
-    </div>
+    </section>
   );
 }
