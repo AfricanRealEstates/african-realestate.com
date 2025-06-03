@@ -121,10 +121,10 @@ export default async function GuidePage({ params }: Props) {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <div className="bg-gray-50 border-b border-gray-100">
-        <div className="max-w-4xl mx-auto px-4 py-12">
+        <div className="max-w-5xl mx-auto px-4 py-24">
           <Link
             href="/guides"
-            className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-8 transition-colors"
+            className="pt-8 inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-8 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Guides
@@ -141,7 +141,7 @@ export default async function GuidePage({ params }: Props) {
             </Badge>
           </div>
 
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">
             {guide.title}
           </h1>
 
@@ -164,7 +164,7 @@ export default async function GuidePage({ params }: Props) {
 
       {/* Cover Image */}
       {guide.coverImage && (
-        <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="max-w-5xl mx-auto px-4 py-8">
           <div className="relative h-64 md:h-96 rounded-xl overflow-hidden">
             <Image
               src={guide.coverImage || "/placeholder.svg"}
@@ -177,7 +177,7 @@ export default async function GuidePage({ params }: Props) {
       )}
 
       {/* Content */}
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-5xl mx-auto px-4 py-8">
         <article className="prose prose-lg max-w-none">
           <GuideContent content={guide.content} />
         </article>

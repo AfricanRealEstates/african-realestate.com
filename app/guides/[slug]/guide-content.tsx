@@ -98,14 +98,15 @@ export default function GuideContent({ content }: GuideContentProps) {
 
               case "image":
                 return (
-                  <div key={index} className="my-8">
-                    <div className="relative w-full h-64 md:h-80 rounded-lg overflow-hidden bg-gray-100">
+                  <div key={index} className="my-2">
+                    <div className="relative w-full rounded-lg overflow-hidden">
                       <Image
                         src={node.attrs?.src || "/placeholder.svg"}
                         alt={node.attrs?.alt || "Guide image"}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
+                        width={1200} // Adjust this to your largest expected image width
+                        height={300}
+                        className="w-full h-[400px] rounded-lg object-cover"
+                        sizes="(max-width: 768px) 100vw, 800px"
                       />
                     </div>
                     {node.attrs?.title && (
