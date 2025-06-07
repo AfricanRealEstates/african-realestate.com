@@ -256,7 +256,7 @@ export default function PropertyCardEnhanced({
             </div>
             {property.status && (
               <div className="text-xs text-gray-600">
-                {property.status === "sale" ? "For Sale" : "For Rent"}
+                {property.status === "sale" ? "For Sale" : "To Let"}
               </div>
             )}
           </div>

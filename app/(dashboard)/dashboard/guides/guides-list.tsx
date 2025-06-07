@@ -194,7 +194,7 @@ export function GuidesList() {
           <SelectContent>
             <SelectItem value="all">All Guide Types</SelectItem>
             <SelectItem value="sale">For Sale</SelectItem>
-            <SelectItem value="rent">For Rent</SelectItem>
+            <SelectItem value="rent">To Let</SelectItem>
             <SelectItem value="sell">To Sell</SelectItem>
           </SelectContent>
         </Select>

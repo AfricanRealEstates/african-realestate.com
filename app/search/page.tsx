@@ -39,8 +39,8 @@ export async function generateMetadata({
   }
 
   if (status) {
-    title += ` | ${status === "sale" ? "For Sale" : "For Rent"}`;
-    description += ` Properties ${status === "sale" ? "for sale" : "for rent"}.`;
+    title += ` | ${status === "sale" ? "For Sale" : "To Let"}`;
+    description += ` Properties ${status === "sale" ? "for sale" : "to let"}.`;
   }
 
   if (propertyType) {

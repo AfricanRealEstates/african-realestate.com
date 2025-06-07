@@ -485,7 +485,7 @@ export default function PropertyCardEnhanced({
 
           <div className="flex items-center gap-1 text-gray-600 mb-3">
             <MapPin className="h-4 w-4" />
-            <span className="text-sm line-clamp-1">
+            <span className="text-sm line-clamp-1 capitalize">
               {property.locality}, {property.county}
             </span>
           </div>

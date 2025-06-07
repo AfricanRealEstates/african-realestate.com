@@ -128,7 +128,7 @@ export default async function NearbyTownPropertiesPage({
           "@type": "Offer",
           price: property.price,
           priceCurrency: property.currency,
-          availability: property.status === "sale" ? "For Sale" : "For Rent",
+          availability: property.status === "sale" ? "For Sale" : "To Let",
         },
         address: {
           "@type": "PostalAddress",

@@ -379,7 +379,7 @@ export default async function CityProperties() {
                     property.status === "sale" ? "bg-green-600" : "bg-blue-600"
                   } text-white px-2 py-1 rounded-md text-xs font-medium`}
                 >
-                  {property.status === "sale" ? "For Sale" : "For Rent"}
+                  {property.status === "sale" ? "For Sale" : "To Let"}
                 </div>
               )}
             </div>

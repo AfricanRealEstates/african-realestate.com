@@ -167,7 +167,7 @@ export default function DynamicGuidesContent({
                 value={status.value}
                 className="flex items-center gap-2 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm"
               >
-                {getStatusIcon(status.value)}
+                {/* {getStatusIcon(status.value)} */}
                 <span className="hidden sm:inline">
                   {status.value === "sell" ? "Sell" : `${status.label}`}
                 </span>

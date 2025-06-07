@@ -384,7 +384,7 @@ export function GuideForm({ guide }: GuideFormProps) {
                         </FormControl>
                         <SelectContent>
                           <SelectItem value="sale">For Sale</SelectItem>
-                          <SelectItem value="rent">For Rent</SelectItem>
+                          <SelectItem value="rent">To Let</SelectItem>
                           <SelectItem value="sell">To Sell</SelectItem>
                         </SelectContent>
                       </Select>

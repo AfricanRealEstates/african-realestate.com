@@ -93,8 +93,8 @@ const propertyTypes = [
 ];
 
 const propertyStatuses = [
-  { value: "sale", label: "Sale" },
-  { value: "rent", label: "Rent" },
+  { value: "sale", label: "Buy" },
+  { value: "rent", label: "Let" },
   { value: "sell", label: "Sell" },
 ];
 
