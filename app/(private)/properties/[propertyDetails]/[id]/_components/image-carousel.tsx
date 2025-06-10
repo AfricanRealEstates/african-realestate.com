@@ -98,6 +98,9 @@ export default function EnhancedImageCarousel({
   const [isImageLoaded, setIsImageLoaded] = useState<boolean[]>([]);
   const [showControls, setShowControls] = useState(true);
   const [imageLoadErrors, setImageLoadErrors] = useState<boolean[]>([]);
+  const [preloadedImages, setPreloadedImages] = useState<Set<number>>(
+    new Set([0])
+  );
 
   // Refs
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -305,6 +308,34 @@ export default function EnhancedImageCarousel({
     }
   };
 
+  // Preload adjacent images to eliminate loading states during navigation
+  useEffect(() => {
+    // Preload current image and adjacent images (previous and next)
+    const imagesToPreload = [
+      currentIndex,
+      currentIndex > 0 ? currentIndex - 1 : allImages.length - 1,
+      currentIndex < allImages.length - 1 ? currentIndex + 1 : 0,
+    ];
+
+    // Create new Image objects to preload
+    imagesToPreload.forEach((index) => {
+      if (!preloadedImages.has(index) && allImages[index]) {
+        // Use window.Image to explicitly reference the browser's native Image constructor
+        const img = new window.Image();
+        img.src = optimizeImageUrl(
+          allImages[index],
+          isFullscreen ? 1920 : 800,
+          isFullscreen ? 90 : 80
+        );
+        img.onload = () => {
+          setPreloadedImages((prev) => new Set([...prev, index]));
+          handleImageLoaded(index);
+        };
+        img.onerror = () => handleImageError(index);
+      }
+    });
+  }, [currentIndex, allImages, preloadedImages, isFullscreen]);
+
   // Render the main carousel content
   const renderCarouselContent = () => (
     <div
@@ -404,7 +435,8 @@ export default function EnhancedImageCarousel({
               )}
             >
               {!isImageLoaded[currentIndex] &&
-                !imageLoadErrors[currentIndex] && (
+                !imageLoadErrors[currentIndex] &&
+                !preloadedImages.has(currentIndex) && (
                   <div className="absolute inset-0 bg-gray-100 animate-pulse flex items-center justify-center">
                     <ImageIcon className="h-12 w-12 text-gray-400" />
                   </div>
@@ -434,11 +466,16 @@ export default function EnhancedImageCarousel({
                     isFullscreen
                       ? "object-contain w-full h-full"
                       : "object-cover",
-                    isImageLoaded[currentIndex] ? "opacity-100" : "opacity-0"
+                    isImageLoaded[currentIndex] ||
+                      preloadedImages.has(currentIndex)
+                      ? "opacity-100"
+                      : "opacity-0"
                   )}
                   onLoad={() => handleImageLoaded(currentIndex)}
                   onError={() => handleImageError(currentIndex)}
-                  priority={currentIndex === 0}
+                  priority={
+                    currentIndex === 0 || preloadedImages.has(currentIndex)
+                  }
                   sizes={
                     isFullscreen ? "100vw" : "(max-width: 768px) 100vw, 66vw"
                   }
@@ -569,9 +606,13 @@ export default function EnhancedImageCarousel({
       className={cn(
         "flex gap-2 overflow-x-auto scrollbar-hide py-2 px-4 bg-white/80 backdrop-blur-sm rounded-lg",
         isFullscreen
-          ? "absolute bottom-4 left-1/2 transform -translate-x-1/2 z-30 max-w-4xl w-auto"
+          ? "fixed bottom-4 left-0 right-0 mx-auto z-30 max-w-4xl w-auto justify-center"
           : "mt-4"
       )}
+      style={{
+        maxWidth: isFullscreen ? "calc(100vw - 32px)" : undefined,
+        margin: isFullscreen ? "0 auto" : undefined,
+      }}
     >
       {/* Video Thumbnail (if video exists) */}
       {videoInfo && (
@@ -626,6 +667,11 @@ export default function EnhancedImageCarousel({
             width={64}
             height={64}
             className="object-cover w-full h-full"
+            priority={
+              index === currentIndex ||
+              index === currentIndex + 1 ||
+              index === currentIndex - 1
+            }
           />
         </button>
       ))}
