@@ -1,5 +1,9 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
+import {
+  generateCountySitemapUrls,
+  generateLocationSitemapUrls,
+} from "@/lib/seo-utils";
 
 export const baseUrl = "https://www.african-realestate.com";
 
@@ -46,6 +50,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.4,
     },
     {
+      url: `${baseUrl}/privacy`,
+      lastModified: new Date().toISOString(),
+      changeFrequency: "monthly" as const,
+      priority: 0.4,
+    },
+    {
+      url: `${baseUrl}/terms-of-service`,
+      lastModified: new Date().toISOString(),
+      changeFrequency: "monthly" as const,
+      priority: 0.4,
+    },
+    {
+      url: `${baseUrl}/license`,
+      lastModified: new Date().toISOString(),
+      changeFrequency: "monthly" as const,
+      priority: 0.4,
+    },
+    {
       url: `${baseUrl}/blog`,
       lastModified: new Date().toISOString(),
       changeFrequency: "daily" as const,
@@ -74,34 +96,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   try {
-    // Fetch blog posts from the new Post model
-    const blogPosts = await prisma.post.findMany({
-      where: { published: true },
-      select: {
-        slug: true,
-        updatedAt: true,
-        topics: true,
-      },
-    });
-
-    const blogPostsUrls = blogPosts.flatMap((post) => {
-      // Filter post topics to only include valid predefined topics
-      const validTopics = post.topics.filter((topic) =>
-        BLOG_TOPICS.some((predefinedTopic) => predefinedTopic.id === topic)
-      );
-
-      // If no valid topics, use the first topic as default
-      const postTopics = validTopics.length > 0 ? validTopics : ["tips"];
-
-      return postTopics.map((topic) => ({
-        url: `${baseUrl}/blog/${topic}/${post.slug}`,
-        lastModified: post.updatedAt.toISOString(),
-        changeFrequency: "daily" as const,
-        priority: 0.7,
-      }));
-    });
-
-    // Fetch properties
+    // Get properties
     const properties = await prisma.property.findMany({
       where: { isActive: true },
       select: {
@@ -114,56 +109,47 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const propertiesUrls = properties.map((property) => ({
       url: `${baseUrl}/properties/${property.propertyDetails}/${property.id}`,
       lastModified: property.updatedAt.toISOString(),
-      changeFrequency: "hourly" as const,
-      priority: 0.9,
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
     }));
 
-    // Fetch locations (nearby towns)
-    const locations = await prisma.property.findMany({
-      distinct: ["nearbyTown"],
+    // Generate dynamic location URLs
+    const locationUrls = await generateLocationSitemapUrls();
+    const countyUrls = await generateCountySitemapUrls();
+
+    // Get blog posts
+    const blogPosts = await prisma.post.findMany({
+      where: { published: true },
       select: {
-        nearbyTown: true,
-      },
-      where: {
-        isActive: true,
+        slug: true,
+        updatedAt: true,
+        topics: true,
       },
     });
 
-    const locationUrls = locations.map((location) => ({
-      url: `${baseUrl}/properties/${location.nearbyTown}`,
-      lastModified: new Date().toISOString(),
-      changeFrequency: "weekly" as const,
-      priority: 0.6,
-    }));
+    const blogPostsUrls = blogPosts.flatMap((post) => {
+      const validTopics = post.topics.filter((topic) =>
+        BLOG_TOPICS.some((predefinedTopic) => predefinedTopic.id === topic)
+      );
+      const postTopics = validTopics.length > 0 ? validTopics : ["tips"];
 
-    // Fetch property types
-    const propertyTypes = await prisma.property.findMany({
-      distinct: ["propertyType"],
-      select: {
-        propertyType: true,
-      },
-      where: {
-        isActive: true,
-      },
+      return postTopics.map((topic) => ({
+        url: `${baseUrl}/blog/${topic}/${post.slug}`,
+        lastModified: post.updatedAt.toISOString(),
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      }));
     });
-
-    const propertyTypeUrls = propertyTypes.map((type) => ({
-      url: `${baseUrl}/properties/type/${type.propertyType.toLowerCase().replace(/\s+/g, "-")}`,
-      lastModified: new Date().toISOString(),
-      changeFrequency: "weekly" as const,
-      priority: 0.6,
-    }));
 
     return [
+      ...additionalPages,
       ...propertiesUrls,
       ...locationUrls,
-      ...propertyTypeUrls,
+      ...countyUrls,
       ...blogPostsUrls,
-      ...topicPages,
-      ...additionalPages,
     ];
   } catch (error) {
     console.error("Error generating sitemap:", error);
-    return [...topicPages, ...additionalPages];
+    return additionalPages;
   }
 }

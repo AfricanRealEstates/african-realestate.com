@@ -575,9 +575,9 @@ export default async function PropertyDetails({
               {property.propertyDetails}
             </Link>
           </p>
-          <h2 className="text-2xl font-bold tracking-tight text-gray-900 capitalize lg:text-4xl">
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 capitalize lg:text-4xl">
             {property.title}
-          </h2>
+          </h1>
         </div>
 
         <section className="flex flex-col lg:flex-row mt-8 w-full h-full">
@@ -807,18 +807,6 @@ export default async function PropertyDetails({
           whatsappNumber={agent.whatsappNumber}
           propertyUrl={propertyUrl}
         />
-
-        {/* <MessageWidget
-          propertyType={property.propertyType}
-          propertyTitle={property.title}
-          propertyId={property.id}
-          propertyUrl={propertyUrl}
-          propertyNumber={property.propertyNumber}
-          whatsappNumber={agent.whatsappNumber}
-          price={property.price}
-          currency={property.currency}
-          location={`${property.locality}, ${property.county}`}
-        /> */}
         <section className="mx-auto mt-12 max-w-2xl sm:mt-12 lg:max-w-none">
           <div className="flex items-center justify-between space-x-4">
             <h2 className="text-lg lg:text-xl font-medium text-gray-950">
