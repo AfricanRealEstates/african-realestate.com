@@ -33,13 +33,14 @@ import {
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import Image from "next/image";
 import ProductMenu from "./ProductMenu";
 import { Button } from "@/components/utils/Button";
 import AvatarMenu from "./AvatarMenu";
 import Modal from "@/components/modals/Modal";
 import AuthContent from "@/components/auth/AuthContent";
+import { useGlobalSession } from "@/providers/session-provider";
 
 const callsToAction = [
   { name: "Watch demo", href: "#", icon: PlayCircleIcon },
@@ -114,8 +115,8 @@ export default function Header() {
   const [showAvatarMenu, setShowAvatarMenu] = useState(false);
   const [authModalVisible, setAuthModalVisible] = useState(false);
 
-  const session = useSession();
-  const user = session.data?.user;
+  const { session } = useGlobalSession();
+  const user = session?.user;
 
   const pathname = usePathname();
   const isHomePage = pathname === "/";
@@ -186,9 +187,7 @@ export default function Header() {
                 <button className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700">
                   <span className="sr-only">Open main menu</span>
                   <Bars3Icon
-                    className={`size-7 ${
-                      stickyMenu || !isHomePage ? "text-gray-700" : "text-white"
-                    }`}
+                    className={`size-7 ${stickyMenu || !isHomePage ? "text-gray-700" : "text-white"}`}
                     aria-hidden="true"
                   />
                 </button>
@@ -367,7 +366,7 @@ export default function Header() {
                     height={40}
                     width={40}
                     alt={user?.name ?? "User Avatar"}
-                    className="rounded-full border h-8 w-8"
+                    className="rounded-full border h-8 w-8 object-cover"
                   />
                   {showAvatarMenu && <AvatarMenu />}
                 </div>

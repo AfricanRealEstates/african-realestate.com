@@ -17,8 +17,9 @@ export function UserAvatar({ user, className }: UserAvatarProps) {
   return (
     <Avatar className={cn("size-8", className)}>
       <AvatarImage
-        src={imageUrl || "/placeholder.svg"}
+        src={imageUrl || "/assets/placeholder.jpg"}
         alt={user.name || "User avatar"}
+        className="object-cover"
         onError={(e) => {
           // If image fails to load, hide it and show fallback
           const target = e.target as HTMLImageElement;

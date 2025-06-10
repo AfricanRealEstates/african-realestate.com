@@ -88,7 +88,7 @@ export async function unlikeProperty(
       where: { id: user.id },
       data: {
         favoriteIds: {
-          set: user.favoriteIds.filter((id) => id !== propertyId),
+          set: user.favoriteIds?.filter((id) => id !== propertyId),
         },
       },
     });

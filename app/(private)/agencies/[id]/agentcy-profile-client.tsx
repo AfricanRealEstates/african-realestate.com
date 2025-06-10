@@ -165,6 +165,7 @@ export default function AgencyProfileClient({
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
+
                 {/* Professional Badge */}
                 <div className="hidden absolute -bottom-3 -right-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-3 rounded-full shadow-lg">
                   {agency.role === "AGENCY" ? (

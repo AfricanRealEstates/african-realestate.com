@@ -1,6 +1,3 @@
-"use client";
-
-import type { UseFormReturn } from "react-hook-form";
 import {
   Card,
   CardContent,
@@ -8,6 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   FormControl,
   FormDescription,
@@ -16,47 +14,51 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import type { UserRole } from "@prisma/client";
+import { useFormContext } from "react-hook-form";
 
-export default function RoleSpecificFields({
-  form,
-  role,
-}: {
-  form: UseFormReturn<any>;
-  role: UserRole;
-}) {
+type Props = {
+  role: "AGENCY" | "ADMIN" | "USER" | "AGENT";
+};
+
+const RoleSpecificFields = ({ role }: Props) => {
+  const form = useFormContext();
+
   return (
     <Card className="shadow-none">
       <CardHeader>
         <CardTitle>
-          {role === "AGENCY" ? "Agency Information" : "Administrative Settings"}
+          {role === "AGENCY"
+            ? "Agency Information"
+            : role === "AGENT"
+              ? "Agent Information"
+              : "Administrative Settings"}
         </CardTitle>
         <CardDescription>
           {role === "AGENCY"
             ? "Manage your agency details and contact information (all fields are optional)"
-            : "Additional settings for administrators"}
+            : role === "AGENT"
+              ? "Manage your professional details and contact information (all fields are optional)"
+              : "Additional settings for administrators"}
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="grid gap-6">
         {role === "AGENCY" && (
           <>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <FormField
                 control={form.control}
-                name="agentName"
+                name="agencyName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Agency/Agent Name</FormLabel>
+                    <FormLabel>Agency Name</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Real Estate Agency"
+                        placeholder="Acme Corp"
                         {...field}
                         value={field.value || ""}
                       />
                     </FormControl>
-                    {/* <FormDescription>Optional</FormDescription> */}
                     <FormMessage />
                   </FormItem>
                 )}
@@ -64,18 +66,17 @@ export default function RoleSpecificFields({
 
               <FormField
                 control={form.control}
-                name="agentEmail"
+                name="agencyEmail"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Agency Email (option)</FormLabel>
+                    <FormLabel>Professional Email (optional)</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="contact@agency.com"
+                        placeholder="info@acme.com"
                         {...field}
                         value={field.value || ""}
                       />
                     </FormControl>
-                    {/* <FormDescription>Optional</FormDescription> */}
                     <FormMessage />
                   </FormItem>
                 )}
@@ -84,10 +85,10 @@ export default function RoleSpecificFields({
 
             <FormField
               control={form.control}
-              name="agentLocation"
+              name="agencyLocation"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Agency Location</FormLabel>
+                  <FormLabel>Service Area</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Nairobi, Kenya"
@@ -95,7 +96,6 @@ export default function RoleSpecificFields({
                       value={field.value || ""}
                     />
                   </FormControl>
-                  {/* <FormDescription>Optional</FormDescription> */}
                   <FormMessage />
                 </FormItem>
               )}
@@ -115,7 +115,6 @@ export default function RoleSpecificFields({
                         value={field.value || ""}
                       />
                     </FormControl>
-                    {/* <FormDescription>Optional</FormDescription> */}
                     <FormMessage />
                   </FormItem>
                 )}
@@ -134,7 +133,126 @@ export default function RoleSpecificFields({
                         value={field.value || ""}
                       />
                     </FormControl>
-                    {/* <FormDescription>Optional</FormDescription> */}
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="showAgencyContact"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">
+                      Display Contact Information
+                    </FormLabel>
+                    <FormDescription>
+                      Show your contact details publicly on property listings
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value || false}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </>
+        )}
+        {role === "AGENT" && (
+          <>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="agentName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Agent Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="John Doe"
+                        {...field}
+                        value={field.value || ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="agentEmail"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Professional Email (optional)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="john@realestate.com"
+                        {...field}
+                        value={field.value || ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="agentLocation"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Service Area</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Nairobi, Kenya"
+                      {...field}
+                      value={field.value || ""}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="officeLine"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Office Phone (optional)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="+25400000000"
+                        {...field}
+                        value={field.value || ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="whatsappNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>WhatsApp Number</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="+25400000000"
+                        {...field}
+                        value={field.value || ""}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -152,7 +270,6 @@ export default function RoleSpecificFields({
                     </FormLabel>
                     <FormDescription>
                       Show your contact details publicly on property listings
-                      (optional)
                     </FormDescription>
                   </div>
                   <FormControl>
@@ -166,21 +283,50 @@ export default function RoleSpecificFields({
             />
           </>
         )}
-
         {role === "ADMIN" && (
-          <div className="text-sm text-muted-foreground">
-            As an administrator, you have access to all system features and user
-            management capabilities.
-          </div>
-        )}
+          <>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="adminName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Admin Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Admin User"
+                        {...field}
+                        value={field.value || ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-        {role === "SUPPORT" && (
-          <div className="text-sm text-muted-foreground">
-            As a support team member, you have access to help users with their
-            issues and manage support tickets.
-          </div>
+              <FormField
+                control={form.control}
+                name="adminEmail"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Admin Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="admin@example.com"
+                        {...field}
+                        value={field.value || ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </>
         )}
       </CardContent>
     </Card>
   );
-}
+};
+
+export default RoleSpecificFields;

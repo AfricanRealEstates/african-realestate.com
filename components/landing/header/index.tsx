@@ -127,8 +127,8 @@ export default function Header() {
           stickyMenu
             ? "bg-white !py-3 shadow transition duration-100 text-gray-600"
             : isHomePage
-            ? "text-white hover:text-gray-100"
-            : "text-gray-600 border-b border-neutral-100"
+              ? "text-white hover:text-gray-100"
+              : "text-gray-600 border-b border-neutral-100"
         }`}
       >
         <div className="top-0 w-full z-50 will-change-auto duration-200 bg-transparent translate-y-0 transition-colors">

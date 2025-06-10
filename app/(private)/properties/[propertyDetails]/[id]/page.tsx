@@ -179,6 +179,7 @@ const convertToAcres = (size: number, units: string): number => {
       return size;
   }
 };
+
 const formatName = (name: string | null): string => {
   if (!name) return "N/A";
 
@@ -303,6 +304,9 @@ export default async function PropertyDetails({
   const agent = await prisma.user.findUnique({
     where: {
       id: property.userId,
+      role: {
+        in: ["AGENCY", "AGENT"],
+      },
     },
     include: {
       properties: true,
@@ -312,24 +316,6 @@ export default async function PropertyDetails({
   if (!agent) {
     return <NotFound />;
   }
-
-  const convertToAcres = (size: number, units: string): number => {
-    switch (units.toLowerCase()) {
-      case "ha":
-        // Conversion factor: 1 hectare = 2.47105 acres
-        return size * 2.47105;
-      case "acres":
-        return size;
-      case "sqft":
-        // Conversion factor: 1 acre = 43560 square feet
-        return size / 43560;
-      case "sqm":
-        // Conversion factor: 1 acre = 4046.86 square meters
-        return size / 4046.86;
-      default:
-        return size;
-    }
-  };
 
   let convertedLandSize = null;
   if (property.landSize && property.landUnits) {
@@ -729,11 +715,11 @@ export default async function PropertyDetails({
                     </div>
 
                     <div className="bg-white h-full border-l border-neutral-100 w-full flex-1 flex gap-y-4 lg:justify-center lg:items-center">
-                      {agent.image ? (
+                      {agent.profilePhoto ? (
                         <Image
                           height={100}
                           width={100}
-                          src={agent.image || "/placeholder.svg"}
+                          src={agent.profilePhoto || "/placeholder.svg"}
                           alt="Agent"
                           className="object-cover lg:h-28 lg:w-28 h-36 w-36 ml-4 lg:ml-0 rounded-full border border-gray-200"
                         />
@@ -753,16 +739,11 @@ export default async function PropertyDetails({
                   <div className="w-full border-b border-neutral-200"></div>
                   <div className="flex lg:items-center lg:justify-center w-full mb-12">
                     <Button
-                      href={
-                        // user?.role === "AGENT"
-                        //   ? `/agents/${agent.id}`
-                        //   :
-                        `/agencies/${agent.id}`
-                      }
+                      href={`/agencies/${agent.id}`}
                       color="blue"
                       className="mb-8 lg:mb-0" // Added margin-bottom for mobile
                     >
-                      {user?.role === "AGENT"
+                      {agent.role === "AGENT"
                         ? "View all agent's properties"
                         : "View all agency's properties"}
                     </Button>

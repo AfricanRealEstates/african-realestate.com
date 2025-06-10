@@ -139,7 +139,7 @@ export default function ProfileForm({ user }: { user: User }) {
                   {(user.role === "AGENCY" ||
                     user.role === "AGENT" ||
                     user.role === "ADMIN") && (
-                    <RoleSpecificFields form={form} role={user.role} />
+                    <RoleSpecificFields role={user.role} />
                   )}
                 </TabsContent>
 
