@@ -488,7 +488,7 @@ export default function EnhancedImageCarousel({
       )}
 
       {/* Video Button Overlay */}
-      {videoInfo && !isVideoPlaying && currentIndex === 0 && (
+      {/* {videoInfo && !isVideoPlaying && currentIndex === 0 && (
         <button
           onClick={toggleVideo}
           className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-4 z-20 transition-all duration-300 hover:scale-110 group"
@@ -496,7 +496,7 @@ export default function EnhancedImageCarousel({
         >
           <Play className="h-8 w-8 group-hover:scale-110 transition-transform" />
         </button>
-      )}
+      )} */}
 
       {/* Controls Overlay - conditionally shown */}
       <div
@@ -557,7 +557,7 @@ export default function EnhancedImageCarousel({
             aria-label={isVideoPlaying ? "Show images" : "Play video"}
           >
             {isVideoPlaying ? (
-              <ImageIcon className="h-4 w-4" />
+              <X className="h-4 w-4" />
             ) : (
               <Video className="h-4 w-4" />
             )}
