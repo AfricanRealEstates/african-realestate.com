@@ -2,7 +2,6 @@ import { prisma } from "@/lib/prisma";
 import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/20/solid";
 import { Bath, Bed, ExpandIcon, FolderOpen, MapPin } from "lucide-react";
 import type { Metadata } from "next";
-import ImageCarousel from "./_components/image-carousel";
 import Link from "next/link";
 import NotFound from "@/app/not-found";
 import { auth } from "@/auth";
@@ -23,6 +22,7 @@ import { PropertySkeleton } from "@/components/globals/PropertySkeleton";
 import { Suspense } from "react";
 import ViewTracker from "@/components/properties/ViewTracker";
 import PropertyCardEnhanced from "@/components/landing/featured-properties/property-card-enhanced";
+import EnhancedImageCarousel from "./_components/image-carousel";
 
 // no cache
 export const dynamic = "force-dynamic";
@@ -567,10 +567,16 @@ export default async function PropertyDetails({
         </div>
 
         <section className="flex flex-col lg:flex-row mt-8 w-full h-full">
-          <ImageCarousel
+          {/* <ImageCarousel
             property={property}
             whatsappNumber={agent.whatsappNumber}
             videoLink={property.videoLink!}
+          /> */}
+
+          <EnhancedImageCarousel
+            property={property}
+            whatsappNumber={agent.whatsappNumber}
+            videoLink={property.videoLink}
           />
 
           <div className="flex-grow lg:mt-0 h-full">

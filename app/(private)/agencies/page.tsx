@@ -27,7 +27,7 @@ import {
   getTopProfessionals,
   getProfessionalCounts,
 } from "@/actions/getPersonalizedProfessionals";
-import ProfessionalCard from "./_components/professional-card";
+import { ProfessionalsGrid } from "./_components/professionals-grid";
 
 export const metadata = getSEOTags({
   title: "Agencies & Agents | African Real Estate",
@@ -95,7 +95,7 @@ export default async function AgenciesAndAgents({
     if (totalPages <= 1) return null;
 
     return (
-      <div className="space-y-4 mt-4">
+      <div className="space-y-4 mt-8">
         <div className="flex justify-center">
           <Pagination>
             <PaginationContent>
@@ -186,21 +186,24 @@ export default async function AgenciesAndAgents({
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 max-w-2xl mx-auto">
               <div className="bg-blue-50 p-4 sm:p-6 rounded-xl">
                 <div className="text-2xl sm:text-3xl font-bold text-blue-900 mb-1">
-                  {/* {counts.totalProfessionals} */}
+                  {/* {counts.totalProfessionals}+
+                   */}
                   300+
                 </div>
                 <div className="text-sm text-blue-700">Total Professionals</div>
               </div>
               <div className="bg-green-50 p-4 sm:p-6 rounded-xl">
                 <div className="text-2xl sm:text-3xl font-bold text-green-900 mb-1">
-                  {/* {counts.totalAgencies} */}
+                  {/* {counts.totalAgencies}+
+                   */}
                   200+
                 </div>
                 <div className="text-sm text-green-700">Active Agencies</div>
               </div>
               <div className="bg-purple-50 p-4 sm:p-6 rounded-xl">
                 <div className="text-2xl sm:text-3xl font-bold text-purple-900 mb-1">
-                  {/* {counts.totalAgents} */}
+                  {/* {counts.totalAgents}+
+                   */}
                   100+
                 </div>
                 <div className="text-sm text-purple-700">Licensed Agents</div>
@@ -233,17 +236,11 @@ export default async function AgenciesAndAgents({
               </p>
             </div>
 
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {topProfessionals.map((professional, index) => (
-                <ProfessionalCard
-                  key={professional.id}
-                  professional={professional}
-                  isLoggedIn={isLoggedIn}
-                  showTopBadge={!isLoggedIn}
-                  rank={index + 1}
-                />
-              ))}
-            </div>
+            <ProfessionalsGrid
+              professionals={topProfessionals}
+              isLoggedIn={isLoggedIn}
+              showTopBadges={!isLoggedIn}
+            />
           </div>
         )}
 
@@ -263,9 +260,8 @@ export default async function AgenciesAndAgents({
                 >
                   <Users className="h-4 w-4" />
                   <span className="hidden sm:inline">All</span>
-                  <span className="text-xs">
-                    ({counts.totalProfessionals}) Last 24-hr
-                  </span>
+                  <span className="text-xs">({counts.totalProfessionals})</span>
+                  <span>24 hrs</span>
                 </Link>
               </TabsTrigger>
               <TabsTrigger
@@ -279,9 +275,8 @@ export default async function AgenciesAndAgents({
                 >
                   <Building className="h-4 w-4" />
                   <span className="hidden sm:inline">Agencies</span>
-                  <span className="text-xs">
-                    ({counts.totalAgencies}) Last 24-hr
-                  </span>
+                  <span className="text-xs">({counts.totalAgencies})</span>
+                  <span>24 hrs</span>
                 </Link>
               </TabsTrigger>
               <TabsTrigger
@@ -295,28 +290,12 @@ export default async function AgenciesAndAgents({
                 >
                   <Users className="h-4 w-4" />
                   <span className="hidden sm:inline">Agents</span>
-                  <span className="text-xs">
-                    ({counts.totalAgents}) Last 24-hr
-                  </span>
+                  <span className="text-xs">({counts.totalAgents})</span>
+                  <span>24 hrs</span>
                 </Link>
               </TabsTrigger>
             </TabsList>
           </div>
-
-          {/* Search and Filters */}
-          {/* <div className="mb-8">
-            <SearchAndFilters
-              currentTab={tab}
-              onRefresh={() => {
-                const newRefreshSeed = Math.floor(Math.random() * 10000);
-                const params = new URLSearchParams(window.location.search);
-                params.set("refresh", newRefreshSeed.toString());
-                params.set("page", "1");
-                window.location.href = `?${params.toString()}`;
-              }}
-              isRefreshing={false}
-            />
-          </div> */}
 
           {/* Dynamic content indicator */}
           {isLoggedIn && (
@@ -330,17 +309,10 @@ export default async function AgenciesAndAgents({
           <TabsContent value="all">
             {professionalsData.professionals.length > 0 ? (
               <>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {professionalsData.professionals
-                    .slice(0, 6)
-                    .map((professional) => (
-                      <ProfessionalCard
-                        key={professional.id}
-                        professional={professional}
-                        isLoggedIn={isLoggedIn}
-                      />
-                    ))}
-                </div>
+                <ProfessionalsGrid
+                  professionals={professionalsData.professionals.slice(0, 6)}
+                  isLoggedIn={isLoggedIn}
+                />
                 {renderPagination(
                   "all",
                   professionalsData.totalPages,
@@ -369,15 +341,10 @@ export default async function AgenciesAndAgents({
           <TabsContent value="agencies">
             {professionalsData.professionals.length > 0 ? (
               <>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {professionalsData.professionals.slice(0, 6).map((agency) => (
-                    <ProfessionalCard
-                      key={agency.id}
-                      professional={agency}
-                      isLoggedIn={isLoggedIn}
-                    />
-                  ))}
-                </div>
+                <ProfessionalsGrid
+                  professionals={professionalsData.professionals.slice(0, 6)}
+                  isLoggedIn={isLoggedIn}
+                />
                 {renderPagination(
                   "agencies",
                   professionalsData.totalPages,
@@ -404,15 +371,10 @@ export default async function AgenciesAndAgents({
           <TabsContent value="agents">
             {professionalsData.professionals.length > 0 ? (
               <>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {professionalsData.professionals.slice(0, 6).map((agent) => (
-                    <ProfessionalCard
-                      key={agent.id}
-                      professional={agent}
-                      isLoggedIn={isLoggedIn}
-                    />
-                  ))}
-                </div>
+                <ProfessionalsGrid
+                  professionals={professionalsData.professionals.slice(0, 6)}
+                  isLoggedIn={isLoggedIn}
+                />
                 {renderPagination(
                   "agents",
                   professionalsData.totalPages,
